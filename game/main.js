@@ -4,14 +4,13 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 
-let round				= 1;
-let newRound			= true;
-let newScore			= true;
-
+let round			= 1;
+let newRound		= true;
+let newScore		= true;
 let roundStarted	= false;
-let launchSide	= 1;
-const SPACE = ' ';
-let game = true;
+let launchSide		= 1;
+const SPACE			= ' ';
+let game			= true;
 
 /***********************************************************************************/
 /************************** Initialisation de la scene *****************************/
@@ -589,6 +588,114 @@ function checkPaddleCollision() {
 			setTimeout(endGame, 500);	
 	}
 
+
+/***********************************************************************************/
+/******************************* IA ************************************************/
+/***********************************************************************************/
+
+let ia					= false;
+
+const EASY				= 0;
+const MEDIUM			= 1;
+const HARD				= 2;
+let DIFFICULTY_LEVEL	= MEDIUM; //a modifier par le client
+
+let aiBallPositionX;
+let aiBallPositionY;
+
+function updateAIBallPos()
+{
+	aiBallPositionX = ball.position.x;
+	aiBallPositionY = ball.position.y;
+}
+
+function setAILevel()
+{
+// updates ball pos only once per sec for levels easy and medium
+	if (DIFFICULTY_LEVEL == EASY)
+	{
+		setInterval(updateAIBallPos, 1000);
+		//+ ball speed slow
+	}
+	else if (DIFFICULTY_LEVEL == MEDIUM)
+	{
+		setInterval(updateAIBallPos, 1000);
+		// PADDLE_SPEED = 7;
+		ballSpeedX = 6;
+		ballSpeedY = 6;
+	}
+	else if (DIFFICULTY_LEVEL == HARD)
+	{
+		setInterval(updateAIBallPos, 0);
+		// PADDLE_SPEED = 7;
+		ballSpeedX = 6;
+		ballSpeedY = 6;
+	}
+}
+
+function simulateKeyPress(key) {
+	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+}
+
+function simulateKeyRelease(key) {
+	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+}
+
+function getIntersectionY()
+{
+	const velocityX = ballSpeedX;
+	const velocityY = ballSpeedY;
+
+	const intersectionX = FIELD_X / 2 - PADDLE_X / 2;
+	let intersectionY; //value we are looking for
+
+	let distanceToIntersection = intersectionX - aiBallPositionX;
+	let timeToIntersection = distanceToIntersection / velocityX;
+	
+	let intersectionWithoutRebounds = aiBallPositionY + (velocityY * timeToIntersection);
+
+	//if no rebounds
+	if (intersectionWithoutRebounds > FIELD_Y / 2 || intersectionWithoutRebounds < - FIELD_Y / 2) //if current pos + vertical displacement < field height == no rebounds
+			intersectionY = intersectionWithoutRebounds;
+	else //if rebounds
+	{
+			//intersectionY = intersectionWithoutRebounds % (2 * FIELD_HEIGHT); //if only one rebound?
+			intersectionY = intersectionWithoutRebounds;
+			if (intersectionY > FIELD_Y / 2) //means the ball is going back down after bounce
+				intersectionY = - (intersectionY - FIELD_Y / 2); //we substract the excess
+			else
+				intersectionY = (intersectionY + FIELD_Y / 2); //we substract the excess
+	}
+
+	// if (intersectionY > FIELD_WIDTH / 2) //car sinon le paddle loupe souvent la balle de peu
+	// 	intersectionY = intersectionY + (BALL_RADIUS * 2);
+	// else
+	// 	intersectionY = intersectionY - (BALL_RADIUS * 2);
+
+	return intersectionY;
+}
+
+function aiMovePaddle()
+{
+
+	let intersectionY = getIntersectionY();
+
+	// drawBall(FIELD_WIDTH - PADDLE_WIDTH, intersectionY, RED); //draws the intersection point
+
+	if (!roundStarted) //pour éviter l'epilepsie du début
+		return ;
+	else if (intersectionY < rightPaddle.position.y)
+	{
+		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowDown');
+	}
+	else if (intersectionY > rightPaddle.position.y)
+	{
+		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowUp');
+	}
+}
+
 /***********************************************************************************/
 /********************************** Animation **************************************/
 /***********************************************************************************/
@@ -620,6 +727,8 @@ function checkPaddleCollision() {
 			keyHook();
 			if (roundStarted)
 				updateBall();
+			// if (roundStarted)
+				aiMovePaddle()
 			checkPaddleLimits();
 			checkEdgesBounce();
 			checkPaddleCollision()
