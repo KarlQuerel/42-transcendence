@@ -3,6 +3,7 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { ThreeMFLoader } from 'three/examples/jsm/Addons.js';
 
 let round			= 1;
 let newRound		= true;
@@ -30,6 +31,31 @@ let game			= true;
 
 // 	Ajouter OrbitControls
 
+
+/***********************************************************************************/
+/******************************** Le background ************************************/
+/***********************************************************************************/
+
+let	textSky = new THREE.TextureLoader().load("sky.jpg");
+let materialArray = [];
+
+let mat = new THREE.MeshBasicMaterial({map: textSky});
+materialArray.push(mat);
+materialArray.push(mat);
+materialArray.push(mat);
+materialArray.push(mat);
+materialArray.push(mat);
+materialArray.push(mat);
+
+
+materialArray[0].side = THREE.BackSide;
+
+let	envGeometry =  new THREE.BoxGeometry(1000, 1000, 1000);
+// let	position = 800;
+
+let env = new THREE.Mesh(envGeometry, materialArray);
+
+scene.add(env);
 
 /***********************************************************************************/
 /******************************** Les etoiles **************************************/
