@@ -1,11 +1,11 @@
 ## Traditional Website
 
-<img src="imgs/traditional.gif" alt="Traditional" width="800">
+<img src="imgs_utils/traditional.gif" alt="Traditional" width="800">
 
 
 ## Single Page Application
 
-<img src="imgs/SPA.gif" alt="Single Page Application" width="800">
+<img src="imgs_utils/SPA.gif" alt="Single Page Application" width="800">
 
 
 ## The basic idea
@@ -17,3 +17,18 @@ Advantages of SPA:
 - No extra queries to server
 - Fast and responsive front-end building
 - Enhanced user experiences
+
+
+## Code explanation
+So far, we have three files (might change as we code along):
+- ```index.html```:
+	Sets up the basic structure, including **linking to the CSS and JavaScript files.**
+- ```style.css```:
+	Adds **styling** to the application.
+
+- ```app.js```:
+	Contains the logic for **handling client-side routing.** It defines a ```route``` object where:
+	- keys are route paths.
+	- values are functions that update the content of the ```#app``` div based on the current route.
+
+	The most important part is the event listener ```window.onpopstate```, it listens **for changes in the browser's history state and updates the content accordingly.**
