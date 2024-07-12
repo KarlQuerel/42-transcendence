@@ -13,7 +13,7 @@ all :
 	set -e; \
 	docker compose -f docker-compose.yml build; \
 	docker compose -f docker-compose.yml up -d; \
-	echo -e "$(GREEN)\n✨ Ft_Transcendence is ready and running on http://localhost:8000 ✨\n$(NC)"
+	echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on http://localhost:8000 ✨\n$(NC)"
 
 clean:
 	@docker compose down
