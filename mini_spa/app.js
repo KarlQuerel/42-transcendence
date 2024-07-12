@@ -9,53 +9,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const routes = {
         'home': () => document.getElementById('app').innerHTML = `<h1>${T_VAR.HOME_TXT}</h1>`,
         'about': () => document.getElementById('app').innerHTML = `<h1>${T_VAR.ABOUT_TXT}</h1>`,
-        'theteam': () => {
-            document.getElementById('app').innerHTML = `
-                <style>
-                    .team-container {
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: center;
-                        gap: 20px;
-                    }
-                    .team-member {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                    }
-                    .team-member img {
-                        width: 500px; /* Adjust based on your preference */
-                        height: auto;
-                        border-radius: 50%; /* Optional: makes images circular */
-                        margin-bottom: 10px; /* Space between image and name */
-                    }
-                </style>
-                <h1>${T_VAR.TEAM_TXT}</h1>
-                <div class="team-container">
-                    <div class="team-member">
-                        <img src="/home/kquerel/ft_transcendenceyh/mini_spa/imgs_spa/casomarr.jpg" alt="Carolina">
-                         <b><p>Carolina aka the Fist</p></b>
-                    </div>
-                    <div class="team-member">
-                        <img src="/home/kquerel/ft_transcendenceyh/mini_spa/imgs_spa/jrouillo.jpg" alt="Jessica">
-                         <b><p>Jessica aka Spider-twerk</p></b>
-                    </div>
-                    <div class="team-member">
-                        <img src="/home/kquerel/ft_transcendenceyh/mini_spa/imgs_spa/madavid.jpg" alt="Marine">
-                         <b><p>Marine aka the Glitterbox</p></b>
-                    </div>
-                    <div class="team-member">
-                        <img src="/home/kquerel/ft_transcendenceyh/mini_spa/imgs_spa/cbernaze.jpg" alt="Clement">
-                         <b><p>Clement aka the Big Tub</p></b>
-                    </div>
-                    <div class="team-member">
-                        <img src="/home/kquerel/ft_transcendenceyh/mini_spa/imgs_spa/kquerel.jpg" alt="Karl">
-                        <b><p>Karl aka K-K-Karl</p></b>
-                    </div>
-                    <!-- Add more team members as needed -->
-                </div>
-            `;
-        },
+'theteam': () => {
+    document.getElementById('app').innerHTML = `
+        <style>
+            .team-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            .team-member {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .team-member img {
+                width: 500px; /* Adjust based on your preference */
+                height: auto;
+                border-radius: 50%; /* Optional: makes images circular */
+                margin-bottom: 10px; /* Space between image and name */
+            }
+        </style>
+        <h1>${T_VAR.TEAM_TXT}</h1>
+        <div class="team-container">
+            <div class="team-member">
+                <img src="imgs_spa/casomarr.jpg" alt="Carolina">
+                 <b><p>Carolina aka the Fist</p></b>
+            </div>
+            <div class="team-member">
+                <img src="imgs_spa/jrouillo.jpg" alt="Jessica">
+                 <b><p>Jessica aka Spider-twerk</p></b>
+            </div>
+            <div class="team-member">
+                <img src="imgs_spa/madavid.jpg" alt="Marine">
+                 <b><p>Marine aka the Glitterbox</p></b>
+            </div>
+            <div class="team-member">
+                <img src="imgs_spa/cbernaze.jpg" alt="Clement">
+                 <b><p>Clement aka the Big Tub</p></b>
+            </div>
+            <div class="team-member">
+                <img src="imgs_spa/kquerel.jpg" alt="Karl">
+                 <b><p>Karl aka K-K-Karl</p></b>
+            </div>
+        </div>
+    `;
+},
+
 		'login': () => {
 			document.getElementById('app').innerHTML = `
 				<h1>${T_VAR.LOGIN_TXT}</h1>
