@@ -1,3 +1,5 @@
+-- Pour que le container PostgreSQL se lance correctement, il faut que le fichier init.sql soit présent dans le dossier /docker-entrypoint-initdb.d/ du container.
+
 -- Create the database
 CREATE DATABASE mydatabase;
 

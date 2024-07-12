@@ -17,7 +17,11 @@ services:
     build:
       context: .
       dockerfile: pong_backend/Dockerfile
-    command: python pong_backend/manage.py runserver
+    command: >
+      sh -c "
+      python pong_backend/manage.py makemigrations &&
+      python pong_backend/manage.py migrate &&
+      python pong_backend/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
