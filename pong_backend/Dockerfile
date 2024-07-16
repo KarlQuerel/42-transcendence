@@ -11,7 +11,7 @@ WORKDIR /app
 
 
 # Copy the requirements file into the container at /app
-COPY pong_backend/init_files/requirements.txt /app/
+COPY pong_backend/requirements.txt /app/
 
 
 # Install dependencies
