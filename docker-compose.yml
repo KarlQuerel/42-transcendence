@@ -21,6 +21,7 @@ services:
       sh -c "
       python pong_backend/manage.py makemigrations &&
       python pong_backend/manage.py migrate &&
+      python pong_backend/manage.py populate_db &&
       python pong_backend/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
