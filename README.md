@@ -70,10 +70,19 @@ Total Majeurs = 12;
    		- django_web_app
 	   		- merchex
 				- dashboard_app
+					- `models.py`
+					- `views.py`
+					- `urls.py`
 				- user_manager_app
+					- `models.py`
+					- `views.py`
+					- `urls.py`
 	  			- merchex
+					- `urls.py`
+					- `settings.py`
+	       		- `manage.py`
 	       		- `requirements.txt`
-        	- `Dockerfile`
+        - `Dockerfile`
   		- `Makefile`
 	- 2FA
 		- `2fa.py`
