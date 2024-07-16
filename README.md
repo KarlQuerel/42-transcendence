@@ -67,9 +67,14 @@ Total Majeurs = 12;
 		- `...`
 - backend
 	- django_databases
-		- dashboard_app
-		- user_manager_app
-  		- merchex
+   		- django_web_app
+	   		- merchex
+				- dashboard_app
+				- user_manager_app
+	  			- merchex
+	       		- `requirements.txt`
+            	- `Dockerfile`
+  		- `Makefile`
 	- 2FA
 		- `2fa.py`
 	- browser_compatibility
