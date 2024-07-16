@@ -69,6 +69,7 @@ Total Majeurs = 12;
 	- django_databases
 		- dashboard_app
 		- user_manager_app
+  		- merchex
 	- 2FA
 		- `2fa.py`
 	- browser_compatibility
