@@ -73,7 +73,7 @@ Total Majeurs = 12;
 				- user_manager_app
 	  			- merchex
 	       		- `requirements.txt`
-            	- `Dockerfile`
+        	- `Dockerfile`
   		- `Makefile`
 	- 2FA
 		- `2fa.py`
