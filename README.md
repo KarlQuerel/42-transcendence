@@ -40,4 +40,39 @@ Total Majeurs = 12;
 ## Objectifs
 	- créer un jeu pong
 	- ce jeu doit être jouable contre un adversaire sur le même clavier ou à distance
-	-
+
+&nbsp;
+
+# STRUCTURE
+
+- frontend
+	- views
+		- pong_game
+			- 3d_game
+				- `main.js`
+				- `...`
+			- ai_opponent
+				- `ai.js`
+			- personalization
+				- `...`
+		- `home.js`
+		- `about_us.js`
+		- `dashboard.js`
+		- `login.js`
+		- `...`
+	- nginx
+		- `index.html`
+		- `dockerfile`
+	- languages
+		- `...`
+- backend
+	- django_databases
+		- dashboard_app
+		- user_manager_app
+	- 2FA
+		- `2fa.py`
+	- browser_compatibility
+		- `...`
+
+
+
