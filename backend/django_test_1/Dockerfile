@@ -21,4 +21,4 @@ EXPOSE 8100
 ENV PYTHONUNBUFFERED=1
 
 # Run the command to start uWSGI
-CMD ["python", "manage.py", "runserver", "127.0.0.1:8100"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8100"]
