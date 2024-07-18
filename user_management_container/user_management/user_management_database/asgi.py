@@ -1,5 +1,5 @@
 """
-ASGI config for pong_backend project.
+ASGI config for user_management project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pong_backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_management_database.settings')
 
 application = get_asgi_application()

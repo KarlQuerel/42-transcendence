@@ -6,7 +6,7 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init_files/init.sql:/docker-entrypoint-initdb.d/init_files/init.sql
+      - ./initiation_files/init.sql:/docker-entrypoint-initdb.d/initiation_files/init.sql
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
@@ -16,12 +16,12 @@ services:
     container_name: User
     build:
       context: .
-      dockerfile: pong_backend/Dockerfile
+      dockerfile: user_management_container/Dockerfile
     command: >
       sh -c "
-      python pong_backend/manage.py makemigrations &&
-      python pong_backend/manage.py migrate &&
-      python pong_backend/manage.py runserver 0.0.0.0:8000"
+      python user_management/manage.py makemigrations &&
+      python user_management/manage.py migrate &&
+      python user_management/manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
@@ -34,6 +34,24 @@ services:
       - DATABASE_NAME=pong_db
       - DATABASE_USER=pong_user
       - DATABASE_PASSWORD=pong_password
+
+  dashboard:
+    container_name: Dashboard
+    build:
+      context: .
+      dockerfile: dashboard_container/Dockerfile
+    command: >
+      sh -c "
+      python dashboard/manage.py makemigrations &&
+      python dashboard/manage.py migrate &&
+      python dashboard/manage.py runserver 0.0.0.0:8080"
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - web
+      - db
 
 volumes:
   postgres_data:
