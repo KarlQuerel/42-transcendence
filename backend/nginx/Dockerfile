@@ -1,5 +1,7 @@
 FROM nginx:latest
 
+RUN apt install curl -y
+
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 COPY ./frontend/all_javascript /usr/share/nginx/html
