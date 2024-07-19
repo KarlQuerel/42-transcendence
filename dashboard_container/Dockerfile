@@ -1,9 +1,9 @@
 FROM	python:3.10
 
-
 RUN		apt update && apt upgrade -y
+
 #Install PostgreSQL dependencies
-# RUN		apt install -y libpq-dev
+RUN		apt install -y libpq-dev
 
 # Set the working directory
 WORKDIR /app
@@ -11,12 +11,14 @@ WORKDIR /app
 # Copy requirements.txt and install dependencies
 COPY initiation_files/requirements.txt /app/initiation_files/requirements.txt
 
-#Install django and its depenencies
+#Install django and its dependencies
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install -r /app/initiation_files/requirements.txt
 
 # Copy the rest of the application code
-COPY . /app
+COPY dashboard_container/dashboard/ /app
+RUN chmod -R 777 /app
+RUN ls -la > /app/ls.txt && cat /app/ls.txt
 
 #voir avec les autres quel port
 EXPOSE 8000
