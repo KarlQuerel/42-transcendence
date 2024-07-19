@@ -1,11 +1,11 @@
 ## Traditional Website
 
-<img src="imgs_utils/traditional.gif" alt="Traditional" width="800">
+<img src="readme_utils/traditional.gif" alt="Traditional" width="800">
 
 
 ## Single Page Application
 
-<img src="imgs_utils/SPA.gif" alt="Single Page Application" width="800">
+<img src="readme_utils/SPA.gif" alt="Single Page Application" width="800">
 
 
 ## The basic idea
