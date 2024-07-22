@@ -10,7 +10,7 @@ services:
     networks:
       - "test"
 
-  django-1:
+  django_1:
     build:
       context: ./django_test_1/
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
     networks:
       - "test"
 
-  django-2:
+  django_2:
     build:
       context: ./django_test_2/
       dockerfile: Dockerfile
@@ -28,7 +28,7 @@ services:
     networks:
       - "test"
 
-  django-3:
+  django_3:
     build:
       context: ./django_test_3/
       dockerfile: Dockerfile
