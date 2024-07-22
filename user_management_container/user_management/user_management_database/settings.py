@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'profiles',
+    'base',
 ]
 
 MIDDLEWARE = [
@@ -73,9 +73,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'user_management_database.wsgi.application'
 
 
-AUTH_USER_MODEL = 'user_management.CustomUser'
-
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -85,6 +82,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 
 # Password validation

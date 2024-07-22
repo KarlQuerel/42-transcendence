@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from profiles.models import User
+from base.models import CustomUser
 from faker import Faker
 import random
 import string
@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         for _ in range(10):
-            User.objects.create(
+            CustomUser.objects.create(
                 username=''.join(random.choices(string.ascii_letters, k=8)),
                 display_name=''.join(random.choices(string.ascii_letters, k=8)),
                 password=''.join(random.choices(string.ascii_letters, k=8)),
