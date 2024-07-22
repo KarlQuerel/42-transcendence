@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from base.models import User
+from profiles.models import User
 from faker import Faker
 import random
 import string
