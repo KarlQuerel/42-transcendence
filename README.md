@@ -1,3 +1,5 @@
+# **Will change as project advances**
+
 ## Traditional Website
 
 <img src="readme_utils/traditional.gif" alt="Traditional" width="800">
