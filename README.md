@@ -5,7 +5,7 @@
 ### Web
 - Module majeur : Utiliser un framework en backend.
 - Module mineur : Utiliser une base de données pour le backend -et plus.
-- Module majeur : Stocker les pointages d’un tournoi dans la Blockchain.
+- Module majeur : Stocker les pointages d’un tournoi dans la Blockchain. (a faire si y'a le temps)
 
 ### Gestion Utilisateur
 - Module majeur : Gestion d’utilisateurs standard, authentification et utilisateurs en tournois.
@@ -26,20 +26,23 @@ gestion des secrets.
 - Module majeur : Implémenter l’authentification à 2 facteurs (2FA) et JWT.
 
 ### Devops
+- Module majeur : Configuration de l’infrastructure avec ELK (Elasticsearch, Logstash, Kibana) pour la gestion des journaux (logs). (Clement le fera si y'a le temps)
+- Module mineur : Système de monitoring (Clement le fera si y'a le temps)
 - Module majeur : Design de backend en Microservices.
 
 ### Accessibilité
 - Module mineur : Support sur tout type d’appareils.
 - Module mineur : Support de multiples langues.
 
-Majeurs = 10;
-Mineurs = 4;
+Majeurs = 11;
+Mineurs = 5;
 
-Total Majeurs = 12;
+Total Majeurs = 13,5;
 
 ## Objectifs
 	- créer un jeu pong
 	- ce jeu doit être jouable contre un adversaire sur le même clavier ou à distance
+<<<<<<< HEAD
 
 &nbsp;
 
@@ -91,3 +94,13 @@ Total Majeurs = 12;
 
 
 
+=======
+	-
+
+## Ressources
+- https://openclassrooms.com/fr/courses/6573181-adoptez-les-api-rest-pour-vos-projets-web
+- https://openclassrooms.com/fr/courses/4668056-construisez-des-microservices
+- https://github.com/toddmotto/public-apis?tab=readme-ov-file#video
+- https://www.youtube.com/watch?v=eIxDHgzGCnY
+- https://www.youtube.com/watch?v=eesqK59rhGA
+>>>>>>> 5.0-Devops
