@@ -42,7 +42,6 @@ Total Majeurs = 13,5;
 ## Objectifs
 	- créer un jeu pong
 	- ce jeu doit être jouable contre un adversaire sur le même clavier ou à distance
-<<<<<<< HEAD
 
 &nbsp;
 
@@ -94,7 +93,6 @@ Total Majeurs = 13,5;
 
 
 
-=======
 	-
 
 ## Ressources
@@ -103,4 +101,3 @@ Total Majeurs = 13,5;
 - https://github.com/toddmotto/public-apis?tab=readme-ov-file#video
 - https://www.youtube.com/watch?v=eIxDHgzGCnY
 - https://www.youtube.com/watch?v=eesqK59rhGA
->>>>>>> 5.0-Devops
