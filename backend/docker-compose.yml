@@ -8,38 +8,11 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - "test"
+      - "transcendance"
     depends_on:
       - profile
       - dashboard
       - database
-
-  # django_1:
-  #   build:
-  #     context: ./django_test_1/
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8100:8100"
-  #   networks:
-  #     - "test"
-
-  # django_2:
-  #   build:
-  #     context: ./django_test_2/
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8200:8200"
-  #   networks:
-  #     - "test"
-
-  # django_3:
-  #   build:
-  #     context: ./django_test_3/
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8300:8300"
-  #   networks:
-  #     - "test"
 
   database:
     container_name: PostgreSQL
@@ -74,7 +47,7 @@ services:
       - DATABASE_USER=pong_user
       - DATABASE_PASSWORD=pong_password
     networks:
-      - "test"
+      - "transcendance"
 
   dashboard:
     container_name: Dashboard
@@ -93,11 +66,11 @@ services:
       - profile
       - database
     networks:
-      - "test"
+      - "transcendance"
 
 volumes:
   postgres_data:
 
 networks:
-  test:
+  transcendance:
     driver: bridge
