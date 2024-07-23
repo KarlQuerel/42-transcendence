@@ -28,9 +28,9 @@ class Stats(models.Model):
 	#les points de chacun
 
 class GameHistory(models.Model):
-    #ForeignKey to link GameHistory to Stats
-    stats = models.ForeignKey(Stats, related_name='games_history', on_delete=models.CASCADE)
-    opponentNickname = models.CharField(max_length=200)
-    opponentScore = models.IntegerField()
-    myScore = models.IntegerField()
-    date = models.DateTimeField()
+	#ForeignKey to link GameHistory to Stats
+	stats = models.ForeignKey(Stats, related_name='games_history', on_delete=models.CASCADE)
+	opponentNickname = models.CharField(max_length=200)
+	opponentScore = models.IntegerField()
+	myScore = models.IntegerField()
+	date = models.DateTimeField(null=True, blank=True)
