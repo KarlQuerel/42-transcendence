@@ -29,7 +29,7 @@ services:
     container_name: User
     build:
       context: .
-      dockerfile: user_management_container/Dockerfile
+      dockerfile: user/Dockerfile
     command: >
       sh -c "
       cd /app &&
@@ -53,7 +53,7 @@ services:
     container_name: Dashboard
     build:
       context: .
-      dockerfile: dashboard_container/Dockerfile
+      dockerfile: dashboard/Dockerfile
     command: >
       sh -c "
       cd /app &&
