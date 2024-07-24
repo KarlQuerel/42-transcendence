@@ -21,7 +21,7 @@ function setupEventListeners() {
 
 function loadDashboardData()
 {
-	fetch('/api/getData') //TODO: modifier path. getData() est une fonction dans le dossier /api de mon projet django
+	fetch('/dashboard/api/getData') //TODO: modifier path. getData() est une fonction dans le dossier /api de mon projet django
 		.then(response =>
 		{
 			if (!response.ok)
