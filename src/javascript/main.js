@@ -1,19 +1,58 @@
+import home from "./views/home";
 
+// TEST
+import test from "./views/test";
+// FIN TEST
 
 // TODO KARL -> A FAIRE IMPORT TEST FROM PAGES/TEST.JS
 // PUIS UPDATE LES ROUTES
 
-const T_VAR = {
-	HOME_TXT: "Welcome to our amazing Pong game.",
-	ABOUT_TXT: "Pong is a two-dimensional sports game that simulates table tennis. The player controls an in-game paddle by moving it vertically across the left or right side of the screen. They can compete against another player controlling a second paddle on the opposing side. Players use the paddles to hit a ball back and forth.",
-	TEAM_TXT: "Meet our incredible team.",
-	LOGIN_TXT: "Log in to our amazing game",
-	PLAY_PONG_TXT: "Play Pong now"
+
+/***			Define Routes				***/
+const	routes =
+{
+
+	'/home' :
+	{
+		title: "Home",
+		render: home
+	},
+
+	'/test' :
+	{
+		title: "Test",
+		render: test
+	}
+
 };
 
+/***			Router Function				***/
+function router()
+{
+	const path = window.location.hash.slice(1) || '/home';
+	const route = routes[path];
+	if (route) {
+		document.title = route.title;
+		route.render();
+	} else {
+		// Handle 404 Not Found
+		document.getElementById('app').innerHTML = '<h1>404 Not Found</h1>';
+	}
+}
+
+// Initialize the router
+window.addEventListener('load', router);
+window.addEventListener('hashchange', router);
+
+
+// OLD VERSION - TO KEEP JUST IN CASE -> DONT PUSH WITH IT
+
+/*
 document.addEventListener('DOMContentLoaded', () => {
 	const routes = {
-		'home': () => document.getElementById('app').innerHTML = `<h1>${T_VAR.HOME_TXT}</h1>`,
+
+
+		// 'home': () => document.getElementById('app').innerHTML = `<h1>${T_VAR.HOME_TXT}</h1>`,
 		'about': () => document.getElementById('app').innerHTML = `<h1>${T_VAR.ABOUT_TXT}</h1>`,
 		'theteam': () => {
 		document.getElementById('app').innerHTML = `
@@ -116,3 +155,4 @@ document.addEventListener('DOMContentLoaded', () => {
 	const initialPath = window.location.hash ? window.location.hash.slice(1) : '/';
 	navigateTo(initialPath);
 });
+*/
