@@ -6,7 +6,6 @@ export default function renderTemplate()
 	<img src="https://gifdb.com/images/high/obi-wan-kenobi-well-hello-there-hzgui7yr5ketac2c.gif" alt="Hi there" width="300">
 	
 	<p>This is a simple tutorial page on how to add your badass scripts</p>
-	<p>1. Go to index.html</p>
 	<ul>
 		<li> 1. Go to the index.html file, in the BODY zone.</li>
 		<li> 2. Copy paste the template line, change the path "#/your-path-here" and the name after the data-link</li>
