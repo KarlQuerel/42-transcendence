@@ -19,6 +19,7 @@ export class GameData
 
 		this.ball_radius = undefined;
 
+		this.paddle_height = undefined;
 		this.paddle_width = undefined;
 
 		// paddle Y coordinate
@@ -50,8 +51,8 @@ function	predict_ball_paddle_intersection(data)
 		displacement.y = velocityVector.y * time;
 
 		if (time > 10000) //ça a tout réglé mais je vois pas pourquoi displacement.x n'atteindrait jamais intersectionX --> c'est quand la balle a un angle quasi vertical?
-		{  
-			console.error("Infinite loop detected");
+		{
+			//console.error("Infinite loop detected");
 			break;
 		}
 	}
@@ -59,7 +60,8 @@ function	predict_ball_paddle_intersection(data)
 	intersectionY = displacement.y;
 	if (intersectionY > data.fieldY_top || intersectionY < data.fieldY_bottom) //out of bounds
 	{
-		console.log("BOUNCE");
+		// console.log("BOUNCE");
+		let test = 0;
 		while (intersectionY > data.fieldY_top || intersectionY < data.fieldY_bottom) //out of bounds)
 		{
 			if (intersectionY > data.fieldY_top)
@@ -72,19 +74,25 @@ function	predict_ball_paddle_intersection(data)
 				intersectionY = intersectionY - data.fieldY_bottom;
 				intersectionY = data.fieldY_bottom - intersectionY;
 			}
+			if (test == 50)
+				break ; //IMPORTANT! Mais je comprends pas bien pourquoi infinite loop. Changer nom variable test
+			test++;
 		}
 	}
-	else
-		console.log("NO BOUNCE");
+	// else
+	// 	console.log("NO BOUNCE");
 
-	console.log("intersectionY = ", intersectionY);
-
-	if (intersectionY > 0) //car sinon le paddle loupe souvent la balle de peu
-		intersectionY = intersectionY + data.ball_radius;
-	else if (intersectionY < 0)
-		intersectionY = intersectionY - data.ball_radius;
-
-	console.log("END");
+	//HERE //TODO //FIX Il faut ajuster intersectionY sinon l'IA loupe constamment la balle 
+	// if (intersectionY < 250) //car sinon le paddle loupe souvent la balle de peu
+	// {
+	// 	console.log("under 250");
+	// 	intersectionY = intersectionY + data.ball_radius + data.paddle_height / 2;
+	// }
+	// else if (intersectionY > 250)
+	// {
+	// 	console.log("over 250");
+	// 	intersectionY = intersectionY - data.ball_radius - data.paddle_height / 2;
+	// }
 
 	return intersectionY;
 }
@@ -130,112 +138,12 @@ export function getPaddleAction()
 	s'il y a des variables non initialisees : error (voir avec marine
 	quoi faire en cas d'erreur). */
 	if (!checkGameData(data))
+	{
+		console.log("Error updating data : data variables are undefined");
 		return 42;
+	}
 
 	let paddle_action = ai_action(data);
+	console.log("paddle action = ", paddle_action);
 	return paddle_action;
 }
-
-
-
-/*Fonctions a ajouter dans le jeu de karl:
-
-
-let	DOWN	= 0;
-let	UP		= 1;
-
-function simulateKeyPress(key) {
-	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));	
-}
-
-function simulateKeyRelease(key) {
-	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
-}
-
-import { getPaddleAction } from '../AI.js';
-
-function aiMovePaddle()
-{
-	// drawBall(FIELD_WIDTH - PADDLE_WIDTH, intersectionY, RED); //draws the intersection point
-	// pour que la ligne du dessus remarche il faudrait qu'en plus de la variable paddle_action
-	//ia.c envoie egalement a variable predicted_intersection
-
-	let paddle_action = getPaddleAction();
-	if (paddle_action == 42) //ERROR
-		return ; //check avec Marine
-
-	if (!roundStarted) //pour éviter l'epilepsie du début
-		return ;
-
-	if (paddle_action == UP)
-	{
-		simulateKeyPress('ArrowUp');
-		simulateKeyRelease('ArrowDown');
-	}
-	else if (paddle_action == DOWN)
-	{
-		simulateKeyPress('ArrowDown');
-		simulateKeyRelease('ArrowUp');
-	}
-}
-
-import { GameData } from '../AI.js';
-
-let data = new GameData();
-
-function updateGameData()
-{
-	// ball velocity
-	data.ball_horizontal = ballSpeedX;
-	data.ball_vertical = ballSpeedY;
-
-	// field's top/bottom right Y coordinate
-	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
-	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
-
-	// field's right bound X coordinate
-	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
-
-	data.ball_radius = BALL_RATIO;
-
-	data.paddle_width = PADDLE_X;
-	
-	// paddle Y coordinate
-	data.paddle_y = rightPaddle.position.y;
-}
-
-function update_game_data_periodically()
-{
-	// Update data immediately before starting the interval
-	updateGameData();
-
-	setInterval(() => {
-		updateGameData();
-	}, 1000); // Fetch game data once per second
-}
-
-export function update_game_data()
-{
-	return data;
-}
-
-
-// Dashboard django database
-import { sendGameDataToDjango } from '../sendGameDataToDjango.js';
-
-*/
-
-
-/* 
-//Autres parties importantes dans fonction animation de marine :
-
-if (!roundStarted && (scoreRight > 0 || scoreLeft > 0)) //CARO : pour que le paddle revienne au milieu du field
-	{
-		// if (roundStarted == true) //pour entrer dans reset qu'une fois
-			reset();
-	}
-
-if (find_de_partie)
-	sendGameDataToDjango(); //TODO: MARINE
-
-*/

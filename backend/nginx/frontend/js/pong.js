@@ -2,9 +2,11 @@
  -				GAME CONFIG					-
 \***********************************************/
 
+//TODO KARL: qd IA = true, bloquer les touches sans que ca bloque l'IA
+
 /***			General						***/
 let game_done = false;
-let AI_present = false;
+let AI_present = true;
 
 
 const canvas = document.getElementById("pongCanvas");
@@ -56,6 +58,8 @@ const ball =
 /***			Drawing Paddles				***/
 function drawPaddle(paddle)
 {
+	// if (paddle.color == "red")
+	// 	console.log("player2.y = ", paddle.y);
 	ctx.fillStyle = paddle.color;
 	ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
@@ -190,36 +194,6 @@ function checkWinner()
 	return null;
 }
 
-/***			Game Loop					  ***/
-function gameLoop()
-{
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	drawPaddle(player1);
-	drawPaddle(player2);
-	drawBall();
-	drawScore();
-
-
-	checkBallPaddleCollision();
-
-	const winner = checkWinner();
-	if (winner)
-	{
-		drawWinMessage(winner);
-		// send data to caro a son microservice
-		game_done = true; //Karl: je n'ai plus besoin de cette variable, 
-		//j'avais juste besoin de savoir ou appeler la fonction du dessous
-		// sendGameDataToDjango(); //for AI //TODO avec karl
-	}
-	else
-	{
-		update_game_data_periodically(data); //for AI
-		movePaddles();
-		moveBall();
-		requestAnimationFrame(gameLoop);
-	}
-}
-
 /*** Event Listeners For Paddle Movement	   ***/
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
@@ -229,11 +203,11 @@ function keyDownHandler(e)
 {
 	switch (e.key) {
 		case "ArrowUp":
-			if (AI_present == false)
+			// if (AI_present == true)
 				player2.dy = -paddleSpeed;
 			break;
 		case "ArrowDown":
-			if (AI_present == false)
+			// if (AI_present == true)
 				player2.dy = paddleSpeed;
 			break;
 		case "w":
@@ -273,7 +247,7 @@ function simulateKeyRelease(key)
 }
 
 // Dashboard django database
-// import { sendGameDataToDjango } from 'sendGameDataToDjango.js'; //TODO //HERE
+// import { sendGameDataToDjango } from 'sendGameDataToDjango.js'; //TODO
 import { getPaddleAction, GameData } from './ai.js';
 
 let data = new GameData();
@@ -284,10 +258,13 @@ function aiMovePaddle()
 {
 	let paddle_action = getPaddleAction();
 	if (paddle_action == 42) //ERROR
+	{
+		console.log("Paddle action error : undefined action");
 		return ; //check avec Marine
+	}
 
-	if (!roundStarted) //pour éviter l'epilepsie du début
-		return ;
+	// if (!roundStarted) //pour éviter l'epilepsie du début
+	// 	return ;
 
 	if (paddle_action == UP)
 	{
@@ -304,28 +281,29 @@ function aiMovePaddle()
 function updateGameData()
 {
 	// ball velocity
-	data.ball_horizontal = ballSpeedX;
-	data.ball_vertical = ballSpeedY;
+	data.ball_horizontal = ball.dx;
+	data.ball_vertical = ball.dy;
 
 	// field's top/bottom right Y coordinate
-	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
-	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
+	data.fieldY_top = 0;
+	data.fieldY_bottom = 500;
 
 	// field's right bound X coordinate
-	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
+	data.fieldX_right = 790;
 
-	data.ball_radius = BALL_RATIO;
+	data.ball_radius = ball.radius;
 
-	data.paddle_width = PADDLE_X;
+	data.paddle_height = paddleHeight;
+	data.paddle_width = paddleWidth;
 	
 	// paddle Y coordinate
-	data.paddle_y = rightPaddle.position.y;
+	data.paddle_y = player2.y;
 }
 
 function update_game_data_periodically()
 {
 	// Update data immediately before starting the interval
-	updateGameData();
+	updateGameData(); //CHECK que ca envoie bien qu une fois par seconde
 
 	setInterval(() => {
 		updateGameData();
@@ -337,6 +315,38 @@ export function update_game_data()
 	return data;
 }
 
+/***			Game Loop					  ***/
+function gameLoop()
+{
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	drawPaddle(player1);
+	drawPaddle(player2);
+	drawBall();
+	drawScore();
+
+	checkBallPaddleCollision();
+
+	const winner = checkWinner();
+	if (winner)
+	{
+		drawWinMessage(winner);
+		// send data to caro a son microservice
+		game_done = true; //Karl: je n'ai plus besoin de cette variable, 
+		//j'avais juste besoin de savoir ou appeler la fonction du dessous
+		// sendGameDataToDjango(); //for AI //TODO avec karl
+	}
+	else
+	{
+		if (AI_present == true)
+		{
+			update_game_data_periodically(data); //for AI
+			aiMovePaddle(); //for AI
+		}
+		movePaddles();
+		moveBall();
+		requestAnimationFrame(gameLoop);
+	}
+}
 
 /***			Starting Pong				  ***/
 gameLoop();
