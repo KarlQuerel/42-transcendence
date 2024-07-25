@@ -107,9 +107,10 @@ function	ai_action(data)
 	return paddle_movement;
 }
 
-import { update_game_data } from '../pong_game/main.js';
+import { update_game_data } from './pong.js';
 
-function checkGameData(data) {
+function checkGameData(data)
+{
 	for (const [key, value] of Object.entries(data))
 	{
 		if (value === undefined) {

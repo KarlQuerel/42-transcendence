@@ -207,10 +207,13 @@ function gameLoop()
 	{
 		drawWinMessage(winner);
 		// send data to caro a son microservice
-		game_done = true;
+		game_done = true; //Karl: je n'ai plus besoin de cette variable, 
+		//j'avais juste besoin de savoir ou appeler la fonction du dessous
+		// sendGameDataToDjango(); //for AI //TODO avec karl
 	}
 	else
 	{
+		update_game_data_periodically(data); //for AI
 		movePaddles();
 		moveBall();
 		requestAnimationFrame(gameLoop);
@@ -256,6 +259,84 @@ function keyUpHandler(e)
 			break;
 	}
 }
+
+/***			functions for AI				  ***/
+
+function simulateKeyPress(key)
+{
+	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));	
+}
+
+function simulateKeyRelease(key)
+{
+	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+}
+
+// Dashboard django database
+// import { sendGameDataToDjango } from 'sendGameDataToDjango.js'; //TODO //HERE
+import { getPaddleAction, GameData } from './ai.js';
+
+let data = new GameData();
+let	DOWN	= 0;
+let	UP		= 1;
+
+function aiMovePaddle()
+{
+	let paddle_action = getPaddleAction();
+	if (paddle_action == 42) //ERROR
+		return ; //check avec Marine
+
+	if (!roundStarted) //pour éviter l'epilepsie du début
+		return ;
+
+	if (paddle_action == UP)
+	{
+		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowDown');
+	}
+	else if (paddle_action == DOWN)
+	{
+		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowUp');
+	}
+}
+
+function updateGameData()
+{
+	// ball velocity
+	data.ball_horizontal = ballSpeedX;
+	data.ball_vertical = ballSpeedY;
+
+	// field's top/bottom right Y coordinate
+	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
+	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
+
+	// field's right bound X coordinate
+	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
+
+	data.ball_radius = BALL_RATIO;
+
+	data.paddle_width = PADDLE_X;
+	
+	// paddle Y coordinate
+	data.paddle_y = rightPaddle.position.y;
+}
+
+function update_game_data_periodically()
+{
+	// Update data immediately before starting the interval
+	updateGameData();
+
+	setInterval(() => {
+		updateGameData();
+	}, 1000); // Fetch game data once per second
+}
+
+export function update_game_data()
+{
+	return data;
+}
+
 
 /***			Starting Pong				  ***/
 gameLoop();
