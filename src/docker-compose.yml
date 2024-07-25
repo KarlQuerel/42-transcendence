@@ -19,7 +19,7 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/initiation_files/init.sql:/docker-entrypoint-initdb.d/initiation_files/init.sql
+      - ./initiation_files/init.sql:/docker-entrypoint-initdb.d/initiation_files/init.sql
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: myuser
@@ -29,7 +29,7 @@ services:
     container_name: User
     build:
       context: .
-      dockerfile: ./backend/user/Dockerfile
+      dockerfile: user/Dockerfile
     command: >
       sh -c "
       cd /app &&
@@ -53,7 +53,7 @@ services:
     container_name: Dashboard
     build:
       context: .
-      dockerfile: ./backend/dashboard/Dockerfile
+      dockerfile: dashboard/Dockerfile
     command: >
       sh -c "
       cd /app &&
