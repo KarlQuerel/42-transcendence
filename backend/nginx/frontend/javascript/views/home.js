@@ -3,7 +3,7 @@
 // export default () => `
 
 export default function renderHome() {
-    document.getElementById('app').innerHTML = `
+	document.getElementById('app').innerHTML = `
 
 <div class="container mt-4">
 	<div class="row">
