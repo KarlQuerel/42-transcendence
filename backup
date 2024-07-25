@@ -1,0 +1,59 @@
+
+// /***			Importing Scripts			***/
+// import home from "./views/home.js";
+// import test from "./views/test.js";
+
+// /***			Define Routes				***/
+// const	routes =
+// {
+
+// 	'/home' :
+// 	{
+// 		title: "Home",
+// 		render: home
+// 	},
+// 	'/test' :
+// 	{
+// 		title: "Test",
+// 		render: test
+// 	}
+
+// };
+
+// /***			Router Function				***/
+// function router()
+// {
+// 	const path = window.location.hash.slice(1) || '/home';
+
+// 	//debug karl
+// 	console.log('Current path:', path);
+
+// 	const route = routes[path];
+	
+// 	//debug karl
+// 	console.log('Route object:', route);
+
+// 	if (route)
+// 	{
+// 		document.title = route.title;
+// 		route.render();
+// 	}
+// 	else
+// 		// Handle 404 Not Found
+// 		document.getElementById('app').innerHTML = '<h1>404 Not Found</h1>';
+// }
+
+
+// // Move event listener setup outside of the router function
+// window.addEventListener("click", (e) => {
+//   if (e.target.matches("[data-link]")) {
+//     e.preventDefault();
+//     history.pushState("", "", e.target.href);
+//     router();
+//   }
+// });
+
+
+// /***			Initializing Router			***/
+// window.addEventListener("popstate", router);
+// window.addEventListener("DOMContentLoaded", router);
