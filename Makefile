@@ -1,8 +1,8 @@
 all :
-	cd backend && docker-compose up -d --build
+	cd src && docker-compose up -d --build
 
 clean : 
-	cd backend && docker-compose down
+	cd src && docker-compose down
 
 re : clean all
 
