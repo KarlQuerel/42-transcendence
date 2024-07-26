@@ -4,27 +4,27 @@ export default function renderHome()
 	<div class="container mt-4">
 		<div class="row">
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightblue text-white text-center p-4 rounded" onclick="navigateTo('home')">
+				<div class="nav-frame bg-lightblue text-white text-center p-4 rounded" onclick="navigateTo('/home')">
 					<p>Home</p>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightgreen text-white text-center p-4 rounded" onclick="navigateTo('about')">
-					<p>What is Pong?</p>
+				<div class="nav-frame bg-lightgreen text-white text-center p-4 rounded" onclick="navigateTo('/template')">
+					<p>How to Add My JS Files</p>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightcoral text-white text-center p-4 rounded" onclick="navigateTo('theteam')">
+				<div class="nav-frame bg-lightcoral text-white text-center p-4 rounded" onclick="navigateTo('/theteam')">
 					<p>The Team</p>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightgoldenrodyellow text-white text-center p-4 rounded" onclick="navigateTo('play-pong')">
+				<div class="nav-frame bg-lightgoldenrodyellow text-white text-center p-4 rounded" onclick="navigateTo('/play-pong')">
 					<p>Play Pong</p>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightpink text-white text-center p-4 rounded" onclick="navigateTo('login')">
+				<div class="nav-frame bg-lightpink text-white text-center p-4 rounded" onclick="navigateTo('/login')">
 					<p>Log In</p>
 				</div>
 			</div>
