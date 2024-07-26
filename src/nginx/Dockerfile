@@ -1,6 +1,12 @@
 FROM nginx:latest
 
-RUN apt install curl -y
+####################
+# modifier pour que ca marche chez jess
+RUN apk add --no-cache curl
+# ajouter pour que ca marche chez jess
+RUN addgroup -S www-data || true
+RUN adduser -S www-data -G www-data || true
+####################
 
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
