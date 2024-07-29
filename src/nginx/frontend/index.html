@@ -60,75 +60,31 @@
         </div>
 
         <div class="friends-list">
-            <h2>Friends List and Pending Requests</h2>
+            <h2>Friends List</h2>
             <div class="row">
                 <div class="col-md-6">
-                    <h4>Friends List</h4>
                     <ul class="list-group" id="friends-list-container">
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h4>Pending Requests</h4>
-                    <ul class="list-group" id="pending-requests-container">
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="section">
+        <!-- Stats Display Section -->
+        <div class="stats-display-section">
             <h2>Stats Display</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <h4>Wins and Losses</h4>
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>25</td>
-                                <td>10</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col-md-6">
-                    <h4>Match History</h4>
-                    <table class="table table-striped stats-table">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Opponent</th>
-                                <th>Result</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>2024-01-15</td>
-                                <td>Player A</td>
-                                <td>Win</td>
-                                <td>1v1, 5-3</td>
-                            </tr>
-                            <tr>
-                                <td>2024-01-10</td>
-                                <td>Player B</td>
-                                <td>Loss</td>
-                                <td>1v1, 2-5</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="stats-container"></div> <!-- Container for displayGeneralStats -->
+        </div>
+
+        <!-- Match History Section -->
+        <div class="match-history-section">
+            <h2>Match History</h2>
+            <div class="match-history-container"></div> <!-- Container for displayMatchHistory -->
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="javascript/views/user/profile_page.js"></script>
+    <script src="javascript/views/user/profile.js"></script>
 </body>
 </html>
