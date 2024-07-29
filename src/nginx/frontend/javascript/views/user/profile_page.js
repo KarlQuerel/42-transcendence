@@ -36,23 +36,14 @@ function displayUserData(userData) {
 
 function displayFriendsList(friendsData) {
     const friendsListContainer = document.getElementById('friends-list-container');
-    const pendingRequestsContainer = document.getElementById('pending-requests-container');
     
     friendsListContainer.innerHTML = ''; // Clear existing friends list
-    pendingRequestsContainer.innerHTML = ''; // Clear existing pending requests
 
     friendsData.friends.forEach(friend => {
         const friendItem = document.createElement('li');
         friendItem.className = 'list-group-item';
         friendItem.textContent = friend.username;
         friendsListContainer.appendChild(friendItem);
-    });
-
-    friendsData.pendingRequests.forEach(request => {
-        const requestItem = document.createElement('li');
-        requestItem.className = 'list-group-item';
-        requestItem.textContent = request.username;
-        pendingRequestsContainer.appendChild(requestItem);
     });
 }
 
