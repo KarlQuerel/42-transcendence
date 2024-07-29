@@ -197,6 +197,18 @@ h1
 	color: #00ff00;
 }
 
+h2
+{
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	font-size: 0.9em;
+	color: #00ff00;
+	text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8); /* Slight glow effect */
+}
+
 p
 {
 	font-size: 0.7em; /* Reduced from 30px to 1em for body text */
@@ -206,4 +218,120 @@ p
 	justify-content: center;
 	align-items: center;
 	position: relative;
+}
+
+/***********************************************\
+					TEAM PAGE
+\***********************************************/
+#team-page
+{
+	text-align: center;
+	padding: 20px;
+}
+
+h1
+{
+	color: var(--retro-green);
+	font-size: 2em;
+	margin-bottom: 20px;
+}
+
+.team-container
+{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 20px;
+	padding: 10px;
+}
+
+.team-member
+{
+	width: 200px;
+	text-align: center;
+	border: 3px solid var(--retro-green);
+	background-color: #111;
+	border-radius: 10px;
+	padding: 10px;
+	transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.team-member:hover
+{
+	transform: scale(1.05);
+	box-shadow: 0 6px 12px rgba(0, 255, 0, 0.75); /* Retro green shadow */
+}
+
+.team-photo
+{
+	width: 100%;
+	height: auto;
+	border-bottom: 3px solid var(--retro-green);
+	border-radius: 10px;
+}
+
+.team-title
+{
+	margin-top: 10px;
+	font-size: 1.2em;
+	color: var(--retro-green);
+}
+
+/***********************************************\
+					GIF STYLES
+\***********************************************/
+
+.not-found-container {
+	text-align: center;
+	padding: 20px;
+	color: #fff;
+	background-color: #000; /* Black background for contrast */
+}
+
+.gif-frame
+{
+	display: inline-block;
+	padding: 20px;
+	border: 5px solid #00ff00; /* Retro green border */
+	border-radius: 15px; /* Rounded corners */
+	background-color: #111; /* Dark background for the frame */
+	margin: 20px 0;
+}
+
+.gif-frame img
+{
+	max-width: 100%; /* Ensures image is responsive */
+	height: auto;
+}
+
+h1
+{
+	font-size: 2em;
+	color: #ff0000; /* Red color for emphasis */
+	margin-bottom: 20px;
+}
+
+p
+{
+	font-size: 1.2em;
+	color: #fff;
+}
+
+/* Styles for the 404 Page */
+#not-found-page
+{
+	text-align: center;
+	padding: 20px;
+}
+
+#not-found-page .gif-frame
+{
+	border: 5px solid #00ff00;
+}
+
+/* Styles for the Pong Page */
+#pong-page
+{
+	text-align: center;
+	padding: 20px;
 }

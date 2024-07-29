@@ -14,12 +14,12 @@ export default function renderHome()
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightcoral text-white text-center p-4 rounded" onclick="navigateTo('/theteam')">
+				<div class="nav-frame bg-lightcoral text-white text-center p-4 rounded" onclick="navigateTo('/team')">
 					<p>The Team</p>
 				</div>
 			</div>
 			<div class="col-md-4">
-				<div class="nav-frame bg-lightgoldenrodyellow text-white text-center p-4 rounded" onclick="navigateTo('/play-pong')">
+				<div class="nav-frame bg-lightgoldenrodyellow text-white text-center p-4 rounded" onclick="navigateTo('/pong')">
 					<p>Play Pong</p>
 				</div>
 			</div>
