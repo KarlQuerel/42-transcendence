@@ -30,4 +30,12 @@ export default function renderHome()
 			</div>
 		</div>
 	</div>`;
+	
+	// Attach click event listeners to navigation frames
+	document.querySelectorAll('.nav-frame').forEach(element => {
+	element.addEventListener('click', () => {
+		const path = element.getAttribute('data-path');
+		navigateTo(path);
+	});
+});
 }

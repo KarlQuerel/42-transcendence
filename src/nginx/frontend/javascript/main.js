@@ -63,6 +63,8 @@ function navigateTo(path)
 	router();
 }
 
+window.navigateTo = navigateTo;
+
 /*** Enabling Client-side Routing ***/
 document.addEventListener("DOMContentLoaded", () =>
 {
