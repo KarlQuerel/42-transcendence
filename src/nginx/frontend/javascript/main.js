@@ -95,6 +95,14 @@ function router()
 			document.getElementById('app').innerHTML = '';
 			document.getElementById('app').appendChild(renderedContent);
 		}
+
+		//TEST KARL
+		if (route.init)
+		{
+			console.log('Initializing route:', path);
+			route.init();
+		}
+		//FIN TEST KARL
 	}
 	else
 	{
