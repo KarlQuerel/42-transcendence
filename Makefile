@@ -3,8 +3,11 @@ all :
 
 clean : 
 	cd src && docker-compose down
+	docker system prune -af
 
 re : clean all
 
-web :
+web : all
 	xdg-open http://localhost:8080
+
+.PHONY: all clean re web
