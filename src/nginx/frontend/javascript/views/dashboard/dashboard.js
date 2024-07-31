@@ -1,9 +1,35 @@
-document.addEventListener('DOMContentLoaded', function()
-{
+// dashboard.js
+
+export function renderDashboard() {
+	return `
+		<div id="dashboard">
+			<h1>Welcome to the Dashboard</h1>
+			<div id="chart_icon">Chart Icon</div>
+			<div id="friends_icon">Friends Icon</div>
+			<div id="trophee_icon">Trophee Icon</div>
+
+			<div id="chartModal" class="modal"></div>
+			<div id="avatarModal" class="modal"></div>
+			<div id="badgeModal" class="modal">
+				<div class="modal-body">
+					<img class="badge-icon" src="" alt="Badge">
+					<p></p>
+				</div>
+			</div>
+			<div class="avatar-container"></div>
+			<table>
+				<thead id="tableHeaderRow"></thead>
+				<tbody id="tableBody"></tbody>
+			</table>
+		</div>
+	`;
+}
+
+export function initializeDashboard() {
 	loadDashboardData(); //pour fetch statsData
 	setupEventListeners(); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
-	loadUserManagementData() //pour avatars
-});
+	loadUserManagementData(); //pour avatars
+}
 
 function setupEventListeners() {
 	document.getElementById('chart_icon').addEventListener('click', function() {
@@ -19,45 +45,37 @@ function setupEventListeners() {
 	});
 }
 
-function loadDashboardData()
-{
-	fetch('/dashboard/api/getData') //TODO: modifier path. getData() est une fonction dans le dossier /api de mon projet django
-		.then(response =>
-		{
+function loadDashboardData() {
+	fetch('/dashboard/api/getData')
+		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
 			return response.json();
 		})
-		//on met dans statsData toutes les données qu'on a fetch de ma base de données Django
 		.then(statsData => {
-			console.log(statsData);
-
+			console.log("Received dashboard data : ", statsData);
 			//chart_icon
 			// ChartBarData(statsData);
 			ChartDoughnutData(statsData);
-
 			//friends_icon
-			GameHistoryTable(statsData); 
-
+			// GameHistoryTable(statsData);
 			//trophee_icon
 			Badge(statsData);
 		})
 		.catch(error => console.error('Error : fetch statsData', error));
 }
 
-function loadUserManagementData()
-{
+function loadUserManagementData() {
 	fetch('/api/getData') //TODO adapter a path et nom fonction jess
-		.then(response =>
-		{
+		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
 			return response.json();
 		})
 		//on met dans statsData toutes les données qu'on a fetch de ma base de données Django
 		.then(userData => {
-			console.log(userData);
-			Avatars(userData);
+			console.log('Received user management data:', userData);
+			Avatars(statsData, userData);
 		})
 		.catch(error => console.error('Error : fetch userData', error));
 }
@@ -86,7 +104,6 @@ function loadUserManagementData()
 //     });
 // }
 
-
 function Avatars(statsData, userData)
 {
 	const opponentsList = []; // Ensure only one avatar per user
@@ -101,7 +118,7 @@ function Avatars(statsData, userData)
 	userData.forEach(user => {
 		if (opponentsList.includes(user.nickname)) //if current user is inside opponentsList : display avatar
 		{
-			const avatarBox = document.createElement('div');
+			
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.toggle = 'tableModal';
 			avatarBox.dataset.nickname = user.nickname;
