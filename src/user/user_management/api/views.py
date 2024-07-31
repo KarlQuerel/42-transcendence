@@ -8,6 +8,17 @@ from .serializers import CustomUserSerializer
 
 
 
+# TEST KARL
+from django.http import JsonResponse
+
+def user_data_view(request):
+    # Your logic to fetch or create the data
+    data = {"key": "value"}  # Example data
+    return JsonResponse(data)  # Automatically sets Content-Type to application/json
+
+# TEST KARL
+
+
 # Retrieves a list of all CustomUser instances, all users'data
 @api_view(['GET'])
 def getData(request):
@@ -37,3 +48,5 @@ class UserProfileView(generics.RetrieveAPIView):
         # return CustomUser.objects.get(username='cbernaze')
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
+
+

@@ -11,7 +11,7 @@ import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboar
 //	Home buttons	\\
 import { renderTheTeam } from "./views/the_team/the_team.js";
 import renderPong from "./components/pong/pong.js";
-import renderProfile from "./views/user/profile_html.js";
+import { renderProfile, initializeProfile } from "./views/user/profile.js";
 
 
 
@@ -66,7 +66,8 @@ const routes =
 	'/profile':
 	{
 		title: "Profile",
-		render: renderProfile
+		render: renderProfile,
+		init: initializeProfile
 	},
 	'/404':
 	{
