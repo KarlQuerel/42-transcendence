@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     avatar = models.ImageField(blank=True, upload_to='avatars/')
     is_online = models.BooleanField(default=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
-    is_2fa = models.BooleanField(default=False)
+    # is_2fa = models.BooleanField(default=False)
 	
     groups = models.ManyToManyField(
         'auth.Group',
