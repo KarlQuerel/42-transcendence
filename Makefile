@@ -1,3 +1,6 @@
+#TODO: le makefile devrait installer docker s'il ne figure pas deja sur l'ordi, sinon
+#la commande docker-compose ne marchera pas
+
 all :
 	cd src && docker-compose up -d --build
 
