@@ -1,22 +1,29 @@
-
 /***			Importing Scripts			***/
-import renderHome from "./views/home.js";
-import renderTemplate from "./views/template.js";
-// import renderPong from "./components/pong/pong.js";
-import {
-	// setupEventListeners,
-	loadDashboardData,
-	// loadUserManagementData,
-	// Avatars,
-	// displayGameHistory,
-	// ChartDoughnutData,
-	// Badge,
-	test
-} from './views/dashboard_SPA.js';
+
+//	Page Not Found	\\
+import renderError404 from "./views/error_404/error_404.js";
+
+//		Nav Bar		\\
+import renderHome from "./views/home/home.js";
+import renderTemplate from "./views/template/template.js";
+import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboard.js";
+
+//	Home buttons	\\
+import { renderTheTeam } from "./views/the_team/the_team.js";
+import renderPong from "./components/pong/pong.js";
+
+//		Footer		\\
+import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
+import renderTermsOfService from "./views/terms_of_service/terms_of_service.js";
 
 /***			Define Routes				***/
 const routes =
 {
+	'':
+	{
+		title: "Home",
+		render: renderHome
+	},
 	'/home':
 	{
 		title: "Home",
@@ -24,71 +31,98 @@ const routes =
 	},
 	'/template':
 	{
-		title: "Tuto JS files",
+		title: "How to Add My JS Files",
 		render: renderTemplate
 	},
-	// '/pong':
-	// {
-	// 	title: "Pong Game",
-	// 	render: renderPong
-	// },
-	'/dashboard': {
+	'/privacy-policy':
+	{
+		title: "Privacy Policy",
+		render: renderPrivacyPolicy
+	},
+	'/terms-of-service':
+	{
+		title: "Terms of Service",
+		render: renderTermsOfService
+	},
+	'/dashboard':
+	{
 		title: "Dashboard",
-		render: () => {
-			// HTML structure for the dashboard
-			return `
-			<h1>Pong Game Dashboard</h1>
-			<p>Something below must be printed:</p>
-			<div id="nicknameDisplay"></div>
-
-			<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-			<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-			<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-			<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-			<script src="javascript/views/dashboard_SPA.js"></script>
-			`;
-		}
+		render: renderDashboard,
+		init: initializeDashboard
+	},
+	'/team':
+	{
+		title: "The Team",
+		render: renderTheTeam
+	},
+	'/pong':
+	{
+		title: "Pong Game",
+		render: renderPong
+	},
+	'/404':
+	{
+		title: "Page Not Found",
+		render: renderError404
 	}
 };
 
-/*** Router Function ***/
-function router() {
-	const path = window.location.hash.slice(1) || '/home';
-	const route = routes[path];
+/***			Router Function				***/
+function router()
+{
+	let path = window.location.pathname || '/home';
+		
+	// Normalize path to avoid trailing slashes causing issues
+	if (path.endsWith('/'))
+		path = path.slice(0, -1);
+
+	const route = routes[path] || routes['/404'];
 
 	console.log('Current path:', path);
 	console.log('Route:', route);
 
-	if (route) {
+	if (route)
+	{
 		document.title = route.title;
-		document.getElementById('app').innerHTML = route.render();
+		const renderedContent = route.render();
 
-		if (path === '/dashboard') {
-			// Call functions specific to the dashboard
-			loadDashboardData();
-			// setupEventListeners();
-			// loadUserManagementData();
-			// Avatars()
-			// displayGameHistory();
-			// ChartDoughnutData();
-			// Badge();
-			test();
+		if (typeof renderedContent === 'string')
+		{
+			document.getElementById('app').innerHTML = renderedContent;
 		}
-	} else {
-		document.getElementById('app').innerHTML = '<h1>404 Not Found</h1>';
+		else if (renderedContent instanceof HTMLElement)
+		{
+			document.getElementById('app').innerHTML = '';
+			document.getElementById('app').appendChild(renderedContent);
+		}
+	}
+	else
+	{
+		document.title = "Page not Found";
+		document.getElementById('app').innerHTML = renderError404();
 	}
 }
 
-/***		Enabling Client-side Routing		***/
+/***		Navigation Function				***/
+function navigateTo(path)
+{
+	history.pushState(null, "", path);
+	router();
+}
+
+window.navigateTo = navigateTo;
+
+/***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
 	document.body.addEventListener("click", (e) =>
 	{
-		if (e.target.matches("[data-link]"))
+		// Ensure the link is of type <a>
+		if (e.target.matches("a[data-link]"))
 		{
 			e.preventDefault();
-			history.pushState(null, "", e.target.href);
-			router();
+			const href = e.target.getAttribute('href');
+			navigateTo(href);
 		}
 	});
 
@@ -96,4 +130,3 @@ document.addEventListener("DOMContentLoaded", () =>
 
 	router();
 });
-
