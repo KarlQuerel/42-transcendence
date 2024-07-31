@@ -19,7 +19,7 @@ import renderTermsOfService from "./views/terms_of_service/terms_of_service.js";
 /***			Define Routes				***/
 const routes =
 {
-	'/':
+	'':
 	{
 		title: "Home",
 		render: renderHome
