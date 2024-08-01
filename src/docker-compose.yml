@@ -1,7 +1,19 @@
 version: '3.8'
 
 services:
+
+  database:
+    container_name: database
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - "transcendance"
+    expose:
+      - 5432
+
   nginx:
+    container_name: Nginx
     build:
       context: ./nginx/
       dockerfile: Dockerfile
@@ -16,11 +28,15 @@ services:
 
   profile:
     container_name: User
+    user: root
+    volumes:
+      - .profile:/var/lib/postgresql/
     build:
       context: .
       dockerfile: user/Dockerfile
     command: >
       sh -c "
+      sleep 5 &&
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
@@ -35,6 +51,9 @@ services:
       - DATABASE_PASSWORD=pong_password
     networks:
       - "transcendance"
+    depends_on:
+      - database
+  
 
 
   dashboard:
@@ -58,3 +77,7 @@ services:
 networks:
   transcendance:
     driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
