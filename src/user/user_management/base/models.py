@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
     is_online = models.BooleanField(default=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
     is_2fa = models.BooleanField(default=False)
-	
+
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
