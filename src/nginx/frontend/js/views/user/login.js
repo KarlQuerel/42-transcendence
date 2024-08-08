@@ -1,13 +1,17 @@
+import { NewUser } from "../../components/user/NewUser.js";
+
 document.addEventListener('DOMContentLoaded', function () {
-	fillVarFromData();
+	document.querySelector('button[type="button"]').addEventListener('click', function () {
+		fillVarFromData();
 	// createNewUser();
 	// console.log('New user created: ', username);
+	});
 });
 
-var username;
-var display_name;
-var password;
-var email;
+let username;
+let display_name;
+let password;
+let email;
 
 function fillVarFromData() {
 	getFormData();
@@ -15,17 +19,19 @@ function fillVarFromData() {
 }
 
 function getFormData() {
-	document.querySelector('button[type="button"]').addEventListener('click', function () {
-		username = document.getElementById('username').value;
-		display_name = document.getElementById('display_name').value;
-		password = document.getElementById('password').value;
-		email = document.getElementById('email').value;
+	username = document.getElementById('username').value;
+	display_name = document.getElementById('display_name').value;
+	password = document.getElementById('password').value;
+	email = document.getElementById('email').value;
 
-		console.log('Username:', username);
-		console.log('Display Name:', display_name);
-		console.log('Password:', password);
-		console.log('Email:', email);
-	});
+	console.log('Username:', username);
+	console.log('Display Name:', display_name);
+	console.log('Password:', password);
+	console.log('Email:', email);
+
+	const newUser = new NewUser(username, display_name, password, email);
+
+	console.log(newUser.username, newUser.pseudo, newUser.password, newUser.email);
 }
 
 function checkDataValidity() {
