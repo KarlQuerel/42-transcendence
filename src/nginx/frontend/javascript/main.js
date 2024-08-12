@@ -11,6 +11,7 @@ import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboar
 //	Home buttons	\\
 import { renderTheTeam } from "./views/the_team/the_team.js";
 import renderPong from "./components/pong/pong.js";
+import renderProfile from "./views/user/profile.js";
 
 //		Footer		\\
 import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
@@ -60,6 +61,11 @@ const routes =
 		title: "Pong Game",
 		render: renderPong
 	},
+	'/profile':
+	{
+		title: "My Profile",
+		render: renderProfile
+	},
 	'/404':
 	{
 		title: "Page Not Found",
@@ -95,14 +101,11 @@ function router()
 			document.getElementById('app').innerHTML = '';
 			document.getElementById('app').appendChild(renderedContent);
 		}
-
-		//TEST KARL
 		if (route.init)
 		{
 			console.log('Initializing route:', path);
 			route.init();
 		}
-		//FIN TEST KARL
 	}
 	else
 	{
