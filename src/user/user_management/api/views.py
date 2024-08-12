@@ -1,7 +1,7 @@
 from rest_framework.response import Response
-#converts any response to json
-
 from rest_framework.decorators import api_view
+#converts any response to json
+from django.views.decorators.csrf import csrf_exempt
 from base.models import CustomUser
 from .serializers import CustomUserSerializer
 
@@ -17,3 +17,27 @@ def addUser(request):
 	if serializer.is_valid():
 		serializer.save()
 	return Response(serializer.data)
+
+@csrf_exempt
+def check_existing_username(request):
+	if request.method == 'GET':
+		username = request.GET.get('username', None)
+		if username:
+			exists = CustomUser.objects.filter(username=username).exists()
+			return Response({'exists': bool(exists)})
+		else:
+			return Response({'error': 'Username parameter missing'}, status=400)
+	else:
+		return Response({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def check_existing_email(request):
+	if request.method == 'GET':
+		email = request.GET.get('email', None)
+		if email:
+			exists = CustomUser.objects.filter(email=email).exists()
+			return Response({'exists': bool(exists)})
+		else:
+			return Response({'error': 'Email parameter missing'}, status=400)
+	else:
+		return Response({'error': 'Invalid request method'}, status=405)
