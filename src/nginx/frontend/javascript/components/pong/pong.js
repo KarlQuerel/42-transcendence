@@ -1,12 +1,16 @@
 export default function renderPong()
 {
 	return `
-	<div id="pong-page">
-		<h1 class="pong-title">Pong Game</h1>
-		<div id="winning-message" class="hidden"></div>
-		<canvas id="pongCanvas" width="800" height="600"></canvas>
-		<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
-	</div>
+		<div id="pong-page">
+			<h1 class="pong-title">Pong Game</h1>
+			<div id="winning-message" class="hidden"></div>
+			<video id="background-video" autoplay loop muted>
+				<source src="../../../assets/images/pong/gif_background.mp4" type="video/mp4">
+				Your browser does not support the video tag.
+			</video>
+			<canvas id="pongCanvas" width="800" height="600"></canvas>
+			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
+		</div>
 	`;
 }
 
@@ -21,7 +25,16 @@ let AI_present = false;
 
 /***		  Graphics						***/
 let backgroundImage = new Image();
-backgroundImage.src = '../../../assets/images/pong/retro_background.jpg';
+backgroundImage.src = '../../../assets/images/pong/gif_background.gif';
+
+backgroundImage.onload = () =>
+	{
+	setTimeout(() =>
+		{
+	  initializePong();  // Start the game only after the image is fully loaded
+	}, 100); // Adjust the delay if needed
+  };
+  
 
 let canvas, ctx;
 
@@ -75,21 +88,42 @@ const ball =
 \***********************************************/
 export function initializePong()
 {
-	canvas = document.getElementById("pongCanvas");
-	ctx = canvas.getContext("2d");
+	console.log('Initializing Pong...');
 
-	// Ensure canvas has correct dimensions and border if dynamically set
-	canvas.style.border = "5px solid #00ff00"; // Green border
+	// Ensure initialization runs after content is rendered
+	requestAnimationFrame(() =>
+	{
+		canvas = document.getElementById("pongCanvas");
+		if (!canvas)
+		{
+			console.error("Canvas element not found!");
+			return;
+		}
 
-	player1.y = (canvas.height - paddleHeight) / 2;
-	player2.x = canvas.width - paddleWidth - paddleOffset;
-	player2.y = (canvas.height - paddleHeight) / 2;
-	ball.x = canvas.width / 2;
-	ball.y = canvas.height / 2;
+		ctx = canvas.getContext("2d");
+		if (!ctx)
+		{
+			console.error("Context could not be retrieved!");
+			return;
+		}
 
-	game_done = false; 
-	gameLoop();
+		console.log('Canvas and context retrieved successfully.');
+
+		// Ensure canvas has correct dimensions and border if dynamically set
+		canvas.style.border = "5px solid #00ff00"; // Green border
+
+		player1.y = (canvas.height - paddleHeight) / 2;
+		player2.x = canvas.width - paddleWidth - paddleOffset;
+		player2.y = (canvas.height - paddleHeight) / 2;
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+
+		game_done = false;
+		gameLoop();
+	});
 }
+
+
 
 
 /***********************************************\
@@ -101,13 +135,35 @@ function drawPaddle(paddle)
 {
 	ctx.fillStyle = paddle.color;
 	ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)'; // Default neon green
-	ctx.shadowBlur = paddle.shadowBlur || 15; // Increase for more glow
-	ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+	ctx.shadowBlur = paddle.shadowBlur || 100; // Increase for more glow
+
+	// Set rounded corners
+	const cornerRadius = 5;
+	ctx.lineJoin = "round";
+	ctx.lineCap = "round";
+	ctx.lineWidth = 10; // Ensure the width is enough to make the corners visible
+
+	// Begin drawing the paddle with rounded corners
+	ctx.beginPath();
+	ctx.moveTo(paddle.x + cornerRadius, paddle.y); // Top-left corner
+	ctx.lineTo(paddle.x + paddle.width - cornerRadius, paddle.y); // Top-right corner
+	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y, paddle.x + paddle.width, paddle.y + cornerRadius); // Top-right rounded corner
+	ctx.lineTo(paddle.x + paddle.width, paddle.y + paddle.height - cornerRadius); // Right side
+	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y + paddle.height, paddle.x + paddle.width - cornerRadius, paddle.y + paddle.height); // Bottom-right rounded corner
+	ctx.lineTo(paddle.x + cornerRadius, paddle.y + paddle.height); // Bottom side
+	ctx.quadraticCurveTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y + paddle.height - cornerRadius); // Bottom-left rounded corner
+	ctx.lineTo(paddle.x, paddle.y + cornerRadius); // Left side
+	ctx.quadraticCurveTo(paddle.x, paddle.y, paddle.x + cornerRadius, paddle.y); // Top-left rounded corner
+	ctx.closePath();
+
+	ctx.fill(); // Fill the paddle
 	ctx.shadowColor = 'transparent'; // Reset shadow to avoid affecting other drawings
 }
 
 
-/***		  Drawing Ball				   ***/
+
+
+/***		Drawing Ball					***/
 function drawBall()
 {
 	ctx.beginPath();
@@ -117,7 +173,7 @@ function drawBall()
 	ctx.closePath();
 }
 
-/***		  Drawing Score				  ***/
+/***		Drawing Score					***/
 function drawScore()
 {
 	// Set font properties
@@ -289,7 +345,8 @@ function keyUpHandler(e)
 export function gameLoop()
 {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+	// ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
 	movePaddles();
 	moveBall();

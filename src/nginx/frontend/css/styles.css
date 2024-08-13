@@ -9,9 +9,32 @@
 	border-radius: 15px; /* Rounded corners */
 	box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Retro green shadow */
 	position: relative; /* Ensure child elements are positioned relative to this container */
+	overflow: hidden; /* Ensure no content overflows */
 }
 
-/* Winning Message Styling */
+#background-video
+{
+	position: absolute; /* Position the video absolutely within the container */
+	top: 0;
+	left: 0;
+	width: 100%; /* Stretch the video to cover the entire container */
+	height: 100%;
+	object-fit: cover; /* Ensure the video covers the container without distortion */
+	z-index: -1; /* Send the video behind the canvas and other content */
+}
+
+#pongCanvas
+{
+	border: 5px solid #00ff00; /* Green border */
+	background-color: #000; /* Black background to match the game theme */
+	margin-top: 20px; /* Space between the canvas and other elements */
+	display: block; /* Ensure the canvas is a block element */
+	margin-left: auto; /* Centering the canvas horizontally */
+	margin-right: auto; /* Centering the canvas horizontally */
+	position: relative; /* Ensure the canvas is positioned relative to its container */
+	z-index: 1; /* Ensure the canvas is above the video */
+}
+
 #winning-message
 {
 	background-color: black;
@@ -34,17 +57,6 @@
 #winning-message.show
 {
 	display: block; /* Show the message when needed */
-}
-
-/* Canvas Styling */
-#pongCanvas
-{
-	border: 5px solid #00ff00; /* Green border */
-	background-color: #000; /* Black background to match the game theme */
-	margin-top: 20px; /* Space between the canvas and other elements */
-	display: block; /* Ensure the canvas is a block element */
-	margin-left: auto; /* Centering the canvas horizontally */
-	margin-right: auto; /* Centering the canvas horizontally */
 }
 
 /***********************************************

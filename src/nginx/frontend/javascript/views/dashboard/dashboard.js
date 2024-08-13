@@ -47,53 +47,53 @@ function setupEventListeners()
 }
 
 function loadDashboardData() {
-    fetch('/api/dashboard')
-        .then(response => {
-            console.log("Received response:", response);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            // Check if the response is JSON before attempting to parse
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                throw new TypeError("Oops, we haven't got JSON!");
-            }
+	fetch('/api/dashboard')
+		.then(response => {
+			console.log("Received response:", response);
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			// Check if the response is JSON before attempting to parse
+			const contentType = response.headers.get("content-type");
+			if (!contentType || !contentType.includes("application/json")) {
+				throw new TypeError("Oops, we haven't got JSON!");
+			}
 
-            return response.json();
-        })
-        .then(statsData => {
-            console.log("Dashboard data loaded:", statsData);
-            ChartDoughnutData(statsData);
-            GameHistoryTable(statsData);
-            Badge(statsData);
-        })
-        .catch(error => console.error('Error fetching statsData:', error));
+			return response.json();
+		})
+		.then(statsData => {
+			console.log("Dashboard data loaded:", statsData);
+			ChartDoughnutData(statsData);
+			GameHistoryTable(statsData);
+			Badge(statsData);
+		})
+		.catch(error => console.error('Error fetching statsData:', error));
 }
 
 function loadUserManagementData() {
-    fetch('/api/userData') // Assuming the correct endpoint is /api/userData
-        .then(response => {
-            if (!response.ok)
-                throw new Error('Error : network response');
-            // Check if the response is JSON before attempting to parse
-            const contentType = response.headers.get("content-type");
-            if (!contentType || !contentType.includes("application/json")) {
-                throw new TypeError("Oops, we haven't got JSON!");
-            }
+	fetch('/api/userData') // Assuming the correct endpoint is /api/userData
+		.then(response => {
+			if (!response.ok)
+				throw new Error('Error : network response');
+			// Check if the response is JSON before attempting to parse
+			const contentType = response.headers.get("content-type");
+			if (!contentType || !contentType.includes("application/json")) {
+				throw new TypeError("Oops, we haven't got JSON!");
+			}
 
-            return response.json();
-        })
-        .then(userData => {
-            console.log(userData);
-            Avatars(userData);
-        })
-        .catch(error => console.error('Error : fetch userData', error));
+			return response.json();
+		})
+		.then(userData => {
+			console.log(userData);
+			Avatars(userData);
+		})
+		.catch(error => console.error('Error : fetch userData', error));
 }
 
 function GameHistoryTable(statsData) {
-    // Example implementation
-    console.log("Displaying game history table with data:", statsData);
-    // Code to dynamically create and populate a table with statsData
+	// Example implementation
+	console.log("Displaying game history table with data:", statsData);
+	// Code to dynamically create and populate a table with statsData
 }
 
 function Avatars(userData)
