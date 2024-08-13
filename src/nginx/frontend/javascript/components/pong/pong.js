@@ -7,7 +7,7 @@ export default function renderPong()
 			</video>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
-			<button id="rematch-button" class="hidden">Rematch</button>
+			<button id="rematch-button">Rematch</button>
 			<canvas id="pongCanvas" width="800" height="600"></canvas>
 			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
 		</div>
@@ -21,8 +21,8 @@ export default function renderPong()
 
 /***			General						***/
 let	game_done = false;
-let	AI_present = false;
 let	game_paused = false;
+let	AI_present = false;
 
 /***			Graphics					***/
 let canvas, ctx;
@@ -83,11 +83,25 @@ export function initializePong()
 	requestAnimationFrame(() =>
 	{
 		canvas = document.getElementById("pongCanvas");
+		const rematchButton = document.getElementById('rematch-button');
 		if (!canvas)
 		{
 			console.error("Canvas element not found!");
 			return;
 		}
+
+		//test
+		if (!rematchButton)
+		{
+			console.error('Rematch button not found!');
+			return ;
+		}
+		else
+		{
+			console.log('Rematch button found:', rematchButton);
+			rematchButton.addEventListener('click', resetGame);
+		}
+		//fin test
 
 		ctx = canvas.getContext("2d");
 		if (!ctx)
@@ -107,12 +121,10 @@ export function initializePong()
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
 
+		// Start the game loop
 		game_done = false;
 		gameLoop();
 
-		const rematchButton = document.getElementById('rematch-button');
-		if (rematchButton)
-			rematchButton.addEventListener('click', resetGame);
 	});
 }
 
@@ -191,10 +203,35 @@ function drawWinMessage(winner)
 	const messageElement = document.getElementById('winning-message');
 	const rematchButton = document.getElementById('rematch-button');
 
+	if (!messageElement)
+	{
+		console.error('Winning message element not foun!');
+		return ;
+	}
 	messageElement.textContent = winner + " Wins!";
-	messageElement.classList.add('show'); // Show the winning message
+	messageElement.classList.add('show');
 
-	rematchButton.classList.remove('hidden'); // Show the rematch button
+	// if (!rematchButton)
+	// {
+	// 	console.error('Rematch button element not foun!');
+	// 	return ;
+	// }
+	// rematchButton.classList.remove('hidden');
+	// rematchButton.classList.add('show');
+
+	//  // Print attributes
+	//  console.log('Rematch Button Attributes:');
+	//  console.log('Classes:', rematchButton.classList.toString()); // Print class list as a string
+	//  console.log('ID:', rematchButton.id); // Print ID
+	//  console.log('Style:', rematchButton.style.cssText); // Print inline styles
+
+    if (rematchButton) {
+        console.log('Before class change:', rematchButton.classList);
+        rematchButton.classList.remove('hidden');
+        console.log('After removing hidden:', rematchButton.classList);
+        rematchButton.classList.add('show');
+        console.log('After adding show:', rematchButton.classList);
+    }
 }
 
 /***			Drawing Pause Menu			***/
