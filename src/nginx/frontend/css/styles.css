@@ -20,20 +20,22 @@
 	width: 100%; /* Stretch the video to cover the entire container */
 	height: 100%;
 	object-fit: cover; /* Ensure the video covers the container without distortion */
-	z-index: -1; /* Send the video behind the canvas and other content */
+	z-index: 0; /* Send the video behind the canvas and other content */
 }
 
 #pongCanvas
 {
-	border: 5px solid #00ff00; /* Green border */
-	background-color: #000; /* Black background to match the game theme */
+	background-color: rgba(0, 0, 0, 0.8);
 	margin-top: 20px; /* Space between the canvas and other elements */
 	display: block; /* Ensure the canvas is a block element */
 	margin-left: auto; /* Centering the canvas horizontally */
 	margin-right: auto; /* Centering the canvas horizontally */
 	position: relative; /* Ensure the canvas is positioned relative to its container */
 	z-index: 1; /* Ensure the canvas is above the video */
+	border-radius: 15px; /* Rounded corners for the canvas */
+	overflow: hidden; /* Ensure that content does not overflow the rounded corners */
 }
+
 
 #winning-message
 {

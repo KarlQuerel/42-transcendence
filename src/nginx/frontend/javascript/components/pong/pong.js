@@ -2,12 +2,11 @@ export default function renderPong()
 {
 	return `
 		<div id="pong-page">
+			<video id="background-video" autoplay muted loop>
+				<source src="../../../assets/images/pong/gif_background.mp4" type="video/mp4">
+			</video>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
-			<video id="background-video" autoplay loop muted>
-				<source src="../../../assets/images/pong/gif_background.mp4" type="video/mp4">
-				Your browser does not support the video tag.
-			</video>
 			<canvas id="pongCanvas" width="800" height="600"></canvas>
 			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
 		</div>
@@ -19,32 +18,29 @@ export default function renderPong()
  -				GAME CONFIG				 -
 \***********************************************/
 
-/***		  General						 ***/
-let game_done = false;
-let AI_present = false;
+/***			General						***/
+let	game_done = false;
+let	AI_present = false;
+let	game_paused = false;
 
-/***		  Graphics						***/
+/***			Graphics					***/
 let backgroundImage = new Image();
 backgroundImage.src = '../../../assets/images/pong/gif_background.gif';
 
 backgroundImage.onload = () =>
-	{
-	setTimeout(() =>
-		{
-	  initializePong();  // Start the game only after the image is fully loaded
-	}, 100); // Adjust the delay if needed
-  };
-  
+{
+	setTimeout(() => {initializePong();}, 100);
+};
 
 let canvas, ctx;
 
-/***		  Paddle Properties			  ***/
+/***			Paddle Properties			***/
 const paddleWidth = 10;
 const paddleHeight = 100;
 const paddleSpeed = 8;
 const paddleOffset = 20;
 
-/***		  Player Paddles				 ***/
+/***			Player Paddles				***/
 const player1 =
 {
 	x: paddleOffset,
@@ -72,7 +68,7 @@ const player2 =
 };
 
 
-/***		  Ball Properties				***/
+/***			Ball Properties				***/
 const ball =
 {
 	x: 0,
@@ -123,14 +119,11 @@ export function initializePong()
 	});
 }
 
-
-
-
 /***********************************************\
- -				RENDERING				   -
+ -				RENDERING					 -
 \***********************************************/
 
-/***		  Drawing Paddles				***/
+/***			Drawing Paddles				***/
 function drawPaddle(paddle)
 {
 	ctx.fillStyle = paddle.color;
@@ -159,8 +152,6 @@ function drawPaddle(paddle)
 	ctx.fill(); // Fill the paddle
 	ctx.shadowColor = 'transparent'; // Reset shadow to avoid affecting other drawings
 }
-
-
 
 
 /***		Drawing Ball					***/
@@ -197,7 +188,7 @@ function drawScore()
 }
 
 
-/***		  Drawing Winning Message		***/
+/***			Drawing Winning Message		***/
 function drawWinMessage(winner)
 {
 	const messageElement = document.getElementById('winning-message');
@@ -205,13 +196,25 @@ function drawWinMessage(winner)
 	messageElement.classList.add('show'); // Show the winning message
 }
 
+/***			Drawing Pause Menu			***/
+function drawPauseMenu()
+{
+	ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Semi-transparent background
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+	ctx.fillStyle = "white";
+	ctx.font = "48px 'Press Start 2P', cursive";
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
+	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+}
 
 
 /***********************************************\
- -				GAME DYNAMICS			   -
+ -				GAME DYNAMICS				 -
 \***********************************************/
 
-/***		  Moving Paddles				 ***/
+/***			Moving Paddles				 ***/
 function movePaddles()
 {
 	if (player1.dy !== 0)
@@ -233,7 +236,7 @@ function movePaddles()
 	}
 }
 
-/***		  Moving Ball					***/
+/***			Moving Ball					***/
 function moveBall()
 {
 	ball.x += ball.dx;
@@ -302,7 +305,7 @@ function resetBall()
 }
 
 /***********************************************\
- -				KEYBOARD HANDLING		   -
+ -				KEYBOARD HANDLING			 -
 \***********************************************/
 
 document.addEventListener("keydown", keyDownHandler);
@@ -310,43 +313,56 @@ document.addEventListener("keyup", keyUpHandler);
 
 function keyDownHandler(e)
 {
-	if (e.key == "w" || e.key == "ArrowUp")
+	if (e.key === "p" || e.key === "Escape")
 	{
-		if (e.key == "w")
+		game_paused = !game_paused;
+		if (game_paused == false)
+				gameLoop();
+		return ;
+	}
+	
+	if (e.key === "w" || e.key === "ArrowUp")
+	{
+		if (e.key === "w")
 			player1.dy = -paddleSpeed;
-		else if (e.key == "ArrowUp")
+		else if (e.key === "ArrowUp")
 			player2.dy = -paddleSpeed;
 	}
-	else if (e.key == "s" || e.key == "ArrowDown")
+	else if (e.key === "s" || e.key === "ArrowDown")
 	{
-		if (e.key == "s")
+		if (e.key === "s")
 			player1.dy = paddleSpeed;
-		else if (e.key == "ArrowDown")
+		else if (e.key === "ArrowDown")
 			player2.dy = paddleSpeed;
 	}
 }
 
 function keyUpHandler(e)
 {
-	if (e.key == "w" || e.key == "s")
+	if (e.key === "w" || e.key === "s")
 	{
 		player1.dy = 0;
 	}
-	else if (e.key == "ArrowUp" || e.key == "ArrowDown")
+	else if (e.key === "ArrowUp" || e.key === "ArrowDown")
 	{
 		player2.dy = 0;
 	}
 }
 
 /***********************************************\
- -				GAME LOOP				   -
+ -				GAME LOOP					 -
 \***********************************************/
 
 export function gameLoop()
 {
+	if (game_paused == true)
+	{
+		drawPauseMenu();
+		requestAnimationFrame(gameLoop);
+		return;
+	}
+	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-	// ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
 	movePaddles();
 	moveBall();
