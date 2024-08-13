@@ -3,10 +3,11 @@ export default function renderPong()
 	return `
 		<div id="pong-page">
 			<video id="background-video" autoplay muted loop>
-				<source src="../../../assets/images/pong/gif_background.mp4" type="video/mp4">
+				<source src="../../../assets/images/pong/tunnel_background.mp4" type="video/mp4">
 			</video>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
+			<button id="rematch-button" class="hidden">Rematch</button>
 			<canvas id="pongCanvas" width="800" height="600"></canvas>
 			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
 		</div>
@@ -15,7 +16,7 @@ export default function renderPong()
 
 
 /***********************************************\
- -				GAME CONFIG				 -
+-				GAME CONFIG						-
 \***********************************************/
 
 /***			General						***/
@@ -24,14 +25,6 @@ let	AI_present = false;
 let	game_paused = false;
 
 /***			Graphics					***/
-let backgroundImage = new Image();
-backgroundImage.src = '../../../assets/images/pong/gif_background.gif';
-
-backgroundImage.onload = () =>
-{
-	setTimeout(() => {initializePong();}, 100);
-};
-
 let canvas, ctx;
 
 /***			Paddle Properties			***/
@@ -80,7 +73,7 @@ const ball =
 };
 
 /***********************************************\
- -				INITIALIZE PONG			 -
+-				INITIALIZE PONG					-
 \***********************************************/
 export function initializePong()
 {
@@ -116,11 +109,15 @@ export function initializePong()
 
 		game_done = false;
 		gameLoop();
+
+		const rematchButton = document.getElementById('rematch-button');
+		if (rematchButton)
+			rematchButton.addEventListener('click', resetGame);
 	});
 }
 
 /***********************************************\
- -				RENDERING					 -
+-				RENDERING						-
 \***********************************************/
 
 /***			Drawing Paddles				***/
@@ -192,14 +189,18 @@ function drawScore()
 function drawWinMessage(winner)
 {
 	const messageElement = document.getElementById('winning-message');
+	const rematchButton = document.getElementById('rematch-button');
+
 	messageElement.textContent = winner + " Wins!";
 	messageElement.classList.add('show'); // Show the winning message
+
+	rematchButton.classList.remove('hidden'); // Show the rematch button
 }
 
 /***			Drawing Pause Menu			***/
 function drawPauseMenu()
 {
-	ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; // Semi-transparent background
+	ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
 	ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 	ctx.fillStyle = "white";
@@ -211,7 +212,7 @@ function drawPauseMenu()
 
 
 /***********************************************\
- -				GAME DYNAMICS				 -
+-				GAME DYNAMICS					-
 \***********************************************/
 
 /***			Moving Paddles				 ***/
@@ -305,7 +306,7 @@ function resetBall()
 }
 
 /***********************************************\
- -				KEYBOARD HANDLING			 -
+-				KEYBOARD HANDLING				-
 \***********************************************/
 
 document.addEventListener("keydown", keyDownHandler);
@@ -317,7 +318,10 @@ function keyDownHandler(e)
 	{
 		game_paused = !game_paused;
 		if (game_paused == false)
-				gameLoop();
+		{
+			resetBall();
+			gameLoop();
+		}
 		return ;
 	}
 	
@@ -350,7 +354,7 @@ function keyUpHandler(e)
 }
 
 /***********************************************\
- -				GAME LOOP					 -
+-				GAME STATUS						-
 \***********************************************/
 
 export function gameLoop()
@@ -361,6 +365,9 @@ export function gameLoop()
 		requestAnimationFrame(gameLoop);
 		return;
 	}
+
+	if (game_done == true)
+		return ;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -388,4 +395,26 @@ export function gameLoop()
 	{
 		requestAnimationFrame(gameLoop);
 	}
+}
+
+// TODO - voir avec caro si c'est pas trop galere
+function resetGame()
+{
+	// Reset game state
+	player1.score = 0;
+	player2.score = 0;
+	ball.speed = 5;
+	ball.dx = 5;
+	ball.dy = 5;
+
+	// Hide the winning message and rematch button
+	const messageElement = document.getElementById('winning-message');
+	const rematchButton = document.getElementById('rematch-button');
+
+	messageElement.classList.remove('show');
+	rematchButton.classList.add('hidden');
+
+	// Restart the game
+	game_done = false;
+	requestAnimationFrame(gameLoop);
 }
