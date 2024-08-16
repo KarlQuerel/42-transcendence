@@ -15,6 +15,23 @@
 	opacity: 100%;
 }
 
+/***********************************************
+					BODY
+***********************************************/
+body
+{
+	font-family: 'Press Start 2P', cursive; /* Retro arcade font */
+	margin: 0;
+	padding: 0;
+	background-color: #000;
+	color: #fff;
+	font-size: 0.7em;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	padding-top: 40px; /* Room for header */
+	padding-bottom: 60px; /* Room for footer */
+}
 
 /***********************************************
 					PONG PAGE
@@ -105,44 +122,24 @@
 
 
 /***********************************************
-					BODY
-***********************************************/
-body
-{
-	font-family: 'Press Start 2P', cursive; /* Retro arcade font */
-	margin: 0;
-	padding: 0;
-	background-color: #000;
-	color: #fff;
-	font-size: 0.7em;
-}
-
-/***********************************************
-					HEADER
-***********************************************/
-header
-{
-	text-align: center;
-	padding: 20px;
-	background-color: #0044cc;
-	color: #fff;
-	font-size: 2em;
-	text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8); /* Glow effect for header text */
-}
-
-/***********************************************
 					FOOTER
 ***********************************************/
 footer
 {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
 	background-color: #000;
 	border-top: 2px solid #00ff00;
+	padding: 10px 0;
+	text-align: center;
+	z-index: 1000;
 }
 
 .footer-content
 {
 	margin: 0;
-	text-align: center;
 }
 
 .footer-content a
@@ -160,8 +157,49 @@ footer
 }
 
 /***********************************************
-					NAV
+					NAVIGATION BAR
 ***********************************************/
+.navbar
+{
+	position: sticky;
+	top: 0;
+	width: 100%;
+	background-color: #000; /* Ensure background color to make the navbar stand out */
+	border-bottom: 2px solid #00ff00; /* Optional: Green border at the bottom */
+	z-index: 1000; /* Ensure it stays on top of other content */
+	padding: 10px;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	gap: 15px;
+}
+
+
+.button-link
+{
+	padding: 10px 20px;
+	font-size: 18px;
+	background-color: #00ff00; /* Green background */
+	color: #000; /* Black text */
+	border: 2px solid rgb(255, 255, 255);
+	border-radius: 10px;
+	cursor: pointer;
+	text-decoration: none; /* Remove underline from links */
+	display: inline-block; /* Ensure it behaves like a block element */
+	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+.button-link:hover
+{
+	background-color: #6eec83a1; /* Darker background on hover */
+	color: #fff; /* White text on hover */
+	transform: scale(1.05) rotate(-2deg);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+/* TODO KARL CHANGE IT FOR HOME PAGE */
+
 .nav-frames
 {
 	display: flex;

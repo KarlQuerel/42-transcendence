@@ -23,11 +23,6 @@ export default function renderHome()
 					<p>Play Pong</p>
 				</div>
 			</div>
-			<div class="col-md-4">
-				<div class="nav-frame bg-lightpink text-white text-center p-4 rounded" onclick="navigateTo('/login')">
-					<p>Log In</p>
-				</div>
-			</div>
 		</div>
 	</div>`;
 	
