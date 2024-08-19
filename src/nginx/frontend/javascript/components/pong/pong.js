@@ -5,6 +5,11 @@ export default function renderPong()
 			<video id="background-video" autoplay muted loop>
 				<source src="../../../assets/images/pong/tunnel_background.mp4" type="video/mp4">
 			</video>
+			 <div id="menu-overlay" class="menu-overlay">
+				<h1 class="menu-title">Welcome to Pong</h1>
+				<button id="singleplayer-button" class="menu-button">Single Player</button>
+				<button id="multiplayer-button" class="menu-button">Multiplayer</button>
+			</div>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
 			<button id="rematch-button">Rematch</button>
@@ -84,13 +89,35 @@ export function initializePong()
 	{
 		canvas = document.getElementById("pongCanvas");
 		const rematchButton = document.getElementById('rematch-button');
+		const singleplayerButton = document.getElementById('singleplayer-button');
+		const twoplayerButton = document.getElementById('twoplayers-button');
+		const menuOverlay = document.getElementById('menu-overlay');
+		const pongInstructions = document.querySelector('.pong-instructions');
+
 		if (!canvas)
 		{
 			console.error("Canvas element not found!");
 			return;
 		}
 
-		//test
+		if (!singleplayerButton || !twoplayerButton)
+		{
+			console.error('Menu buttons not found!');
+			return ;
+		}
+
+		singleplayerButton.addEventListener('click', () =>
+		{
+			AI_present = true;
+			startGame();
+		});
+
+		twoplayerButton.addEventListener('click', () =>
+		{
+			AI_present = false;
+			startGame();
+		})
+
 		if (!rematchButton)
 		{
 			console.error('Rematch button not found!');
@@ -101,31 +128,35 @@ export function initializePong()
 			console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
-		//fin test
-
+		
 		ctx = canvas.getContext("2d");
 		if (!ctx)
-		{
-			console.error("Context could not be retrieved!");
+			{
+				console.error("Context could not be retrieved!");
 			return;
 		}
 
 		console.log('Canvas and context retrieved successfully.');
 
-		// Ensure canvas has correct dimensions and border if dynamically set
-		canvas.style.border = "5px solid #00ff00"; // Green border
-
-		player1.y = (canvas.height - paddleHeight) / 2;
-		player2.x = canvas.width - paddleWidth - paddleOffset;
-		player2.y = (canvas.height - paddleHeight) / 2;
-		ball.x = canvas.width / 2;
-		ball.y = canvas.height / 2;
-
-		// Start the game loop
-		game_done = false;
-		gameLoop();
+		canvas.style.border = "5px solid #00ff00";
 
 	});
+}
+
+/***			Starting Game				***/
+function startGame(menuOverlay, pongInstructions)
+{
+	menuOverlay.classList.add('hidden');
+	pongInstructions.classList.remove('hidden');
+
+	player1.y = (canvas.height - paddleHeight) / 2;
+	player2.x = canvas.width - paddleWidth - paddleOffset;
+	player2.y = (canvas.height - paddleHeight) / 2;
+	ball.x = canvas.width / 2;
+	ball.y = canvas.height / 2;
+
+	game_done = false;
+	gameLoop();
 }
 
 /***********************************************\
@@ -225,13 +256,13 @@ function drawWinMessage(winner)
 	//  console.log('ID:', rematchButton.id); // Print ID
 	//  console.log('Style:', rematchButton.style.cssText); // Print inline styles
 
-    if (rematchButton) {
-        console.log('Before class change:', rematchButton.classList);
-        rematchButton.classList.remove('hidden');
-        console.log('After removing hidden:', rematchButton.classList);
-        rematchButton.classList.add('show');
-        console.log('After adding show:', rematchButton.classList);
-    }
+	if (rematchButton) {
+		console.log('Before class change:', rematchButton.classList);
+		rematchButton.classList.remove('hidden');
+		console.log('After removing hidden:', rematchButton.classList);
+		rematchButton.classList.add('show');
+		console.log('After adding show:', rematchButton.classList);
+	}
 }
 
 /***			Drawing Pause Menu			***/

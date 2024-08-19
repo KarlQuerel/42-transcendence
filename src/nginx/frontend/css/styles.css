@@ -34,129 +34,6 @@ body
 }
 
 /***********************************************
-					PONG PAGE
-***********************************************/
-#pong-page
-{
-	text-align: center;
-	padding: 20px;
-	background-color: #222; /* Dark background for contrast */
-	border-radius: 15px; /* Rounded corners */
-	box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Retro green shadow */
-	position: relative; /* Ensure child elements are positioned relative to this container */
-	overflow: hidden; /* Ensure no content overflows */
-}
-
-#background-video
-{
-	position: absolute; /* Position the video absolutely within the container */
-	top: 0;
-	left: 0;
-	width: 100%; /* Stretch the video to cover the entire container */
-	height: 100%;
-	object-fit: cover; /* Ensure the video covers the container without distortion */
-	z-index: 0; /* Send the video behind the canvas and other content */
-}
-
-#pongCanvas
-{
-	background-color: rgba(0, 0, 0, 0.8);
-	margin-top: 20px; /* Space between the canvas and other elements */
-	display: block; /* Ensure the canvas is a block element */
-	margin-left: auto; /* Centering the canvas horizontally */
-	margin-right: auto; /* Centering the canvas horizontally */
-	position: relative; /* Ensure the canvas is positioned relative to its container */
-	z-index: 1; /* Ensure the canvas is above the video */
-	border-radius: 15px; /* Rounded corners for the canvas */
-	overflow: hidden; /* Ensure that content does not overflow the rounded corners */
-}
-
-#winning-message
-{
-	background-color: black;
-	border: 3px solid var(--retro-green); /* Green border */
-	color: var(--retro-green);
-	font-family: 'Press Start 2P', cursive; /* Retro arcade font */
-	font-size: 36px;
-	text-align: center;
-	padding: 20px;
-	margin: 0;
-	width: fit-content;
-	position: fixed; /* Fixed positioning to center on the viewport */
-	top: 50%; /* Center vertically */
-	left: 50%; /* Center horizontally */
-	transform: translate(-50%, -50%); /* Offset by 50% of its own width and height */
-	z-index: 10; /* Ensure it is above the canvas */
-	display: none; /* Hidden by default */
-}
-
-#winning-message.show
-{
-	display: block;
-}
-
-#rematch-button
-{
-	position: absolute;
-	bottom: 20px;
-	left: 50%;
-	transform: translateX(-50%);
-	padding: 10px 20px;
-	font-size: 18px;
-	background-color: #00ff00;
-	color: #000;
-	border: black;
-	border-width: thick;
-	border-radius: 10px;
-	cursor: pointer;
-	visibility: visible;
-	opacity: 100%;
-}
-
-#rematch-button:hover
-{
-	background-color: #0056b3;
-	transform: scale(1.05) rotate(-2deg);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-
-/***********************************************
-					FOOTER
-***********************************************/
-footer
-{
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	background-color: #000;
-	border-top: 2px solid #00ff00;
-	padding: 10px 0;
-	text-align: center;
-	z-index: 1000;
-}
-
-.footer-content
-{
-	margin: 0;
-}
-
-.footer-content a
-{
-	margin: 0 10px;
-	text-decoration: none;
-	color: #00ff00;
-	font-size: 0.7em;
-}
-
-.footer-content a:hover
-{
-	text-decoration: underline;
-	color: #fff; /* White on hover for better visibility */
-}
-
-/***********************************************
 					NAVIGATION BAR
 ***********************************************/
 .navbar
@@ -278,6 +155,172 @@ footer
 	transform: scale(1.05) rotate(-2deg);
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+
+/***********************************************
+PONG PAGE
+***********************************************/
+#pong-page
+{
+	text-align: center;
+	padding: 20px;
+	background-color: #222; /* Dark background for contrast */
+	border-radius: 15px; /* Rounded corners */
+	box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); /* Retro green shadow */
+	position: relative; /* Ensure child elements are positioned relative to this container */
+	overflow: hidden; /* Ensure no content overflows */
+}
+
+#background-video
+{
+	position: absolute; /* Position the video absolutely within the container */
+	top: 0;
+	left: 0;
+	width: 100%; /* Stretch the video to cover the entire container */
+	height: 100%;
+	object-fit: cover; /* Ensure the video covers the container without distortion */
+	z-index: 0; /* Send the video behind the canvas and other content */
+}
+
+#pongCanvas
+{
+	background-color: rgba(0, 0, 0, 0.8);
+	margin-top: 20px; /* Space between the canvas and other elements */
+	display: block; /* Ensure the canvas is a block element */
+	margin-left: auto; /* Centering the canvas horizontally */
+	margin-right: auto; /* Centering the canvas horizontally */
+	position: relative; /* Ensure the canvas is positioned relative to its container */
+	z-index: 1; /* Ensure the canvas is above the video */
+	border-radius: 15px; /* Rounded corners for the canvas */
+	overflow: hidden; /* Ensure that content does not overflow the rounded corners */
+}
+
+#winning-message
+{
+	background-color: black;
+	border: 3px solid var(--retro-green); /* Green border */
+	color: var(--retro-green);
+	font-family: 'Press Start 2P', cursive; /* Retro arcade font */
+	font-size: 36px;
+	text-align: center;
+	padding: 20px;
+	margin: 0;
+	width: fit-content;
+	position: fixed; /* Fixed positioning to center on the viewport */
+	top: 50%; /* Center vertically */
+	left: 50%; /* Center horizontally */
+	transform: translate(-50%, -50%); /* Offset by 50% of its own width and height */
+	z-index: 10; /* Ensure it is above the canvas */
+	display: none; /* Hidden by default */
+}
+
+#winning-message.show
+{
+	display: block;
+}
+
+#rematch-button
+{
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	padding: 10px 20px;
+	font-size: 18px;
+	background-color: #00ff00;
+	color: #000;
+	border: black;
+	border-width: thick;
+	border-radius: 10px;
+	cursor: pointer;
+	visibility: visible;
+	opacity: 100%;
+}
+
+#rematch-button:hover
+{
+	background-color: #0056b3;
+	transform: scale(1.05) rotate(-2deg);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* TESTING MENU TWO PLAYERS */
+/* Style the menu overlay */
+.menu-overlay
+{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+	padding: 20px;
+	border-radius: 10px;
+	text-align: center;
+	z-index: 10; /* Ensure the menu is on top of other elements */
+}
+
+.menu-title
+{
+	color: #fff;
+	font-family: 'Press Start 2P', cursive;
+	margin-bottom: 20px;
+}
+
+.menu-button
+{
+	display: block;
+	margin: 10px auto;
+	padding: 10px 20px;
+	font-family: 'Press Start 2P', cursive;
+	color: #00ff00;
+	background-color: #000;
+	border: 2px solid #00ff00;
+	cursor: pointer;
+	border-radius: 5px;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+.menu-button:hover
+{
+	background-color: #00ff00;
+	color: #000;
+}
+
+
+/***********************************************
+					FOOTER
+***********************************************/
+footer
+{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background-color: #000;
+	border-top: 2px solid #00ff00;
+	padding: 10px 0;
+	text-align: center;
+	z-index: 1000;
+}
+
+.footer-content
+{
+	margin: 0;
+}
+
+.footer-content a
+{
+	margin: 0 10px;
+	text-decoration: none;
+	color: #00ff00;
+	font-size: 0.7em;
+}
+
+.footer-content a:hover
+{
+	text-decoration: underline;
+	color: #fff; /* White on hover for better visibility */
+}
+
 
 
 /* TODO KARL CHANGE IT FOR HOME PAGE */
