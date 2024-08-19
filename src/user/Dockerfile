@@ -10,6 +10,7 @@ WORKDIR /app
 COPY initiation_files/requirements.txt /app/initiation_files/requirements.txt
 
 
+
 ########### ˇ Install the dependencies ˇ ###########
 
 #Install django and its dependencies
@@ -22,11 +23,17 @@ RUN	apt install libpq-dev -y
 RUN pip install channels_redis
 RUN pip install channels
 
+# Instll Pythen Dotenv for managing environment variables
+RUN pip install python-dotenv==1.0.1
+
 # Install Faker for generating fake data
 # RUN pip install faker
 
 
 ########### ^ Install the dependencies ^ ###########
+
+
+
 
 # Copy the entrypoint script for PostgreSQL
 COPY user/conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
@@ -43,6 +50,7 @@ RUN chmod -R 777 /app
 
 #voir avec les autres quel port
 EXPOSE 8200
+EXPOSE 5432
 
 # Define environment variable
 ENV PYTHONUNBUFFERED=1

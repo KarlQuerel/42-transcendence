@@ -1,9 +1,12 @@
 #!/bin/bash
 
-# Define variables
-DB_NAME="pong_database"
-DB_USER="pong_user"
-DB_PASSWORD="pong_password"
+# Load environment variables from .env file
+export $(grep -v '^#' ../../../.env | xargs)
+
+# Define variables using the loaded environment variables
+DB_NAME="${POSTGRES_DB}"
+DB_USER="${POSTGRES_USER}"
+DB_PASSWORD="${POSTGRES_PASSWORD}"
 
 # Start the PostgreSQL service (modify as needed for your environment)
 echo "Starting PostgreSQL service..."
