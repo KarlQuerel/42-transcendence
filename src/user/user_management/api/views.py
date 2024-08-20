@@ -21,6 +21,7 @@ def addUser(request):
 
 # class	CustomUserAPIView(APIView):
 
+@api_view(['GET'])
 def check_existing_username(request):
 	if request.method == 'GET':
 		username = request.GET.get('username', None)
@@ -32,6 +33,7 @@ def check_existing_username(request):
 	else:
 		return Response({'error': 'Invalid request method'}, status=405)
 
+@api_view(['GET'])
 def check_existing_email(request):
 	if request.method == 'GET':
 		email = request.GET.get('email', None)

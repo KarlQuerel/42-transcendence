@@ -60,7 +60,7 @@ function lookForExisitingUser(identifier, id_type) {
 }
 
 function lookForExisitingEmail(identifier) {
-	fetch('/api/users/check-email', { redirect: 'follow' })
+	fetch('/api/users/check-email/', { redirect: 'follow' })
 		.then(response => response.json())
 		.then(data => {
 			if (data.exists) {
@@ -74,7 +74,7 @@ function lookForExisitingEmail(identifier) {
 }
 
 function lookForExisitingUsername(identifier) {
-	fetch('/api/users/check-username', { redirect: 'follow' })
+	fetch('/api/users/check-username/', { redirect: 'follow' })
 		.then(response => response.json())
 		.then(data => {
 			if (data.exists) {
