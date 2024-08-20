@@ -8,7 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		if (id_type == 'error') {
 			//afficher message d'erreur approprie sur page html
 		}
-		lookForExisitingUser(identifier, id_type);
+		else {
+			lookForExisitingUser(identifier, id_type);
+		}
 		// createNewUser();
 	});
 });
@@ -49,5 +51,38 @@ function isValidEmail(identifier) {
 }
 
 function lookForExisitingUser(identifier, id_type) {
+	if (id_type == 'email') {
+		lookForExisitingEmail(identifier);
+	}
+	else {
+		lookForExisitingUsername(identifier);
+	}
+}
 
+function lookForExisitingEmail(identifier) {
+	fetch('/api/users/check-email', { redirect: 'follow' })
+		.then(response => response.json())
+		.then(data => {
+			if (data.exists) {
+				console.log('Email exists.', data);
+			}
+			else {
+				console.log('Email doesn\'t exist.', data);
+			}
+		})
+		.catch(error => console.error('Error fetching /api/users', error));
+}
+
+function lookForExisitingUsername(identifier) {
+	fetch('/api/users/check-username', { redirect: 'follow' })
+		.then(response => response.json())
+		.then(data => {
+			if (data.exists) {
+				console.log('Username exists.', data);
+			}
+			else {
+				console.log('Username doesn\'t exist.', data);
+			}
+		})
+		.catch(error => console.error('Error fetching /api/users', error));
 }
