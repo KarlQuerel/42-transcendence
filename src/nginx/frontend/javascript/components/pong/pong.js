@@ -8,7 +8,7 @@ export default function renderPong()
 			 <div id="menu-overlay" class="menu-overlay">
 				<h1 class="menu-title">Welcome to Pong</h1>
 				<button id="singleplayer-button" class="menu-button">Single Player</button>
-				<button id="multiplayer-button" class="menu-button">Multiplayer</button>
+				<button id="twoplayer-button" class="menu-button">Two Players</button>
 			</div>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
@@ -45,9 +45,9 @@ const player1 =
 	y: 0,
 	width: paddleWidth,
 	height: paddleHeight,
-	color: "cyan", // Neon color
-	shadowColor: 'rgba(0, 255, 255, 0.8)', // Neon cyan glow
-	shadowBlur: 20, // Intensity of the glow
+	color: "cyan",
+	shadowColor: 'rgba(0, 255, 255, 0.8)',
+	shadowBlur: 20,
 	dy: 0,
 	score: 0
 };
@@ -58,9 +58,9 @@ const player2 =
 	y: 0,
 	width: paddleWidth,
 	height: paddleHeight,
-	color: "magenta", // Neon color
-	shadowColor: 'rgba(255, 0, 255, 0.8)', // Neon magenta glow
-	shadowBlur: 20, // Intensity of the glow
+	color: "magenta",
+	shadowColor: 'rgba(255, 0, 255, 0.8)',
+	shadowBlur: 20,
 	dy: 0,
 	score: 0
 };
@@ -90,7 +90,7 @@ export function initializePong()
 		canvas = document.getElementById("pongCanvas");
 		const rematchButton = document.getElementById('rematch-button');
 		const singleplayerButton = document.getElementById('singleplayer-button');
-		const twoplayerButton = document.getElementById('twoplayers-button');
+		const twoplayerButton = document.getElementById('twoplayer-button');
 		const menuOverlay = document.getElementById('menu-overlay');
 		const pongInstructions = document.querySelector('.pong-instructions');
 
@@ -109,13 +109,13 @@ export function initializePong()
 		singleplayerButton.addEventListener('click', () =>
 		{
 			AI_present = true;
-			startGame();
+			startGame(menuOverlay, pongInstructions);
 		});
 
 		twoplayerButton.addEventListener('click', () =>
 		{
 			AI_present = false;
-			startGame();
+			startGame(menuOverlay, pongInstructions);
 		})
 
 		if (!rematchButton)
@@ -167,30 +167,30 @@ function startGame(menuOverlay, pongInstructions)
 function drawPaddle(paddle)
 {
 	ctx.fillStyle = paddle.color;
-	ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)'; // Default neon green
-	ctx.shadowBlur = paddle.shadowBlur || 100; // Increase for more glow
+	ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)';
+	ctx.shadowBlur = paddle.shadowBlur || 100;
 
 	// Set rounded corners
 	const cornerRadius = 5;
 	ctx.lineJoin = "round";
 	ctx.lineCap = "round";
-	ctx.lineWidth = 10; // Ensure the width is enough to make the corners visible
+	ctx.lineWidth = 10;
 
 	// Begin drawing the paddle with rounded corners
 	ctx.beginPath();
-	ctx.moveTo(paddle.x + cornerRadius, paddle.y); // Top-left corner
-	ctx.lineTo(paddle.x + paddle.width - cornerRadius, paddle.y); // Top-right corner
-	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y, paddle.x + paddle.width, paddle.y + cornerRadius); // Top-right rounded corner
-	ctx.lineTo(paddle.x + paddle.width, paddle.y + paddle.height - cornerRadius); // Right side
-	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y + paddle.height, paddle.x + paddle.width - cornerRadius, paddle.y + paddle.height); // Bottom-right rounded corner
-	ctx.lineTo(paddle.x + cornerRadius, paddle.y + paddle.height); // Bottom side
-	ctx.quadraticCurveTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y + paddle.height - cornerRadius); // Bottom-left rounded corner
-	ctx.lineTo(paddle.x, paddle.y + cornerRadius); // Left side
-	ctx.quadraticCurveTo(paddle.x, paddle.y, paddle.x + cornerRadius, paddle.y); // Top-left rounded corner
+	ctx.moveTo(paddle.x + cornerRadius, paddle.y);
+	ctx.lineTo(paddle.x + paddle.width - cornerRadius, paddle.y);
+	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y, paddle.x + paddle.width, paddle.y + cornerRadius);
+	ctx.lineTo(paddle.x + paddle.width, paddle.y + paddle.height - cornerRadius);
+	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y + paddle.height, paddle.x + paddle.width - cornerRadius, paddle.y + paddle.height);
+	ctx.lineTo(paddle.x + cornerRadius, paddle.y + paddle.height);
+	ctx.quadraticCurveTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y + paddle.height - cornerRadius);
+	ctx.lineTo(paddle.x, paddle.y + cornerRadius);
+	ctx.quadraticCurveTo(paddle.x, paddle.y, paddle.x + cornerRadius, paddle.y);
 	ctx.closePath();
 
-	ctx.fill(); // Fill the paddle
-	ctx.shadowColor = 'transparent'; // Reset shadow to avoid affecting other drawings
+	ctx.fill();
+	ctx.shadowColor = 'transparent';
 }
 
 
@@ -208,14 +208,14 @@ function drawBall()
 function drawScore()
 {
 	// Set font properties
-	ctx.font = "48px 'Press Start 2P', cursive"; // Retro arcade font and larger size
-	ctx.textAlign = "center"; // Center the score text
-	ctx.textBaseline = "middle"; // Vertical alignment of text
+	ctx.font = "48px 'Press Start 2P', cursive";
+	ctx.textAlign = "center";
+	ctx.textBaseline = "middle";
 
 	// Score color and shadow
 	ctx.fillStyle = "var(--retro-green)";
-	ctx.shadowColor = "rgba(0, 255, 0, 0.8)"; // Retro green shadow
-	ctx.shadowBlur = 10; // Blur effect for the shadow
+	ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
+	ctx.shadowBlur = 10;
 
 	// Draw Player 1's score
 	ctx.fillText(player1.score, canvas.width / 4, 50);
@@ -242,27 +242,13 @@ function drawWinMessage(winner)
 	messageElement.textContent = winner + " Wins!";
 	messageElement.classList.add('show');
 
-	// if (!rematchButton)
-	// {
-	// 	console.error('Rematch button element not foun!');
-	// 	return ;
-	// }
-	// rematchButton.classList.remove('hidden');
-	// rematchButton.classList.add('show');
-
-	//  // Print attributes
-	//  console.log('Rematch Button Attributes:');
-	//  console.log('Classes:', rematchButton.classList.toString()); // Print class list as a string
-	//  console.log('ID:', rematchButton.id); // Print ID
-	//  console.log('Style:', rematchButton.style.cssText); // Print inline styles
-
-	if (rematchButton) {
-		console.log('Before class change:', rematchButton.classList);
-		rematchButton.classList.remove('hidden');
-		console.log('After removing hidden:', rematchButton.classList);
-		rematchButton.classList.add('show');
-		console.log('After adding show:', rematchButton.classList);
+	if (!rematchButton)
+	{
+		console.error('Rematch button element not found!');
+		return ;
 	}
+	rematchButton.classList.remove('hidden');
+	rematchButton.classList.add('show');
 }
 
 /***			Drawing Pause Menu			***/
