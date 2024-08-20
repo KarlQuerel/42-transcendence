@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load environment variables from .env file
-export $(grep -v '^#' ../../../.env | xargs)
+export $(grep -v '^#' docker-compose exec profile python manage.py check_db../../.env | xargs)
 
 # Define variables using the loaded environment variables
 DB_NAME="${POSTGRES_DB}"

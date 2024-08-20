@@ -2,10 +2,10 @@
 #la commande docker-compose ne marchera pas
 
 all :
-	cd src && export $(cat ../.env | xargs) && docker-compose up -d --build
+	cd src && docker-compose up -d --build
 
 clean : 
-	cd src && export $(cat ../.env | xargs) && docker-compose down
+	cd src && docker-compose down
 	docker system prune -af
 
 re : clean all

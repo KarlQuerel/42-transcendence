@@ -97,8 +97,6 @@ WSGI_APPLICATION = 'user_management_database.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'default_db_name'),
         'USER': os.getenv('POSTGRES_USER', 'default_user'),

@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
 
   database:
-    container_name: database
+    container_name: Database
     image: postgres:13
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
@@ -16,7 +14,9 @@ services:
     ports:
       - "5432:5432"
     env_file:
-      - ../.env
+      - .env
+
+
   nginx:
     container_name: Nginx
     build:
@@ -56,8 +56,7 @@ services:
     depends_on:
       - database
     env_file:
-      - ../.env
-  
+      - .env
 
 
   dashboard:
