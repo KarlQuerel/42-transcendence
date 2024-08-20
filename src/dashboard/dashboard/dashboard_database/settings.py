@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -78,8 +83,12 @@ WSGI_APPLICATION = 'dashboard_database.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'default_db_name'),
+        'USER': os.getenv('POSTGRES_USER', 'default_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'default_password'),
+        'HOST': 'database',
+        'PORT': '5432',
     }
 }
 

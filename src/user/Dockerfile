@@ -2,12 +2,11 @@ FROM	python:3.10
 
 RUN		apt update && apt upgrade -y
 
-
 # Set the working directory
 WORKDIR /app
 
 # Copy requirements.txt and install dependencies
-COPY initiation_files/requirements.txt /app/initiation_files/requirements.txt
+COPY initiation_files/django_conf/requirements.txt /app/initiation_files/django_conf/requirements.txt
 
 
 
@@ -15,7 +14,7 @@ COPY initiation_files/requirements.txt /app/initiation_files/requirements.txt
 
 #Install django and its dependencies
 RUN pip install --no-cache-dir --upgrade pip
-RUN pip install -r /app/initiation_files/requirements.txt
+RUN pip install -r /app/initiation_files/django_conf/requirements.txt
 RUN apt install postgresql -y
 RUN	apt install libpq-dev -y
 
@@ -23,7 +22,7 @@ RUN	apt install libpq-dev -y
 RUN pip install channels_redis
 RUN pip install channels
 
-# Instll Pythen Dotenv for managing environment variables
+# Install Python Dotenv for managing environment variables
 RUN pip install python-dotenv==1.0.1
 
 # Install Faker for generating fake data
@@ -34,15 +33,15 @@ RUN pip install python-dotenv==1.0.1
 
 
 
-
 # Copy the entrypoint script for PostgreSQL
-COPY user/conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+COPY ../initiation_files/postgresql_conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
 RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 
-
 # Copy the initiation file for PostgreSQL
-COPY user/conf/init_database.sh /tmp/init_database.sh
+COPY ../initiation_files/postgresql_conf/init_database.sh /tmp/init_database.sh
 RUN chmod 777 /tmp/init_database.sh
+
+
 
 # Copy the rest of the application code
 COPY user/user_management/ /app

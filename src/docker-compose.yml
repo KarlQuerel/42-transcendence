@@ -61,6 +61,8 @@ services:
 
   dashboard:
     container_name: Dashboard
+    volumes:
+      - .profile:/var/lib/postgresql/
     build:
       context: .
       dockerfile: dashboard/Dockerfile
@@ -72,10 +74,15 @@ services:
       python manage.py runserver 0.0.0.0:8100"
     expose:
       - "8080:8080"
+      - 5432
     ports:
       - "8100:8100"
     networks:
       - "transcendance"
+    depends_on:
+      - database
+    env_file:
+      - .env
 
 networks:
   transcendance:
