@@ -1,6 +1,5 @@
 export function renderTheTeam()
 {
-	// Return the HTML structure for the team page
 	return `
 		<div id="team-page">
 			<h1>Meet the Team</h1>
@@ -13,10 +12,10 @@ export function renderTheTeam()
 
 function renderTeamMembers()
 {
-	const members = [
+	const members =
+	[
 		{ name: "Caro", imageUrl: "https://i.giphy.com/GRM7Z2s6AougoR3rvv.webp" },
 		{ name: "Jess", imageUrl: "https://i.giphy.com/ffbi8GwJqS7I1lt27A.webp" },
-		{ name: "Marine", imageUrl: "https://i.giphy.com/dNhCpFWksNtbMLsFpX.webp" },
 		{ name: "Clement", imageUrl: "https://i.giphy.com/10mHLqxvhfdZuw.webp" },
 		{ name: "Karl", imageUrl: "https://i.gifer.com/Leq.gif" }
 	];

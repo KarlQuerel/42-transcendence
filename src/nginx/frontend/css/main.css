@@ -1,0 +1,16 @@
+/*		Import base styles			*/
+@import url('base/additional-styles.css');
+@import url('base/body.css');
+@import url('base/global.css');
+
+/*		Import component styles		*/
+@import url('components/buttons.css');
+@import url('components/footer.css');
+@import url('components/gifs.css');
+@import url('components/navbar.css');
+
+/*		Import page-specific styles	*/
+@import url('pages/dashboard.css');
+@import url('pages/homepage.css');
+@import url('pages/pong.css');
+@import url('pages/theteam.css');

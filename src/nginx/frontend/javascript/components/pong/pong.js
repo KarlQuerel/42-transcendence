@@ -6,7 +6,6 @@ export default function renderPong()
 				<source src="../../../assets/images/pong/tunnel_background.mp4" type="video/mp4">
 			</video>
 			 <div id="menu-overlay" class="menu-overlay">
-				<h1 class="menu-title">Welcome to Pong</h1>
 				<button id="singleplayer-button" class="menu-button">Single Player</button>
 				<button id="twoplayer-button" class="menu-button">Two Players</button>
 			</div>
@@ -131,7 +130,7 @@ export function initializePong()
 		
 		ctx = canvas.getContext("2d");
 		if (!ctx)
-			{
+		{
 				console.error("Context could not be retrieved!");
 			return;
 		}
