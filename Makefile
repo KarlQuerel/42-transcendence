@@ -9,8 +9,6 @@ NC = \033[0m
 
 
 all :
-	@trap 'exit 0' INT; \
-	set -e; \
 	docker compose -f docker-compose.yml build; \
 	docker compose -f docker-compose.yml up -d; \
 	echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on http://localhost:8000 ✨\n$(NC)"
@@ -24,6 +22,6 @@ fclean: clean
 	@docker volume prune -f
 	@echo "$(GREEN)\n 🛁✨ All containers, networks, volumes and images have been removed ✨🛁\n$(NC)"
 
-re : fclean all
+re : clean all
 
 .PHONY: all clean fclean re
