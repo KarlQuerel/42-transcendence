@@ -13,6 +13,11 @@ services:
       - profile
       - dashboard
       - database
+    # command: >
+    #   sh -c "
+    #   chown -R www-data:www-data /usr/share/nginx/html/"
+    # volumes:
+    #   - frontend:/usr/share/nginx/html/
 
   database:
     container_name: PostgreSQL
@@ -70,7 +75,12 @@ services:
 
 volumes:
   postgres_data:
-
+  frontend:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './nginx/frontend/'
 networks:
   transcendance:
     driver: bridge
