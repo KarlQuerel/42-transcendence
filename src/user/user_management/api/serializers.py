@@ -19,7 +19,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if obj.avatar:
             with open(obj.avatar.path, 'rb') as avatar_file:
                 return base64.b64encode(avatar_file.read()).decode('utf-8')
-            return None
+        return None
 
 
     def create(self, validated_data):

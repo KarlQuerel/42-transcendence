@@ -1,14 +1,31 @@
-version: '3.8'
-
 services:
+
+  database:
+    container_name: Database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - transcendance
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+
+
   nginx:
+    container_name: Nginx
     build:
       context: ./nginx/
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     networks:
-      - "transcendance"
+      - transcendance
     depends_on:
       - profile
       - dashboard
@@ -19,68 +36,70 @@ services:
     # volumes:
     #   - frontend:/usr/share/nginx/html/
 
-  database:
-    container_name: PostgreSQL
-    image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./initiation_files/init.sql:/docker-entrypoint-initdb.d/initiation_files/init.sql
-    environment:
-      POSTGRES_DB: mydatabase
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
 
   profile:
     container_name: User
+    user: root
+    volumes:
+      - .profile:/var/lib/postgresql/
     build:
       context: .
       dockerfile: user/Dockerfile
     command: >
       sh -c "
+      sleep 5 &&
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8200"
+    expose:
+      - "8080:8080"
+      - "5432"
     ports:
       - "8200:8200"
+    networks:
+      - transcendance
     depends_on:
       - database
-    environment:
-      - DATABASE_HOST=database
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=pong_database
-      - DATABASE_USER=pong_user
-      - DATABASE_PASSWORD=pong_password
-    networks:
-      - "transcendance"
+    env_file:
+      - .env
+
 
   dashboard:
     container_name: Dashboard
+    volumes:
+      - .dashboard:/var/lib/postgresql/
     build:
       context: .
       dockerfile: dashboard/Dockerfile
     command: >
       sh -c "
+      sleep 8 &&
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8100"
+    expose:
+      - "8080:8080"
+      - "5432"
     ports:
       - "8100:8100"
-    depends_on:
-      - profile
-      - database
     networks:
-      - "transcendance"
+      - transcendance
+    depends_on:
+      - database
+    env_file:
+      - .env
+networks:
+  transcendance:
+    driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
   frontend:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: './nginx/frontend/'
-networks:
-  transcendance:
-    driver: bridge
