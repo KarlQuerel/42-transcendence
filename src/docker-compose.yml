@@ -10,7 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - "transcendance"
+      - transcendance
     ports:
       - "5432:5432"
     env_file:
@@ -25,7 +25,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - "transcendance"
+      - transcendance
     depends_on:
       - profile
       - dashboard
@@ -48,11 +48,11 @@ services:
       python manage.py runserver 0.0.0.0:8200"
     expose:
       - "8080:8080"
-      - 5432
+      - "5432"
     ports:
       - "8200:8200"
     networks:
-      - "transcendance"
+      - transcendance
     depends_on:
       - database
     env_file:
@@ -62,23 +62,24 @@ services:
   dashboard:
     container_name: Dashboard
     volumes:
-      - .profile:/var/lib/postgresql/
+      - .dashboard:/var/lib/postgresql/
     build:
       context: .
       dockerfile: dashboard/Dockerfile
     command: >
       sh -c "
+      sleep 8 &&
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8100"
     expose:
       - "8080:8080"
-      - 5432
+      - "5432"
     ports:
       - "8100:8100"
     networks:
-      - "transcendance"
+      - transcendance
     depends_on:
       - database
     env_file:

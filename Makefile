@@ -7,6 +7,7 @@ all :
 clean : 
 	cd src && docker-compose down
 	docker system prune -af
+	docker volume prune -af
 
 re : clean all
 
