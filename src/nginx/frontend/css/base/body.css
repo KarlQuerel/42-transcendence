@@ -11,7 +11,9 @@ body
 	font-size: 0.7em;
 	display: flex;
 	flex-direction: column;
-	min-height: 100vh;
+	/* TODO: add a min-width with pong canvas */
+	min-width: 800px;
+	min-height: 600px;
 	padding-top: 20px; /* Room for header */
 	padding-bottom: 60px; /* Room for footer */
 }

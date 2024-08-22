@@ -20,3 +20,10 @@
 	--retro-green: #00ff00;
 	--dark-gray: #111;
 }
+
+/*		Reset for different browsers		*/
+html, body
+{
+	margin: 0;
+	padding: 0;
+}

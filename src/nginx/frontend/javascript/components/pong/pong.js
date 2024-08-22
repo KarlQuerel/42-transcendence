@@ -12,7 +12,7 @@ export default function renderPong()
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
 			<button id="rematch-button">Rematch</button>
-			<canvas id="pongCanvas" width="800" height="600"></canvas>
+			<canvas id="pongCanvas"></canvas>
 			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
 		</div>
 	`;
@@ -29,16 +29,18 @@ let	game_paused = false;
 let	AI_present = false;
 
 /***			Graphics					***/
-let canvas, ctx;
+let		canvas, ctx;
+const	minWidth = 800;
+const	minHeight = 600;
 
 /***			Paddle Properties			***/
-const paddleWidth = 10;
-const paddleHeight = 100;
-const paddleSpeed = 8;
-const paddleOffset = 20;
+const	paddleWidth = 10;
+const	paddleHeight = 100;
+const	paddleSpeed = 8;
+const	paddleOffset = 20;
 
 /***			Player Paddles				***/
-const player1 =
+const	player1 =
 {
 	x: paddleOffset,
 	y: 0,
@@ -51,7 +53,7 @@ const player1 =
 	score: 0
 };
 
-const player2 =
+const	player2 =
 {
 	x: 0,
 	y: 0,
@@ -66,7 +68,7 @@ const player2 =
 
 
 /***			Ball Properties				***/
-const ball =
+const	ball =
 {
 	x: 0,
 	y: 0,
@@ -87,11 +89,11 @@ export function initializePong()
 	requestAnimationFrame(() =>
 	{
 		canvas = document.getElementById("pongCanvas");
-		const rematchButton = document.getElementById('rematch-button');
-		const singleplayerButton = document.getElementById('singleplayer-button');
-		const twoplayerButton = document.getElementById('twoplayer-button');
-		const menuOverlay = document.getElementById('menu-overlay');
-		const pongInstructions = document.querySelector('.pong-instructions');
+		const	rematchButton = document.getElementById('rematch-button');
+		const	singleplayerButton = document.getElementById('singleplayer-button');
+		const	twoplayerButton = document.getElementById('twoplayer-button');
+		const	menuOverlay = document.getElementById('menu-overlay');
+		const	pongInstructions = document.querySelector('.pong-instructions');
 
 		if (!canvas)
 		{
@@ -139,6 +141,31 @@ export function initializePong()
 
 		canvas.style.border = "5px solid #00ff00";
 
+		// Set canvas dimensions based on viewport height
+		const	setCanvasDimensions = () =>
+		{
+			const	viewportHeight = window.innerHeight;
+			canvas.width = viewportHeight * 0.8; // 80% of viewport height
+			canvas.height = viewportHeight * 0.6; // 60% of viewport height
+		};
+
+		setCanvasDimensions();
+
+		// Adjust canvas size on window resize
+		window.addEventListener('resize', () =>
+		{
+			setCanvasDimensions();
+
+			// Enforce minimum window size
+			if (window.innerWidth < minWidth || window.innerHeight < minHeight)
+			{
+				window.resizeTo
+				(
+					Math.max(window.innerWidth, minWidth),
+					Math.max(window.innerHeight, minHeight)
+				);
+			}
+		});
 	});
 }
 
@@ -170,7 +197,7 @@ function drawPaddle(paddle)
 	ctx.shadowBlur = paddle.shadowBlur || 100;
 
 	// Set rounded corners
-	const cornerRadius = 5;
+	const	cornerRadius = 5;
 	ctx.lineJoin = "round";
 	ctx.lineCap = "round";
 	ctx.lineWidth = 10;
@@ -230,8 +257,8 @@ function drawScore()
 /***			Drawing Winning Message		***/
 function drawWinMessage(winner)
 {
-	const messageElement = document.getElementById('winning-message');
-	const rematchButton = document.getElementById('rematch-button');
+	const	messageElement = document.getElementById('winning-message');
+	const	rematchButton = document.getElementById('rematch-button');
 
 	if (!messageElement)
 	{
@@ -461,8 +488,8 @@ function resetGame()
 	ball.dy = 5;
 
 	// Hide the winning message and rematch button
-	const messageElement = document.getElementById('winning-message');
-	const rematchButton = document.getElementById('rematch-button');
+	const	messageElement = document.getElementById('winning-message');
+	const	rematchButton = document.getElementById('rematch-button');
 
 	messageElement.classList.remove('show');
 	rematchButton.classList.add('hidden');
