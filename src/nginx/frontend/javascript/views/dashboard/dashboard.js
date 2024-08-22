@@ -24,15 +24,13 @@ export function renderDashboard()
 	`;
 }
 
-export function initializeDashboard()
-{
+export function initializeDashboard() {
 	loadDashboardData();
 	setupEventListeners();
 	loadUserManagementData();
 }
 
-function setupEventListeners()
-{
+function setupEventListeners() {
 	document.getElementById('chart_icon').addEventListener('click', function() {
 		$('#chartModal').modal('show');
 	});
@@ -47,40 +45,26 @@ function setupEventListeners()
 }
 
 function loadDashboardData() {
-	fetch('/api/dashboard')
+	fetch('/dashboard/api/getData')
 		.then(response => {
-			console.log("Received response:", response);
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-			// Check if the response is JSON before attempting to parse
-			const contentType = response.headers.get("content-type");
-			if (!contentType || !contentType.includes("application/json")) {
-				throw new TypeError("Oops, we haven't got JSON!");
-			}
-
+			if (!response.ok)
+				throw new Error('Error : network response');
 			return response.json();
 		})
 		.then(statsData => {
-			console.log("Dashboard data loaded:", statsData);
+			console.log(statsData);
 			ChartDoughnutData(statsData);
 			GameHistoryTable(statsData);
 			Badge(statsData);
 		})
-		.catch(error => console.error('Error fetching statsData:', error));
+		.catch(error => console.error('Error : fetch statsData', error));
 }
 
 function loadUserManagementData() {
-	fetch('/api/userData') // Assuming the correct endpoint is /api/userData
+	fetch('/api/getData')
 		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
-			// Check if the response is JSON before attempting to parse
-			const contentType = response.headers.get("content-type");
-			if (!contentType || !contentType.includes("application/json")) {
-				throw new TypeError("Oops, we haven't got JSON!");
-			}
-
 			return response.json();
 		})
 		.then(userData => {
@@ -90,33 +74,22 @@ function loadUserManagementData() {
 		.catch(error => console.error('Error : fetch userData', error));
 }
 
-function GameHistoryTable(statsData) {
-	// Example implementation
-	console.log("Displaying game history table with data:", statsData);
-	// Code to dynamically create and populate a table with statsData
-}
-
-function Avatars(userData)
-{
+function Avatars(userData) {
 	// Code for rendering avatars
 }
 
-function displayGameHistory(chosenOpponent)
-{
+function displayGameHistory(chosenOpponent) {
 	// Code for displaying game history
 }
 
-function addGameHistory(chosenOpponent)
-{
+function addGameHistory(chosenOpponent) {
 	// Code for adding game history
 }
 
-function ChartDoughnutData(statsData)
-{
+function ChartDoughnutData(statsData) {
 	// Code for rendering doughnut chart
 }
 
-function Badge(statsData)
-{
+function Badge(statsData) {
 	// Code for handling badge display
 }

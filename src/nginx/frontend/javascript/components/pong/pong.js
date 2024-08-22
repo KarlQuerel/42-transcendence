@@ -450,7 +450,7 @@ export function gameLoop()
 	}
 }
 
-// TODO - voir avec caro si c'est pas trop galere
+// Karl -> voir avec caro
 function resetGame()
 {
 	// Reset game state
