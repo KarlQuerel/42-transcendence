@@ -47,7 +47,7 @@ RUN chmod 777 /tmp/init_database.sh
 COPY dashboard/dashboard/ /app
 RUN chmod -R 777 /app
 
-#voir avec les autres quel port
+# Voir avec les autres quel port
 EXPOSE 8100
 EXPOSE 5432
 

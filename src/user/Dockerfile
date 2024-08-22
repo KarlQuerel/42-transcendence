@@ -47,7 +47,7 @@ RUN chmod 777 /tmp/init_database.sh
 COPY user/user_management/ /app
 RUN chmod -R 777 /app
 
-#voir avec les autres quel port
+# Voir avec les autres quel port
 EXPOSE 8200
 EXPOSE 5432
 
