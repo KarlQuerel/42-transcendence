@@ -1,4 +1,11 @@
-export function renderProfile()
+/*** Initialization Function ***/
+export function startProfile()
+{
+    console.log("Profile page initialized");
+}
+
+/*** Render Function ***/
+export default function renderProfile()
 {
 	return `
     <div class="container">
