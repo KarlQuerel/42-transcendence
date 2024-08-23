@@ -5,10 +5,12 @@ export default function renderPong()
 			<video id="background-video" autoplay muted loop>
 				<source src="../../../assets/images/pong/tunnel_background.mp4" type="video/mp4">
 			</video>
-			 <div id="menu-overlay" class="menu-overlay">
-				<button id="singleplayer-button" class="menu-button">Single Player</button>
-				<button id="twoplayer-button" class="menu-button">Two Players</button>
-			</div>
+			<div id="menu-overlay" class="menu-overlay">
+			<button id="singleplayer-button" class="menu-button">Single Player</button>
+			<img src="../../../assets/images/pong/single_player.gif" alt="1P GIF" class="menu-gif">
+			<button id="twoplayer-button" class="menu-button">Two Players</button>
+			<img src="../../../assets/images/pong/two_players.gif" alt="2P GIF" class="menu-gif">
+			 </div>
 			<h1 class="pong-title">Pong Game</h1>
 			<div id="winning-message" class="hidden"></div>
 			<button id="rematch-button">Rematch</button>
