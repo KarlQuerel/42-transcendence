@@ -1,31 +1,6 @@
 /* **********************************************
 					PONG PAGE
 ***********************************************/
-/*	RESIZE PROBLEM TO SHOW TO OTHERS	*/
-/* #pong-page
-{
-	text-align: center;
-	padding: 20px;
-	background-color: #222;
-	overflow: hidden;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	width: 100vw;
-	position: relative;
-}
-
-#menu-overlay, #pongCanvas
-{
-	width: 80vw;
-	height: 60vh;
-	max-width: 800px;
-	max-height: 600px;
-	border: 5px solid #00ff00;
-	box-sizing: border-box;
-} */
-
 #pong-page
 {
 	text-align: center;
@@ -50,14 +25,17 @@
 {
 	background-color: rgba(0, 0, 0, 0.8);
 	margin-top: 20px;
-	display: block;
+	display: flex;
 	margin-left: auto;
 	margin-right: auto;
 	position: relative;
 	z-index: 1;
 	border-radius: 15px;
 	overflow: hidden;
+	min-width: 50vh;
+	min-height: 50vh;
 }
+
 /*		WINNING MESSAGE		*/
 #winning-message
 {
