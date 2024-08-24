@@ -3,6 +3,8 @@ export default function renderHome()
 	document.getElementById('app').innerHTML = `
 
 	<h1>UNDER CONSTRUCTION</h1>
+	<a class="button-link" href="/profile" data-link>Profile</a>
+	
 
 	`;
 	

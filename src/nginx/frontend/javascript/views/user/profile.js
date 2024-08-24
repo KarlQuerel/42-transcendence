@@ -1,9 +1,3 @@
-/*** Initialization Function ***/
-export function startProfile()
-{
-    console.log("Profile page initialized");
-}
-
 /*** Render Function ***/
 export default function renderProfile()
 {
@@ -50,15 +44,19 @@ export default function renderProfile()
     `;
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    initializeProfile();
-});
+// document.addEventListener('DOMContentLoaded', function()
+// {
+//     initializeProfile();
+// });
 
+/*** Initialization Function ***/
 export function initializeProfile() {
 	
     console.log("Calling loadUserData");
     loadUserData();
+    console.log("Calling loadFriendsList");
     loadFriendsList();
+    console.log("Calling loadGameHistory");
     loadGameHistory();
 }
 
@@ -113,14 +111,21 @@ function displayUserData(userData) {
 
 
 
-function loadFriendsList() {
+function loadFriendsList()
+{
+    console.log("Before fetch");
     fetch('/api/friends/')
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
             return response.json();
-        })
+        }
+        //test
+        ,
+        console.log("Before displayFriendsList")
+        //fin test
+    )
         .then(friendsData => {
             displayFriendsList(friendsData);
         })

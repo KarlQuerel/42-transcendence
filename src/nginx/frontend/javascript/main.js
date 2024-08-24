@@ -11,7 +11,7 @@ import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboar
 //	Home buttons	\\
 import { renderTheTeam } from "./views/the_team/the_team.js";
 import renderPong, { gameLoop, initializePong } from "./components/pong/pong.js";
-import renderProfile, { startProfile } from "./views/user/profile.js";
+import renderProfile, { initializeProfile } from "./views/user/profile.js";
 
 //		Footer		\\
 import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
@@ -65,7 +65,8 @@ const routes =
 	'/profile':
 	{
 		title: "My Profile",
-		render: renderProfile
+		render: renderProfile,
+		init: initializeProfile
 	},
 	'/404':
 	{
