@@ -52,32 +52,56 @@ export default function renderProfile()
 /*** Initialization Function ***/
 export function initializeProfile() {
 	
-    console.log("Calling loadUserData");
+    console.log("1. Calling loadUserData");
     loadUserData();
-    console.log("Calling loadFriendsList");
+    console.log("2. Calling loadFriendsList");
     loadFriendsList();
-    console.log("Calling loadGameHistory");
+    console.log("3. Calling loadGameHistory");
     loadGameHistory();
 }
 
 
 
 
-function loadUserData() {
+function loadUserData()
+{
     console.log("API call to fetch user data");
-    fetch('/api/profile/')
-        .then(response => {
-            console.log("Check si la reponse is okay");
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            console.log("NTM");
-            return response.json();
-        })
-        .then(userData => {
-            displayUserData(userData);
-        })
-        .catch(error => console.error('Error fetching user data:', error));
+    const token = localStorage.getItem('access_token');
+    fetch('/api/profile/', {
+        method: 'GET',
+        headers:
+        {
+            'Authorization': `Bearer ${token}`,
+        },
+    })
+    .then(response => {
+        if (response.status === 401) {
+            return refreshToken().then(newToken => {
+                return fetch('/api/profile/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${newToken}`,
+                    },
+                });
+            });
+        }
+        return response;
+    })
+    .then(response =>
+    {
+        console.log("Check si la reponse is okay");
+        if (!response.ok)
+        {
+            throw new Error('Network response was not ok');
+        }
+        console.log("NTM");
+        return response.json();
+    })
+    .then(userData =>
+    {
+        displayUserData(userData);
+    })
+    .catch(error => console.error('Error fetching user data:', error));
 }
 
 

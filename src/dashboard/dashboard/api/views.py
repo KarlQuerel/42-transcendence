@@ -6,15 +6,6 @@ from rest_framework.decorators import api_view
 from base.models import Stats, GameHistory
 from .serializers import statsSerializer
 
-# # TEST KARL
-# from django.http import JsonResponse
-
-# def user_data_view(request):
-#     # Your logic to fetch or create the data
-#     data = {"key": "value"}  # Example data
-#     return JsonResponse(data)  # Automatically sets Content-Type to application/json
-
-# # TEST KARL
 
 
 @api_view(['GET'])

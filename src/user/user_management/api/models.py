@@ -10,12 +10,10 @@ import os
 class CustomUser(AbstractUser):
     username = models.CharField(blank=False, null=False, max_length=12, unique=True)
     display_name = models.CharField(max_length=12)
-    password = models.CharField(blank=False, null=False, max_length=50)
     email = models.EmailField(blank=False, null=False, unique=True)
-    avatar = models.ImageField(blank=True, upload_to='avatars/')
-    is_online = models.BooleanField(default=True)
-    friends = models.ManyToManyField("CustomUser", blank=True)
-    is_2fa = models.BooleanField(default=False)
+    # avatar = models.ImageField(blank=True, upload_to='avatars/')
+    # is_online = models.BooleanField(default=True)
+    # friends = models.ManyToManyField("CustomUser", blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -34,10 +32,10 @@ class CustomUser(AbstractUser):
 
 
 
-@receiver(pre_save, sender=CustomUser)
-def set_default_avatar(sender, instance, **kwargs):
-	if not instance.avatar:
-		default_avatar_path = os.path.join(settings.API_DIR, 'static', 'avatars', 'default.png')
-		with open(default_avatar_path, 'rb') as f:
-			default_avatar = File(f)
-			var = instance.avatar.save('default.png', default_avatar, save=False)
+# @receiver(pre_save, sender=CustomUser)
+# def set_default_avatar(sender, instance, **kwargs):
+# 	if not instance.avatar:
+# 		default_avatar_path = os.path.join(settings.API_DIR, 'static', 'avatars', 'default.png')
+# 		with open(default_avatar_path, 'rb') as f:
+# 			default_avatar = File(f)
+# 			var = instance.avatar.save('default.png', default_avatar, save=False)

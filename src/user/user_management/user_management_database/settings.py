@@ -46,9 +46,37 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
     'api',
     'channels',
+    'profiles',
 ]
+
+################# Pour les tokens JWT #################
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': os.getenv('JWT_SIGNING_KEY'),
+    'VERIFYING_KEY': None,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+}
+
+#######################################################
+
 
 # Pour gérer les channels > pour avoir le statut de connexion en temps réel
 ASGI_APPLICATION = 'user_management_database.asgi.application'
@@ -103,7 +131,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', 'default_db_name'),
         'USER': os.getenv('POSTGRES_USER', 'default_user'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'default_password'),
-        'HOST': 'database',
+        'HOST': 'Database',
         'PORT': '5432',
     }
 }
