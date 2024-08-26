@@ -1,11 +1,5 @@
 FROM nginx:latest
 
-####################
-# ajouter pour que ca marche chez jess
-# RUN addgroup -S www-data || true
-# RUN adduser -S www-data -G www-data || true
-####################
-
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 COPY ./frontend /usr/share/nginx/html

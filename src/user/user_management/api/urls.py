@@ -1,10 +1,11 @@
 from django.urls import path
 from . import views
-from .views import UserProfileView
+# from api.views import CustomUserAPIView
 
 urlpatterns = [
-	path('', views.getData),
-	path('add/', views.addUser),
-    path('api/getData/', views.getData, name='get_data'),
-    path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+	# path('', views.getData),
+	# path('add/', views.addUser),
+	# path('', CustomUserAPIView.as_view()),
+	path('check-email/', views.check_existing_email, name='check-email'),
+	path('check-username/', views.check_existing_username, name='check-username'),
 ]

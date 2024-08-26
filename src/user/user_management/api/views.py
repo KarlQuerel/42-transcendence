@@ -1,22 +1,11 @@
-#converts any response to json
-
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework import generics, status
-from base.models import CustomUser
+#converts any response to json
+from django.views.decorators.csrf import csrf_exempt
+from api.models import CustomUser
 from .serializers import CustomUserSerializer
-
-
-
-# TEST KARL
-from django.http import JsonResponse
-
-def user_data_view(request):
-    # Your logic to fetch or create the data
-    data = {"key": "value"}  # Example data
-    return JsonResponse(data)  # Automatically sets Content-Type to application/json
-
-# TEST KARL
 
 
 # Retrieves a list of all CustomUser instances, all users'data
@@ -49,4 +38,28 @@ class UserProfileView(generics.RetrieveAPIView):
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
+# class	CustomUserAPIView(APIView):
 
+@api_view(['GET'])
+def check_existing_username(request):
+	if request.method == 'GET':
+		username = request.GET.get('username', None)
+		if username:
+			exists = CustomUser.objects.filter(username=username).exists()
+			return Response({'exists': bool(exists)})
+		else:
+			return Response({'error': 'Username parameter missing'}, status=400)
+	else:
+		return Response({'error': 'Invalid request method'}, status=405)
+
+@api_view(['GET'])
+def check_existing_email(request):
+	if request.method == 'GET':
+		email = request.GET.get('email', None)
+		if email:
+			exists = CustomUser.objects.filter(email=email).exists()
+			return Response({'exists': bool(exists)})
+		else:
+			return Response({'error': 'Email parameter missing'}, status=400)
+	else:
+		return Response({'error': 'Invalid request method'}, status=405)

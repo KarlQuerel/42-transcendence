@@ -29,6 +29,12 @@ services:
     depends_on:
       - profile
       - dashboard
+      - database
+    # command: >
+    #   sh -c "
+    #   chown -R www-data:www-data /usr/share/nginx/html/"
+    # volumes:
+    #   - frontend:/usr/share/nginx/html/
 
 
   profile:
@@ -84,7 +90,6 @@ services:
       - database
     env_file:
       - .env
-
 networks:
   transcendance:
     driver: bridge
@@ -92,3 +97,9 @@ networks:
 volumes:
   postgres_data:
     driver: local
+  frontend:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './nginx/frontend/'

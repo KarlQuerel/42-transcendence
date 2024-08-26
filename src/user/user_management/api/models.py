@@ -15,8 +15,8 @@ class CustomUser(AbstractUser):
     avatar = models.ImageField(blank=True, upload_to='avatars/')
     is_online = models.BooleanField(default=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
-    # is_2fa = models.BooleanField(default=False)
-	
+    is_2fa = models.BooleanField(default=False)
+
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='customuser_set',
@@ -37,7 +37,7 @@ class CustomUser(AbstractUser):
 @receiver(pre_save, sender=CustomUser)
 def set_default_avatar(sender, instance, **kwargs):
 	if not instance.avatar:
-		default_avatar_path = os.path.join(settings.BASE_DIR, 'static', 'avatar', 'default.png')
+		default_avatar_path = os.path.join(settings.API_DIR, 'static', 'avatars', 'default.png')
 		with open(default_avatar_path, 'rb') as f:
 			default_avatar = File(f)
 			var = instance.avatar.save('default.png', default_avatar, save=False)
