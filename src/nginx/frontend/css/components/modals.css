@@ -1,0 +1,20 @@
+/***********************************************
+						MODALS
+***********************************************/
+.modal-header
+{
+	background-color: #00ff00;
+	color: #ffffff;
+}
+
+.modal-body
+{
+	background-color: #f8f9fa;
+	color: #343a40;
+}
+
+.modal-footer
+{
+	background-color: #6c757d;
+	color: #ffffff;
+}

@@ -23,51 +23,41 @@
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* test card */
-/* Customizing the card */
-.card {
-    background-color: #f0f0f0;
-    border-color: #00ff00;
-}
-
-/* Customizing the card body */
-.card-body {
-    background-color: #e0ffe0; /* Light green background */
-    color: #000; /* Black text */
-}
-
 
 /* test fleeing button */
 
 /* Floating button */
-.float-button {
-    position: fixed;
-    bottom: 20px; /* Adjust as needed */
-    right: 20px; /* Adjust as needed */
-    z-index: 1000; /* Ensure it stays on top of other content */
-    border-radius: 50%;
-    padding: 10px 20px; /* Add padding to make the button visible */
-    background-color: #007bff; /* Default background color */
-    color: #fff; /* Text color */
-    font-size: 16px; /* Font size */
-    text-align: center; /* Center text */
-    display: flex; /* Flex display to center content */
-    align-items: center; /* Vertically center content */
-    justify-content: center; /* Horizontally center content */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s, transform 0.3s;
-    border: none; /* Remove default button border */
-    text-decoration: none; /* Remove underline from link */
+.float-button
+{
+	position: fixed;
+	bottom: 20px; /* Adjust as needed */
+	right: 20px; /* Adjust as needed */
+	z-index: 1000; /* Ensure it stays on top of other content */
+	border-radius: 50%;
+	padding: 10px 20px; /* Add padding to make the button visible */
+	background-color: #007bff; /* Default background color */
+	color: #fff; /* Text color */
+	font-size: 16px; /* Font size */
+	text-align: center; /* Center text */
+	display: flex; /* Flex display to center content */
+	align-items: center; /* Vertically center content */
+	justify-content: center; /* Horizontally center content */
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	transition: background-color 0.3s, transform 0.3s;
+	border: none; /* Remove default button border */
+	text-decoration: none; /* Remove underline from link */
 }
 
 /* Hover effect */
-.float-button:hover {
-    background-color: #0056b3; /* Darker background on hover */
-    transform: scale(1.1); /* Slightly enlarge the button */
+.float-button:hover
+{
+	background-color: #0056b3; /* Darker background on hover */
+	transform: scale(1.1); /* Slightly enlarge the button */
 }
 
 /* Floating button icon */
-.float-button i {
-    font-size: 1.5rem; /* Adjust icon size */
-    margin-right: 8px; /* Space between icon and text */
+.float-button i
+{
+	font-size: 1.5rem; /* Adjust icon size */
+	margin-right: 8px; /* Space between icon and text */
 }

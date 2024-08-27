@@ -129,11 +129,14 @@ document.addEventListener("DOMContentLoaded", () =>
 {
 	document.body.addEventListener("click", (e) =>
 	{
-		// Ensure the link is of type <a>
-		if (e.target.matches("a[data-link]"))
+		// Find the nearest anchor tag if the clicked element is nested inside one
+		const link = e.target.closest("a[data-link]");
+		
+		if (link)
 		{
 			e.preventDefault();
-			const href = e.target.getAttribute('href');
+			const href = link.getAttribute('href');
+			console.log(`Navigating to ${href}`);
 			navigateTo(href);
 		}
 	});
