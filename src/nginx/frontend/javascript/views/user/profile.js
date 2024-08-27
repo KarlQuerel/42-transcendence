@@ -50,8 +50,8 @@ export default function renderProfile()
 // });
 
 /*** Initialization Function ***/
-export function initializeProfile() {
-	
+export function initializeProfile()
+{
     console.log("1. Calling loadUserData");
     loadUserData();
     console.log("2. Calling loadFriendsList");
@@ -61,52 +61,105 @@ export function initializeProfile() {
 }
 
 
-
-
-function loadUserData()
+async function loadUserData()
 {
-    console.log("API call to fetch user data");
     const token = localStorage.getItem('access_token');
-    fetch('/api/profile/', {
+    let response = await fetch('/api/profile/', {
         method: 'GET',
         headers:
         {
             'Authorization': `Bearer ${token}`,
         },
-    })
-    .then(response => {
-        if (response.status === 401) {
-            return refreshToken().then(newToken => {
-                return fetch('/api/profile/', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${newToken}`,
-                    },
-                });
-            });
-        }
-        return response;
-    })
-    .then(response =>
+    });
+
+    if (response.status === 401)
     {
-        console.log("Check si la reponse is okay");
-        if (!response.ok)
-        {
-            throw new Error('Network response was not ok');
-        }
-        console.log("NTM");
-        return response.json();
-    })
-    .then(userData =>
+        const newToken = await refreshToken();
+        localStorage.setItem('access_token', newToken); // Update the stored token
+        response = await fetch('/api/profile/', { // Retry the original request
+            method: 'GET',
+            headers:
+            {
+                'Authorization': `Bearer ${newToken}`,
+            },
+        });
+    }
+
+    if (!response.ok)
     {
-        displayUserData(userData);
-    })
-    .catch(error => console.error('Error fetching user data:', error));
+        throw new Error('Network response was not ok');
+    }
+    return response.json().then(userData => displayUserData(userData));
 }
 
 
-function displayUserData(userData) {
-    if (!userData) {
+async function refreshToken()
+{
+    const refreshToken = localStorage.getItem('refresh_token');
+    let response = await fetch('/api/token/refresh/', {
+        method: 'POST',
+        headers:
+        {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok)
+    {
+        throw new Error('Token refresh failed');
+    }
+    const data = await response.json();
+    return data.access;
+}
+
+
+// function loadUserData()
+// {
+//     // console.log("API call to fetch user data");
+//     const token = localStorage.getItem('access_token');
+//     fetch('/api/profile/', {
+//         method: 'GET',
+//         headers:
+//         {
+//             'Authorization': `Bearer ${token}`,
+//         },
+//     })
+//     .then(response => {
+//         if (response.status === 401) {
+//             return refreshToken().then(newToken => {
+//                 return fetch('/api/profile/', {
+//                     method: 'GET',
+//                     headers: {
+//                         'Authorization': `Bearer ${newToken}`,
+//                     },
+//                 });
+//             });
+//         }
+//         return response;
+//     })
+//     .then(response =>
+//     {
+//         console.log("Check si la reponse is okay");
+//         if (!response.ok)
+//         {
+//             throw new Error('Network response was not ok');
+//         }
+//         console.log("NTM");
+//         return response.json();
+//     })
+//     .then(userData =>
+//     {
+//         displayUserData(userData);
+//     })
+//     .catch(error => console.error('Error fetching user data:', error));
+// }
+
+
+function displayUserData(userData)
+{
+    if (!userData)
+    {
         document.querySelector('.profile-header h1').textContent = `Welcome, Player`;
         document.querySelector('.avatar').src = 'user_management/static/avatar/default.png'; // Specify a default avatar path
         document.querySelector('.status-online').textContent = 'Offline';
@@ -127,7 +180,7 @@ function displayUserData(userData) {
         <p><strong>Tournament Display Name:</strong> ${userData.display_name}</p>
         <p><strong>Email Address:</strong> ${userData.email}</p>
         `;
-    }
+}
 
 
 

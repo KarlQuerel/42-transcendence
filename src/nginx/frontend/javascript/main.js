@@ -12,6 +12,8 @@ import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboar
 import { renderTheTeam } from "./views/the_team/the_team.js";
 import renderPong, { gameLoop, initializePong } from "./components/pong/pong.js";
 import renderProfile, { initializeProfile } from "./views/user/profile.js";
+// TODO: changer le nom du js
+import renderLogin, { initializeLogin } from "./views/user/login.js";
 
 //		Footer		\\
 import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
@@ -72,6 +74,12 @@ const routes =
 	{
 		title: "Page Not Found",
 		render: renderError404
+	},
+	'/login':
+	{
+		title: "Log In",
+		render: renderLogin,
+		init: initializeLogin
 	}
 };
 

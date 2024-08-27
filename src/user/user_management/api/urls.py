@@ -4,9 +4,9 @@ from . import views
 
 urlpatterns = [
 	# path('', views.getData),
-	# path('add/', views.addUser),
+	path('addUser/', views.addUser, name='add-user'),
 	# path('', CustomUserAPIView.as_view()),
 	path('check-email/', views.check_existing_email, name='check-email'),
 	path('check-username/', views.check_existing_username, name='check-username'),
-    path('register/', views.addUser, name='register'),
+    path('login/', views.addUser, name='login'),
 ]

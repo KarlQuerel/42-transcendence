@@ -1,4 +1,4 @@
-function refreshToken() {
+export function refreshToken() {
     const refreshToken = localStorage.getItem('refresh_token');
     return fetch('/api/token/refresh/', {
         method: 'POST',

@@ -4,15 +4,11 @@ import base64
 
 class CustomUserSerializer(serializers.ModelSerializer):
     # avatar_data = serializers.SerializerMethodField()
-    # friends = serializers.PrimaryKeyRelatedField(many=True, queryset=CustomUser.objects.all())
+    display_name = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = CustomUser
-        # fields = ['username', 'display_name', 'email', 'avatar', 'avatar_data', 'is_online', 'is_2fa']
-        fields = ['username', 'password', 'email']
-        # extra_kwargs = {
-            # 'password': {'write_only': True},
-            # 'friends': {'read_only': True}
-        # }
+        fields = ['username', 'password', 'display_name', 'email']
 
 
     def get_avatar_data(self, obj):

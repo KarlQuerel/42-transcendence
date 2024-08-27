@@ -80,7 +80,7 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8100"
+      gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
       - "8080:8080"
       - "5432"

@@ -9,7 +9,6 @@ WORKDIR /app
 COPY initiation_files/django_conf/requirements.txt /app/initiation_files/django_conf/requirements.txt
 
 
-
 ########### ˇ Install the dependencies ˇ ###########
 
 #Install django and its dependencies
@@ -22,15 +21,7 @@ RUN	apt install libpq-dev -y
 RUN pip install channels_redis
 RUN pip install channels
 
-# Install Python Dotenv for managing environment variables
-RUN pip install python-dotenv==1.0.1
-
-# Install Faker for generating fake data
-# RUN pip install faker
-
-
 ########### ^ Install the dependencies ^ ###########
-
 
 
 # Copy the entrypoint script for PostgreSQL
@@ -40,8 +31,6 @@ RUN chmod 777 /etc/postgresql/15/main/pg_hba.conf
 # Copy the initiation file for PostgreSQL
 COPY ../initiation_files/postgresql_conf/init_database.sh /tmp/init_database.sh
 RUN chmod 777 /tmp/init_database.sh
-
-
 
 # Copy the rest of the application code
 COPY dashboard/dashboard/ /app
