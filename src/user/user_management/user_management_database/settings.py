@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'api',
     'channels',
-    'friends',
 ]
 
 ################# Pour les tokens JWT #################

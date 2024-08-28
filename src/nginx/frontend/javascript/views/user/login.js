@@ -5,7 +5,6 @@ export default function renderLogin()
 
         <h1>Log In</h1>
         <input type="text" id="username" placeholder="Enter username">
-        <input type="text" id="tournament_name" placeholder="Enter tournament name">
         <input type="text" id="password" placeholder="Enter password">
         <input type="text" id="email" placeholder="Enter email">      
         <button type="button">Submit</button>
@@ -27,12 +26,6 @@ export function initializeLogin() {
             let username_type = checkIdentifierType(username);
             console.log('Type:', username_type);
 
-            // tournament_name
-            let tournament_name = getIdentifier('tournament_name');
-            console.log('Tournament Name:', tournament_name.length);
-            let tournamentname_type = checkIdentifierType(tournament_name);
-            console.log('Type:', tournamentname_type);
-
             // password
             let password = getIdentifier('password');
             console.log('Password:', password.length);
@@ -45,7 +38,7 @@ export function initializeLogin() {
             let email_type = checkIdentifierType(email);
             console.log('Type:', email_type);
 
-			addNewUser(username, tournament_name, password, email);
+			addNewUser(username, password, email);
         });
     } else {
 		console.error('Button not found.');
@@ -88,14 +81,29 @@ function isValidEmail(identifier) {
 }
 
 
-function addNewUser(username, tournament_name, password, email) {
-	fetch('/addUser/', {
+function addNewUser(username, password, email) {
+	fetch('/api/users/addUser/', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ username, tournament_name, password, email}),
+		body: JSON.stringify({ username, password, email}),
 	})
+    .then(response =>
+    {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data =>
+    {
+        console.log('Success:', data);
+    })
+    .catch((error) =>
+    {
+        console.error('Error:', error);
+    });
 
 }
 

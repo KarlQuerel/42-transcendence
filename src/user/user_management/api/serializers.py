@@ -4,11 +4,10 @@ import base64
 
 class CustomUserSerializer(serializers.ModelSerializer):
     # avatar_data = serializers.SerializerMethodField()
-    display_name = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'display_name', 'email']
+        fields = ['username', 'password', 'email']
 
 
     def get_avatar_data(self, obj):
