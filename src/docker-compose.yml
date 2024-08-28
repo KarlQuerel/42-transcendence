@@ -43,7 +43,7 @@ services:
     container_name: User
     user: root
     volumes:
-      - .profile:/var/lib/postgresql/
+      - user:/app/
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -70,7 +70,7 @@ services:
   dashboard:
     container_name: Dashboard
     volumes:
-      - .dashboard:/var/lib/postgresql/
+      - dashboard:/app/
     build:
       context: .
       dockerfile: dashboard/Dockerfile
@@ -105,3 +105,15 @@ volumes:
       type: 'none'
       o: 'bind'
       device: './nginx/frontend/'
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './user/user_management/'
+  dashboard:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './dashboard/dashboard/'

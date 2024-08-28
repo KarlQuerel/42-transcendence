@@ -13,12 +13,12 @@ import json
 
 
 # Retrieves a list of all CustomUser instances, all users'data
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getData(request):
-	items = CustomUser.objects.all()
-	serializer = CustomUserSerializer(items, many=True)
-	return Response(serializer.data)
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def getData(request):
+# 	items = CustomUser.objects.all()
+# 	serializer = CustomUserSerializer(items, many=True)
+# 	return Response(serializer.data)
 
 
 #### Autre maniere de faire getData ####
@@ -70,29 +70,32 @@ class UserProfileView(generics.RetrieveAPIView):
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
+
+
+
 # class	CustomUserAPIView(APIView):
 
-@api_view(['GET'])
-def check_existing_username(request):
-	if request.method == 'GET':
-		username = request.GET.get('username', None)
-		if username:
-			exists = CustomUser.objects.filter(username=username).exists()
-			return Response({'exists': bool(exists)})
-		else:
-			return Response({'error': 'Username parameter missing'}, status=400)
-	else:
-		return Response({'error': 'Invalid request method'}, status=405)
+# @api_view(['GET'])
+# def check_existing_username(request):
+# 	if request.method == 'GET':
+# 		username = request.GET.get('username', None)
+# 		if username:
+# 			exists = CustomUser.objects.filter(username=username).exists()
+# 			return Response({'exists': bool(exists)})
+# 		else:
+# 			return Response({'error': 'Username parameter missing'}, status=400)
+# 	else:
+# 		return Response({'error': 'Invalid request method'}, status=405)
 
-@api_view(['GET'])
-def check_existing_email(request):
-	if request.method == 'GET':
-		email = request.GET.get('email', None)
-		if email:
-			exists = CustomUser.objects.filter(email=email).exists()
-			return Response({'exists': bool(exists)})
-		else:
-			return Response({'error': 'Email parameter missing'}, status=400)
-	else:
-		return Response({'error': 'Invalid request method'}, status=405)
+# @api_view(['GET'])
+# def check_existing_email(request):
+# 	if request.method == 'GET':
+# 		email = request.GET.get('email', None)
+# 		if email:
+# 			exists = CustomUser.objects.filter(email=email).exists()
+# 			return Response({'exists': bool(exists)})
+# 		else:
+# 			return Response({'error': 'Email parameter missing'}, status=400)
+# 	else:
+# 		return Response({'error': 'Invalid request method'}, status=405)
 	

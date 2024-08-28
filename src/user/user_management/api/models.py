@@ -11,9 +11,6 @@ class CustomUser(AbstractUser):
     username = models.CharField(blank=False, null=False, max_length=12, unique=True)
     display_name = models.CharField(max_length=12)
     email = models.EmailField(blank=False, null=False, unique=True)
-    # avatar = models.ImageField(blank=True, upload_to='avatars/')
-    # is_online = models.BooleanField(default=True)
-    # friends = models.ManyToManyField("CustomUser", blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',

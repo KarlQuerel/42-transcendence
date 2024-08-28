@@ -10,11 +10,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'email']
 
 
-    def get_avatar_data(self, obj):
-        if obj.avatar:
-            with open(obj.avatar.path, 'rb') as avatar_file:
-                return base64.b64encode(avatar_file.read()).decode('utf-8')
-        return None
+    # def get_avatar_data(self, obj):
+    #     if obj.avatar:
+    #         with open(obj.avatar.path, 'rb') as avatar_file:
+    #             return base64.b64encode(avatar_file.read()).decode('utf-8')
+    #     return None
 
 
     # def create(self, validated_data):

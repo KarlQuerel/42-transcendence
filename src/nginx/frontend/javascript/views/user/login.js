@@ -17,67 +17,91 @@ export default function renderLogin()
 /*** Initialization Function for Login Route ***/
 export function initializeLogin() {
     const button = document.querySelector('button[type="button"]');
-    if (button) {
-        button.addEventListener('click', function () {
+    if (button)
+    {
+        button.addEventListener('click', function ()
+        {
 
             // username
             let username = getIdentifier('username');
-            console.log('Username:', username.length);
             let username_type = checkIdentifierType(username);
-            console.log('Type:', username_type);
 
             // password
             let password = getIdentifier('password');
-            console.log('Password:', password.length);
             let password_type = checkIdentifierType(password);
-            console.log('Type:', password_type);
 
             // email
             let email = getIdentifier('email');
-            console.log('Email:', email.length);
             let email_type = checkIdentifierType(email);
-            console.log('Type:', email_type);
 
-			addNewUser(username, password, email);
+            if (username_type == 'error' || password_type == 'error' || email_type == 'error')
+            {
+                console.log('Error: bad username, password or email');
+                return;
+            }
+            else
+			    addNewUser(username, password, email);
+
         });
-    } else {
-		console.error('Button not found.');
     }
+    else
+		console.error('Button not found.');
 }
 
-function getIdentifier(str) {
+function getIdentifier(str)
+{
 	return document.getElementById(str).value;
 }
 
-function checkIdentifierType(identifier) {
-	if (isValidUsername(identifier) == true) {
+function checkIdentifierType(identifier)
+{
+	if (isValidUsername(identifier) == true)
 		return 'username';
-	}
-	else if (isValidEmail(identifier) == true) {
+	else if (isValidEmail(identifier) == true)
 		return 'email';
-	}
+    else if (isValidPassword(identifier) == true)
+		return 'password';
 	return 'error';
 }
 
-function isValidUsername(identifier) {
+function isValidUsername(username) {
 	const usernamePattern = /^[a-zA-Z0-9_-]+$/;
 
-	if (identifier.length > 12) {
+	if (username.length > 12) {
 		return false;
 	}
-	else if (usernamePattern.test(identifier) == false) {
+	else if (usernamePattern.test(username) == false) {
 		return false;
 	}
 	return true;
 }
 
-function isValidEmail(identifier) {
+function isValidEmail(email) {
 	const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	//add length checking
-	if (emailPattern.test(identifier) == false) {
+	if (emailPattern.test(email) == false) {
 		return false;
 	}
 	return true;
+}
+
+
+function isValidPassword(password)
+{
+	const minLength = 8;
+    const uppercasePattern = /[A-Z]/;
+    const lowercasePattern = /[a-z]/;
+    const digitPattern = /[0-9]/;
+
+    if (password.length < minLength)
+        return false;
+    if (!uppercasePattern.test(password))
+        return false;
+    if (!lowercasePattern.test(password))
+        return false;
+    if (!digitPattern.test(password))
+        return false;
+    return true;
 }
 
 

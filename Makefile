@@ -18,4 +18,19 @@ fclean : clean
 
 re : fclean all
 
-.PHONY: all clean fclean re
+logs:
+	cd src && docker-compose logs -f
+
+logs-nginx:
+	cd src && docker-compose logs -f nginx
+
+logs-profile:
+	cd src && docker-compose logs -f profile
+
+logs-dashboard:
+	cd src && docker-compose logs -f dashboard
+
+logs-database:
+	cd src && docker-compose logs -f database
+
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-dashboard logs-database
