@@ -1,0 +1,119 @@
+services:
+
+  database:
+    container_name: Database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - transcendance
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+
+
+  nginx:
+    container_name: Nginx
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - transcendance
+    depends_on:
+      - profile
+      - dashboard
+      - database
+    # command: >
+    #   sh -c "
+    #   chown -R www-data:www-data /usr/share/nginx/html/"
+    # volumes:
+    #   - frontend:/usr/share/nginx/html/
+
+
+  profile:
+    container_name: User
+    user: root
+    volumes:
+      - user:/app/
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    command: >
+      sh -c "
+      sleep 5 &&
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
+    expose:
+      - "8080:8080"
+      - "5432"
+    ports:
+      - "8200:8200"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+    env_file:
+      - .env
+
+
+  dashboard:
+    container_name: Dashboard
+    volumes:
+      - dashboard:/app/
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    command: >
+      sh -c "
+      sleep 8 &&
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
+    expose:
+      - "8080:8080"
+      - "5432"
+    ports:
+      - "8100:8100"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+    env_file:
+      - .env
+networks:
+  transcendance:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  frontend:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './nginx/frontend/'
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './user/user_management/'
+  dashboard:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './dashboard/dashboard/'
