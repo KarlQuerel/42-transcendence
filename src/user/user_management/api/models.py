@@ -9,23 +9,27 @@ import os
 
 class CustomUser(AbstractUser):
     username = models.CharField(blank=False, null=False, max_length=12, unique=True)
-    display_name = models.CharField(max_length=12)
     email = models.EmailField(blank=False, null=False, unique=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    # Override AbstractUser existing fields
+    groups = None
+    user_permissions = None
 
-    groups = models.ManyToManyField(
-        'auth.Group',
-        related_name='customuser_set',
-        blank=True,
-        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-        verbose_name='groups'
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        related_name='customuser_set',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions'
-    )
+
+    # groups = models.ManyToManyField(
+    #     'auth.Group',
+    #     related_name='customuser_set',
+    #     blank=True,
+    #     help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+    #     verbose_name='groups'
+    # )
+    # user_permissions = models.ManyToManyField(
+    #     'auth.Permission',
+    #     related_name='customuser_set',
+    #     blank=True,
+    #     help_text='Specific permissions for this user.',
+    #     verbose_name='user permissions'
+    # )
 
 
 
