@@ -1,4 +1,5 @@
 services:
+
   database:
     container_name: Database
     image: postgres:13
@@ -6,6 +7,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -14,6 +17,7 @@ services:
       - "5432:5432"
     env_file:
       - .env
+
 
   nginx:
     container_name: Nginx
@@ -29,12 +33,19 @@ services:
     depends_on:
       - profile
       - dashboard
+      - database
+    # command: >
+    #   sh -c "
+    #   chown -R www-data:www-data /usr/share/nginx/html/"
+    # volumes:
+    #   - frontend:/usr/share/nginx/html/
+
 
   profile:
     container_name: User
     user: root
     volumes:
-      - .profile:/var/lib/postgresql/
+      - user:/app/
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -44,9 +55,10 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8200"
+      gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
-      - "8200"
+      - "8080:8080"
+      - "5432"
     ports:
       - "8200:8200"
     networks:
@@ -56,10 +68,11 @@ services:
     env_file:
       - .env
 
+
   dashboard:
     container_name: Dashboard
     volumes:
-      - .dashboard:/var/lib/postgresql/
+      - dashboard:/app/
     build:
       context: .
       dockerfile: dashboard/Dockerfile
@@ -69,9 +82,10 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8100"
+      gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
-      - "8100"
+      - "8080:8080"
+      - "5432"
     ports:
       - "8100:8100"
     networks:
@@ -80,7 +94,6 @@ services:
       - database
     env_file:
       - .env
-
 networks:
   transcendance:
     driver: bridge
@@ -88,3 +101,21 @@ networks:
 volumes:
   postgres_data:
     driver: local
+  frontend:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './nginx/frontend/'
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './user/user_management/'
+  dashboard:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './dashboard/dashboard/'
