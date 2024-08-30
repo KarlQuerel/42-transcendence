@@ -367,6 +367,13 @@ document.addEventListener("keyup", keyUpHandler);
 
 function keyDownHandler(e)
 {
+	
+	if (!canvas)
+	{
+		console.error("Canvas element not initialized!");
+		return ;
+	}
+	
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
