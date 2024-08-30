@@ -26,6 +26,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
     networks:
       - transcendance
     depends_on:
