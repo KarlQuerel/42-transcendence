@@ -3,7 +3,7 @@
 ***********************************************/
 .navbar
 {
-	background-color: transparent;
+	background-color: black;
 	border-bottom: 2px solid #00ff00;
 }
 
@@ -18,6 +18,14 @@
 	background-color: transparent;
 }
 
+.navbar.bg-dark
+{
+	--bs-dark-rgb: 0, 0, 0;
+	--bs-bg-opacity: 1;
+}
+
+
+/*	Navbar buttons	*/
 .custom-btn
 {
 	text-transform: uppercase;
@@ -31,8 +39,21 @@
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
+	box-shadow: none;
 }
 
+.custom-btn:focus,
+.custom-btn:active
+{
+	box-shadow: none;
+	background-color: transparent !important;
+}
+
+.custom-btn:hover
+{
+	background-color: transparent;
+	border-color: transparent;
+}
 
 .custom-btn:hover .btn-flip-side
 {

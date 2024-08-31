@@ -1,7 +1,7 @@
 /***********************************************
 					BODY
 ***********************************************/
-body
+.body-bg
 {
 	font-family: 'Press Start 2P', cursive;
 	margin: 0;
@@ -11,9 +11,16 @@ body
 	font-size: 0.7em;
 	display: flex;
 	flex-direction: column;
-	/* TODO: add a min-width with pong canvas */
 	min-width: 800px;
 	min-height: 600px;
 	padding-top: 20px; /* Room for header */
 	padding-bottom: 60px; /* Room for footer */
+}
+
+.main-content
+{
+	background-color: #1a1a1a;
+	min-height: calc(100vh - 100px);
+	padding: 20px;
+	color: #fff;
 }

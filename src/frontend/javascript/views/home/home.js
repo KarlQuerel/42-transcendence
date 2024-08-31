@@ -1,64 +1,109 @@
 /***********************************************\
+-				WORK-IN-PROGRESS				-
+\***********************************************/
+
+/*
+TODO:
+- Profile on the side - offcanvas
+- What is Pong? - card
+- Fake reviews - carrousel
+*/
+
+/*
+<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+	Profile
+</button>
+
+<!--	USER PROFILE OFFCANVAS	-->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+	<div class="offcanvas-header">
+		<h5 class="offcanvas-title" id="offcanvasExampleLabel">
+			Your Profile
+		</h5>
+		<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	</div>
+	<div class="offcanvas-body">
+		<div>
+			Maybe a profile page here ? Or options ?
+		</div>
+		<div class="dropdown mt-3">
+		<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+			Click me
+		</button>
+		<ul class="dropdown-menu">
+			<li><a class="dropdown-item" href="/pong">Pong</a></li>
+			<li><a class="dropdown-item" href="#">Another action</a></li>
+			<li><a class="dropdown-item" href="#">Something else here</a></li>
+		</ul>
+		</div>
+	</div>
+</div>
+
+<!--	PONG EXPLANATION	-->
+<p class="d-inline-flex gap-1">
+		<a class="btn btn-primary button-link" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+			What is Pong?
+		</a>
+		<button class="btn btn-primary button-link" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+			Why Pong?
+		</button>
+</p>
+<div class="row">
+	<div class="col">
+		<div class="collapse multi-collapse" id="multiCollapseExample1">
+			<div class="card card-body">
+				Pong is a nice game. You should try it.
+			</div>
+		</div>
+	</div>
+	<div class="col">
+		<div class="collapse multi-collapse" id="multiCollapseExample2">
+			<div class="card card-body">
+				Because why not.
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Carousel at the bottom of the page -->
+<div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+			<figure class="text-end">
+				<!---
+				<img src="../../../assets/images/home/1.jpeg" class"d-block w-100 img-fluid">
+				---->
+				<blockquote class="blockquote">
+					<p>"This website changed my life!"</p>
+				</blockquote>
+				<figcaption class="blockquote-footer">
+					Agent Tango - <cite title="Source Title">Actor at Tardif Productions</cite>
+				</figcaption>
+			</figure>
+		</div>
+		<!-- Add more carousel items as needed -->
+	</div>
+	<a class="carousel-control-prev" href="#reviewCarousel" role="button" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+	</a>
+	<a class="carousel-control-next" href="#reviewCarousel" role="button" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+	</a>
+</div>
+
+*/
+
+
+/***********************************************\
 -				RENDERING						-
 \***********************************************/
 export default function renderHome()
 {
 	document.getElementById('app').innerHTML = `
 		
-	<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-		Profile
-	</button>
 
-	<!--	USER PROFILE OFFCANVAS	-->
-	<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasExampleLabel">
-				Your Profile
-			</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		</div>
-		<div class="offcanvas-body">
-			<div>
-				Maybe a profile page here ? Or options ?
-			</div>
-			<div class="dropdown mt-3">
-			<button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-				Click me
-			</button>
-			<ul class="dropdown-menu">
-				<li><a class="dropdown-item" href="/pong">Pong</a></li>
-				<li><a class="dropdown-item" href="#">Another action</a></li>
-				<li><a class="dropdown-item" href="#">Something else here</a></li>
-			</ul>
-			</div>
-		</div>
-	</div>
-
-	<!--	PONG EXPLANATION	-->
-	<p class="d-inline-flex gap-1">
-			<a class="btn btn-primary button-link" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
-				What is Pong?
-			</a>
-			<button class="btn btn-primary button-link" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
-				Why Pong?
-			</button>
-	</p>
-	<div class="row">
-		<div class="col">
-			<div class="collapse multi-collapse" id="multiCollapseExample1">
-				<div class="card card-body">
-					Pong is a nice game. You should try it.
-				</div>
-			</div>
-		</div>
-		<div class="col">
-			<div class="collapse multi-collapse" id="multiCollapseExample2">
-				<div class="card card-body">
-					Because why not.
-				</div>
-			</div>
-		</div>
-	</div>
 <!-------------------------------------
 ---	WEB
 - (MAJOR) Use a Framework as backend
@@ -88,7 +133,7 @@ export default function renderHome()
 
 	<!--	BUTTON MODULES	-->
 	<button type="button" class="btn btn-primary-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-		Modules
+		Les Modules de Dudule
 	</button>
 
 	<!--	MODAL MODULES	-->
@@ -417,35 +462,6 @@ export default function renderHome()
 </div>
 
 
-
-<!-- Carousel at the bottom of the page -->
-<div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
-	<div class="carousel-inner">
-		<div class="carousel-item active">
-			<figure class="text-end">
-				<!---
-				<img src="../../../assets/images/home/1.jpeg" class"d-block w-100 img-fluid">
-				---->
-				<blockquote class="blockquote">
-					<p>"This website changed my life!"</p>
-				</blockquote>
-				<figcaption class="blockquote-footer">
-					Agent Tango - <cite title="Source Title">Actor at Tardif Productions</cite>
-				</figcaption>
-			</figure>
-		</div>
-		<!-- Add more carousel items as needed -->
-	</div>
-	<a class="carousel-control-prev" href="#reviewCarousel" role="button" data-bs-slide="prev">
-		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Previous</span>
-	</a>
-	<a class="carousel-control-next" href="#reviewCarousel" role="button" data-bs-slide="next">
-		<span class="carousel-control-next-icon" aria-hidden="true"></span>
-		<span class="visually-hidden">Next</span>
-	</a>
-</div>
-
 	`;
 	
 	// Attach click event listeners to navigation frames
@@ -463,300 +479,3 @@ export default function renderHome()
 // 	<i class="bi bi-envelope"></i> Contact Us
 // </a>
 // */
-
-// export default function renderHome() {
-//     const appElement = document.getElementById('app');
-
-//     // Clear any existing content
-//     appElement.innerHTML = '';
-
-//     // Create Profile Button
-//     const profileButton = document.createElement('button');
-//     profileButton.className = 'btn btn-primary';
-//     profileButton.type = 'button';
-//     profileButton.setAttribute('data-bs-toggle', 'offcanvas');
-//     profileButton.setAttribute('data-bs-target', '#offcanvasExample');
-//     profileButton.setAttribute('aria-controls', 'offcanvasExample');
-//     profileButton.textContent = 'Profile';
-//     appElement.appendChild(profileButton);
-
-//     // Create Offcanvas Component
-//     const offcanvas = document.createElement('div');
-//     offcanvas.className = 'offcanvas offcanvas-start';
-//     offcanvas.id = 'offcanvasExample';
-//     offcanvas.setAttribute('aria-labelledby', 'offcanvasExampleLabel');
-
-//     const offcanvasHeader = document.createElement('div');
-//     offcanvasHeader.className = 'offcanvas-header';
-
-//     const offcanvasTitle = document.createElement('h5');
-//     offcanvasTitle.className = 'offcanvas-title';
-//     offcanvasTitle.id = 'offcanvasExampleLabel';
-//     offcanvasTitle.textContent = 'Your Profile';
-
-//     const closeButton = document.createElement('button');
-//     closeButton.type = 'button';
-//     closeButton.className = 'btn-close';
-//     closeButton.setAttribute('data-bs-dismiss', 'offcanvas');
-//     closeButton.setAttribute('aria-label', 'Close');
-
-//     offcanvasHeader.appendChild(offcanvasTitle);
-//     offcanvasHeader.appendChild(closeButton);
-
-//     const offcanvasBody = document.createElement('div');
-//     offcanvasBody.className = 'offcanvas-body';
-
-//     const profileContent = document.createElement('div');
-//     profileContent.textContent = 'Maybe a profile page here? Or options?';
-
-//     const dropdown = document.createElement('div');
-//     dropdown.className = 'dropdown mt-3';
-
-//     const dropdownButton = document.createElement('button');
-//     dropdownButton.className = 'btn btn-secondary dropdown-toggle';
-//     dropdownButton.type = 'button';
-//     dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
-//     dropdownButton.textContent = 'Click me';
-
-//     const dropdownMenu = document.createElement('ul');
-//     dropdownMenu.className = 'dropdown-menu';
-
-//     const dropdownItems = [
-//         { text: 'Pong', href: '/pong' },
-//         { text: 'Another action', href: '#' },
-//         { text: 'Something else here', href: '#' }
-//     ];
-
-//     dropdownItems.forEach(item => {
-//         const li = document.createElement('li');
-//         const a = document.createElement('a');
-//         a.className = 'dropdown-item';
-//         a.href = item.href;
-//         a.textContent = item.text;
-//         li.appendChild(a);
-//         dropdownMenu.appendChild(li);
-//     });
-
-//     dropdown.appendChild(dropdownButton);
-//     dropdown.appendChild(dropdownMenu);
-
-//     offcanvasBody.appendChild(profileContent);
-//     offcanvasBody.appendChild(dropdown);
-
-//     offcanvas.appendChild(offcanvasHeader);
-//     offcanvas.appendChild(offcanvasBody);
-
-//     appElement.appendChild(offcanvas);
-
-//     // Create Pong Explanation Section
-//     const explanationContainer = document.createElement('div');
-//     explanationContainer.className = 'd-inline-flex gap-1';
-
-//     const pongButton = document.createElement('a');
-//     pongButton.className = 'btn btn-primary button-link';
-//     pongButton.href = '#multiCollapseExample1';
-//     pongButton.setAttribute('data-bs-toggle', 'collapse');
-//     pongButton.setAttribute('role', 'button');
-//     pongButton.setAttribute('aria-expanded', 'false');
-//     pongButton.setAttribute('aria-controls', 'multiCollapseExample1');
-//     pongButton.textContent = 'What is Pong?';
-
-//     const whyPongButton = document.createElement('button');
-//     whyPongButton.className = 'btn btn-primary button-link';
-//     whyPongButton.type = 'button';
-//     whyPongButton.setAttribute('data-bs-toggle', 'collapse');
-//     whyPongButton.setAttribute('data-bs-target', '#multiCollapseExample2');
-//     whyPongButton.setAttribute('aria-expanded', 'false');
-//     whyPongButton.setAttribute('aria-controls', 'multiCollapseExample2');
-//     whyPongButton.textContent = 'Why Pong?';
-
-//     explanationContainer.appendChild(pongButton);
-//     explanationContainer.appendChild(whyPongButton);
-
-//     const row = document.createElement('div');
-//     row.className = 'row';
-
-//     const col1 = document.createElement('div');
-//     col1.className = 'col';
-
-//     const collapse1 = document.createElement('div');
-//     collapse1.className = 'collapse multi-collapse';
-//     collapse1.id = 'multiCollapseExample1';
-
-//     const card1 = document.createElement('div');
-//     card1.className = 'card card-body';
-//     card1.textContent = 'Pong is a nice game. You should try it.';
-
-//     collapse1.appendChild(card1);
-//     col1.appendChild(collapse1);
-//     row.appendChild(col1);
-
-//     const col2 = document.createElement('div');
-//     col2.className = 'col';
-
-//     const collapse2 = document.createElement('div');
-//     collapse2.className = 'collapse multi-collapse';
-//     collapse2.id = 'multiCollapseExample2';
-
-//     const card2 = document.createElement('div');
-//     card2.className = 'card card-body';
-//     card2.textContent = 'Because why not.';
-
-//     collapse2.appendChild(card2);
-//     col2.appendChild(collapse2);
-//     row.appendChild(col2);
-
-//     appElement.appendChild(explanationContainer);
-//     appElement.appendChild(row);
-
-//     // Create Modal Modules
-//     const modal = document.createElement('div');
-//     modal.className = 'modal fade';
-//     modal.id = 'staticBackdrop';
-//     modal.setAttribute('data-bs-backdrop', 'static');
-//     modal.setAttribute('data-bs-keyboard', 'false');
-//     modal.tabIndex = -1;
-//     modal.setAttribute('aria-labelledby', 'staticBackdropLabel');
-//     modal.setAttribute('aria-hidden', 'true');
-
-//     const modalDialog = document.createElement('div');
-//     modalDialog.className = 'modal-dialog modal-xl';
-
-//     const modalContent = document.createElement('div');
-//     modalContent.className = 'modal-content';
-
-//     const modalHeader = document.createElement('div');
-//     modalHeader.className = 'modal-header';
-
-//     const modalTitle = document.createElement('h5');
-//     modalTitle.className = 'modal-title';
-//     modalTitle.id = 'staticBackdropLabel';
-//     modalTitle.textContent = 'What we did';
-
-//     const modalCloseButton = document.createElement('button');
-//     modalCloseButton.type = 'button';
-//     modalCloseButton.className = 'btn btn-secondary';
-//     modalCloseButton.setAttribute('data-bs-dismiss', 'modal');
-//     modalCloseButton.textContent = 'Get Me Out Of Here';
-
-//     modalHeader.appendChild(modalTitle);
-//     modalHeader.appendChild(modalCloseButton);
-
-//     const modalBody = document.createElement('div');
-//     modalBody.className = 'modal-body';
-
-//     const accordion = document.createElement('div');
-//     accordion.className = 'accordion accordion-flush';
-//     accordion.id = 'MainAccordion';
-
-//     const sections = [
-//         {
-//             id: 'Web',
-//             title: 'Web',
-//             items: [
-//                 {
-//                     id: 'Web-1',
-//                     title: 'Use a Framework as backend',
-//                     badge: 'MAJOR',
-//                     content: 'We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.'
-//                 },
-//                 {
-//                     id: 'Web-2',
-//                     title: 'Use a front-end framework or toolkit',
-//                     badge: 'MINOR',
-//                     content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
-//                 },
-//                 {
-//                     id: 'Web-3',
-//                     title: 'Use a database for the backend',
-//                     badge: 'MINOR',
-//                     content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
-//                 }
-//             ]
-//         },
-//         // Add other sections similarly...
-//     ];
-
-//     sections.forEach(section => {
-//         const accordionItem = document.createElement('div');
-//         accordionItem.className = 'accordion-item';
-
-//         const accordionHeader = document.createElement('h2');
-//         accordionHeader.className = 'accordion-header';
-//         accordionHeader.id = section.id + 'Accordion';
-
-//         const accordionButton = document.createElement('button');
-//         accordionButton.className = 'accordion-button';
-//         accordionButton.type = 'button';
-//         accordionButton.setAttribute('data-bs-toggle', 'collapse');
-//         accordionButton.setAttribute('data-bs-target', `#${section.id}Collapse`);
-//         accordionButton.setAttribute('aria-expanded', 'true');
-//         accordionButton.setAttribute('aria-controls', `${section.id}Collapse`);
-//         accordionButton.textContent = section.title;
-
-//         accordionHeader.appendChild(accordionButton);
-//         accordionItem.appendChild(accordionHeader);
-
-//         const accordionCollapse = document.createElement('div');
-//         accordionCollapse.className = 'accordion-collapse collapse show';
-//         accordionCollapse.id = `${section.id}Collapse`;
-//         accordionCollapse.setAttribute('aria-labelledby', `${section.id}Accordion`);
-//         accordionCollapse.setAttribute('data-bs-parent', '#MainAccordion');
-
-//         const accordionBody = document.createElement('div');
-//         accordionBody.className = 'accordion-body';
-
-//         section.items.forEach(item => {
-//             const itemDiv = document.createElement('div');
-//             itemDiv.className = 'd-flex justify-content-between';
-
-//             const itemTitle = document.createElement('span');
-//             itemTitle.className = 'd-inline-block';
-//             itemTitle.innerHTML = item.title;
-
-//             const itemBadge = document.createElement('span');
-//             itemBadge.className = `badge ${item.badge === 'MAJOR' ? 'bg-danger' : 'bg-warning'}`;
-//             itemBadge.textContent = item.badge;
-
-//             itemDiv.appendChild(itemTitle);
-//             itemDiv.appendChild(itemBadge);
-
-//             const itemContent = document.createElement('div');
-//             itemContent.innerHTML = item.content;
-
-//             accordionBody.appendChild(itemDiv);
-//             accordionBody.appendChild(itemContent);
-//         });
-
-//         accordionCollapse.appendChild(accordionBody);
-//         accordionItem.appendChild(accordionCollapse);
-
-//         accordion.appendChild(accordionItem);
-//     });
-
-//     modalBody.appendChild(accordion);
-
-//     const modalFooter = document.createElement('div');
-//     modalFooter.className = 'modal-footer';
-
-//     const modalSaveButton = document.createElement('button');
-//     modalSaveButton.type = 'button';
-//     modalSaveButton.className = 'btn btn-primary';
-//     modalSaveButton.textContent = 'Save changes';
-
-//     modalFooter.appendChild(modalSaveButton);
-
-//     modalContent.appendChild(modalHeader);
-//     modalContent.appendChild(modalBody);
-//     modalContent.appendChild(modalFooter);
-
-//     modalDialog.appendChild(modalContent);
-//     modal.appendChild(modalDialog);
-
-//     // Append modal to the app element
-//     appElement.appendChild(modal);
-
-//     // Initialize Bootstrap Modals if needed
-//     const modalElement = new bootstrap.Modal(modal);
-//     modalElement.show();
-// }
