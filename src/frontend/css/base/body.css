@@ -13,8 +13,8 @@
 	flex-direction: column;
 	min-width: 800px;
 	min-height: 600px;
-	padding-top: 20px; /* Room for header */
-	padding-bottom: 60px; /* Room for footer */
+	padding-top: 56px;
+	padding-bottom: 60px;
 }
 
 .main-content

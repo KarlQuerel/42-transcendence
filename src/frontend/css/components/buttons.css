@@ -5,59 +5,88 @@
 {
 	padding: 10px 20px;
 	font-size: 18px;
-	background-color: #00ff00; /* Green background */
-	color: #000; /* Black text */
-	border: 2px solid rgb(255, 255, 255);
-	border-radius: 10px;
+	background-color: #00ff00;
+	color: #000;
+	border: 5px solid transparent;
+	border-radius: 15px;
 	cursor: pointer;
-	text-decoration: none; /* Remove underline from links */
-	display: inline-block; /* Ensure it behaves like a block element */
+	text-decoration: none;
+	display: inline-block;
 	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+}
+
+/* Animation for the border */
+@keyframes borderAnimation
+{
+	0% {
+		border-color: #6eec83a1; /* Start color */
+	}
+	50% {
+		border-color: #00027f; /* Mid color */
+	}
+	100% {
+		border-color: #6eec83a1; /* End color */
+	}
 }
 
 .button-link:hover
 {
-	background-color: #6eec83a1; /* Darker background on hover */
-	color: #fff; /* White text on hover */
-	transform: scale(1.05) rotate(-2deg);
+	background-color: #6eec83a1;
+	color: #fff;
+	transform: scale(1.075);
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	border-color: #00ff00;
+	animation: borderAnimation 1s infinite;
 }
 
 
-/* test fleeing button */
+/*		Bootstrap tuning					*/
+.btn-primary
+{
+	--bs-btn-border-color: none;
+	--bs-btn-active-border-color: none;
+	--bs-btn-active-bg: #1a911a;
+	--bs-btn-hover-border-color: none;
+}
 
-/* Floating button */
+
+
+/* 
+	- TO DO: LATER
+
+test fleeing button
+*/
+/*
 .float-button
 {
 	position: fixed;
-	bottom: 20px; /* Adjust as needed */
-	right: 20px; /* Adjust as needed */
-	z-index: 1000; /* Ensure it stays on top of other content */
+	bottom: 20px;
+	right: 20px;
+	z-index: 1000;
 	border-radius: 50%;
-	padding: 10px 20px; /* Add padding to make the button visible */
-	background-color: #007bff; /* Default background color */
-	color: #fff; /* Text color */
-	font-size: 16px; /* Font size */
-	text-align: center; /* Center text */
-	display: flex; /* Flex display to center content */
-	align-items: center; /* Vertically center content */
-	justify-content: center; /* Horizontally center content */
+	padding: 10px 20px;
+	background-color: #007bff;
+	color: #fff;
+	font-size: 16px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 	transition: background-color 0.3s, transform 0.3s;
-	border: none; /* Remove default button border */
-	text-decoration: none; /* Remove underline from link */
+	border: none;
+	text-decoration: none;
 }
 
-/* Hover effect */
 .float-button:hover
 {
-	background-color: #0056b3; /* Darker background on hover */
-	transform: scale(1.1); /* Slightly enlarge the button */
+	background-color: #0056b3;
+	transform: scale(1.1);
 }
 
-/* Floating button icon */
 .float-button i
 {
-	font-size: 1.5rem; /* Adjust icon size */
-	margin-right: 8px; /* Space between icon and text */
+	font-size: 1.5rem;
+	margin-right: 8px;
 }
+*/
