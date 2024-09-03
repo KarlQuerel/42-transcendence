@@ -13,8 +13,6 @@ from "./views/home/home.js";
 import renderPong, { cleanUpPong, initializePong }
 from "./components/pong/pong.js";
 
-import renderLogin, { initializeLogin }
-from "./views/user/login.js";
 
 /***			TO DETERMINE				***/
 import { renderDashboard, initializeDashboard }
@@ -23,8 +21,15 @@ from "./views/dashboard/dashboard.js";
 import { renderTheTeam }
 from "./views/the_team/the_team.js";
 
+/***			User						***/
+import renderSignIn
+from "./views/user/signin.js";
+
 import renderProfile, { initializeProfile }
 from "./views/user/profile.js";
+
+import renderLogin, { initializeLogin }
+from "./views/user/login.js";
 
 /***			Footer						***/
 import renderPrivacyPolicy
@@ -92,6 +97,11 @@ const routes =
 		title: "Log In",
 		render: renderLogin,
 		init: initializeLogin
+	},
+	'/sign-in':
+	{
+		title: "Sign In",
+		render: renderSignIn
 	}
 };
 
