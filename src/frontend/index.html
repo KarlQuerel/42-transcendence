@@ -55,56 +55,68 @@
 -> This is where you will add your .js files
 ------------------------------------------------------------------------------>
 
-<body>
+<body class ="body-bg">
 
-	<!------	NAVIGATION BAR		------>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top py-2">
-	<div class="container">
-		<!--	Home	-->
-		<a class="navbar-brand" href="/home" data-link>
-			<div class="btn btn-primary custom-btn">
-				<div class="btn-flip-side btn-flip-side--green">
-					<span>
-						<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
-							<img src="assets/images/navbar/home_button.gif" alt="Home" class="img-fluid">
-						</div>
-					</span>
-					<span class="d-none d-lg-block">Home</span>
-				</div>
-			</div>
-		</a>
-		<!--	Play Pong	-->
-		<a href="/pong" data-link>
-		<div class="btn btn-primary custom-btn">
-			<div class="btn-flip-side btn-flip-side--green">
-				<span>
-					<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
-						<img src="assets/images/navbar/pong_button.gif" alt="Pong" class="img-fluid">
-					</div>
-				</span>
-				<span>Pong</span>
+	<!-- NAVIGATION BAR -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top py-2">
+		<div class="container d-flex align-items-center">
+			<!-- Burger Button -->
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+				<ul class="navbar-nav d-flex flex-row justify-content-center w-100">
+					<!-- Home -->
+					<li class="nav-item">
+						<a href="/home" data-link class="nav-link">
+							<div class="btn btn-primary custom-btn">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/home_button.gif" alt="Home" class="img-fluid navbar-image">
+										</div>
+									</span>
+									<span>Home</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<!-- Pong -->
+					<li class="nav-item">
+						<a href="/pong" data-link class="nav-link">
+							<div class="btn btn-primary custom-btn">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/pong_button.gif" alt="Pong" class="img-fluid navbar-image">
+										</div>
+									</span>
+									<span>Pong</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<!-- Log In -->
+					<li class="nav-item">
+						<a href="/sign-in" data-link class="nav-link">
+							<div class="btn btn-primary custom-btn">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/login_button.gif" alt="Log In" class="img-fluid">
+										</div>
+									</span>
+									<span>Log In               OR                     Sign Up</span>
+								</div>
+							</div>
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
-		</a>
-		<!--	Log In / Sign Up	-->
-		<a href="/login" data-link>
-		<div class="btn btn-primary custom-btn">
-			<div class="btn-flip-side btn-flip-side--green">
-				<span>
-					<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
-						<img src="assets/images/navbar/login_button.gif" alt="Log In" class="img-fluid">
-					</div>
-				</span>
-				<span>Log In</span>
-			</div>
-		</div>
-		</a>
-		<!-- <a class="button-link" href="/template" data-link>How to add my .js files?</a> -->
-		<!-- <a class="nav-link" href="/dashboard" data-link>Test Dashboard</a> -->
-		<!-- <a class="nav-link" href="/login" data-link>Log in</a> -->
 	</nav>
 
-	<main id="app"></main>
+	<main id="app" class="main-content"></main>
 
 	<!-----------------------------------------------------------------------------
 									FOOTER:
@@ -112,10 +124,10 @@
 ------------------------------------------------------------------------------>
 <footer>
 	<div class="footer-content">
-		<p> 🔥 &copy; 2024 Django Déchainé 🔥 </p>
+		<p> 👾 &copy; 2024 Django Déchainé 👾 </p>
 		<p>
 			<a class="nav-link" href="/privacy-policy" data-link>Privacy Policy</a>
-			<a class="nav-link" href="/terms-of-service" data-link>Terms of Service</a>
+			<a class="nav-link" href="/terms-of-service" data-link>PAGE TEST</a>
 		</p>
 	</div>
 </footer>

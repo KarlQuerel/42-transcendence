@@ -2,8 +2,23 @@ export default function renderTermsOfService()
 {
 	return `
 	<h1>Terms of Service for Pong Game</h1>
-	<img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHd1ZzJsMHM4ZDF5dWo1eTRtZml1dnpyN2g0OWh3MHcwamRreTJ1ciZlcD12MV9naWZzX3NlYXJjaCZjdD1n/CTM4cbZAVLffG06yZG/giphy.webp" alt="Terms of Service" width="300" />
-		
+	<img src="https://picsum.photos/id/1015/300/300" alt="a canyon and a lake" class="testing">
+	<img src="https://picsum.photos/id/1016/300/300" alt="a canyon" style="--g: 20px;--b:5px;--c:#D95B43;" class="testing">
+
+
+	<button class="pixel-button">Button test</button>
+	<button class="pixel-button" style="--g: 20px; --b: 5px; --c: #D95B43;">Benjamin button</button>
+
+	
+
+	<button class="animated-border-button-test">Butt on</button>
+
+	<button class="test-butt">Un Bout de Thon</button>
+
+
+
+
+
 	<p>Welcome to the Pong Game Terms of Service, where we keep things as fun as a pixelated paddle battle! By playing our game, you agree to the following terms. Don’t worry, it’s not as scary as it sounds:</p>
 		
 	<h2>1. No Cheating</h2>

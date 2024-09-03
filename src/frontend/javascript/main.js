@@ -1,25 +1,46 @@
-/***			Importing Scripts			***/
+/***********************************************\
+-				IMPORTING SCRIPTS				-
+\***********************************************/
 
-//	Page Not Found	\\
-import renderError404 from "./views/error_404/error_404.js";
+/***			Page Not Found				***/
+import renderError404
+from "./views/error_404/error_404.js";
 
-//		Nav Bar		\\
-import renderHome from "./views/home/home.js";
-import renderTemplate from "./views/template/template.js";
-import { renderDashboard, initializeDashboard } from "./views/dashboard/dashboard.js";
+/***			Nav Bar						***/
+import renderHome
+from "./views/home/home.js";
 
-//	Home buttons	\\
-import { renderTheTeam } from "./views/the_team/the_team.js";
-import renderPong, { gameLoop, initializePong } from "./components/pong/pong.js";
-import renderProfile, { initializeProfile } from "./views/user/profile.js";
-// TODO: changer le nom du js
-import renderLogin, { initializeLogin } from "./views/user/login.js";
+import renderPong, { cleanUpPong, initializePong }
+from "./components/pong/pong.js";
 
-//		Footer		\\
-import renderPrivacyPolicy from "./views/privacy_policy/privacy_policy.js";
-import renderTermsOfService from "./views/terms_of_service/terms_of_service.js";
 
-/***			Define Routes				***/
+/***			TO DETERMINE				***/
+import { renderDashboard, initializeDashboard }
+from "./views/dashboard/dashboard.js";
+
+import { renderTheTeam }
+from "./views/the_team/the_team.js";
+
+/***			User						***/
+import renderSignIn
+from "./views/user/signin.js";
+
+import renderProfile, { initializeProfile }
+from "./views/user/profile.js";
+
+import renderLogin, { initializeLogin }
+from "./views/user/login.js";
+
+/***			Footer						***/
+import renderPrivacyPolicy
+from "./views/privacy_policy/privacy_policy.js";
+
+import renderTermsOfService
+from "./views/terms_of_service/terms_of_service.js";
+
+/***********************************************\
+-				DEFINING ROUTES					-
+\***********************************************/
 const routes =
 {
 	'':
@@ -31,11 +52,6 @@ const routes =
 	{
 		title: "Home",
 		render: renderHome
-	},
-	'/template':
-	{
-		title: "How to Add My JS Files",
-		render: renderTemplate
 	},
 	'/privacy-policy':
 	{
@@ -62,7 +78,8 @@ const routes =
 	{
 		title: "Pong Game",
 		render: renderPong,
-		init: initializePong
+		init: initializePong,
+		cleanup: cleanUpPong
 	},
 	'/profile':
 	{
@@ -80,37 +97,62 @@ const routes =
 		title: "Log In",
 		render: renderLogin,
 		init: initializeLogin
+	},
+	'/sign-in':
+	{
+		title: "Sign In",
+		render: renderSignIn
 	}
 };
+
+/***********************************************\
+-				FUNCTIONS						-
+\***********************************************/
+
+//	Initializing currentPath to an empty string
+let	currentPath = '';
+
+/***			Normalizing Paths			***/
+function normalizePath(path)
+{
+	if (path.endsWith('/'))
+		return path.slice(0, -1);
+	return path;
+}
 
 /***			Router Function				***/
 function router()
 {
-	let path = window.location.pathname || '/home';
-		
-	// Normalize path to avoid trailing slashes causing issues
-	if (path.endsWith('/'))
-		path = path.slice(0, -1);
+	let path = normalizePath(window.location.pathname) || '/home';
 
+	//	Assigning default path if none
+	if (!path)
+			path = '/home';
+
+	const previousRoute = routes[currentPath]
 	const route = routes[path] || routes['/404'];
 
 	console.log('Current path:', path);
 	console.log('Route:', route);
+
+	//	Clear previous route if necessary
+	if (previousRoute && previousRoute.cleanup)
+		previousRoute.cleanup();
 
 	if (route)
 	{
 		document.title = route.title;
 		const renderedContent = route.render();
 
+		const	appElement = document.getElementById('app');
 		if (typeof renderedContent === 'string')
-		{
-			document.getElementById('app').innerHTML = renderedContent;
-		}
+			appElement.innerHTML = renderedContent;
 		else if (renderedContent instanceof HTMLElement)
 		{
-			document.getElementById('app').innerHTML = '';
-			document.getElementById('app').appendChild(renderedContent);
+			appElement.innerHTML = '';
+			appElement.appendChild(renderedContent);
 		}
+
 		if (route.init)
 		{
 			console.log('Initializing route:', path);
@@ -122,6 +164,9 @@ function router()
 		document.title = "Page not Found";
 		document.getElementById('app').innerHTML = renderError404();
 	}
+
+	//	Updating currentPath to the new path
+	currentPath = path;
 }
 
 /***		Navigation Function				***/
@@ -136,14 +181,14 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
-	document.body.addEventListener("click", (e) =>
+	document.body.addEventListener("click", (event) =>
 	{
 		// Find the nearest anchor tag if the clicked element is nested inside one
-		const link = e.target.closest("a[data-link]");
+		const link = event.target.closest("a[data-link]");
 		
 		if (link)
 		{
-			e.preventDefault();
+			event.preventDefault();
 			const href = link.getAttribute('href');
 			console.log(`Navigating to ${href}`);
 			navigateTo(href);

@@ -1,28 +1,92 @@
+/***********************************************\
+-				RENDERING						-
+\***********************************************/
 export default function renderPong()
 {
-	return `
-		<div id="pong-page">
-			<video id="background-video" autoplay muted loop>
-				<source src="../../../assets/images/pong/tunnel_background.mp4" type="video/mp4">
-			</video>
-			<div id="menu-overlay" class="menu-overlay">
-				<button id="singleplayer-button" class="menu-button">Single Player</button>
-				<img src="../../../assets/images/pong/single_player.gif" alt="1P GIF" class="menu-gif">
-				<button id="twoplayer-button" class="menu-button">Two Players</button>
-				<img src="../../../assets/images/pong/two_players.gif" alt="2P GIF" class="menu-gif">
-			</div>
-			<h1 class="pong-title">Pong Game</h1>
-			<div id="winning-message" class="hidden"></div>
-			<button id="rematch-button">Rematch</button>
-			<canvas id="pongCanvas"></canvas>
-			<p class="pong-instructions">Use W/S keys for Player 1 and Arrow Up/Down for Player 2.</p>
-			<div id="paused-gif-container" class="hidden">
-				<img id="paused-gif" src="../../../assets/images/pong/paused.gif" alt="Paused GIF">
-			</div>
-			</div>
-	`;
-}
+	const container = document.createElement('div');
+	container.id = 'pong-page';
 
+	const video = document.createElement('video');
+	video.id = 'background-video';
+	video.autoplay = true;
+	video.muted = true;
+	video.loop = true;
+		
+	const source = document.createElement('source');
+	source.src = '../../../assets/images/pong/tunnel_background.mp4';
+	source.type = 'video/mp4';
+	video.appendChild(source);
+
+	container.appendChild(video);
+
+	const overlay = document.createElement('div');
+	overlay.id = 'menu-overlay';
+	overlay.className = 'menu-overlay';
+		
+	const singlePlayerButton = document.createElement('button');
+	singlePlayerButton.id = 'singleplayer-button';
+	singlePlayerButton.className = 'menu-button';
+	singlePlayerButton.textContent = 'Single Player';
+	overlay.appendChild(singlePlayerButton);
+
+	const singlePlayerGif = document.createElement('img');
+	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
+	singlePlayerGif.alt = '1P GIF';
+	singlePlayerGif.className = 'menu-gif';
+	overlay.appendChild(singlePlayerGif);
+
+	const twoPlayerButton = document.createElement('button');
+	twoPlayerButton.id = 'twoplayer-button';
+	twoPlayerButton.className = 'menu-button';
+	twoPlayerButton.textContent = 'Two Players';
+	overlay.appendChild(twoPlayerButton);
+
+	const twoPlayerGif = document.createElement('img');
+	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
+	twoPlayerGif.alt = '2P GIF';
+	twoPlayerGif.className = 'menu-gif';
+	overlay.appendChild(twoPlayerGif);
+
+	container.appendChild(overlay);
+
+	const title = document.createElement('h1');
+	title.className = 'pong-title';
+	title.textContent = 'Pong Game';
+	container.appendChild(title);
+
+	const winningMessage = document.createElement('div');
+	winningMessage.id = 'winning-message';
+	winningMessage.className = 'hidden';
+	container.appendChild(winningMessage);
+
+	const rematchButton = document.createElement('button');
+	rematchButton.id = 'rematch-button';
+	rematchButton.textContent = 'Rematch';
+	container.appendChild(rematchButton);
+
+	const canvas = document.createElement('canvas');
+	canvas.id = 'pongCanvas';
+	container.appendChild(canvas);
+
+	const instructions = document.createElement('p');
+	instructions.className = 'pong-instructions';
+	instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
+	container.appendChild(instructions);
+
+	const pausedGifContainer = document.createElement('div');
+	pausedGifContainer.id = 'paused-gif-container';
+	pausedGifContainer.className = 'hidden';
+		
+	const pausedGif = document.createElement('img');
+	pausedGif.id = 'paused-gif';
+	pausedGif.src = '../../../assets/images/pong/paused.gif';
+	pausedGif.alt = 'Paused GIF';
+	pausedGifContainer.appendChild(pausedGif);
+
+	container.appendChild(pausedGifContainer);
+
+	return container;
+}
 
 /***********************************************\
 -				GAME CONFIG						-
@@ -171,6 +235,9 @@ export function initializePong()
 				);
 			}
 		});
+
+		document.addEventListener("keydown", keyDownHandler);
+		document.addEventListener("keyup", keyUpHandler);
 	});
 }
 
@@ -353,6 +420,7 @@ function moveBall()
 	}
 }
 
+/***			Checking Paddles			***/
 function checkBallPaddleCollision()
 {
 	// Check collision with Player 1's paddle
@@ -382,6 +450,7 @@ function checkBallPaddleCollision()
 	}
 }
 
+/***				Resetting Ball			***/
 function resetBall()
 {
 	ball.x = canvas.width / 2;
@@ -393,10 +462,6 @@ function resetBall()
 /***********************************************\
 -				KEYBOARD HANDLING				-
 \***********************************************/
-
-document.addEventListener("keydown", keyDownHandler);
-document.addEventListener("keyup", keyUpHandler);
-
 function keyDownHandler(e)
 {
 	
@@ -449,6 +514,7 @@ function keyUpHandler(e)
 -				GAME STATUS						-
 \***********************************************/
 
+/***			Main Loop					***/
 export function gameLoop()
 {
 	if (game_paused == true)
@@ -489,7 +555,7 @@ export function gameLoop()
 	}
 }
 
-// Karl -> voir avec caro
+/***			Resetting Game				***/
 function resetGame()
 {
 	// Reset game state
@@ -509,4 +575,27 @@ function resetGame()
 	// Restart the game
 	game_done = false;
 	requestAnimationFrame(gameLoop);
+}
+
+/***			Closing Pong Game			***/
+export function cleanUpPong()
+{
+	console.log('Cleaning up Pong...')
+
+	// Removing Events Listener
+	document.removeEventListener("keydown", keyDownHandler);
+	document.removeEventListener("keyup", keyUpHandler);
+
+	// Stopping Game Loop
+	cancelAnimationFrame(gameLoop);
+
+	// Removing Game Elements
+	const	canvas = document.getElementById("pongCanvas");
+	if (canvas)
+			canvas.remove();
+
+	// Resetting Game Variables
+	game_done = true;
+	game_paused = false;
+	AI_present = false;
 }
