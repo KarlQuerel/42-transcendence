@@ -115,6 +115,7 @@ function	ai_action(data)
 	return paddle_movement;
 }
 
+//CARO: pour l'instant pas sûre que ça s'update qu'une fois par seconde...
 import { update_game_data } from './pong.js';
 
 function checkGameData(data)

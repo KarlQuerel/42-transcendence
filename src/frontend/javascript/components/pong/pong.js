@@ -504,6 +504,85 @@ function keyUpHandler(e)
 }
 
 /***********************************************\
+-					AI							-
+\***********************************************/
+const DOWN = 0
+const UP = 1
+
+function simulateKeyPress(key) {
+	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));	
+}
+
+function simulateKeyRelease(key) {
+	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+}
+
+import { getPaddleAction } from './ai.js';
+
+import { GameData } from './ai.js';
+
+let data = new GameData();
+
+//CARO: pour l'instant pas sûre que ça s'update qu'une fois par seconde...
+
+function updateGameData()
+{
+	// ball velocity
+	data.ball_horizontal = ballSpeedX;
+	data.ball_vertical = ballSpeedY;
+
+	// field's top/bottom right Y coordinate
+	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
+	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
+
+	// field's right bound X coordinate
+	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
+
+	data.ball_radius = BALL_RATIO;
+
+	data.paddle_width = PADDLE_X;
+	
+	// paddle Y coordinate
+	data.paddle_y = rightPaddle.position.y;
+}
+
+function update_game_data_periodically()
+{
+	// Update data immediately before starting the interval
+	updateGameData();
+
+	setInterval(() => {
+		updateGameData();
+	}, 1000); // Fetch game data once per second
+}
+
+export function update_game_data()
+{
+	return data;
+}
+
+function moveAiPaddle()
+{
+	update_game_data_periodically();
+	if (getPaddleAction() == UP)
+	{
+		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowDown');
+	}
+	else if (getPaddleAction() == DOWN)
+	{
+		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowUp');
+	}
+}
+
+/***********************************************************************************/
+/************************** Dashboard django database*******************************/
+/***********************************************************************************/
+
+// import { sendGameDataToDjango } from '../sendGameDataToDjango.js';
+
+/***********************************************\
 -				GAME STATUS						-
 \***********************************************/
 
@@ -522,6 +601,8 @@ export function gameLoop()
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+
+	moveAiPaddle();
 	movePaddles();
 	moveBall();
 	checkBallPaddleCollision();
