@@ -26,6 +26,7 @@ html, body
 {
 	margin: 0;
 	padding: 0;
+	cursor: url('../../assets/images/cursor/test_cursor.png') 16 16, auto;
 }
 
 /***********************************************
@@ -139,10 +140,10 @@ html, body
 		border-color: #00ff00;
 	}
 	25% {
-		border-color: #ff00ff;
+		border-color: #ff0000;
 	}
 	50% {
-		border-color: #0000ff;
+		border-color: #15ff00;
 	}
 	75% {
 		border-color: #ff0000;
