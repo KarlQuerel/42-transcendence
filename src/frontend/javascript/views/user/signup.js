@@ -1,9 +1,9 @@
 /*** Render Function ***/
-export default function renderLogin()
+export default function renderSignUp()
 {
 	return `
 
-        <h1>Log In</h1>
+        <h1>Sign Up</h1>
         <form>
 
         <div class="form-group">
@@ -49,8 +49,8 @@ export default function renderLogin()
 
 
 
-/*** Initialization Function for Login Route ***/
-export function initializeLogin() {
+/*** Initialization Function for Signup Route ***/
+export function initializeSignUp() {
     const button = document.querySelector('button[type="button"]');
     if (button)
     {

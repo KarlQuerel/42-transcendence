@@ -42,10 +42,10 @@ export default function renderSignIn()
 	form.appendChild(document.createElement('br')); // Line break
 	form.appendChild(signUpButton);
 
-	// Add event listener to the Sign Up button to redirect to /login
+	// Add event listener to the Sign Up button to redirect to /sign-up
 	signUpButton.addEventListener('click', () =>
 	{
-		window.location.href = '/login';
+		window.location.href = '/sign-up';
 	});
 
 
