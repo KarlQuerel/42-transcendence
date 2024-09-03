@@ -52,4 +52,3 @@ export default function renderSignIn()
 	// Return the form element
 	return form;
 }
-
