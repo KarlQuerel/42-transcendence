@@ -482,29 +482,98 @@ TODO:
 // // </a>
 // // */
 
+// Function to create the "What is Pong?" card
+function createWhatIsPongCard() {
+	const col = document.createElement('div');
+	col.className = 'col';
+
+	const collapse = document.createElement('div');
+	collapse.className = 'collapse';
+	collapse.id = 'multiCollapseExample1';
+
+	const cardBody = document.createElement('div');
+	cardBody.className = 'card card-body text-center rounded-circle';
+
+	const gifElement = document.createElement('img');
+	gifElement.src = '../../../assets/images/home/what_is_pong.gif';
+	gifElement.alt = 'Pong GIF';
+	gifElement.className = 'img-fluid mb-3';
+
+	const textElement = document.createElement('p');
+	textElement.innerHTML = `
+		Pong is one of the earliest video games ever created, and it's a simple 2D sports game that simulates table tennis (ping-pong).<br>
+		In the game, two players control paddles on opposite sides of the screen, and they use these paddles to hit a ball back and forth.<br>
+		The goal is to score points by making the ball pass your opponent's paddle.<br>
+		The game was released in 1972 and is considered a classic, often credited with helping to launch the video game industry.
+	`;
+
+	// Create the "I need more" link
+	const moreInfoLink = document.createElement('a');
+	moreInfoLink.href = 'https://en.wikipedia.org/wiki/Pong';
+	moreInfoLink.className = 'btn btn-primary btn-home mt-3';
+	moreInfoLink.textContent = 'I need more';
+	moreInfoLink.target = '_blank';
+
+	// Append the elements to the card body
+	cardBody.appendChild(gifElement);
+	cardBody.appendChild(textElement);
+	cardBody.appendChild(moreInfoLink);
+
+	// Append the card body to the collapse, and collapse to the column
+	collapse.appendChild(cardBody);
+	col.appendChild(collapse);
+
+	return col;
+}
+
+
+// Function to create the "Why Pong?" card
+function createWhyPongCard()
+{
+	const col = document.createElement('div');
+	col.className = 'col';
+
+	const collapse = document.createElement('div');
+	collapse.className = 'collapse';
+	collapse.id = 'multiCollapseExample2';
+
+	const cardBody = document.createElement('div');
+	cardBody.className = 'card card-body text-center';
+
+	const textElement = document.createElement('p');
+	textElement.textContent = 'Because why not.';
+
+	cardBody.appendChild(textElement);
+	collapse.appendChild(cardBody);
+	col.appendChild(collapse);
+
+	return col;
+}
+
+// Main function to render the home content
 export default function renderHome()
 {
 	const container = document.createElement('div');
+	container.className = 'container mt-4';
 
-	// Create the paragraph with buttons
-	const paragraph = document.createElement('p');
-	paragraph.className = 'd-inline-flex gap-1';
+	// Create the row for buttons
+	const buttonRow = document.createElement('div');
+	buttonRow.className = 'd-inline-flex gap-1';
 
 	// Create the "What is Pong?" link
 	const whatIsPongLink = document.createElement('a');
-	whatIsPongLink.className = 'btn btn-primary button-link';
+	whatIsPongLink.className = 'btn btn-primary btn-home';
 	whatIsPongLink.setAttribute('data-bs-toggle', 'collapse');
 	whatIsPongLink.href = '#multiCollapseExample1';
 	whatIsPongLink.role = 'button';
 	whatIsPongLink.setAttribute('aria-expanded', 'false');
 	whatIsPongLink.setAttribute('aria-controls', 'multiCollapseExample1');
 	whatIsPongLink.textContent = 'What is Pong?';
-
-	whatIsPongLink.style.marginRight = '10px';
+	whatIsPongLink.style.marginRight = '100px';
 
 	// Create the "Why Pong?" button
 	const whyPongButton = document.createElement('button');
-	whyPongButton.className = 'btn btn-primary button-link';
+	whyPongButton.className = 'btn btn-primary btn-home';
 	whyPongButton.type = 'button';
 	whyPongButton.setAttribute('data-bs-toggle', 'collapse');
 	whyPongButton.setAttribute('data-bs-target', '#multiCollapseExample2');
@@ -512,51 +581,21 @@ export default function renderHome()
 	whyPongButton.setAttribute('aria-controls', 'multiCollapseExample2');
 	whyPongButton.textContent = 'Why Pong?';
 
-	// Append the link and button to the paragraph
-	paragraph.appendChild(whatIsPongLink);
-	paragraph.appendChild(whyPongButton);
+	// Append the link and button to the row
+	buttonRow.appendChild(whatIsPongLink);
+	buttonRow.appendChild(whyPongButton);
 
-	// Create the row container
-	const row = document.createElement('div');
-	row.className = 'row';
+	// Create the row for collapsible content
+	const contentRow = document.createElement('div');
+	contentRow.className = 'row mt-3';
 
-	// Create the first column with the "What is Pong?" collapse
-	const col1 = document.createElement('div');
-	col1.className = 'col';
+	// Append the individual card columns to the content row
+	contentRow.appendChild(createWhatIsPongCard());
+	contentRow.appendChild(createWhyPongCard());
 
-	const collapse1 = document.createElement('div');
-	collapse1.className = 'collapse multi-collapse';
-	collapse1.id = 'multiCollapseExample1';
-
-	const cardBody1 = document.createElement('div');
-	cardBody1.className = 'card card-body';
-	cardBody1.textContent = 'Pong is a nice game. You should try it.';
-
-	collapse1.appendChild(cardBody1);
-	col1.appendChild(collapse1);
-
-	// Create the second column with the "Why Pong?" collapse
-	const col2 = document.createElement('div');
-	col2.className = 'col';
-
-	const collapse2 = document.createElement('div');
-	collapse2.className = 'collapse multi-collapse';
-	collapse2.id = 'multiCollapseExample2';
-
-	const cardBody2 = document.createElement('div');
-	cardBody2.className = 'card card-body';
-	cardBody2.textContent = 'Because why not.';
-
-	collapse2.appendChild(cardBody2);
-	col2.appendChild(collapse2);
-
-	// Append the columns to the row
-	row.appendChild(col1);
-	row.appendChild(col2);
-
-	// Append the paragraph and row to the container
-	container.appendChild(paragraph);
-	container.appendChild(row);
+	// Append the button row and content row to the container
+	container.appendChild(buttonRow);
+	container.appendChild(contentRow);
 
 	return container;
 }

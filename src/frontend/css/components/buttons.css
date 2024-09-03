@@ -1,7 +1,15 @@
 /***********************************************
 					BUTTONS
 ***********************************************/
-.button-link
+.btn-primary
+{
+	--bs-btn-border-color: none;
+	--bs-btn-active-border-color: none;
+	--bs-btn-active-bg: #1a911a;
+	--bs-btn-hover-border-color: none;
+}
+
+.btn-home
 {
 	padding: 10px 20px;
 	font-size: 18px;
@@ -15,40 +23,40 @@
 	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 
-/* Animation for the border */
-@keyframes borderAnimation
-{
-	0% {
-		border-color: #6eec83a1; /* Start color */
-	}
-	50% {
-		border-color: #00027f; /* Mid color */
-	}
-	100% {
-		border-color: #6eec83a1; /* End color */
-	}
-}
-
-.button-link:hover
+.btn-home:hover
 {
 	background-color: #6eec83a1;
 	color: #fff;
 	transform: scale(1.075);
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	border-color: #00ff00;
-	animation: borderAnimation 1s infinite;
+	animation: borderAnimation 4s infinite;
 }
 
-
-/*		Bootstrap tuning					*/
-.btn-primary
+/* Animation for the border */
+@keyframes borderAnimation
 {
-	--bs-btn-border-color: none;
-	--bs-btn-active-border-color: none;
-	--bs-btn-active-bg: #1a911a;
-	--bs-btn-hover-border-color: none;
+	0%
+	{
+		border-color: #6eec83a1;
+	}
+	25%
+	{
+		border-color: #27c227;
+	}
+	50%
+	{
+		border-color: #00ff00;
+	}
+	75%
+	{
+		border-color: #27c227;
+	}
+	100%
+	{
+		border-color: #6eec83a1;
+	}
 }
-
 
 
 /* 
