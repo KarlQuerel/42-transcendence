@@ -34,11 +34,6 @@ services:
       - profile
       - dashboard
       - database
-    # command: >
-    #   sh -c "
-    #   chown -R www-data:www-data /usr/share/nginx/html/"
-    # volumes:
-    #   - frontend:/usr/share/nginx/html/
 
 
   profile:
@@ -57,7 +52,7 @@ services:
       python manage.py migrate &&
       gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
-      - "8080:8080"
+      - "8080"
       - "5432"
     ports:
       - "8200:8200"
@@ -84,7 +79,7 @@ services:
       python manage.py migrate &&
       gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
-      - "8080:8080"
+      - "8080"
       - "5432"
     ports:
       - "8100:8100"
@@ -94,6 +89,7 @@ services:
       - database
     env_file:
       - .env
+
 networks:
   transcendance:
     driver: bridge
