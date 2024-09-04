@@ -152,7 +152,7 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	console.log('Initializing Pong...');
+	// console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
@@ -195,7 +195,7 @@ export function initializePong()
 		}
 		else
 		{
-			console.log('Rematch button found:', rematchButton);
+			// console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -206,7 +206,7 @@ export function initializePong()
 			return;
 		}
 
-		console.log('Canvas and context retrieved successfully.');
+		// console.log('Canvas and context retrieved successfully.');
 
 		canvas.style.border = "5px solid #00ff00";
 
@@ -464,6 +464,8 @@ function resetBall()
 \***********************************************/
 function keyDownHandler(e)
 {
+	// console.log(`Key pressed: ${e.key}`);
+
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
@@ -506,46 +508,36 @@ function keyUpHandler(e)
 /***********************************************\
 -					AI							-
 \***********************************************/
-const DOWN = 0
-const UP = 1
-
-function simulateKeyPress(key) {
-	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));	
-}
-
-function simulateKeyRelease(key) {
-	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
-}
 
 import { getPaddleAction } from './ai.js';
 
 import { GameData } from './ai.js';
 
 let data = new GameData();
-console.log("2. data now exists in pong.js and is NULL");
+// console.log("2. data now exists in pong.js and is NULL");
 
 //CARO: pour l'instant pas sûre que ça s'update qu'une fois par seconde...
 
 function updateGameData()
 {
 	// ball velocity
-	data.ball_horizontal = ball.speed; //speedX
-	data.ball_vertical = ball.speed; //speedY
+	data.ball_horizontal = ball.dx; //speedX
+	data.ball_vertical = ball.dy; //speedY
 
 	// field's top/bottom right Y coordinate
 /* 	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
 	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2; */
 	//HERE
-	data.fieldY_top = canvas.height;
-	data.fieldY_bottom = 0;
+	data.fieldY_top = 0;
+	data.fieldY_bottom = canvas.height;
 
 	// field's right bound X coordinate
 	data.fieldX_right = canvas.width; //HERE
 
 	data.ball_radius = ball.radius;
 
-	// data.paddle_height = undefined;
-	data.paddle_width = canvas.width - player2.x; //CHECK: il me faut la paddle.width
+	data.paddle_height = paddleHeight;
+	data.paddle_width = paddleWidth;
 	// paddle Y coordinate
 	data.paddle_y = player2.y;
 }
@@ -556,36 +548,97 @@ function update_game_data_periodically()
 	if (data.ball_horizontal == undefined) //if first value in data is undefined, update all data values for the first time
 	{
 		updateGameData();
-		console.log("3. data is updated for the first time with the values in pong.js");
+		// console.log("3. data is updated for the first time with the values in pong.js");
 	}
 
-	console.log("4. inside the function that updates the data periodically in pong.js");
+	// console.log("4. inside the function that updates the data periodically in pong.js");
 	setInterval(() => {
 		updateGameData(); //CHECK que c'est bien qu'une fois par seconde
-		console.log("5 : data is updated in pong.js");
+		// console.log("5 : data is updated in pong.js at", new Date().toISOString());
+		console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
+		console.log("---> canvas.height - paddleHeight = paddle position = ", canvas.height - paddleHeight);
+		console.log("ball position Y = ", ball.y);
 	}, 1000); // Fetch game data once per second
 }
+
+/* function update_game_data_periodically()
+{
+    // Update data immediately before starting the interval
+    if (data.ball_horizontal == undefined) //if first value in data is undefined, update all data values for the first time
+    {
+        updateGameData();
+        console.log("3. data is updated for the first time with the values in pong.js at", new Date().toISOString());
+    }
+
+    console.log("4. inside the function that updates the data periodically in pong.js at", new Date().toISOString());
+
+    function updatePeriodically() {
+        updateGameData();
+        console.log("5 : data is updated in pong.js at", new Date().toISOString());
+        console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
+        setTimeout(updatePeriodically, 1000); // Schedule the next update
+    }
+
+    setTimeout(updatePeriodically, 1000); // Start the first update after 1 second
+} */
+
+/* let startTime;
+
+function update_game_data_periodically() {
+	// Record the start time when the game begins
+	if (!startTime) {
+		startTime = Date.now();
+	}
+
+	// Update data immediately before starting the interval
+	if (data.ball_horizontal == undefined) {
+		updateGameData();
+	}
+
+	function updatePeriodically() {
+		updateGameData();
+		const elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
+		console.log(`5 : data is updated in pong.js at ${elapsedTime} seconds from the start of the game`);
+		console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
+		setTimeout(updatePeriodically, 5000); // Schedule the next update after 1 second
+	}
+
+	setTimeout(updatePeriodically, 5000); // Start the first update after 1 second
+} */
 
 export function update_game_data()
 {
 	return data;
 }
 
+const DOWN = 0
+const UP = 1
+
+// document.addEventListener('keydown', keyDownHandler); //HERE en cours
+// document.addEventListener('keyup', keyUpHandler);
+
+// function simulateKeyPress(key) {
+// 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+// }
+
+// function simulateKeyRelease(key) {
+// 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+// }
+
 function moveAiPaddle()
 {
-	// update_game_data_periodically(); //now in gameloop()
 	if (getPaddleAction() == UP)
 	{
-		simulateKeyPress('ArrowUp');
-		simulateKeyRelease('ArrowDown');
-		// player2.y++; //HERE test
+		// simulateKeyPress('ArrowUp');
+		// simulateKeyRelease('ArrowUp');
+		player2.dy = -paddleSpeed;
 		console.log("AI PADDLE GOING UP");
 	}
 	else if (getPaddleAction() == DOWN)
 	{
-		simulateKeyPress('ArrowDown');
-		simulateKeyRelease('ArrowUp');
-		// player2.y--; //HERE test
+		// simulateKeyPress('ArrowDown');
+		// simulateKeyRelease('ArrowDown');
+		player2.dy = paddleSpeed;
 		console.log("AI PADDLE GOING DOWN");
 	}
 }
@@ -603,8 +656,6 @@ function moveAiPaddle()
 /***			Main Loop					***/
 export function gameLoop()
 {
-	update_game_data_periodically(); //TEST CARO
-
 	if (game_paused == true)
 	{
 		drawPauseMenu();
@@ -616,6 +667,8 @@ export function gameLoop()
 		return ;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+	update_game_data_periodically(); //TEST CARO
 
 	moveAiPaddle();
 	movePaddles();
@@ -669,7 +722,7 @@ function resetGame()
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	console.log('Cleaning up Pong...')
+	// console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);

@@ -19,7 +19,7 @@ export class GameData
 
 		this.ball_radius = undefined;
 
-		// this.paddle_height = undefined;
+		this.paddle_height = undefined;
 		this.paddle_width = undefined;
 
 		// paddle Y coordinate
@@ -82,17 +82,11 @@ function	predict_ball_paddle_intersection(data)
 	// else
 	// 	console.log("NO BOUNCE");
 
-	//HERE //TODO //FIX Il faut ajuster intersectionY sinon l'IA loupe constamment la balle 
-	// if (intersectionY < 250) //car sinon le paddle loupe souvent la balle de peu
-	// {
-	// 	console.log("under 250");
-	// 	intersectionY = intersectionY + data.ball_radius + data.paddle_height / 2;
-	// }
-	// else if (intersectionY > 250)
-	// {
-	// 	console.log("over 250");
-	// 	intersectionY = intersectionY - data.ball_radius - data.paddle_height / 2;
-	// }
+	//HERE //TODO //FIX Il ajuster intersectionY sinon l'IA loupe constamment la balle 
+	if (intersectionY > data.fieldY_bottom / 2) //bottom et non top car top = 0 et bottom = canvas.height
+		intersectionY = intersectionY - data.paddle_height / 2;
+	else if (intersectionY < data.fieldY_bottom / 2)
+		intersectionY = intersectionY + data.paddle_height / 2;
 
 	return intersectionY;
 }
@@ -132,12 +126,12 @@ function checkGameData(data)
 
 let data = new GameData(); /*est-ce que je peux la sortir de la fonction 
 	export pour qu on y entre uq une seule fois?*/
-console.log("1. data is initialized to NULL in ai.js");
+// console.log("1. data is initialized to NULL in ai.js");
 
 export function getPaddleAction()
 {
 	data = update_game_data();
-	console.log("6. data is fetch in ai.js to do maths");
+	// console.log("6. data is fetch in ai.js to do maths");
 
 /* 	protection : loop qui lit toute les variables dans data :
 	s'il y a des variables non initialisees : error (voir avec marine
@@ -149,6 +143,6 @@ export function getPaddleAction()
 	}
 
 	let paddle_action = ai_action(data);
-	console.log("paddle action = ", paddle_action);
+	// console.log("paddle action = ", paddle_action);
 	return paddle_action;
 }
