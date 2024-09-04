@@ -522,37 +522,47 @@ import { getPaddleAction } from './ai.js';
 import { GameData } from './ai.js';
 
 let data = new GameData();
+console.log("2. data now exists in pong.js and is NULL");
 
 //CARO: pour l'instant pas sûre que ça s'update qu'une fois par seconde...
 
 function updateGameData()
 {
 	// ball velocity
-	data.ball_horizontal = ballSpeedX;
-	data.ball_vertical = ballSpeedY;
+	data.ball_horizontal = ball.speed; //speedX
+	data.ball_vertical = ball.speed; //speedY
 
 	// field's top/bottom right Y coordinate
-	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
-	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2;
+/* 	data.fieldY_top = FIELD_POSITION_Y + FIELD_Y / 2;
+	data.fieldY_bottom = FIELD_POSITION_Y - FIELD_Y / 2; */
+	//HERE
+	data.fieldY_top = canvas.height;
+	data.fieldY_bottom = 0;
 
 	// field's right bound X coordinate
-	data.fieldX_right = FIELD_POSITION_X + FIELD_X / 2;
+	data.fieldX_right = canvas.width; //HERE
 
-	data.ball_radius = BALL_RATIO;
+	data.ball_radius = ball.radius;
 
-	data.paddle_width = PADDLE_X;
-	
+	// data.paddle_height = undefined;
+	data.paddle_width = canvas.width - player2.x; //CHECK: il me faut la paddle.width
 	// paddle Y coordinate
-	data.paddle_y = rightPaddle.position.y;
+	data.paddle_y = player2.y;
 }
 
 function update_game_data_periodically()
 {
 	// Update data immediately before starting the interval
-	updateGameData();
-
-	setInterval(() => {
+	if (data.ball_horizontal == undefined) //if first value in data is undefined, update all data values for the first time
+	{
 		updateGameData();
+		console.log("3. data is updated for the first time with the values in pong.js");
+	}
+
+	console.log("4. inside the function that updates the data periodically in pong.js");
+	setInterval(() => {
+		updateGameData(); //CHECK que c'est bien qu'une fois par seconde
+		console.log("5 : data is updated in pong.js");
 	}, 1000); // Fetch game data once per second
 }
 
@@ -563,16 +573,20 @@ export function update_game_data()
 
 function moveAiPaddle()
 {
-	update_game_data_periodically();
+	// update_game_data_periodically(); //now in gameloop()
 	if (getPaddleAction() == UP)
 	{
 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowDown');
+		// player2.y++; //HERE test
+		console.log("AI PADDLE GOING UP");
 	}
 	else if (getPaddleAction() == DOWN)
 	{
 		simulateKeyPress('ArrowDown');
 		simulateKeyRelease('ArrowUp');
+		// player2.y--; //HERE test
+		console.log("AI PADDLE GOING DOWN");
 	}
 }
 
@@ -589,6 +603,8 @@ function moveAiPaddle()
 /***			Main Loop					***/
 export function gameLoop()
 {
+	update_game_data_periodically(); //TEST CARO
+
 	if (game_paused == true)
 	{
 		drawPauseMenu();
@@ -600,7 +616,6 @@ export function gameLoop()
 		return ;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 
 	moveAiPaddle();
 	movePaddles();

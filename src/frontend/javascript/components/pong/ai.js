@@ -19,7 +19,7 @@ export class GameData
 
 		this.ball_radius = undefined;
 
-		this.paddle_height = undefined;
+		// this.paddle_height = undefined;
 		this.paddle_width = undefined;
 
 		// paddle Y coordinate
@@ -115,14 +115,14 @@ function	ai_action(data)
 	return paddle_movement;
 }
 
-//CARO: pour l'instant pas sûre que ça s'update qu'une fois par seconde...
 import { update_game_data } from './pong.js';
 
 function checkGameData(data)
 {
 	for (const [key, value] of Object.entries(data))
 	{
-		if (value === undefined) {
+		if (value == undefined)
+		{
 			console.log(`ERROR: ${key} is undefined`);
 			return false;
 		}
@@ -130,10 +130,14 @@ function checkGameData(data)
 	return true;
 }
 
+let data = new GameData(); /*est-ce que je peux la sortir de la fonction 
+	export pour qu on y entre uq une seule fois?*/
+console.log("1. data is initialized to NULL in ai.js");
+
 export function getPaddleAction()
 {
-	let data = new GameData();
 	data = update_game_data();
+	console.log("6. data is fetch in ai.js to do maths");
 
 /* 	protection : loop qui lit toute les variables dans data :
 	s'il y a des variables non initialisees : error (voir avec marine
@@ -141,7 +145,7 @@ export function getPaddleAction()
 	if (!checkGameData(data))
 	{
 		console.log("Error updating data : data variables are undefined");
-		return 42;
+		return 42; //TODO: mettre dans pong.js que si return 42 alors stop le jeu
 	}
 
 	let paddle_action = ai_action(data);
