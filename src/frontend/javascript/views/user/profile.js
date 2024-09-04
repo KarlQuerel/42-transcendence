@@ -86,9 +86,7 @@ async function loadUserData()
     }
 
     if (!response.ok)
-    {
         throw new Error('Network response was not ok');
-    }
     return response.json().then(userData => displayUserData(userData));
 }
 
@@ -106,9 +104,7 @@ async function refreshToken()
     });
 
     if (!response.ok)
-    {
         throw new Error('Token refresh failed');
-    }
     const data = await response.json();
     return data.access;
 }

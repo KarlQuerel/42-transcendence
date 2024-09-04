@@ -71,6 +71,11 @@ class UserProfileView(generics.RetrieveAPIView):
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
 
+# Handle JWTokens for user authentication
+class TokenView(APIView):
+	def post(self, request):
+        # Handle the token generation logic here
+		return Response({'access': 'access_token', 'refresh': 'refresh_token'}, status=status.HTTP_200_OK)
 
 
 # class	CustomUserAPIView(APIView):

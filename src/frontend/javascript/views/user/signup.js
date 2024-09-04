@@ -128,7 +128,7 @@ function checkIdentifierType(identifier)
 
 function isValidFirstName(first_name)
 {
-    const usernamePattern = /^[a-zA-Z]+$/;
+    const usernamePattern = /^[\p{L}\p{Nl}]+$/u;
 
     if (first_name.length > 30)
         return false;
@@ -139,7 +139,7 @@ function isValidFirstName(first_name)
 
 function isValidLastName(last_name)
 {
-    const usernamePattern = /^[a-zA-Z\-]+$/;
+    const usernamePattern = /^[\p{L}\p{Nl}\s\-]+$/u;
 
     if (last_name.length > 30)
         return false;

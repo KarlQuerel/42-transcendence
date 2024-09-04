@@ -48,7 +48,79 @@ export default function renderSignIn()
 		window.location.href = '/sign-up';
 	});
 
+	// Add event listener to the Log In button to handle login
+    form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the default form submission
+
+        const username = emailInput.value;
+        const password = passwordInput.value;
+
+        login(username, password);
+    });
+
 
 	// Return the form element
 	return form;
+}
+
+
+
+
+// Pour les JWTokens
+function login(username, password)
+{
+    fetch('/api/token/',
+	{
+        method: 'POST',
+        headers:
+		{
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+    })
+    .then(response => response.json())
+    .then(data =>
+	{
+        if (data.access)
+		{
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            
+            // Call refreshToken to ensure tokens are up-to-date
+            refreshToken().then(newAccessToken =>
+			{
+                console.log('Token refreshed:', newAccessToken);
+                // Redirect to profile or dashboard
+            })
+			.catch(error => {
+                console.error('Token refresh failed:', error);
+            });
+        }
+		else
+		{
+            console.error('Login failed');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
+export function refreshToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+    return fetch('/api/token/refresh/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access) {
+            localStorage.setItem('access_token', data.access);
+            return data.access;
+        } else {
+            throw new Error('Token refresh failed');
+        }
+    });
 }
