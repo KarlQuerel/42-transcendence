@@ -43,23 +43,23 @@ TODO:
 
 <!--	PONG EXPLANATION	-->
 <p class="d-inline-flex gap-1">
-		<a class="btn btn-primary button-link" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">
+		<a class="btn btn-primary button-link" data-bs-toggle="collapse" href="#whatispongcollapse" role="button" aria-expanded="false" aria-controls="whatispongcollapse">
 			What is Pong?
 		</a>
-		<button class="btn btn-primary button-link" type="button" data-bs-toggle="collapse" data-bs-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">
+		<button class="btn btn-primary button-link" type="button" data-bs-toggle="collapse" data-bs-target="#whypongcollapse" aria-expanded="false" aria-controls="whypongcollapse">
 			Why Pong?
 		</button>
 </p>
 <div class="row">
 	<div class="col">
-		<div class="collapse multi-collapse" id="multiCollapseExample1">
+		<div class="collapse multi-collapse" id="whatispongcollapse">
 			<div class="card card-body">
 				Pong is a nice game. You should try it.
 			</div>
 		</div>
 	</div>
 	<div class="col">
-		<div class="collapse multi-collapse" id="multiCollapseExample2">
+		<div class="collapse multi-collapse" id="whypongcollapse">
 			<div class="card card-body">
 				Because why not.
 			</div>
@@ -482,17 +482,72 @@ TODO:
 // // </a>
 // // */
 
-// Function to create the "What is Pong?" card
+export default function renderHome()
+{
+	// Create the container for the home content
+	const container = document.createElement('div');
+	container.id = 'home-content';
+
+	// Create "What is Pong?" and "Why Pong?" sections
+	const row = document.createElement('div');
+	row.className = 'row';
+
+	const whatIsPongCard = createWhatIsPongCard();
+	console.log('What is Pong Card:', whatIsPongCard);
+
+	const whyPongCard = createWhyPongCard();
+	console.log('Why pong Card:', whyPongCard);
+
+	row.appendChild(whatIsPongCard);
+	row.appendChild(whyPongCard);
+	container.appendChild(row);
+
+	// Create and append "Les Modules de Dudule" button and modal
+	const { button, modal } = createLesModulesDeDuduleModal();
+	container.appendChild(button);
+
+	// Append modal to document body
+	if (!document.getElementById('staticBackdrop'))
+	{
+		document.body.appendChild(modal);
+	}
+
+	return container;
+}
+
+// Helper functions for creating cards and modals (unchanged)
 function createWhatIsPongCard() {
+	console.log('Creating What Is Pong Card');
+
 	const col = document.createElement('div');
 	col.className = 'col';
+
+	const card = document.createElement('div');
+	card.className = 'card';
+
+	const cardHeader = document.createElement('div');
+	cardHeader.className = 'card-header';
+	cardHeader.id = 'headingOne';
+
+	const button = document.createElement('button');
+	button.className = 'btn btn-primary';
+	button.type = 'button';
+	button.setAttribute('data-bs-toggle', 'collapse');
+	button.setAttribute('data-bs-target', '#multiCollapseExample1');
+	button.setAttribute('aria-expanded', 'true');
+	button.setAttribute('aria-controls', 'multiCollapseExample1');
+	button.textContent = 'What is Pong?';
+
+	cardHeader.appendChild(button);
+	card.appendChild(cardHeader);
 
 	const collapse = document.createElement('div');
 	collapse.className = 'collapse';
 	collapse.id = 'multiCollapseExample1';
+	collapse.setAttribute('aria-labelledby', 'headingOne');
 
 	const cardBody = document.createElement('div');
-	cardBody.className = 'card card-body text-center rounded-circle';
+	cardBody.className = 'card-body text-center';
 
 	const gifElement = document.createElement('img');
 	gifElement.src = '../../../assets/images/home/what_is_pong.gif';
@@ -501,101 +556,255 @@ function createWhatIsPongCard() {
 
 	const textElement = document.createElement('p');
 	textElement.innerHTML = `
-		Pong is one of the earliest video games ever created, and it's a simple 2D sports game that simulates table tennis (ping-pong).<br>
-		In the game, two players control paddles on opposite sides of the screen, and they use these paddles to hit a ball back and forth.<br>
+		Released in 1972, Pong is one of the earliest video games ever created, 
+		and it's a simple 2D sports game that simulates table tennis (ping-pong).<br><br>
+		In the game, two players control paddles on opposite sides of the screen, 
+		and they use these paddles to hit a ball back and forth.<br><br>
 		The goal is to score points by making the ball pass your opponent's paddle.<br>
-		The game was released in 1972 and is considered a classic, often credited with helping to launch the video game industry.
 	`;
 
-	// Create the "I need more" link
 	const moreInfoLink = document.createElement('a');
 	moreInfoLink.href = 'https://en.wikipedia.org/wiki/Pong';
-	moreInfoLink.className = 'btn btn-primary btn-home mt-3';
-	moreInfoLink.textContent = 'I need more';
+	moreInfoLink.className = 'btn btn-primary btn-home mt-3 button-green';
+	moreInfoLink.textContent = 'More Info';
 	moreInfoLink.target = '_blank';
+	moreInfoLink.style.fontSize = '12px';
+	moreInfoLink.style.padding = '4px 8px';
 
-	// Append the elements to the card body
 	cardBody.appendChild(gifElement);
 	cardBody.appendChild(textElement);
 	cardBody.appendChild(moreInfoLink);
 
-	// Append the card body to the collapse, and collapse to the column
 	collapse.appendChild(cardBody);
-	col.appendChild(collapse);
+	card.appendChild(collapse);
+	col.appendChild(card);
 
 	return col;
 }
 
+function createWhyPongCard() {
+	console.log('Creating Why Pong Card');
 
-// Function to create the "Why Pong?" card
-function createWhyPongCard()
-{
 	const col = document.createElement('div');
 	col.className = 'col';
+
+	const card = document.createElement('div');
+	card.className = 'card';
+
+	const cardHeader = document.createElement('div');
+	cardHeader.className = 'card-header';
+	cardHeader.id = 'headingTwo';
+
+	const button = document.createElement('button');
+	button.className = 'btn btn-primary';
+	button.type = 'button';
+	button.setAttribute('data-bs-toggle', 'collapse');
+	button.setAttribute('data-bs-target', '#multiCollapseExample2');
+	button.setAttribute('aria-expanded', 'false');
+	button.setAttribute('aria-controls', 'multiCollapseExample2');
+	button.textContent = 'Why Pong?';
+
+	cardHeader.appendChild(button);
+	card.appendChild(cardHeader);
 
 	const collapse = document.createElement('div');
 	collapse.className = 'collapse';
 	collapse.id = 'multiCollapseExample2';
+	collapse.setAttribute('aria-labelledby', 'headingTwo');
 
 	const cardBody = document.createElement('div');
-	cardBody.className = 'card card-body text-center';
+	cardBody.className = 'card-body text-center';
 
 	const textElement = document.createElement('p');
 	textElement.textContent = 'Because why not.';
 
 	cardBody.appendChild(textElement);
 	collapse.appendChild(cardBody);
-	col.appendChild(collapse);
+	card.appendChild(collapse);
+	col.appendChild(card);
 
 	return col;
 }
 
-// Main function to render the home content
-export default function renderHome()
+
+function createLesModulesDeDuduleModal()
 {
-	const container = document.createElement('div');
-	container.className = 'container mt-4';
+	const button = document.createElement('button');
+	button.type = 'button';
+	button.className = 'btn btn-primary-link';
+	button.setAttribute('data-bs-toggle', 'modal');
+	button.setAttribute('data-bs-target', '#staticBackdrop');
+	button.textContent = 'Les Modules de Dudule';
 
-	// Create the row for buttons
-	const buttonRow = document.createElement('div');
-	buttonRow.className = 'd-inline-flex gap-1';
+	const modal = document.createElement('div');
+	modal.className = 'modal fade';
+	modal.id = 'staticBackdrop';
+	modal.setAttribute('data-bs-backdrop', 'static');
+	modal.setAttribute('data-bs-keyboard', 'false');
+	modal.setAttribute('tabindex', '-1');
+	modal.setAttribute('aria-labelledby', 'staticBackdropLabel');
+	modal.setAttribute('aria-hidden', 'true');
 
-	// Create the "What is Pong?" link
-	const whatIsPongLink = document.createElement('a');
-	whatIsPongLink.className = 'btn btn-primary btn-home';
-	whatIsPongLink.setAttribute('data-bs-toggle', 'collapse');
-	whatIsPongLink.href = '#multiCollapseExample1';
-	whatIsPongLink.role = 'button';
-	whatIsPongLink.setAttribute('aria-expanded', 'false');
-	whatIsPongLink.setAttribute('aria-controls', 'multiCollapseExample1');
-	whatIsPongLink.textContent = 'What is Pong?';
-	whatIsPongLink.style.marginRight = '100px';
+	const modalDialog = document.createElement('div');
+	modalDialog.className = 'modal-dialog modal-xl';
+	modal.appendChild(modalDialog);
 
-	// Create the "Why Pong?" button
-	const whyPongButton = document.createElement('button');
-	whyPongButton.className = 'btn btn-primary btn-home';
-	whyPongButton.type = 'button';
-	whyPongButton.setAttribute('data-bs-toggle', 'collapse');
-	whyPongButton.setAttribute('data-bs-target', '#multiCollapseExample2');
-	whyPongButton.setAttribute('aria-expanded', 'false');
-	whyPongButton.setAttribute('aria-controls', 'multiCollapseExample2');
-	whyPongButton.textContent = 'Why Pong?';
+	const modalContent = document.createElement('div');
+	modalContent.className = 'modal-content';
+	modalDialog.appendChild(modalContent);
 
-	// Append the link and button to the row
-	buttonRow.appendChild(whatIsPongLink);
-	buttonRow.appendChild(whyPongButton);
+	const modalHeader = document.createElement('div');
+	modalHeader.className = 'modal-header';
+	modalContent.appendChild(modalHeader);
 
-	// Create the row for collapsible content
-	const contentRow = document.createElement('div');
-	contentRow.className = 'row mt-3';
+	const modalTitle = document.createElement('h5');
+	modalTitle.className = 'modal-title';
+	modalTitle.id = 'staticBackdropLabel';
+	modalTitle.textContent = 'What we did';
+	modalHeader.appendChild(modalTitle);
 
-	// Append the individual card columns to the content row
-	contentRow.appendChild(createWhatIsPongCard());
-	contentRow.appendChild(createWhyPongCard());
+	const modalBody = document.createElement('div');
+	modalBody.className = 'modal-body';
+	modalContent.appendChild(modalBody);
 
-	// Append the button row and content row to the container
-	container.appendChild(buttonRow);
-	container.appendChild(contentRow);
+	const mainAccordion = document.createElement('div');
+	mainAccordion.className = 'accordion accordion-flush';
+	mainAccordion.id = 'MainAccordion';
+	modalBody.appendChild(mainAccordion);
 
-	return container;
+	// Function to create accordion items
+	function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
+	{
+		const accordionItem = document.createElement('div');
+		accordionItem.className = 'accordion-item';
+
+		const accordionHeader = document.createElement('h2');
+		accordionHeader.className = 'accordion-header';
+		accordionHeader.id = `${accordionId}Accordion`;
+		accordionItem.appendChild(accordionHeader);
+
+		const button = document.createElement('button');
+		button.className = 'accordion-button';
+		button.type = 'button';
+		button.setAttribute('data-bs-toggle', 'collapse');
+		button.setAttribute('data-bs-target', `#outerCollapse${accordionId}`);
+		button.setAttribute('aria-expanded', 'true');
+		button.setAttribute('aria-controls', `outerCollapse${accordionId}`);
+		button.textContent = title;
+		accordionHeader.appendChild(button);
+
+		const collapse = document.createElement('div');
+		collapse.id = `outerCollapse${accordionId}`;
+		collapse.className = 'accordion-collapse collapse';
+		collapse.setAttribute('aria-labelledby', `${accordionId}Accordion`);
+		accordionItem.appendChild(collapse);
+
+		const accordionBody = document.createElement('div');
+		accordionBody.className = 'accordion-body';
+		collapse.appendChild(accordionBody);
+
+		const nestedAccordion = document.createElement('div');
+		nestedAccordion.className = 'accordion';
+		nestedAccordion.id = `${accordionId}Nested`;
+		accordionBody.appendChild(nestedAccordion);
+
+		modules.forEach(module => {
+			const moduleItem = document.createElement('div');
+			moduleItem.className = 'accordion-item';
+
+			const moduleHeader = document.createElement('h2');
+			moduleHeader.className = 'accordion-header';
+			moduleHeader.id = `${accordionId}-${module.id}`;
+			moduleItem.appendChild(moduleHeader);
+
+			const moduleButton = document.createElement('button');
+			moduleButton.className = `accordion-button ${module.collapsed ? 'collapsed' : ''} d-flex justify-content-start align-items-center`;
+			moduleButton.type = 'button';
+			moduleButton.setAttribute('data-bs-toggle', 'collapse');
+			moduleButton.setAttribute('data-bs-target', `#nested-${accordionId}-${module.id}`);
+			moduleButton.setAttribute('aria-expanded', module.collapsed ? 'false' : 'true');
+			moduleButton.setAttribute('aria-controls', `nested-${accordionId}-${module.id}`);
+			moduleButton.textContent = module.title;
+			moduleHeader.appendChild(moduleButton);
+
+			const badge = document.createElement('span');
+			badge.className = `badge ${module.badgeClass} me-3`;
+			badge.textContent = module.badgeText;
+			moduleButton.appendChild(badge);
+
+			const moduleCollapse = document.createElement('div');
+			moduleCollapse.id = `nested-${accordionId}-${module.id}`;
+			moduleCollapse.className = `accordion-collapse collapse ${module.collapsed ? '' : 'show'}`;
+			moduleCollapse.setAttribute('aria-labelledby', `${accordionId}-${module.id}`);
+			moduleItem.appendChild(moduleCollapse);
+
+			const moduleBody = document.createElement('div');
+			moduleBody.className = 'accordion-body';
+			moduleBody.innerHTML = module.content;
+			moduleCollapse.appendChild(moduleBody);
+
+			nestedAccordion.appendChild(moduleItem);
+		});
+
+		return accordionItem;
+	}
+
+	// Example data for accordion items
+	const webModules = [
+		{
+			id: '1',
+			title: 'Use a Framework as backend',
+			collapsed: false,
+			badgeClass: 'text-bg-danger',
+			badgeText: 'MAJOR',
+			content: 'We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework. <img src="../../../assets/images/home/modules/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">'
+		},
+		{
+			id: '2',
+			title: 'Use a front-end framework or toolkit',
+			collapsed: true,
+			badgeClass: 'text-bg-warning',
+			badgeText: 'MINOR',
+			content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+		},
+		{
+			id: '3',
+			title: 'Use a database for the backend',
+			collapsed: true,
+			badgeClass: 'text-bg-warning',
+			badgeText: 'MINOR',
+			content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
+		}
+	];
+
+	const userModules = [
+		{
+			id: '1',
+			title: 'Standard user management, authentication, users across tournaments',
+			collapsed: false,
+			badgeClass: 'text-bg-danger',
+			badgeText: 'MAJOR',
+			content: 'Users can blablabla lalala'
+		}
+	];
+
+	// Add accordion items to the main accordion
+	mainAccordion.appendChild(createAccordionItem('Web', 'Web', 'text-bg-danger', 'MAJOR', webModules));
+	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', userModules));
+
+	// Create modal footer
+	const modalFooter = document.createElement('div');
+	modalFooter.className = 'modal-footer';
+	modalContent.appendChild(modalFooter);
+
+	const closeButton = document.createElement('button');
+	closeButton.type = 'button';
+	closeButton.className = 'btn btn-secondary';
+	closeButton.setAttribute('data-bs-dismiss', 'modal');
+	closeButton.textContent = 'Close';
+	modalFooter.appendChild(closeButton);
+
+	// Return the button and modal elements
+	return { button, modal };
 }
+

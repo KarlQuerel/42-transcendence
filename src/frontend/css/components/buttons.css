@@ -29,8 +29,7 @@
 	color: #fff;
 	transform: scale(1.075);
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-	border-color: #00ff00;
-	animation: borderAnimation 4s infinite;
+	animation: borderAnimation 2s infinite;
 }
 
 /* Animation for the border */
@@ -38,23 +37,23 @@
 {
 	0%
 	{
-		border-color: #6eec83a1;
+		border-color: #ffffff;
 	}
 	25%
 	{
-		border-color: #27c227;
+		border-color: #9afc9a;
 	}
 	50%
 	{
-		border-color: #00ff00;
+		border-color: #34ff34;
 	}
 	75%
 	{
-		border-color: #27c227;
+		border-color: #9afc9a;
 	}
 	100%
 	{
-		border-color: #6eec83a1;
+		border-color: #ffffff;
 	}
 }
 
