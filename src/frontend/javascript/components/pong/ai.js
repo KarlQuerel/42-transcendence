@@ -44,6 +44,8 @@ function	predict_ball_paddle_intersection(data)
 		y: 0
 	};
 
+	if (displacement.x < 0) //TEST
+		displacement.x *= -1;
 	while (displacement.x < intersectionX)
 	{
 		time += 1;
@@ -57,7 +59,7 @@ function	predict_ball_paddle_intersection(data)
 		}
 	}
 
-	intersectionY = displacement.y;
+/* 	intersectionY = displacement.y;
 	if (intersectionY > data.fieldY_top || intersectionY < data.fieldY_bottom) //out of bounds
 	{
 		// console.log("BOUNCE");
@@ -78,15 +80,46 @@ function	predict_ball_paddle_intersection(data)
 				break ; //IMPORTANT! Mais je comprends pas bien pourquoi infinite loop. Changer nom variable test
 			test++;
 		}
-	}
+	} */
 	// else
 	// 	console.log("NO BOUNCE");
 
+	intersectionY = displacement.y;
+	if (intersectionY < data.fieldY_top || intersectionY > data.fieldY_bottom) //out of bounds
+	{
+		// console.log("BOUNCE");
+		let test = 0;
+		while (intersectionY < data.fieldY_top || intersectionY > data.fieldY_bottom) //out of bounds)
+		{
+			console.log(`BOUNCE NUMBER: ${test}, INTERSECTION Y: ${intersectionY}`);
+			if (intersectionY <= data.fieldY_top)
+			{
+				// intersectionY = intersectionY * (-1);
+				intersectionY = intersectionY - data.fieldY_top;
+				intersectionY = data.fieldY_top - intersectionY;
+			}
+			else if (intersectionY >= data.fieldY_bottom)
+			{
+				intersectionY = intersectionY - data.fieldY_bottom;
+				intersectionY = data.fieldY_bottom - intersectionY;
+			} //et si == top ou bottom?
+			if (test == 10)
+				break ; //IMPORTANT! Mais je comprends pas bien pourquoi infinite loop. Changer nom variable test
+			test++;
+		}
+		console.log("-----------------------------------");
+		console.log("Number of rebounds = ", test);
+		console.log("intersectionY = ", intersectionY);
+		console.log("data.fieldY_top = ", data.fieldY_top);
+		console.log("data.fieldY_bottom = ", data.fieldY_bottom);
+		console.log("-----------------------------------");
+	}
+
 	//HERE //TODO //FIX Il ajuster intersectionY sinon l'IA loupe constamment la balle 
-	if (intersectionY > data.fieldY_bottom / 2) //bottom et non top car top = 0 et bottom = canvas.height
-		intersectionY = intersectionY - data.paddle_height / 2;
-	else if (intersectionY < data.fieldY_bottom / 2)
-		intersectionY = intersectionY + data.paddle_height / 2;
+	// if (intersectionY > data.fieldY_bottom / 2) //bottom et non top car top = 0 et bottom = canvas.height
+	// 	intersectionY = intersectionY - data.paddle_height / 2;
+	// else if (intersectionY < data.fieldY_bottom / 2)
+	// 	intersectionY = intersectionY + data.paddle_height / 2;
 
 	return intersectionY;
 }

@@ -433,7 +433,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		// ball.speed += 0.1; //CARO: mis en commentaire
 	}
 
 	// Check collision with Player 2's paddle
@@ -555,9 +555,9 @@ function update_game_data_periodically()
 	setInterval(() => {
 		updateGameData(); //CHECK que c'est bien qu'une fois par seconde
 		// console.log("5 : data is updated in pong.js at", new Date().toISOString());
-		console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
-		console.log("---> canvas.height - paddleHeight = paddle position = ", canvas.height - paddleHeight);
-		console.log("ball position Y = ", ball.y);
+		// console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
+		// console.log("---> canvas.height - paddleHeight = paddle position = ", canvas.height - paddleHeight);
+		// console.log("ball position Y = ", ball.y);
 	}, 1000); // Fetch game data once per second
 }
 
@@ -703,7 +703,7 @@ function resetGame()
 	// Reset game state
 	player1.score = 0;
 	player2.score = 0;
-	ball.speed = 5;
+	ball.speed = 5; //CARO: karl ta speed ne change rien je pense que tu utilises dy au lieu de speed ailleurs dans le code
 	ball.dx = 5;
 	ball.dy = 5;
 
