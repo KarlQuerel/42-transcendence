@@ -1,14 +1,13 @@
 from django.urls import path
 from . import views
-from .views import TokenView
 # from api.views import CustomUserAPIView
 
 urlpatterns = [
 	# path('', views.getData),
 	path('addUser/', views.addUser, name='add-user'),
+    path('signInUser/', views.signInUser, name='sign-in-user'),
 	# path('', CustomUserAPIView.as_view()),
 	# path('check-email/', views.check_existing_email, name='check-email'),
 	# path('check-username/', views.check_existing_username, name='check-username'),
     path('sign-up/', views.addUser, name='sign-up'),
-    path('token/', TokenView.as_view(), name='token'),
 ]

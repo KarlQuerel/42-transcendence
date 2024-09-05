@@ -93,7 +93,7 @@ export function initializeSignUp() {
                 return;
             }
             else
-			    addNewUser(username, password, email);
+			    addNewUser(username, password, email, date_of_birth, first_name, last_name);
         });
     }
     else
@@ -230,7 +230,7 @@ function sendErrorToConsole(first_name_type, last_name_type, username_type, date
 /****************************************************/
 
 
-function addNewUser(username, password, email)
+function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
 	fetch('/api/users/addUser/',
     {
@@ -238,7 +238,7 @@ function addNewUser(username, password, email)
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ username, password, email}),
+		body: JSON.stringify({ username, password, email, date_of_birth, first_name, last_name}),
 	})
     .then(response =>
     {
@@ -249,7 +249,9 @@ function addNewUser(username, password, email)
     })
     .then(data =>
     {
-        console.log('Success:', data);
+        const maskedPassword = '*'.repeat(password.length);
+        const safeData = { ...data, password: maskedPassword };
+        console.log('Success:', safeData);
     })
     .catch((error) =>
     {

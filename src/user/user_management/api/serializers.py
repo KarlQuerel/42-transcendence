@@ -7,7 +7,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password', 'email', 'date_of_birth', 'first_name', 'last_name']
 
 
     # def get_avatar_data(self, obj):

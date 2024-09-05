@@ -67,46 +67,49 @@ export default function renderSignIn()
 
 
 // Pour les JWTokens
+
 function login(username, password)
 {
-    fetch('/api/token/',
-	{
+    fetch('/api/users/signInUser/', {
         method: 'POST',
-        headers:
-		{
+        headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username, password }),
     })
     .then(response => response.json())
-    .then(data =>
-	{
+    .then(data => {
         if (data.access)
 		{
+            // Store tokens in local storage
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
-            
-            // Call refreshToken to ensure tokens are up-to-date
-            refreshToken().then(newAccessToken =>
-			{
-                console.log('Token refreshed:', newAccessToken);
-                // Redirect to profile or dashboard
-            })
-			.catch(error => {
-                console.error('Token refresh failed:', error);
-            });
+
+            // Optionally, call refreshToken to ensure tokens are up-to-date
+            return refreshToken();
         }
 		else
-		{
-            console.error('Login failed');
-        }
+            throw new Error('Login failed: No access token received');
     })
-    .catch(error => console.error('Error:', error));
+    .then(newAccessToken => {
+        console.log('Token refreshed:', newAccessToken);
+        // Handle successful login (e.g., redirect to dashboard)
+        // Example:
+        window.location.href = '/dashboard';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Optionally, display an error message to the user
+        alert('Login failed: ' + error.message);
+    });
 }
 
-
-export function refreshToken() {
+async function refreshToken()
+{
     const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken)
+        throw new Error('No refresh token found');
+
     return fetch('/api/token/refresh/', {
         method: 'POST',
         headers: {
@@ -119,8 +122,72 @@ export function refreshToken() {
         if (data.access) {
             localStorage.setItem('access_token', data.access);
             return data.access;
-        } else {
-            throw new Error('Token refresh failed');
         }
+		else
+            throw new Error('Failed to refresh token');
     });
 }
+
+
+// function login(username, password)
+// {
+//     fetch('/api/token/',
+// 	{
+//         method: 'POST',
+//         headers:
+// 		{
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ username: username, password: password }),
+//     })
+//     .then(response => response.json())
+//     .then(data =>
+// 	{
+//         if (data.access)
+// 		{
+//             localStorage.setItem('access_token', data.access);
+//             localStorage.setItem('refresh_token', data.refresh);
+            
+//             // Call refreshToken to ensure tokens are up-to-date
+//             refreshToken().then(newAccessToken =>
+// 			{
+//                 console.log('Token refreshed:', newAccessToken);
+//                 // Redirect to profile or dashboard
+//             })
+// 			.catch(error => {
+//                 console.error('Token refresh failed:', error);
+//             });
+//         }
+// 		else
+// 		{
+//             console.error('Login failed');
+//         }
+//     })
+//     .catch(error => console.error('Error:', error));
+// }
+
+
+// async function refreshToken()
+// {
+//     const refreshToken = localStorage.getItem('refresh_token');
+//     return fetch('/api/token/refresh/', {
+//         method: 'POST',
+//         headers:
+// 		{
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ refresh: refreshToken }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.access)
+// 		{
+//             localStorage.setItem('access_token', data.access);
+//             return data.access;
+//         }
+// 		else
+// 		{
+//             throw new Error('Token refresh failed');
+//         }
+//     });
+// }

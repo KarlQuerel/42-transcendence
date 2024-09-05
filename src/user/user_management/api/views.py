@@ -1,14 +1,16 @@
-from rest_framework.permissions import IsAuthenticated
+# from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+# from rest_framework.decorators import permission_classes
+# from rest_framework.views import APIView
 from rest_framework import generics, status
-#converts any response to json
 from django.views.decorators.csrf import csrf_exempt
 from api.models import CustomUser
 from .serializers import CustomUserSerializer
-
-from .forms import UserRegistrationForm
+from rest_framework_simplejwt.tokens import RefreshToken
+# from .forms import UserRegistrationForm
+from django.contrib.auth import authenticate, login
+from django.http import JsonResponse
 import json
 
 
@@ -40,10 +42,51 @@ import json
 def addUser(request):
 	serializer = CustomUserSerializer(data=request.data)
 	if serializer.is_valid():
-		serializer.save()
+		validated_data = serializer.validated_data
+        
+		user = CustomUser(
+                  username=validated_data['username'],
+                  email=validated_data['email'],
+                  date_of_birth=validated_data['date_of_birth'],
+                  first_name=validated_data['first_name'],
+                  last_name=validated_data['last_name'],
+		)
+		user.set_password(request.data['password']) 
+		user.save()
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
 	print(serializer.errors)  # Log the serializer errors for debugging
 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+def signInUser(request):
+	if request.method == 'POST':
+		try:
+			data = json.loads(request.body)
+			username = request.data.get('username')
+			password = request.data.get('password')
+
+			# Authenticate the user
+			user = authenticate(request, username=username, password=password)
+		
+			if user is not None:
+				login(request, user)
+				refresh = RefreshToken.for_user(user)
+				access_token = str(refresh.access_token)
+				refresh_token = str(refresh)
+				return JsonResponse({
+                    'access': access_token,
+                    'refresh': refresh_token
+                }, status=200)
+			else:
+				return JsonResponse({'error': 'Invalid username or password'}, status=400)
+		
+		except json.JSONDecodeError:
+			return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+	return JsonResponse({'error': 'Invalid request method'}, status=405)
+      
+
 
 # @api_view(['POST'])
 # def addUser(request):
@@ -70,12 +113,6 @@ class UserProfileView(generics.RetrieveAPIView):
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
-
-# Handle JWTokens for user authentication
-class TokenView(APIView):
-	def post(self, request):
-        # Handle the token generation logic here
-		return Response({'access': 'access_token', 'refresh': 'refresh_token'}, status=status.HTTP_200_OK)
 
 
 # class	CustomUserAPIView(APIView):

@@ -74,7 +74,7 @@ async function loadUserData()
 
     if (response.status === 401)
     {
-        const newToken = await refreshToken();
+        const newToken = await refreshToken_loaduser();
         localStorage.setItem('access_token', newToken); // Update the stored token
         response = await fetch('/api/profile/', { // Retry the original request
             method: 'GET',
@@ -91,7 +91,7 @@ async function loadUserData()
 }
 
 
-async function refreshToken()
+async function refreshToken_loaduser()
 {
     const refreshToken = localStorage.getItem('refresh_token');
     let response = await fetch('/api/token/refresh/', {
