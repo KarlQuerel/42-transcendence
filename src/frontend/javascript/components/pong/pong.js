@@ -96,6 +96,7 @@ export default function renderPong()
 let	game_done = false;
 let	game_paused = false;
 let	AI_present = false;
+let	animationFrameId;
 
 /***			Graphics					***/
 let		canvas, ctx;
@@ -411,12 +412,12 @@ function moveBall()
 	if (ball.x - ball.radius < 0)
 	{
 		player2.score++;
-		resetBall();
+		resetAll();
 	}
 	else if (ball.x + ball.radius > canvas.width)
 	{
 		player1.score++;
-		resetBall();
+		resetAll();
 	}
 }
 
@@ -450,6 +451,13 @@ function checkBallPaddleCollision()
 	}
 }
 
+/***				Resetting All			***/
+function resetAll()
+{
+	resetBall();
+	resetPaddles();
+}
+
 /***				Resetting Ball			***/
 function resetBall()
 {
@@ -457,6 +465,13 @@ function resetBall()
 	ball.y = canvas.height / 2;
 	ball.dx = -ball.dx;
 	ball.speed = 5;
+}
+
+/***			Resetting Paddles			***/
+function resetPaddles()
+{
+	player1.y = (canvas.height - paddleHeight) / 2;
+	player2.y = (canvas.height - paddleHeight) / 2;
 }
 
 /***********************************************\
@@ -467,10 +482,15 @@ function keyDownHandler(e)
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
-		if (game_paused == false)
+		if (game_paused == true)
 		{
-			resetBall();
-			gameLoop();
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
+		}
+		else
+		{
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		return ;
 	}
@@ -513,7 +533,7 @@ export function gameLoop()
 	if (game_paused == true)
 	{
 		drawPauseMenu();
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 		return;
 	}
 
@@ -542,9 +562,9 @@ export function gameLoop()
 		game_done = true;
 	}
 
-	if (!game_done)
+	if (game_done == false)
 	{
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
