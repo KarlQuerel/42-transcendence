@@ -361,6 +361,22 @@ function drawPauseMenu()
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.remove('hidden');
+	}
+}
+
+/***			Hiding Pausing GIF		***/
+function hidePauseMenu()
+{
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.add('hidden');
+	}
 }
 
 
@@ -491,6 +507,7 @@ function keyDownHandler(e)
 		{
 			cancelAnimationFrame(animationFrameId);
 			animationFrameId = requestAnimationFrame(gameLoop);
+			hidePauseMenu();
 		}
 		return ;
 	}
