@@ -32,12 +32,8 @@ services:
       - profile
       - dashboard
       - database
-    # command: >
-    #   sh -c "
-    #   chown -R www-data:www-data /usr/share/nginx/html/"
-    # volumes:
-    #   - frontend:/usr/share/nginx/html/
-
+    volumes:
+      - ./frontend:/usr/share/nginx/html
 
   profile:
     container_name: User
@@ -99,12 +95,6 @@ networks:
 volumes:
   postgres_data:
     driver: local
-  frontend:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './nginx/frontend/'
   user:
     driver: local
     driver_opts:

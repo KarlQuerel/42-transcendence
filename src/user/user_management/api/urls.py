@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 # from api.views import CustomUserAPIView
 
@@ -9,4 +9,5 @@ urlpatterns = [
 	# path('check-email/', views.check_existing_email, name='check-email'),
 	# path('check-username/', views.check_existing_username, name='check-username'),
     path('login/', views.addUser, name='login'),
+	path('friends/', include('friends.urls')),
 ]
