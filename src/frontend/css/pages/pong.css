@@ -117,7 +117,7 @@
 	background: rgba(0, 0, 0);
 	padding: 20px;
 	text-align: center;
-	z-index: 10;
+	z-index: 1000;
 	width: 50vh;
 	max-width: 800px;
 	height: 50vh;
@@ -134,7 +134,14 @@
 	left: 50%;
 	transform: translateX(-50%);
 	width: 100px;
+	height: auto;
 	display: none;
+}
+
+#singleplayer-button:hover .menu-gif,
+#twoplayer-button:hover .menu-gif
+{
+	display: block;
 }
 
 .menu-buttons-container
@@ -180,19 +187,48 @@
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-#singleplayer-button:hover .menu-gif,
-#twoplayer-button:hover .menu-gif
-{
-	display: block;
-}
 
 /*		PAUSE MENU		*/
 #paused-gif
 {
-	display: none;
+	/* TODO: TO CHANGE LATER to be responsive*/
+	width: 100px;
+	height: auto;
+	animation: moveLeftRight 2s infinite ease-in-out;
+}
+
+@keyframes moveLeftRight
+{
+	0%
+	{
+		transform: translateX(0); /* Start position */
+	}
+	50%
+	{
+		transform: translateX(-30px); /* Move left by 20px */
+	}
+	100%
+	{
+		transform: translateX(30px); /* Move right by 20px */
+	}
+}
+
+
+#paused-gif-container
+{
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	z-index: 1000;
+	z-index: 10;
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s ease;
 }
+
+#paused-gif-container.show
+{
+	visibility: visible;
+	opacity: 1;
+}
+

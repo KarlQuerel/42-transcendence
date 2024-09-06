@@ -1,10 +1,12 @@
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
+//TODO: Refactor renderPong()
 export default function renderPong()
 {
 	const container = document.createElement('div');
 	container.id = 'pong-page';
+	container.className = 'container-fluid';
 
 	const video = document.createElement('video');
 	video.id = 'background-video';
@@ -29,11 +31,14 @@ export default function renderPong()
 	singlePlayerButton.textContent = 'Single Player';
 	overlay.appendChild(singlePlayerButton);
 
+	const singlePlayerGifContainer = document.createElement('div');
+	singlePlayerGifContainer.className = 'menu-gif-container';
 	const singlePlayerGif = document.createElement('img');
 	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
 	singlePlayerGif.alt = '1P GIF';
 	singlePlayerGif.className = 'menu-gif';
-	overlay.appendChild(singlePlayerGif);
+	singlePlayerGifContainer.appendChild(singlePlayerGif);
+	overlay.appendChild(singlePlayerGifContainer);
 
 	const twoPlayerButton = document.createElement('button');
 	twoPlayerButton.id = 'twoplayer-button';
@@ -41,11 +46,14 @@ export default function renderPong()
 	twoPlayerButton.textContent = 'Two Players';
 	overlay.appendChild(twoPlayerButton);
 
+	const twoPlayerGifContainer = document.createElement('div');
+	twoPlayerGifContainer.className = 'menu-gif-container';
 	const twoPlayerGif = document.createElement('img');
 	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
 	twoPlayerGif.alt = '2P GIF';
 	twoPlayerGif.className = 'menu-gif';
-	overlay.appendChild(twoPlayerGif);
+	twoPlayerGifContainer.appendChild(twoPlayerGif);
+	overlay.appendChild(twoPlayerGifContainer);
 
 	container.appendChild(overlay);
 
@@ -75,12 +83,13 @@ export default function renderPong()
 
 	const pausedGifContainer = document.createElement('div');
 	pausedGifContainer.id = 'paused-gif-container';
-	pausedGifContainer.className = 'hidden';
+	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
 		
 	const pausedGif = document.createElement('img');
 	pausedGif.id = 'paused-gif';
 	pausedGif.src = '../../../assets/images/pong/paused.gif';
 	pausedGif.alt = 'Paused GIF';
+	pausedGif.className = 'img-fluid';
 	pausedGifContainer.appendChild(pausedGif);
 
 	container.appendChild(pausedGifContainer);
@@ -97,6 +106,7 @@ let	game_done = false;
 let	game_paused = false;
 let	AI_present = false;
 let	animationFrameId;
+let	isGameModeSelected = false;
 
 /***			Graphics					***/
 let		canvas, ctx;
@@ -248,6 +258,8 @@ function startGame(menuOverlay, pongInstructions)
 	menuOverlay.classList.add('hidden');
 	pongInstructions.classList.remove('hidden');
 
+	isGameModeSelected = true;
+
 	player1.y = (canvas.height - paddleHeight) / 2;
 	player2.x = canvas.width - paddleWidth - paddleOffset;
 	player2.y = (canvas.height - paddleHeight) / 2;
@@ -362,20 +374,22 @@ function drawPauseMenu()
 	ctx.textBaseline = "middle";
 	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
 
-	const	pausedGif = document.getElementById('paused-gif');
-	if (pausedGif)
+	const pausedGifContainer = document.getElementById('paused-gif-container');
+	if (pausedGifContainer)
 	{
-		pausedGif.classList.remove('hidden');
+		pausedGifContainer.classList.remove('hidden');
+		pausedGifContainer.classList.add('show');
 	}
 }
 
 /***			Hiding Pausing GIF		***/
 function hidePauseMenu()
 {
-	const	pausedGif = document.getElementById('paused-gif');
-	if (pausedGif)
+	const pausedGifContainer = document.getElementById('paused-gif-container');
+	if (pausedGifContainer)
 	{
-		pausedGif.classList.add('hidden');
+		pausedGifContainer.classList.remove('show');
+		pausedGifContainer.classList.add('hidden');
 	}
 }
 
@@ -495,19 +509,23 @@ function resetPaddles()
 \***********************************************/
 function keyDownHandler(e)
 {
+	if (isGameModeSelected == false)
+		return ;
+	
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
 		if (game_paused == true)
 		{
 			cancelAnimationFrame(animationFrameId);
+			drawPauseMenu();
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		else
 		{
 			cancelAnimationFrame(animationFrameId);
-			animationFrameId = requestAnimationFrame(gameLoop);
 			hidePauseMenu();
+			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		return ;
 	}
@@ -604,6 +622,7 @@ function resetGame()
 
 	// Restart the game
 	game_done = false;
+	isGameModeSelected = false;
 	requestAnimationFrame(gameLoop);
 }
 
