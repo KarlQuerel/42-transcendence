@@ -2,99 +2,106 @@
 -				RENDERING						-
 \***********************************************/
 //TODO: Refactor renderPong()
-export default function renderPong()
-{
-	const container = document.createElement('div');
-	container.id = 'pong-page';
-	container.className = 'container-fluid';
+export default function renderPong() {
+    const container = document.createElement('div');
+    container.id = 'pong-page';
+    container.className = 'container-fluid p-0';
 
-	const video = document.createElement('video');
-	video.id = 'background-video';
-	video.autoplay = true;
-	video.muted = true;
-	video.loop = true;
-		
-	const source = document.createElement('source');
-	source.src = '../../../assets/images/pong/tunnel_background.mp4';
-	source.type = 'video/mp4';
-	video.appendChild(source);
+    const video = document.createElement('video');
+    video.id = 'background-video';
+    video.autoplay = true;
+    video.muted = true;
+    video.loop = true;
+        
+    const source = document.createElement('source');
+    source.src = '../../../assets/images/pong/tunnel_background.mp4';
+    source.type = 'video/mp4';
+    video.appendChild(source);
 
-	container.appendChild(video);
+    container.appendChild(video);
 
-	const overlay = document.createElement('div');
-	overlay.id = 'menu-overlay';
-	overlay.className = 'menu-overlay';
-		
-	const singlePlayerButton = document.createElement('button');
-	singlePlayerButton.id = 'singleplayer-button';
-	singlePlayerButton.className = 'menu-button';
-	singlePlayerButton.textContent = 'Single Player';
-	overlay.appendChild(singlePlayerButton);
+    const overlay = document.createElement('div');
+    overlay.id = 'menu-overlay';
+    overlay.className = 'menu-overlay';
 
-	const singlePlayerGifContainer = document.createElement('div');
-	singlePlayerGifContainer.className = 'menu-gif-container';
-	const singlePlayerGif = document.createElement('img');
-	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
-	singlePlayerGif.alt = '1P GIF';
-	singlePlayerGif.className = 'menu-gif';
-	singlePlayerGifContainer.appendChild(singlePlayerGif);
-	overlay.appendChild(singlePlayerGifContainer);
+    const menuButtonsContainer = document.createElement('div');
+    menuButtonsContainer.className = 'menu-buttons-container';
 
-	const twoPlayerButton = document.createElement('button');
-	twoPlayerButton.id = 'twoplayer-button';
-	twoPlayerButton.className = 'menu-button';
-	twoPlayerButton.textContent = 'Two Players';
-	overlay.appendChild(twoPlayerButton);
+    const singlePlayerButton = document.createElement('button');
+    singlePlayerButton.id = 'singleplayer-button';
+    singlePlayerButton.className = 'menu-button';
+    singlePlayerButton.textContent = 'Single Player';
+    menuButtonsContainer.appendChild(singlePlayerButton);
 
-	const twoPlayerGifContainer = document.createElement('div');
-	twoPlayerGifContainer.className = 'menu-gif-container';
-	const twoPlayerGif = document.createElement('img');
-	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
-	twoPlayerGif.alt = '2P GIF';
-	twoPlayerGif.className = 'menu-gif';
-	twoPlayerGifContainer.appendChild(twoPlayerGif);
-	overlay.appendChild(twoPlayerGifContainer);
+    const singlePlayerGifContainer = document.createElement('div');
+    singlePlayerGifContainer.className = 'menu-gif-container';
 
-	container.appendChild(overlay);
+    const singlePlayerGif = document.createElement('img');
+    singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
+    singlePlayerGif.alt = '1P GIF';
+    singlePlayerGif.className = 'menu-gif';
+    singlePlayerGifContainer.appendChild(singlePlayerGif);
+    
+    menuButtonsContainer.appendChild(singlePlayerGifContainer);
+    overlay.appendChild(menuButtonsContainer);
 
-	const title = document.createElement('h1');
-	title.className = 'pong-title';
-	title.textContent = 'Pong Game';
-	container.appendChild(title);
+    const twoPlayerButton = document.createElement('button');
+    twoPlayerButton.id = 'twoplayer-button';
+    twoPlayerButton.className = 'menu-button';
+    twoPlayerButton.textContent = 'Two Players';
+    menuButtonsContainer.appendChild(twoPlayerButton);
 
-	const winningMessage = document.createElement('div');
-	winningMessage.id = 'winning-message';
-	winningMessage.className = 'hidden';
-	container.appendChild(winningMessage);
+    const twoPlayerGifContainer = document.createElement('div');
+    twoPlayerGifContainer.className = 'menu-gif-container';
 
-	const rematchButton = document.createElement('button');
-	rematchButton.id = 'rematch-button';
-	rematchButton.textContent = 'Rematch';
-	container.appendChild(rematchButton);
+    const twoPlayerGif = document.createElement('img');
+    twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
+    twoPlayerGif.alt = '2P GIF';
+    twoPlayerGif.className = 'menu-gif';
+    twoPlayerGifContainer.appendChild(twoPlayerGif);
 
-	const canvas = document.createElement('canvas');
-	canvas.id = 'pongCanvas';
-	container.appendChild(canvas);
+    menuButtonsContainer.appendChild(twoPlayerGifContainer);
 
-	const instructions = document.createElement('p');
-	instructions.className = 'pong-instructions';
-	instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
-	container.appendChild(instructions);
+    container.appendChild(overlay);
 
-	const pausedGifContainer = document.createElement('div');
-	pausedGifContainer.id = 'paused-gif-container';
-	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
-		
-	const pausedGif = document.createElement('img');
-	pausedGif.id = 'paused-gif';
-	pausedGif.src = '../../../assets/images/pong/paused.gif';
-	pausedGif.alt = 'Paused GIF';
-	pausedGif.className = 'img-fluid';
-	pausedGifContainer.appendChild(pausedGif);
+    const title = document.createElement('h1');
+    title.className = 'pong-title';
+    title.textContent = 'Pong Game';
+    container.appendChild(title);
 
-	container.appendChild(pausedGifContainer);
+    const winningMessage = document.createElement('div');
+    winningMessage.id = 'winning-message';
+    winningMessage.className = 'hidden';
+    container.appendChild(winningMessage);
 
-	return container;
+    const rematchButton = document.createElement('button');
+    rematchButton.id = 'rematch-button';
+    rematchButton.textContent = 'Rematch';
+    container.appendChild(rematchButton);
+
+    const canvas = document.createElement('canvas');
+    canvas.id = 'pongCanvas';
+    container.appendChild(canvas);
+
+    const instructions = document.createElement('p');
+    instructions.className = 'pong-instructions';
+    instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
+    container.appendChild(instructions);
+
+    const pausedGifContainer = document.createElement('div');
+    pausedGifContainer.id = 'paused-gif-container';
+    pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
+        
+    const pausedGif = document.createElement('img');
+    pausedGif.id = 'paused-gif';
+    pausedGif.src = '../../../assets/images/pong/paused.gif';
+    pausedGif.alt = 'Paused GIF';
+    pausedGif.className = 'img-fluid';
+    pausedGifContainer.appendChild(pausedGif);
+
+    container.appendChild(pausedGifContainer);
+
+    return container;
 }
 
 /***********************************************\

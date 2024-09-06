@@ -22,12 +22,19 @@
 	--dark-gray: #111;
 }
 
+.no-scroll
+{
+	overflow: hidden;
+}
+
 /*		Reset for different browsers		*/
 html, body
 {
 	margin: 0;
 	padding: 0;
 	cursor: url('../../assets/images/cursor/test_cursor.png') 16 16, auto;
+	min-width: 800px;
+	min-height: 600px;
 }
 
 /***********************************************
