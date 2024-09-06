@@ -109,6 +109,7 @@ function	predict_ball_paddle_intersection(data)
 		}
 		console.log("-----------------------------------");
 		console.log("Number of rebounds = ", test);
+		console.log("paddle position = ", data.paddle_y);
 		console.log("intersectionY = ", intersectionY);
 		console.log("data.fieldY_top = ", data.fieldY_top);
 		console.log("data.fieldY_bottom = ", data.fieldY_bottom);
@@ -117,18 +118,18 @@ function	predict_ball_paddle_intersection(data)
 
 	//HERE //TODO //FIX Il ajuster intersectionY sinon l'IA loupe constamment la balle 
 	// if (intersectionY > data.fieldY_bottom / 2) //bottom et non top car top = 0 et bottom = canvas.height
-	// 	intersectionY = intersectionY - data.paddle_height / 2;
-	// else if (intersectionY < data.fieldY_bottom / 2)
-	// 	intersectionY = intersectionY + data.paddle_height / 2;
+	// 	intersectionY = intersectionY + (data.paddle_height / 2); //si en bas
+	// else if (intersectionY < data.fieldY_bottom / 2) //si en haut
+	// 	intersectionY = intersectionY - (data.paddle_height / 2);
 
-	return intersectionY;
+	return intersectionY + data.paddle_height; //TEST  + data.paddle_height
 }
 
 function	decide_paddle_movement(paddle_y, predicted_intersection)
 {
-	if (paddle_y < predicted_intersection)
+	if (paddle_y > predicted_intersection + data.paddle_height) //TEST  + data.paddle_height
 		return UP;
-	else if (paddle_y > predicted_intersection)
+	else if (paddle_y < predicted_intersection + data.paddle_height) //TEST  + data.paddle_height
 		return DOWN;
 	else
 		return DO_NOT_MOVE;

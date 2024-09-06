@@ -96,6 +96,7 @@ export default function renderPong()
 let	game_done = false;
 let	game_paused = false;
 let	AI_present = false;
+let	animationFrameId;
 
 /***			Graphics					***/
 let		canvas, ctx;
@@ -152,7 +153,7 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	// console.log('Initializing Pong...');
+	console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
@@ -195,7 +196,7 @@ export function initializePong()
 		}
 		else
 		{
-			// console.log('Rematch button found:', rematchButton);
+			console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -206,7 +207,7 @@ export function initializePong()
 			return;
 		}
 
-		// console.log('Canvas and context retrieved successfully.');
+		console.log('Canvas and context retrieved successfully.');
 
 		canvas.style.border = "5px solid #00ff00";
 
@@ -360,6 +361,22 @@ function drawPauseMenu()
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.remove('hidden');
+	}
+}
+
+/***			Hiding Pausing GIF		***/
+function hidePauseMenu()
+{
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.add('hidden');
+	}
 }
 
 
@@ -411,12 +428,12 @@ function moveBall()
 	if (ball.x - ball.radius < 0)
 	{
 		player2.score++;
-		resetBall();
+		resetAll();
 	}
 	else if (ball.x + ball.radius > canvas.width)
 	{
 		player1.score++;
-		resetBall();
+		resetAll();
 	}
 }
 
@@ -433,7 +450,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		// ball.speed += 0.1; //CARO: mis en commentaire
+		ball.speed += 0.1;
 	}
 
 	// Check collision with Player 2's paddle
@@ -450,13 +467,27 @@ function checkBallPaddleCollision()
 	}
 }
 
+/***				Resetting All			***/
+function resetAll()
+{
+	resetBall();
+	resetPaddles();
+}
+
 /***				Resetting Ball			***/
 function resetBall()
 {
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
 	ball.dx = -ball.dx;
-	ball.speed = 5;
+	ball.speed = 1; //HERE caro
+}
+
+/***			Resetting Paddles			***/
+function resetPaddles()
+{
+	player1.y = (canvas.height - paddleHeight) / 2;
+	player2.y = (canvas.height - paddleHeight) / 2;
 }
 
 /***********************************************\
@@ -464,15 +495,19 @@ function resetBall()
 \***********************************************/
 function keyDownHandler(e)
 {
-	// console.log(`Key pressed: ${e.key}`);
-
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
-		if (game_paused == false)
+		if (game_paused == true)
 		{
-			resetBall();
-			gameLoop();
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
+		}
+		else
+		{
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
+			hidePauseMenu();
 		}
 		return ;
 	}
@@ -504,6 +539,7 @@ function keyUpHandler(e)
 		player2.dy = 0;
 	}
 }
+
 
 /***********************************************\
 -					AI							-
@@ -558,7 +594,7 @@ function update_game_data_periodically()
 		// console.log("---> data.paddle_y = ", data.paddle_y, "VS player2.y = ", player2.y);
 		// console.log("---> canvas.height - paddleHeight = paddle position = ", canvas.height - paddleHeight);
 		// console.log("ball position Y = ", ball.y);
-	}, 1000); // Fetch game data once per second
+	}, 0); // Fetch game data once per second //TEST CARO 0 secondes //FIX: 1 seconde ne marche de toutes façons pas
 }
 
 /* function update_game_data_periodically()
@@ -659,7 +695,7 @@ export function gameLoop()
 	if (game_paused == true)
 	{
 		drawPauseMenu();
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 		return;
 	}
 
@@ -668,7 +704,8 @@ export function gameLoop()
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	update_game_data_periodically(); //TEST CARO
+	// update_game_data_periodically(); //TEST CARO
+	updateGameData(); //TEST CARO 0 secondes
 
 	moveAiPaddle();
 	movePaddles();
@@ -691,9 +728,9 @@ export function gameLoop()
 		game_done = true;
 	}
 
-	if (!game_done)
+	if (game_done == false)
 	{
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
@@ -703,7 +740,7 @@ function resetGame()
 	// Reset game state
 	player1.score = 0;
 	player2.score = 0;
-	ball.speed = 5; //CARO: karl ta speed ne change rien je pense que tu utilises dy au lieu de speed ailleurs dans le code
+	ball.speed = 5;
 	ball.dx = 5;
 	ball.dy = 5;
 
@@ -722,7 +759,7 @@ function resetGame()
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	// console.log('Cleaning up Pong...')
+	console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
