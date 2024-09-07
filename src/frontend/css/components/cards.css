@@ -3,14 +3,14 @@
 ***********************************************/
 .card
 {
-	background-color: #f0f0f0;
-	border-color: none;
+	background-color: transparent;
+	border-color: transparent;
 }
 
 .card-body
 {
-	background-color: #e0ffe0;
-	color: #0026ff;
+	background-color: #a3dba3;
+	color: #000000;
 }
 
 
@@ -26,42 +26,4 @@
 	border: 1mm ridge #00ff00;
 	height: auto;
 	width: auto;
-}
-
-
-/* test */
-/* Button Style */
-.button-green {
-    background-color: transparent;
-    color: #00ff00;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: 3px solid transparent;
-    border-radius: 15px;
-    position: relative;
-    transition: color 0.4s ease;
-}
-
-/* Border Animation */
-.button-green::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20%;
-    height: 20%;
-    border: 3px solid #00ff00;
-    border-radius: 15px;
-    transform: scale(0);
-    transition: transform 0.4s ease;
-    z-index: -1;
-}
-
-.button-green:hover::before {
-    transform: scale(1);
-}
-
-.button-green:hover {
-    color: #000;
-    background-color: #00ff00;
 }

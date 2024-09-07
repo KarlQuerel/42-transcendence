@@ -102,7 +102,7 @@ TODO:
 -				RENDERING						-
 \***********************************************/
 // export default function renderHome()
-// {
+//
 // 	document.getElementById('app').innerHTML = `
 		
 
@@ -461,76 +461,53 @@ TODO:
 // </div>
 // </div>
 // </div>
-// </div>
-
-
-// 	`;
-	
-// 	// Attach click event listeners to navigation frames
-// 	document.querySelectorAll('.nav-frame').forEach(element => {
-// 		element.addEventListener('click', () => {
-// 			const path = element.getAttribute('data-path');
-// 			navigateTo(path);
-// 		});
-// 	});
-// }
-
-// // // TODO - Karl, fleeing contact us to implement later
-// // /*
-// // <a href="mailto:contact@example.com" class="btn btn-primary float-button">
-// // 	<i class="bi bi-envelope"></i> Contact Us
-// // </a>
-// // */
+// </div> */
 
 export default function renderHome()
 {
-	// Create the container for the home content
-	const container = document.createElement('div');
+	const	container = document.createElement('div');
 	container.id = 'home-content';
+	container.className = 'mt-auto';
 
-	// Create "What is Pong?" and "Why Pong?" sections
-	const row = document.createElement('div');
+	const	row = document.createElement('div');
 	row.className = 'row';
 
-	const whatIsPongCard = createWhatIsPongCard();
+	const	whatIsPongCard = createWhatIsPongCard();
 	console.log('What is Pong Card:', whatIsPongCard);
 
-	const whyPongCard = createWhyPongCard();
+	const	whyPongCard = createWhyPongCard();
 	console.log('Why pong Card:', whyPongCard);
 
 	row.appendChild(whatIsPongCard);
 	row.appendChild(whyPongCard);
 	container.appendChild(row);
 
-	// Create and append "Les Modules de Dudule" button and modal
-	const { button, modal } = createLesModulesDeDuduleModal();
+	const	{ button, modal } = createWhatWeDidModal();
 	container.appendChild(button);
 
-	// Append modal to document body
-	if (!document.getElementById('staticBackdrop'))
-	{
+	if (!document.getElementById('staticBackdrop')) {
 		document.body.appendChild(modal);
 	}
 
 	return container;
 }
 
-// Helper functions for creating cards and modals (unchanged)
-function createWhatIsPongCard() {
+function createWhatIsPongCard()
+{
 	console.log('Creating What Is Pong Card');
 
-	const col = document.createElement('div');
+	const	col = document.createElement('div');
 	col.className = 'col';
 
-	const card = document.createElement('div');
+	const	card = document.createElement('div');
 	card.className = 'card';
 
-	const cardHeader = document.createElement('div');
-	cardHeader.className = 'card-header';
+	const	cardHeader = document.createElement('div');
+	cardHeader.className = 'card-header d-flex justify-content-center';
 	cardHeader.id = 'headingOne';
 
-	const button = document.createElement('button');
-	button.className = 'btn btn-primary';
+	const	button = document.createElement('button');
+	button.className = 'btn btn-home';
 	button.type = 'button';
 	button.setAttribute('data-bs-toggle', 'collapse');
 	button.setAttribute('data-bs-target', '#multiCollapseExample1');
@@ -541,31 +518,31 @@ function createWhatIsPongCard() {
 	cardHeader.appendChild(button);
 	card.appendChild(cardHeader);
 
-	const collapse = document.createElement('div');
+	const	collapse = document.createElement('div');
 	collapse.className = 'collapse';
 	collapse.id = 'multiCollapseExample1';
 	collapse.setAttribute('aria-labelledby', 'headingOne');
 
-	const cardBody = document.createElement('div');
-	cardBody.className = 'card-body text-center';
+	const	cardBody = document.createElement('div');
+	cardBody.className = 'card-body text-center rounded-3';
 
-	const gifElement = document.createElement('img');
+	const	gifElement = document.createElement('img');
 	gifElement.src = '../../../assets/images/home/what_is_pong.gif';
 	gifElement.alt = 'Pong GIF';
 	gifElement.className = 'img-fluid mb-3';
 
-	const textElement = document.createElement('p');
+	const	textElement = document.createElement('p');
 	textElement.innerHTML = `
 		Released in 1972, Pong is one of the earliest video games ever created, 
 		and it's a simple 2D sports game that simulates table tennis (ping-pong).<br><br>
 		In the game, two players control paddles on opposite sides of the screen, 
 		and they use these paddles to hit a ball back and forth.<br><br>
-		The goal is to score points by making the ball pass your opponent's paddle.<br>
+		The goal is to score points by making the ball pass your opponent's paddle.
 	`;
 
-	const moreInfoLink = document.createElement('a');
+	const	moreInfoLink = document.createElement('a');
 	moreInfoLink.href = 'https://en.wikipedia.org/wiki/Pong';
-	moreInfoLink.className = 'btn btn-primary btn-home mt-3 button-green';
+	moreInfoLink.className = 'btn btn-primary btn-home mt-3';
 	moreInfoLink.textContent = 'More Info';
 	moreInfoLink.target = '_blank';
 	moreInfoLink.style.fontSize = '12px';
@@ -582,41 +559,42 @@ function createWhatIsPongCard() {
 	return col;
 }
 
-function createWhyPongCard() {
+function createWhyPongCard()
+{
 	console.log('Creating Why Pong Card');
 
-	const col = document.createElement('div');
+	const	col = document.createElement('div');
 	col.className = 'col';
 
-	const card = document.createElement('div');
+	const	card = document.createElement('div');
 	card.className = 'card';
 
-	const cardHeader = document.createElement('div');
+	const	cardHeader = document.createElement('div');
 	cardHeader.className = 'card-header';
 	cardHeader.id = 'headingTwo';
 
-	const button = document.createElement('button');
-	button.className = 'btn btn-primary';
+	const	button = document.createElement('button');
+	button.className = 'btn btn-home';
 	button.type = 'button';
 	button.setAttribute('data-bs-toggle', 'collapse');
 	button.setAttribute('data-bs-target', '#multiCollapseExample2');
 	button.setAttribute('aria-expanded', 'false');
 	button.setAttribute('aria-controls', 'multiCollapseExample2');
-	button.textContent = 'Why Pong?';
+	button.textContent = 'Aidez moi a trouver qlq chose ici';
 
 	cardHeader.appendChild(button);
 	card.appendChild(cardHeader);
 
-	const collapse = document.createElement('div');
+	const	collapse = document.createElement('div');
 	collapse.className = 'collapse';
 	collapse.id = 'multiCollapseExample2';
 	collapse.setAttribute('aria-labelledby', 'headingTwo');
 
-	const cardBody = document.createElement('div');
-	cardBody.className = 'card-body text-center';
+	const	cardBody = document.createElement('div');
+	cardBody.className = 'card-body text-center rounded-3';
 
-	const textElement = document.createElement('p');
-	textElement.textContent = 'Because why not.';
+	const	textElement = document.createElement('p');
+	textElement.textContent = 'I have no fucking ideeaaaaassssssssssssss';
 
 	cardBody.appendChild(textElement);
 	collapse.appendChild(cardBody);
@@ -626,17 +604,97 @@ function createWhyPongCard() {
 	return col;
 }
 
-
-function createLesModulesDeDuduleModal()
+function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
 {
-	const button = document.createElement('button');
+	const	accordionItem = document.createElement('div');
+	accordionItem.className = 'accordion-item';
+
+	const	accordionHeader = document.createElement('h2');
+	accordionHeader.className = 'accordion-header d-flex justify-content-between align-items-center';
+	accordionHeader.id = `${accordionId}Accordion`;
+	accordionItem.appendChild(accordionHeader);
+
+	const	button = document.createElement('button');
+	button.className = 'accordion-button';
 	button.type = 'button';
-	button.className = 'btn btn-primary-link';
+	button.setAttribute('data-bs-toggle', 'collapse');
+	button.setAttribute('data-bs-target', `#outerCollapse${accordionId}`);
+	button.setAttribute('aria-expanded', 'true');
+	button.setAttribute('aria-controls', `outerCollapse${accordionId}`);
+	button.textContent = title;
+	accordionHeader.appendChild(button);
+
+	const	collapse = document.createElement('div');
+	collapse.id = `outerCollapse${accordionId}`;
+	collapse.className = 'accordion-collapse collapse';
+	collapse.setAttribute('aria-labelledby', `${accordionId}Accordion`);
+	accordionItem.appendChild(collapse);
+
+	const	accordionBody = document.createElement('div');
+	accordionBody.className = 'accordion-body';
+	collapse.appendChild(accordionBody);
+
+	const	nestedAccordion = document.createElement('div');
+	nestedAccordion.className = 'accordion';
+	nestedAccordion.id = `${accordionId}Nested`;
+	accordionBody.appendChild(nestedAccordion);
+
+	modules.forEach(module => {
+		const	moduleItem = document.createElement('div');
+		moduleItem.className = 'accordion-item';
+
+		const	moduleHeader = document.createElement('h2');
+		moduleHeader.className = 'accordion-header';
+		moduleHeader.id = `${accordionId}-${module.id}`;
+		moduleItem.appendChild(moduleHeader);
+
+		const	moduleButton = document.createElement('button');
+		moduleButton.className = `accordion-button ${module.collapsed ? 'collapsed' : ''} d-flex justify-content-start align-items-center`;
+		moduleButton.type = 'button';
+		moduleButton.setAttribute('data-bs-toggle', 'collapse');
+		moduleButton.setAttribute('data-bs-target', `#nested-${accordionId}-${module.id}`);
+		moduleButton.setAttribute('aria-expanded', module.collapsed ? 'false' : 'true');
+		moduleButton.setAttribute('aria-controls', `nested-${accordionId}-${module.id}`);
+		moduleButton.textContent = module.title;
+		moduleHeader.appendChild(moduleButton);
+
+		const	badge = document.createElement('span');
+		badge.className = `badge ${module.badgeClass} badge-right me-3`;
+		badge.textContent = module.badgeText;
+		moduleButton.appendChild(badge);
+
+		const	moduleCollapse = document.createElement('div');
+		moduleCollapse.id = `nested-${accordionId}-${module.id}`;
+		moduleCollapse.className = `accordion-collapse collapse ${module.collapsed ? '' : 'show'}`;
+		moduleCollapse.setAttribute('aria-labelledby', `${accordionId}-${module.id}`);
+		moduleItem.appendChild(moduleCollapse);
+
+		const	moduleBody = document.createElement('div');
+		moduleBody.className = 'accordion-body';
+		moduleBody.innerHTML = module.content;
+		moduleCollapse.appendChild(moduleBody);
+
+		nestedAccordion.appendChild(moduleItem);
+	});
+
+	return accordionItem;
+}
+
+function createWhatWeDidModal()
+{
+	const	container = document.createElement('div');
+	container.className = 'd-flex justify-content-center';
+		
+	const	button = document.createElement('button');
+	button.type = 'button';
+	button.className = 'btn btn-home d-flex justify-content-center';
 	button.setAttribute('data-bs-toggle', 'modal');
 	button.setAttribute('data-bs-target', '#staticBackdrop');
-	button.textContent = 'Les Modules de Dudule';
+	button.textContent = 'What we Did';
 
-	const modal = document.createElement('div');
+	container.appendChild(button);
+
+	const	modal = document.createElement('div');
 	modal.className = 'modal fade';
 	modal.id = 'staticBackdrop';
 	modal.setAttribute('data-bs-backdrop', 'static');
@@ -645,147 +703,70 @@ function createLesModulesDeDuduleModal()
 	modal.setAttribute('aria-labelledby', 'staticBackdropLabel');
 	modal.setAttribute('aria-hidden', 'true');
 
-	const modalDialog = document.createElement('div');
+	const	modalDialog = document.createElement('div');
 	modalDialog.className = 'modal-dialog modal-xl';
 	modal.appendChild(modalDialog);
 
-	const modalContent = document.createElement('div');
+	const	modalContent = document.createElement('div');
 	modalContent.className = 'modal-content';
 	modalDialog.appendChild(modalContent);
 
-	const modalHeader = document.createElement('div');
+	const	modalHeader = document.createElement('div');
 	modalHeader.className = 'modal-header';
 	modalContent.appendChild(modalHeader);
 
-	const modalTitle = document.createElement('h5');
+	const	modalTitle = document.createElement('h5');
 	modalTitle.className = 'modal-title';
 	modalTitle.id = 'staticBackdropLabel';
 	modalTitle.textContent = 'What we did';
 	modalHeader.appendChild(modalTitle);
 
-	const modalBody = document.createElement('div');
+	const	modalBody = document.createElement('div');
 	modalBody.className = 'modal-body';
 	modalContent.appendChild(modalBody);
 
-	const mainAccordion = document.createElement('div');
+	const	mainAccordion = document.createElement('div');
 	mainAccordion.className = 'accordion accordion-flush';
 	mainAccordion.id = 'MainAccordion';
 	modalBody.appendChild(mainAccordion);
 
-	// Function to create accordion items
-	function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
-	{
-		const accordionItem = document.createElement('div');
-		accordionItem.className = 'accordion-item';
-
-		const accordionHeader = document.createElement('h2');
-		accordionHeader.className = 'accordion-header';
-		accordionHeader.id = `${accordionId}Accordion`;
-		accordionItem.appendChild(accordionHeader);
-
-		const button = document.createElement('button');
-		button.className = 'accordion-button';
-		button.type = 'button';
-		button.setAttribute('data-bs-toggle', 'collapse');
-		button.setAttribute('data-bs-target', `#outerCollapse${accordionId}`);
-		button.setAttribute('aria-expanded', 'true');
-		button.setAttribute('aria-controls', `outerCollapse${accordionId}`);
-		button.textContent = title;
-		accordionHeader.appendChild(button);
-
-		const collapse = document.createElement('div');
-		collapse.id = `outerCollapse${accordionId}`;
-		collapse.className = 'accordion-collapse collapse';
-		collapse.setAttribute('aria-labelledby', `${accordionId}Accordion`);
-		accordionItem.appendChild(collapse);
-
-		const accordionBody = document.createElement('div');
-		accordionBody.className = 'accordion-body';
-		collapse.appendChild(accordionBody);
-
-		const nestedAccordion = document.createElement('div');
-		nestedAccordion.className = 'accordion';
-		nestedAccordion.id = `${accordionId}Nested`;
-		accordionBody.appendChild(nestedAccordion);
-
-		modules.forEach(module => {
-			const moduleItem = document.createElement('div');
-			moduleItem.className = 'accordion-item';
-
-			const moduleHeader = document.createElement('h2');
-			moduleHeader.className = 'accordion-header';
-			moduleHeader.id = `${accordionId}-${module.id}`;
-			moduleItem.appendChild(moduleHeader);
-
-			const moduleButton = document.createElement('button');
-			moduleButton.className = `accordion-button ${module.collapsed ? 'collapsed' : ''} d-flex justify-content-start align-items-center`;
-			moduleButton.type = 'button';
-			moduleButton.setAttribute('data-bs-toggle', 'collapse');
-			moduleButton.setAttribute('data-bs-target', `#nested-${accordionId}-${module.id}`);
-			moduleButton.setAttribute('aria-expanded', module.collapsed ? 'false' : 'true');
-			moduleButton.setAttribute('aria-controls', `nested-${accordionId}-${module.id}`);
-			moduleButton.textContent = module.title;
-			moduleHeader.appendChild(moduleButton);
-
-			const badge = document.createElement('span');
-			badge.className = `badge ${module.badgeClass} me-3`;
-			badge.textContent = module.badgeText;
-			moduleButton.appendChild(badge);
-
-			const moduleCollapse = document.createElement('div');
-			moduleCollapse.id = `nested-${accordionId}-${module.id}`;
-			moduleCollapse.className = `accordion-collapse collapse ${module.collapsed ? '' : 'show'}`;
-			moduleCollapse.setAttribute('aria-labelledby', `${accordionId}-${module.id}`);
-			moduleItem.appendChild(moduleCollapse);
-
-			const moduleBody = document.createElement('div');
-			moduleBody.className = 'accordion-body';
-			moduleBody.innerHTML = module.content;
-			moduleCollapse.appendChild(moduleBody);
-
-			nestedAccordion.appendChild(moduleItem);
-		});
-
-		return accordionItem;
-	}
-
 	// Example data for accordion items
-	const webModules = [
-		{
-			id: '1',
-			title: 'Use a Framework as backend',
-			collapsed: false,
-			badgeClass: 'text-bg-danger',
-			badgeText: 'MAJOR',
-			content: 'We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework. <img src="../../../assets/images/home/modules/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">'
-		},
-		{
-			id: '2',
-			title: 'Use a front-end framework or toolkit',
-			collapsed: true,
-			badgeClass: 'text-bg-warning',
-			badgeText: 'MINOR',
-			content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
-		},
-		{
-			id: '3',
-			title: 'Use a database for the backend',
-			collapsed: true,
-			badgeClass: 'text-bg-warning',
-			badgeText: 'MINOR',
-			content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
-		}
+	const	webModules = [
+	{
+		id: '1',
+		title: 'Use a Framework as backend',
+		collapsed: false,
+		badgeClass: 'text-bg-danger',
+		badgeText: 'MAJOR',
+		content: 'We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework. <img src="../../../assets/images/home/modules/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">'
+	},
+	{
+		id: '2',
+		title: 'Use a front-end framework or toolkit',
+		collapsed: true,
+		badgeClass: 'text-bg-warning',
+		badgeText: 'MINOR',
+		content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+	},
+	{
+		id: '3',
+		title: 'Use a database for the backend',
+		collapsed: true,
+		badgeClass: 'text-bg-warning',
+		badgeText: 'MINOR',
+		content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
+	}
 	];
 
-	const userModules = [
-		{
-			id: '1',
-			title: 'Standard user management, authentication, users across tournaments',
-			collapsed: false,
-			badgeClass: 'text-bg-danger',
-			badgeText: 'MAJOR',
-			content: 'Users can blablabla lalala'
-		}
+	const	userModules = [
+	{
+		id: '1',
+		title: 'Standard user management, authentication, users across tournaments',
+		collapsed: false,
+		badgeClass: 'text-bg-danger',
+		badgeText: 'MAJOR',
+		content: 'Users can blablabla lalala'
+	}
 	];
 
 	// Add accordion items to the main accordion
@@ -793,18 +774,16 @@ function createLesModulesDeDuduleModal()
 	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', userModules));
 
 	// Create modal footer
-	const modalFooter = document.createElement('div');
+	const	modalFooter = document.createElement('div');
 	modalFooter.className = 'modal-footer';
 	modalContent.appendChild(modalFooter);
 
-	const closeButton = document.createElement('button');
+	const	closeButton = document.createElement('button');
 	closeButton.type = 'button';
 	closeButton.className = 'btn btn-secondary';
 	closeButton.setAttribute('data-bs-dismiss', 'modal');
 	closeButton.textContent = 'Close';
 	modalFooter.appendChild(closeButton);
 
-	// Return the button and modal elements
-	return { button, modal };
+	return { button: container, modal };
 }
-
