@@ -1,99 +1,40 @@
 /***********************************************
 					BUTTONS
 ***********************************************/
-.btn-primary
-{
-	--bs-btn-border-color: none;
-	--bs-btn-active-border-color: none;
-	--bs-btn-active-bg: #1a911a;
-	--bs-btn-hover-border-color: none;
-}
-
 .btn-home
 {
-	padding: 10px 20px;
-	font-size: 18px;
-	background-color: #00ff00;
-	color: #000;
-	border: 5px solid transparent;
-	border-radius: 15px;
-	cursor: pointer;
+	border: 2px solid var(--base-green);
+	background-color: var(--base-dark);
+	position: relative;
+	width: auto;
+	height: auto;
+	margin: 10px;
 	text-decoration: none;
-	display: inline-block;
-	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--base-white);
+	transition: var(--animation-speed);
+	border-radius: 5px;
 }
 
 .btn-home:hover
 {
-	background-color: #6eec83a1;
-	color: #fff;
-	transform: scale(1.075);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-	animation: borderAnimation 2s infinite;
+	border: 2px solid var(--base-green);
+	color: var(--base-dark);
+	background: var(--base-green) url('../../assets/images/buttons/pixel_button_green.png');
+	transition-delay: 0.4s;
+	background-size: 180px;
+	animation: animate var(--animation-speed) steps(8) forwards;
 }
 
-/* Animation for the border */
-@keyframes borderAnimation
+@keyframes animate
 {
 	0%
 	{
-		border-color: #ffffff;
-	}
-	25%
-	{
-		border-color: #9afc9a;
-	}
-	50%
-	{
-		border-color: #34ff34;
-	}
-	75%
-	{
-		border-color: #9afc9a;
+		background-position-y: 0;
 	}
 	100%
 	{
-		border-color: #ffffff;
+		background-position-y: -480px;
 	}
 }
-
-
-/* 
-	- TO DO: LATER
-
-test fleeing button
-*/
-/*
-.float-button
-{
-	position: fixed;
-	bottom: 20px;
-	right: 20px;
-	z-index: 1000;
-	border-radius: 50%;
-	padding: 10px 20px;
-	background-color: #007bff;
-	color: #fff;
-	font-size: 16px;
-	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	transition: background-color 0.3s, transform 0.3s;
-	border: none;
-	text-decoration: none;
-}
-
-.float-button:hover
-{
-	background-color: #0056b3;
-	transform: scale(1.1);
-}
-
-.float-button i
-{
-	font-size: 1.5rem;
-	margin-right: 8px;
-}
-*/

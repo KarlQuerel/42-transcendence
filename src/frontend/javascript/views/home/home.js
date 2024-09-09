@@ -12,7 +12,7 @@ TODO:
 */
 
 /*
-<button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+<button class="btn " type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
 	Profile
 </button>
 
@@ -43,10 +43,10 @@ TODO:
 
 <!--	PONG EXPLANATION	-->
 <p class="d-inline-flex gap-1">
-		<a class="btn btn-primary button-link" data-bs-toggle="collapse" href="#whatispongcollapse" role="button" aria-expanded="false" aria-controls="whatispongcollapse">
+		<a class="btn	button-link" data-bs-toggle="collapse" href="#whatispongcollapse" role="button" aria-expanded="false" aria-controls="whatispongcollapse">
 			What is Pong?
 		</a>
-		<button class="btn btn-primary button-link" type="button" data-bs-toggle="collapse" data-bs-target="#whypongcollapse" aria-expanded="false" aria-controls="whypongcollapse">
+		<button class="btn	button-link" type="button" data-bs-toggle="collapse" data-bs-target="#whypongcollapse" aria-expanded="false" aria-controls="whypongcollapse">
 			Why Pong?
 		</button>
 </p>
@@ -134,7 +134,7 @@ TODO:
 // -------------------------------------->
 
 // 	<!--	BUTTON MODULES	-->
-// 	<button type="button" class="btn btn-primary-link" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+// 	<button type="button" class="btn -link" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 // 		Les Modules de Dudule
 // 	</button>
 
@@ -542,7 +542,7 @@ function createWhatIsPongCard()
 
 	const	moreInfoLink = document.createElement('a');
 	moreInfoLink.href = 'https://en.wikipedia.org/wiki/Pong';
-	moreInfoLink.className = 'btn btn-primary btn-home mt-3';
+	moreInfoLink.className = 'btn btn-home mt-auto';
 	moreInfoLink.textContent = 'More Info';
 	moreInfoLink.target = '_blank';
 	moreInfoLink.style.fontSize = '12px';
@@ -680,6 +680,246 @@ function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
 	return accordionItem;
 }
 
+/***********************************************\
+-				MODAL DATA						-
+\***********************************************/
+
+/*					WEB							*/
+const	Web =
+[
+{
+	id: '1',
+	title: 'Use a Framework as backend',
+	collapsed: true,
+	badgeClass: 'text-bg-danger',
+	badgeText: 'MAJOR',
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
+},
+{
+	id: '2',
+	title: 'Use a front-end framework or toolkit',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+},
+{
+	id: '3',
+	title: 'Use a database for the backend',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
+}
+];
+
+/*				USER MANAGEMENT					*/
+const	UserManagement =
+[
+{
+	id: '1',
+	title: 'Standard user management, authentication, users across tournaments',
+	collapsed: true,
+	badgeClass: 'text-bg-danger',
+	badgeText: 'MAJOR',
+	content: 'Users can blablabla shutup nerd'
+}
+];
+
+/*			GAMEPLAY & USER EXPERIENCE			*/
+const	GameplayUserExperience = [
+{
+	id: '1',
+	title: 'Game Customization Options',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: 'Game is customized, give us 125'
+}
+];
+
+/*					AI-ALGO						*/
+const	AiAlgo =
+[
+{
+	id: '1',
+	title: 'Introduce an AI Opponent',
+	collapsed: true,
+	badgeClass: 'text-bg-danger',
+	badgeText: 'MAJOR',
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
+},
+{
+	id: '2',
+	title: 'User and Game Stats Dashboards',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+}
+];
+
+/*				CYBERSECURITY					*/
+const	Cybersecurity =
+[
+{
+	id: '1',
+	title: '2FA - Two-factor authentication',
+	collapsed: true,
+	badgeClass: 'text-bg-danger',
+	badgeText: 'MAJOR',
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
+}
+];
+
+/*					DEVOPS						*/
+const	DevOps =
+[
+{
+	id: '1',
+	title: 'Monitoring System',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
+},
+{
+	id: '2',
+	title: 'Designing the Backend as Microservices',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MAJOR',
+	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+}
+];
+
+/*				ACCESSIBILITY					*/
+const	Accessibility =
+[
+{
+	id: '1',
+	title: 'Multiple language supports',
+	collapsed: true,
+	badgeClass: 'text-bg-warning',
+	badgeText: 'MINOR',
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
+}
+];
+
+
+
+
+
 function createWhatWeDidModal()
 {
 	const	container = document.createElement('div');
@@ -730,48 +970,12 @@ function createWhatWeDidModal()
 	mainAccordion.id = 'MainAccordion';
 	modalBody.appendChild(mainAccordion);
 
-	// Example data for accordion items
-	const	webModules = [
-	{
-		id: '1',
-		title: 'Use a Framework as backend',
-		collapsed: false,
-		badgeClass: 'text-bg-danger',
-		badgeText: 'MAJOR',
-		content: 'We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework. <img src="../../../assets/images/home/modules/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">'
-	},
-	{
-		id: '2',
-		title: 'Use a front-end framework or toolkit',
-		collapsed: true,
-		badgeClass: 'text-bg-warning',
-		badgeText: 'MINOR',
-		content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
-	},
-	{
-		id: '3',
-		title: 'Use a database for the backend',
-		collapsed: true,
-		badgeClass: 'text-bg-warning',
-		badgeText: 'MINOR',
-		content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
-	}
-	];
-
-	const	userModules = [
-	{
-		id: '1',
-		title: 'Standard user management, authentication, users across tournaments',
-		collapsed: false,
-		badgeClass: 'text-bg-danger',
-		badgeText: 'MAJOR',
-		content: 'Users can blablabla lalala'
-	}
-	];
 
 	// Add accordion items to the main accordion
-	mainAccordion.appendChild(createAccordionItem('Web', 'Web', 'text-bg-danger', 'MAJOR', webModules));
-	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', userModules));
+	mainAccordion.appendChild(createAccordionItem('Web', 'Web', 'text-bg-danger', 'MAJOR', Web));
+	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', UserManagement));
+	mainAccordion.appendChild(createAccordionItem('Gameplay', 'Gameplay and User Experience', 'text-bg-danger', 'MAJOR', GameplayUserExperience));
+	//TODO: CONTINUE HERE
 
 	// Create modal footer
 	const	modalFooter = document.createElement('div');

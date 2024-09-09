@@ -333,7 +333,7 @@ function drawScore()
 	ctx.textBaseline = "middle";
 
 	// Score color and shadow
-	ctx.fillStyle = "var(--retro-green)";
+	ctx.fillStyle = "var(----base-green)";
 	ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
 	ctx.shadowBlur = 10;
 

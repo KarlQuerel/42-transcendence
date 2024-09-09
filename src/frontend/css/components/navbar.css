@@ -33,6 +33,9 @@
 
 .btn-nav
 {
+	--bs-btn-border-color: none;
+	--bs-btn-active-border-color: none;
+	--bs-btn-hover-border-color: none;
 	text-transform: uppercase;
 	background-color: transparent;
 	border-color: transparent;

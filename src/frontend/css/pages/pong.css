@@ -40,8 +40,8 @@
 #winning-message
 {
 	background-color: black;
-	border: 3px solid var(--retro-green);
-	color: var(--retro-green);
+	border: 3px solid var(----base-green);
+	color: var(----base-green);
 	font-family: 'Press Start 2P', cursive;
 	font-size: 36px;
 	text-align: center;
