@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models import CustomUser
 import base64
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class CustomUserRegistrationSerializer(serializers.ModelSerializer):
     # avatar_data = serializers.SerializerMethodField()
 
     class Meta:

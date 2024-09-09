@@ -1,14 +1,15 @@
 # from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+# from rest_framework.response import Response
 from rest_framework.decorators import api_view
 # from rest_framework.decorators import permission_classes
 # from rest_framework.views import APIView
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from django.views.decorators.csrf import csrf_exempt
 from api.models import CustomUser
-from .serializers import CustomUserSerializer
+from api.forms import CustomUserRegistrationForm
+from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-# from .forms import UserRegistrationForm
+# from .forms import CustomUserRegistrationForm
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 import json
@@ -19,7 +20,7 @@ import json
 # @permission_classes([IsAuthenticated])
 # def getData(request):
 # 	items = CustomUser.objects.all()
-# 	serializer = CustomUserSerializer(items, many=True)
+# 	serializer = CustomUserRegistrationSerializer(items, many=True)
 # 	return Response(serializer.data)
 
 
@@ -38,36 +39,62 @@ import json
 #########################################
 
 # # For user registration
+
 @api_view(['POST'])
 def addUser(request):
-	serializer = CustomUserSerializer(data=request.data)
-	if serializer.is_valid():
-		validated_data = serializer.validated_data
-        
-		user = CustomUser(
-                  username=validated_data['username'],
-                  email=validated_data['email'],
-                  date_of_birth=validated_data['date_of_birth'],
-                  first_name=validated_data['first_name'],
-                  last_name=validated_data['last_name'],
-		)
-		user.set_password(request.data['password']) 
-		user.save()
-		return Response(serializer.data, status=status.HTTP_201_CREATED)
-	print(serializer.errors)  # Log the serializer errors for debugging
-	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+	data = json.loads(request.body)
+	form = CustomUserRegistrationForm(request.data)
 
+	if form.is_valid():
+		user = form.save(commit=False)
+		user.set_password(form.cleaned_data['password'])
+		user.save()
+		return JsonResponse(form.data, status=status.HTTP_201_CREATED)
+
+	else:
+		return JsonResponse(form.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+########################### OPTION QUI MARCHAIT ###########################
+
+
+# @api_view(['POST'])
+# def addUser(request):
+# 	serializer = CustomUserRegistrationSerializer(data=request.data)
+# 	if serializer.is_valid():
+# 		validated_data = serializer.validated_data
+        
+# 		# user = CustomUser(
+#         #           username=validated_data['username'],
+#         #           email=validated_data['email'],
+#         #           date_of_birth=validated_data['date_of_birth'],
+#         #           first_name=validated_data['first_name'],
+#         #           last_name=validated_data['last_name'],
+# 		# )
+# 		user = serializer.save(owner=request.user)
+# 		user.set_password(request.data['password'])
+# 		user.username = serializer.cleaned_data.get('username', None)
+# 		user.save()
+# 		return Response(serializer.data, status=status.HTTP_201_CREATED)
+# 	print(serializer.errors)  # Log the serializer errors for debugging
+# 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @csrf_exempt
 def signInUser(request):
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body)
-			username = request.data.get('username')
-			password = request.data.get('password')
+			print(data)
+			username = data.get('username')
+			password = data.get('password')
+			print(f'username: {username}, password: {password}')
 
 			# Authenticate the user
-			user = authenticate(request, username=username, password=password)
+			# check_password = check_password(password)
+			user = authenticate(request, username=data['username'], password=data['password'])
+			print(user)
 		
 			if user is not None:
 				login(request, user)
@@ -85,33 +112,32 @@ def signInUser(request):
 			return JsonResponse({'error': 'Invalid JSON'}, status=400)
 
 	return JsonResponse({'error': 'Invalid request method'}, status=405)
-      
 
 
-# @api_view(['POST'])
-# def addUser(request):
-# 	data = json.loads(request.body)
-# 	form = UserRegistrationForm(data)
-# 	if form.is_valid():
-# 		user = form.save(commit=False)
-# 		user.set_password(form.cleaned_data['password'])
-# 		user.username = form.cleaned_data.get('username', None)
-# 		user.save()
-# 		return Response({'username': user.username}, status=status.HTTP_201_CREATED)
-# 	return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+###################################################################################################
 
 
 
 # Sends to the frontend the profile of the currently authenticated user
 class UserProfileView(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
+    serializer_class = CustomUserRegistrationSerializer
 
     def get_object(self):
         return self.request.user
         # return CustomUser.objects.get(username='cbernaze')
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
+
+
+
+
+
+
+
+
+
+
 
 
 

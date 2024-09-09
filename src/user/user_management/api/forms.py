@@ -1,17 +1,24 @@
 from django import forms
 from .models import CustomUser
+from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 
-class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    # confirm_password = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
+class CustomUserRegistrationForm(UserCreationForm):
 
-    class Meta:
+    class Meta(UserCreationForm.Meta):
         model = CustomUser
-        fields = ['password',
-                #   'confirm_password',
-                  'username',]
+        fields = ['username', 'password', 'email', 'date_of_birth', 'first_name', 'last_name']
 
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        # Ajouter des validations supplémentaires ici si nécessaire
-        return password
+
+
+class CustomUserChangePasswordForm(SetPasswordForm):
+
+    class Meta(SetPasswordForm.Meta):
+        model = CustomUser
+        fields = ['old_password', 'new_password1', 'new_password2']
+
+
+
+    # def clean_password(self):
+    #     password = self.cleaned_data.get('password')
+    #     # Ajouter des validations supplémentaires ici si nécessaire
+    #     return password
