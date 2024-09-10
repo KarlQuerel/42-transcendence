@@ -1,4 +1,9 @@
 /***********************************************\
+-				GLOBAL VARIABLES				-
+\***********************************************/
+export	const	DEBUG = true;
+
+/***********************************************\
 -				IMPORTING SCRIPTS				-
 \***********************************************/
 
@@ -132,8 +137,11 @@ function router()
 	const previousRoute = routes[currentPath]
 	const route = routes[path] || routes['/404'];
 
-	console.log('Current path:', path);
-	console.log('Route:', route);
+	if (DEBUG)
+	{
+		console.log('Current path:', path);
+		console.log('Route:', route);	
+	}
 
 	//	Clear previous route if necessary
 	if (previousRoute && previousRoute.cleanup)
@@ -155,7 +163,8 @@ function router()
 
 		if (route.init)
 		{
-			console.log('Initializing route:', path);
+			if (DEBUG)
+				console.log('Initializing route:', path);
 			route.init();
 		}
 	}
@@ -190,7 +199,8 @@ document.addEventListener("DOMContentLoaded", () =>
 		{
 			event.preventDefault();
 			const href = link.getAttribute('href');
-			console.log(`Navigating to ${href}`);
+			if (DEBUG)
+				console.log(`Navigating to ${href}`);
 			navigateTo(href);
 		}
 	});
