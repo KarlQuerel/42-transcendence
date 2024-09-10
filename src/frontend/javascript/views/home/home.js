@@ -1,14 +1,33 @@
-/***********************************************\
--				WORK-IN-PROGRESS				-
-\***********************************************/
-
 /*
 TODO:
-- Profile on the side - offcanvas
-- What is Pong? - card
 - Fake reviews - carrousel
 
 - On pong : maybe loading bar
+
+---	WEB
+- (MAJOR) Use a Framework as backend
+- (MINOR) Use a front-end framework or toolkit
+- (MINOR) User a database for the backend
+
+---	USER MANAGEMENT
+- (MAJOR) Standard user management, authentication, users across tournaments
+
+---	GAMEPLAY AND USER EXPERIENCE
+- (MINOR) Game Customization Options
+
+---	AI-ALGO
+- (MAJOR) Introduce an AI Opponent
+- (MINOR) User and Game Stats Dashboards
+
+---	CYBERSECURITY
+- (MAJOR) 2FA
+
+---	DEVOPS
+- (MINOR) Monitoring System
+- (MAJOR) Designing the Backend as Microservices
+
+---	ACCESSIBILITY
+- (MINOR) Multiple language supports
 */
 
 /*
@@ -37,32 +56,6 @@ TODO:
 			<li><a class="dropdown-item" href="#">Another action</a></li>
 			<li><a class="dropdown-item" href="#">Something else here</a></li>
 		</ul>
-		</div>
-	</div>
-</div>
-
-<!--	PONG EXPLANATION	-->
-<p class="d-inline-flex gap-1">
-		<a class="btn	button-link" data-bs-toggle="collapse" href="#whatispongcollapse" role="button" aria-expanded="false" aria-controls="whatispongcollapse">
-			What is Pong?
-		</a>
-		<button class="btn	button-link" type="button" data-bs-toggle="collapse" data-bs-target="#whypongcollapse" aria-expanded="false" aria-controls="whypongcollapse">
-			Why Pong?
-		</button>
-</p>
-<div class="row">
-	<div class="col">
-		<div class="collapse multi-collapse" id="whatispongcollapse">
-			<div class="card card-body">
-				Pong is a nice game. You should try it.
-			</div>
-		</div>
-	</div>
-	<div class="col">
-		<div class="collapse multi-collapse" id="whypongcollapse">
-			<div class="card card-body">
-				Because why not.
-			</div>
 		</div>
 	</div>
 </div>
@@ -97,372 +90,9 @@ TODO:
 
 */
 
-
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
-// export default function renderHome()
-//
-// 	document.getElementById('app').innerHTML = `
-		
-
-// <!-------------------------------------
-// ---	WEB
-// - (MAJOR) Use a Framework as backend
-// - (MINOR) Use a front-end framework or toolkit
-// - (MINOR) User a database for the backend
-
-// ---	USER MANAGEMENT
-// - (MAJOR) Standard user management, authentication, users across tournaments
-
-// ---	GAMEPLAY AND USER EXPERIENCE
-// - (MINOR) Game Customization Options
-
-// ---	AI-ALGO
-// - (MAJOR) Introduce an AI Opponent
-// - (MINOR) User and Game Stats Dashboards
-
-// ---	CYBERSECURITY
-// - (MAJOR) 2FA
-
-// ---	DEVOPS
-// - (MINOR) Monitoring System
-// - (MAJOR) Designing the Backend as Microservices
-
-// ---	ACCESSIBILITY
-// - (MINOR) Multiple language supports
-// -------------------------------------->
-
-// 	<!--	BUTTON MODULES	-->
-// 	<button type="button" class="btn -link" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-// 		Les Modules de Dudule
-// 	</button>
-
-// 	<!--	MODAL MODULES	-->
-// 	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-// 	<div class="modal-dialog modal-xl">
-// 	<div class="modal-content">
-// 	<div class="modal-header">
-// 		<h5 class="modal-title" id="staticBackdropLabel">
-// 			What we did
-// 		</h5>
-// 	</div>
-// 	<div class="modal-body">
-// 	<div class="accordion accordion-flush" id="MainAccordion">
-
-// 	<!--	WEB	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="WebAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseWeb" aria-expanded="true" aria-controls="outerCollapseWeb">
-// 				Web
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseWeb" class="accordion-collapse collapse" aria-labelledby="WebAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="WebNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Web-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-web-1" aria-expanded="true" aria-controls="nested-web-1">
-// 				Use a Framework as backend
-// 				<span class="badge rounded-pill text-bg-danger me-3">
-// 					MAJOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-web-1" class="accordion-collapse collapse" aria-labelledby="Web-1">
-// 		<div class="accordion-body">
-// 			We used <a href="https://www.djangoproject.com/start/overview/" target="_blank">Djan-motherfucking useless and not even working bitchy ass-go</a> as framework.
-// 		<img src="../../../assets/images/home/modules/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	<!-- #2 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Web-2">
-// 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nested-web-2" aria-expanded="false" aria-controls="nested-web-2">
-// 				Use a front-end framework or toolkit
-// 				<span class="badge text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-web-2" class="accordion-collapse collapse" aria-labelledby="Web-2">
-// 		<div class="accordion-body">
-// 			We used <a href="https://getbootstrap.com/" target"_blank">Bootstrap</a> as frontend toolkit.
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	<!-- #3 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Web-3">
-// 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nested-web-3" aria-expanded="false" aria-controls="nested-web-3">
-// 				Use a database for the backend
-// 				<span class="badge text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-web-3" class="accordion-collapse collapse" aria-labelledby="Web-3">
-// 		<div class="accordion-body">
-// 			We used <a href="https://www.postgresql.org/" target"_blank">PostgreSQL>PostgreSQL</a> as a designated database.
-// 		</div>
-// 		</div>
-// 	</div>
-	
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	USER MANAGEMENT	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="UserAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseUser" aria-expanded="true" aria-controls="outerCollapseUser">
-// 				User Management
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseUser" class="accordion-collapse collapse" aria-labelledby="UserAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="UserNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="User-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-user-1" aria-expanded="true" aria-controls="nested-user-1">
-// 				Standard user management, authentication, users across tournaments
-// 				<span class="badge rounded-pill text-bg-danger me-3">
-// 					MAJOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-user-1" class="accordion-collapse collapse" aria-labelledby="User-1">
-// 		<div class="accordion-body">
-// 				Users can blablabla lalala
-// 		</div>
-// 		</div>
-// 	</div>
-	
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	GAMEPLAY AND USER EXPERIENCE	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="GameAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseGame" aria-expanded="true" aria-controls="outerCollapseGame">
-// 				Gameplay and User Experience
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseGame" class="accordion-collapse collapse" aria-labelledby="GameAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="GameNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Game-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-game-1" aria-expanded="true" aria-controls="nested-game-1">
-// 				Game Customization Options
-// 				<span class="badge text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-game-1" class="accordion-collapse collapse" aria-labelledby="Game-1">
-// 		<div class="accordion-body">
-// 			We customised our game. You can now play our game on Steam, Epic Games and Skyblog.
-// 		</div>
-// 		</div>
-// 	</div>
-	
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	AI-ALGO	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="AIAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseAI" aria-expanded="true" aria-controls="outerCollapseAI">
-// 				AI-Algo
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseAI" class="accordion-collapse collapse" aria-labelledby="AIAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="AINested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="AI-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-AI-1" aria-expanded="true" aria-controls="nested-AI-1">
-// 				Introduce an AI Opponent
-// 				<span class="badge rounded-pill text-bg-danger me-3">
-// 					MAJOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-AI-1" class="accordion-collapse collapse" aria-labelledby="AI-1">
-// 		<div class="accordion-body">
-// 			Try to beat our AI!
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	<!-- #2 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="AI-2">
-// 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nested-AI-2" aria-expanded="false" aria-controls="nested-AI-2">
-// 				User and Game Stats Dashboards
-// 				<span class="badge text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-AI-2" class="accordion-collapse collapse" aria-labelledby="AI-2">
-// 		<div class="accordion-body">
-// 			Dashboards AI Description blablablabla
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	CYBERSECURITY	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="CyberAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseCyber" aria-expanded="true" aria-controls="outerCollapseCyber">
-// 				Cybersecurity
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseCyber" class="accordion-collapse collapse" aria-labelledby="CyberAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="CyberNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Cyber-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-cyber-1" aria-expanded="true" aria-controls="nested-cyber-1">
-// 				Implement Two-Factor Authentication (2FA) and JWT
-// 				<span class="badge rounded-pill text-bg-danger me-3">
-// 					MAJOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-cyber-1" class="accordion-collapse collapse" aria-labelledby="Cyber-1">
-// 		<div class="accordion-body">
-// 			We implemented 2FA, your data is safe with us!
-// 		</div>
-// 		</div>
-// 	</div>
-	
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	DEVOPS	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="DevOpsAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseDevOps" aria-expanded="true" aria-controls="outerCollapseDevOps">
-// 				DevOps
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseDevOps" class="accordion-collapse collapse" aria-labelledby="DevOpsAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="DevOpsNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="DevOps-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-DevOps-1" aria-expanded="true" aria-controls="nested-DevOps-1">
-// 				Monitoring System
-// 				<span class="badge rounded-pill text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-DevOps-1" class="accordion-collapse collapse" aria-labelledby="DevOps-1">
-// 		<div class="accordion-body">
-// 			Big Brother is watching
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	<!-- #2 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="DevOps-2">
-// 			<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#nested-DevOps-2" aria-expanded="false" aria-controls="nested-DevOps-2">
-// 				Designing the Backend as Microservices
-// 				<span class="badge rounded-pill text-bg-danger me-3">
-// 					MAJOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-DevOps-2" class="accordion-collapse collapse" aria-labelledby="DevOps-2">
-// 		<div class="accordion-body">
-// 			Designing back blablabla description
-// 		</div>
-// 		</div>
-// 	</div>
-
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	ACCESSIBILITY	-->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="AccessAccordion">
-// 			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseAccess" aria-expanded="true" aria-controls="outerCollapseAccess">
-// 				Accessibility
-// 			</button>
-// 		</h2>
-// 	<div id="outerCollapseAccess" class="accordion-collapse collapse" aria-labelledby="AccessAccordion">
-// 	<div class="accordion-body">
-// 	<div class="accordion" id="AccessNested">
-	
-// 	<!-- #1 MODULE -->
-// 	<div class="accordion-item">
-// 		<h2 class="accordion-header" id="Access-1">
-// 			<button class="accordion-button d-flex justify-content-start align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#nested-Access-1" aria-expanded="true" aria-controls="nested-Access-1">
-// 				Multiple language supports
-// 				<span class="badge rounded-pill text-bg-warning me-3">
-// 					MINOR
-// 				</span>
-// 			</button>
-// 		</h2>
-// 		<div id="nested-Access-1" class="accordion-collapse collapse" aria-labelledby="Access-1">
-// 		<div class="accordion-body">
-// 			We plan to support over 60 languages!
-// 		</div>
-// 		</div>
-// 	</div>
-	
-// 	</div>
-// 	</div>
-// 	</div>
-// 	</div>
-
-// 	<!--	FOOTER MODAL	-->
-// 	<div class="modal-footer">
-// 		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-// 			Get Me Out Of Here
-// 		</button>
-// 	</div>
-	
-// </div>
-// </div>
-// </div>
-// </div>
-// </div> */
-
 export default function renderHome()
 {
 	const	container = document.createElement('div');
@@ -529,7 +159,7 @@ function createWhatIsPongCard()
 	const	gifElement = document.createElement('img');
 	gifElement.src = '../../../assets/images/home/what_is_pong.gif';
 	gifElement.alt = 'Pong GIF';
-	gifElement.className = 'img-fluid mb-3';
+	gifElement.className = 'img-fluid my-auto py-auto';
 
 	const	textElement = document.createElement('p');
 	textElement.innerHTML = `
@@ -542,7 +172,7 @@ function createWhatIsPongCard()
 
 	const	moreInfoLink = document.createElement('a');
 	moreInfoLink.href = 'https://en.wikipedia.org/wiki/Pong';
-	moreInfoLink.className = 'btn btn-home mt-auto';
+	moreInfoLink.className = 'btn btn-second mt-auto py-auto';
 	moreInfoLink.textContent = 'More Info';
 	moreInfoLink.target = '_blank';
 	moreInfoLink.style.fontSize = '12px';
@@ -671,7 +301,7 @@ function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
 
 		const	moduleBody = document.createElement('div');
 		moduleBody.className = 'accordion-body';
-		moduleBody.innerHTML = module.content;
+		moduleBody.innerHTML = typeof module.content === 'function' ? module.content() : module.content;
 		moduleCollapse.appendChild(moduleBody);
 
 		nestedAccordion.appendChild(moduleItem);
@@ -706,7 +336,7 @@ const	Web =
 		const colImage = document.createElement('div');
 		colImage.className = 'col-md-4';
 		const img = document.createElement('img');
-		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.src = '../../../assets/images/home/modules/web/django_logo.png';
 		img.alt = 'Django Logo';
 		img.className = 'img-fluid rounded float-end';
 		colImage.appendChild(img);
@@ -723,7 +353,29 @@ const	Web =
 	collapsed: true,
 	badgeClass: 'text-bg-warning',
 	badgeText: 'MINOR',
-	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used the most useless front-end framework, I'm of course talking about <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/web/bootstrap_logo.svg';
+		img.alt = 'Bootstrap Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 },
 {
 	id: '3',
@@ -731,7 +383,29 @@ const	Web =
 	collapsed: true,
 	badgeClass: 'text-bg-warning',
 	badgeText: 'MINOR',
-	content: 'We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> as a designated database.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/web/postgreSQL_logo.png';
+		img.alt = 'PostgreSQL Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 }
 ];
 
@@ -744,7 +418,29 @@ const	UserManagement =
 	collapsed: true,
 	badgeClass: 'text-bg-danger',
 	badgeText: 'MAJOR',
-	content: 'Users can blablabla shutup nerd'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>Users can blabla shutup nerd <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/web/django_logo.png';
+		img.alt = 'Tournament Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 }
 ];
 
@@ -756,7 +452,29 @@ const	GameplayUserExperience = [
 	collapsed: true,
 	badgeClass: 'text-bg-warning',
 	badgeText: 'MINOR',
-	content: 'Game is customized, give us 125'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We customised our game. You can now play our game on Steam, Epic Games and Skyblog, give us 125.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/web/django_logo.png';
+		img.alt = 'Game Customization Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 }
 ];
 
@@ -776,14 +494,14 @@ const	AiAlgo =
 		const colText = document.createElement('div');
 		colText.className = 'col-md-8';
 		colText.innerHTML = `
-		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		<p>Try to beat our AI you puny noob!</p>
 		`;
 	
 		const colImage = document.createElement('div');
 		colImage.className = 'col-md-4';
 		const img = document.createElement('img');
-		img.src = '../../../assets/images/home/modules/django_logo.png';
-		img.alt = 'Django Logo';
+		img.src = '../../../assets/images/home/modules/ai-algo/AI_logo.gif';
+		img.alt = 'AI Logo';
 		img.className = 'img-fluid rounded float-end';
 		colImage.appendChild(img);
 	
@@ -799,7 +517,29 @@ const	AiAlgo =
 	collapsed: true,
 	badgeClass: 'text-bg-warning',
 	badgeText: 'MINOR',
-	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>Blablablablibloubla</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/ai-algo/AI_logo.gif';
+		img.alt = 'AI Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 }
 ];
 
@@ -875,9 +615,31 @@ const	DevOps =
 	id: '2',
 	title: 'Designing the Backend as Microservices',
 	collapsed: true,
-	badgeClass: 'text-bg-warning',
+	badgeClass: 'text-bg-danger',
 	badgeText: 'MAJOR',
-	content: 'We used <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a> as frontend toolkit.'
+	content: (() => {
+		const row = document.createElement('div');
+		row.className = 'row';
+	
+		const colText = document.createElement('div');
+		colText.className = 'col-md-8';
+		colText.innerHTML = `
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		`;
+	
+		const colImage = document.createElement('div');
+		colImage.className = 'col-md-4';
+		const img = document.createElement('img');
+		img.src = '../../../assets/images/home/modules/django_logo.png';
+		img.alt = 'Django Logo';
+		img.className = 'img-fluid rounded float-end';
+		colImage.appendChild(img);
+	
+		row.appendChild(colText);
+		row.appendChild(colImage);
+	
+		return row.outerHTML;
+		})
 }
 ];
 
@@ -897,7 +659,7 @@ const	Accessibility =
 		const colText = document.createElement('div');
 		colText.className = 'col-md-8';
 		colText.innerHTML = `
-		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+		<p>We plan to support over 120 languages !</p>
 		`;
 	
 		const colImage = document.createElement('div');
@@ -975,7 +737,10 @@ function createWhatWeDidModal()
 	mainAccordion.appendChild(createAccordionItem('Web', 'Web', 'text-bg-danger', 'MAJOR', Web));
 	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', UserManagement));
 	mainAccordion.appendChild(createAccordionItem('Gameplay', 'Gameplay and User Experience', 'text-bg-danger', 'MAJOR', GameplayUserExperience));
-	//TODO: CONTINUE HERE
+	mainAccordion.appendChild(createAccordionItem('AI', 'AI-Algo', 'text-bg-danger', 'MAJOR', AiAlgo));
+	mainAccordion.appendChild(createAccordionItem('Cyber', 'Cybersecurity', 'text-bg-danger', 'MAJOR', Cybersecurity));
+	mainAccordion.appendChild(createAccordionItem('DevOps', 'DevOps', 'text-bg-danger', 'MAJOR', DevOps));
+	mainAccordion.appendChild(createAccordionItem('Access', 'Accessibility', 'text-bg-danger', 'MAJOR', Accessibility));
 
 	// Create modal footer
 	const	modalFooter = document.createElement('div');

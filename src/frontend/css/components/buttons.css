@@ -1,6 +1,8 @@
 /***********************************************
 					BUTTONS
 ***********************************************/
+
+/*			Pixelated Button		*/
 .btn-home
 {
 	border: 2px solid var(--base-green);
@@ -37,4 +39,40 @@
 	{
 		background-position-y: -480px;
 	}
+}
+
+/*			Secondary Button		*/
+.btn-second
+{
+	outline: 0;
+	grid-gap: 8px;
+	align-items: center;
+	/* background: 0 0; */
+	border: 1px solid #000;
+	border-radius: 10px;
+	cursor: pointer;
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 16px;
+	gap: 8px;
+	justify-content: center;
+	line-height: 1.5;
+	overflow: hidden;
+	padding: auto;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	transition: all .14s ease-out;
+	white-space: nowrap;
+}
+.btn-second:hover
+{
+	box-shadow: 4px 4px 0 #000;
+	transform: translate(-4px,-4px);
+	border: 1px solid #000;
+	border-radius: 10px;
+	background-color: #a3c9db;
+}
+.btn-second:focus-visibl
+{
+	outline-offset: 1px;
 }
