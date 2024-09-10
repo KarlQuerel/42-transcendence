@@ -55,6 +55,8 @@ export default function renderSignIn()
         const username = emailInput.value;
         const password = passwordInput.value;
 
+
+        console.log('Logging in with:', username, password); // DEBUG
         login(username, password);
     });
 
@@ -92,10 +94,10 @@ function login(username, password)
             throw new Error('Login failed: No access token received');
     })
     .then(newAccessToken => {
-        console.log('Token refreshed:', newAccessToken);
+        console.log('Token refreshed:', newAccessToken); // DEBUG
         // Handle successful login (e.g., redirect to dashboard)
         // Example:
-        window.location.href = '/dashboard';
+        window.location.href = '/home';
     })
     .catch(error => {
         console.error('Error:', error);

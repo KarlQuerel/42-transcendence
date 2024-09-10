@@ -238,7 +238,14 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
 		headers: {
 			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({ username, password, email, date_of_birth, first_name, last_name}),
+		body: JSON.stringify({
+            username,
+            password1: password,
+            password2: password,
+            email,
+            date_of_birth,
+            first_name,
+            last_name }),
 	})
     .then(response =>
     {

@@ -11,6 +11,8 @@ class CustomUser(AbstractUser):
     username = models.CharField(blank=False, null=False, max_length=12, unique=True)
     email = models.EmailField(blank=False, null=False, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
+    password1 = models.CharField(blank=False, null=False, max_length=30, default='default_password')
+    password2 = models.CharField(blank=False, null=False, max_length=30, default='default_password')
     # Override AbstractUser existing fields
     groups = None
     user_permissions = None

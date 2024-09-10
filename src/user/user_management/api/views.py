@@ -6,13 +6,13 @@ from rest_framework.decorators import api_view
 from rest_framework import generics, status, permissions
 from django.views.decorators.csrf import csrf_exempt
 from api.models import CustomUser
-from api.forms import CustomUserRegistrationForm
+from .forms import CustomUserRegistrationForm
 from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-# from .forms import CustomUserRegistrationForm
 from django.contrib.auth import authenticate, login
 from django.http import JsonResponse
 import json
+import logging
 
 
 # Retrieves a list of all CustomUser instances, all users'data
@@ -40,19 +40,27 @@ import json
 
 # # For user registration
 
+logger = logging.getLogger(__name__)
+
 @api_view(['POST'])
 def addUser(request):
-	data = json.loads(request.body)
-	form = CustomUserRegistrationForm(request.data)
+	try:
+		data = json.loads(request.body)
+		logger.debug(f"Received data: {data}") # DEBUG
+	except json.JSONDecodeError:
+		return JsonResponse({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
+	
+	form = CustomUserRegistrationForm(data)
 
 	if form.is_valid():
 		user = form.save(commit=False)
-		user.set_password(form.cleaned_data['password'])
+		user.set_password(form.cleaned_data['password1'])
 		user.save()
-		return JsonResponse(form.data, status=status.HTTP_201_CREATED)
+		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
 
 	else:
-		return JsonResponse(form.data, status=status.HTTP_400_BAD_REQUEST)
+		logger.debug(f"Form errors: {form.errors}") # DEBUG
+		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
@@ -86,15 +94,15 @@ def signInUser(request):
 	if request.method == 'POST':
 		try:
 			data = json.loads(request.body)
-			print(data)
+			print(data) # DEBUG
 			username = data.get('username')
 			password = data.get('password')
-			print(f'username: {username}, password: {password}')
+			print(f'username: {username}, password: {password}') # DEBUG
 
 			# Authenticate the user
 			# check_password = check_password(password)
-			user = authenticate(request, username=data['username'], password=data['password'])
-			print(user)
+			user = authenticate(request, username=username, password=password)
+			print(f'Authenticated user: {user}') # DEBUG
 		
 			if user is not None:
 				login(request, user)
