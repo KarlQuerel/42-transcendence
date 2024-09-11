@@ -10,13 +10,15 @@
 	position: relative;
 	width: auto;
 	height: auto;
-	margin: 10px;
+	margin: 20px;
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
 	color: var(--base-white);
 	transition: var(--animation-speed);
 	border-radius: 5px;
+	padding: 60px 60px;
+	font-size: 1.5rem;
 }
 
 .btn-home:hover
@@ -25,7 +27,7 @@
 	color: var(--base-dark);
 	background: var(--base-green) url('../../assets/images/buttons/pixel_button_green.png');
 	transition-delay: 0.4s;
-	background-size: 180px;
+	background-size: 220px;
 	animation: animate var(--animation-speed) steps(8) forwards;
 }
 
