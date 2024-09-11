@@ -545,48 +545,48 @@ function keyUpHandler(e)
 -					AI							-
 \***********************************************/
 
+/* imports the function that returns the AI paddle's movement */
 import { getPaddleAction } from './ai.js';
 
+/* imports the uninitialized GameData class */
 import { GameData } from './ai.js';
 
 let data = new GameData();
 
 function updateGameData()
 {
-	// ball velocity
-	data.ball_velocityX = ball.dx;
-	data.ball_velocityY = ball.dy;
+	data.ballX = ball.x;
+	data.ballY = ball.y;
+	data.ball_radius = ball.radius;
+	data.ballX_velocity = ball.dx;
+	data.ballY_velocity = ball.dy;
 
 	data.fieldY_top = 0;
 	data.fieldY_bottom = canvas.height;
-
-	// field's right bound X coordinate
 	data.fieldX_right = canvas.width;
 
-	data.ball_radius = ball.radius;
-
+	data.paddleY = player2.y;
+	data.paddle_initial_position = (canvas.height - paddleHeight) / 2;
 	data.paddle_height = paddleHeight;
 	data.paddle_width = paddleWidth;
-
-	// paddle Y coordinate
-	data.paddle_y = player2.y;
-
-	data.ballX  = ball.x;
-	data.ballY = ball.y;
-	data.ballRadius = ball.radius;
 }
 
+/* Exports the current game data held inside the data class.
+The information hold inside this class can differ from the actual 
+current game info, since the data class is only updated once per 
+second thanks to the time interval created inside gameLoop(). */
 export function update_game_data()
 {
 	return data;
 }
 
+/* All possible returns from getPaddleAction() */
 const DOWN = 0
 const UP = 1
-const DO_NOT_MOVE = 2
-const GO_BAK_TO_INITIAL_POSITION = 3;
+const ERROR = 42
 
-document.addEventListener('keydown', keyDownHandler);
+//CHECK CARO: simulate key press obligatoire? cf interprétation du sujet
+/* document.addEventListener('keydown', keyDownHandler);
 document.addEventListener('keyup', keyUpHandler);
 
 function simulateKeyPress(key) {
@@ -595,25 +595,25 @@ function simulateKeyPress(key) {
 
 function simulateKeyRelease(key) {
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
-}
+} */
 
+/* Simulates a key press from the AI's paddle */
 function moveAiPaddle()
 {
+	//TODO KARL
+/* 	if (getPaddleAction() == ERROR)
+		STOP THE GAME */
 	if (getPaddleAction() == UP)
 	{
-		// simulateKeyPress('ArrowUp');
-		// simulateKeyRelease('ArrowUp');
+/* 		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowUp'); */
 		player2.dy = -paddleSpeed;
 	}
 	else if (getPaddleAction() == DOWN)
 	{
-		// simulateKeyPress('ArrowDown');
-		// simulateKeyRelease('ArrowDown');
+/* 		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowDown'); */
 		player2.dy = paddleSpeed;
-	}
-	else if (getPaddleAction() == GO_BAK_TO_INITIAL_POSITION)
-	{
-		player2.dy = (canvas.height - paddleHeight) / 2; //FIX: NE MARCHE PAS
 	}
 }
 
@@ -645,7 +645,8 @@ export function gameLoop()
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-	// Update data immediately before starting the interval
+//---------------------------------- AI ----------------------------------
+	// updates the game data for the AI file immediately before starting the time interval
 	if (data.ball_horizontal == undefined)
 	{
 		startTime = Date.now();
@@ -653,11 +654,14 @@ export function gameLoop()
 		updateGameData();
 	}
 	elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+	// updates the game data every second
 	if (current_sec != elapsedSeconds)
 		updateGameData();
 	current_sec = elapsedSeconds;
 
 	moveAiPaddle();
+//-----------------------------------------------------------------------
+
 	movePaddles();
 	moveBall();
 	checkBallPaddleCollision();
