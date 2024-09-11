@@ -70,17 +70,53 @@ export default function renderSignIn()
 
 // Pour les JWTokens
 
+// Function to get CSRF token from cookie
+function getCsrfTokenFromCookie() {
+    
+    console.log('Je rentre dans la fonction getCsrfTokenFromCookie'); // DEBUG
+
+    const name = 'csrftoken';
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1);
+        }
+    }
+    console.error('CSRF token not found in cookies');
+    throw new Error('CSRF token not found in cookies');
+}
+
 function login(username, password)
 {
+    console.log('Je rentre dans la fonction login'); // DEBUG
+
+    let csrfHeaderName = 'X-CSRF-TOKEN'; // Adjust this based on your backend requirements
+    let csrfHeaderValue;
+
+    try {
+        csrfHeaderValue = getCsrfTokenFromCookie();
+    } catch (error)
+    {
+        console.error('Error getting CSRF token:', error);
+        alert('CSRF token not found. Please refresh the page and try again.');
+        return;
+    }
+
+    console.log('debug:'); // DEBUG
+    console.log('debug:', csrfHeaderName, csrfHeaderValue); // DEBUG
+
     fetch('/api/users/signInUser/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            [csrfHeaderName]: csrfHeaderValue,
         },
         body: JSON.stringify({ username, password }),
     })
     .then(response => response.json())
     .then(data => {
+        console.log('Response je passe par là:', data); // DEBUG
         if (data.access)
 		{
             // Store tokens in local storage
@@ -91,18 +127,20 @@ function login(username, password)
             return refreshToken();
         }
 		else
-            throw new Error('Login failed: No access token received');
+            throw new Error('Login failed: Wrong udsername and/or password.');
     })
     .then(newAccessToken => {
         console.log('Token refreshed:', newAccessToken); // DEBUG
-        // Handle successful login (e.g., redirect to dashboard)
-        // Example:
         window.location.href = '/home';
     })
     .catch(error => {
         console.error('Error:', error);
-        // Optionally, display an error message to the user
-        alert('Login failed: ' + error.message);
+        if (error.message.includes('CSRF'))
+            alert('CSRF Token mismatch. Please try again.');
+        else if (error.message.includes('Failed to refresh token'))
+            alert('Failed to refresh token. Please check your internet connection and try again.');
+        else
+            alert('Login failed: ' + error.message);
     });
 }
 
@@ -129,67 +167,3 @@ async function refreshToken()
             throw new Error('Failed to refresh token');
     });
 }
-
-
-// function login(username, password)
-// {
-//     fetch('/api/token/',
-// 	{
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username: username, password: password }),
-//     })
-//     .then(response => response.json())
-//     .then(data =>
-// 	{
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             localStorage.setItem('refresh_token', data.refresh);
-            
-//             // Call refreshToken to ensure tokens are up-to-date
-//             refreshToken().then(newAccessToken =>
-// 			{
-//                 console.log('Token refreshed:', newAccessToken);
-//                 // Redirect to profile or dashboard
-//             })
-// 			.catch(error => {
-//                 console.error('Token refresh failed:', error);
-//             });
-//         }
-// 		else
-// 		{
-//             console.error('Login failed');
-//         }
-//     })
-//     .catch(error => console.error('Error:', error));
-// }
-
-
-// async function refreshToken()
-// {
-//     const refreshToken = localStorage.getItem('refresh_token');
-//     return fetch('/api/token/refresh/', {
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh: refreshToken }),
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             return data.access;
-//         }
-// 		else
-// 		{
-//             throw new Error('Token refresh failed');
-//         }
-//     });
-// }

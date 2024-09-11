@@ -15,27 +15,6 @@ import json
 import logging
 
 
-# Retrieves a list of all CustomUser instances, all users'data
-# @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-# def getData(request):
-# 	items = CustomUser.objects.all()
-# 	serializer = CustomUserRegistrationSerializer(items, many=True)
-# 	return Response(serializer.data)
-
-
-#### Autre maniere de faire getData ####
-
-# def get_user_data(request):
-#     user = request.user
-#     user_data = {
-#         'username': user.username,
-#         'email': user.email,
-#         'avatar_url': user.profile.avatar_url,
-#         # Add other user data fields as needed
-#     }
-#     return Response(user_data)
-
 #########################################
 
 # # For user registration
@@ -65,31 +44,8 @@ def addUser(request):
 
 
 
-########################### OPTION QUI MARCHAIT ###########################
 
-
-# @api_view(['POST'])
-# def addUser(request):
-# 	serializer = CustomUserRegistrationSerializer(data=request.data)
-# 	if serializer.is_valid():
-# 		validated_data = serializer.validated_data
-        
-# 		# user = CustomUser(
-#         #           username=validated_data['username'],
-#         #           email=validated_data['email'],
-#         #           date_of_birth=validated_data['date_of_birth'],
-#         #           first_name=validated_data['first_name'],
-#         #           last_name=validated_data['last_name'],
-# 		# )
-# 		user = serializer.save(owner=request.user)
-# 		user.set_password(request.data['password'])
-# 		user.username = serializer.cleaned_data.get('username', None)
-# 		user.save()
-# 		return Response(serializer.data, status=status.HTTP_201_CREATED)
-# 	print(serializer.errors)  # Log the serializer errors for debugging
-# 	return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
+# @csrf_exempt
 def signInUser(request):
 	if request.method == 'POST':
 		try:
@@ -103,7 +59,7 @@ def signInUser(request):
 			# check_password = check_password(password)
 			user = authenticate(request, username=username, password=password)
 			print(f'Authenticated user: {user}') # DEBUG
-		
+
 			if user is not None:
 				login(request, user)
 				refresh = RefreshToken.for_user(user)
@@ -121,8 +77,6 @@ def signInUser(request):
 
 	return JsonResponse({'error': 'Invalid request method'}, status=405)
 
-
-###################################################################################################
 
 
 
