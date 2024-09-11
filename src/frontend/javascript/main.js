@@ -28,8 +28,8 @@ from "./views/user/signin.js";
 import renderProfile, { initializeProfile }
 from "./views/user/profile.js";
 
-import renderLogin, { initializeLogin }
-from "./views/user/login.js";
+import renderSignUp, { initializeSignUp }
+from "./views/user/signup.js";
 
 /***			Footer						***/
 import renderPrivacyPolicy
@@ -92,11 +92,11 @@ const routes =
 		title: "Page Not Found",
 		render: renderError404
 	},
-	'/login':
+	'/sign-up':
 	{
-		title: "Log In",
-		render: renderLogin,
-		init: initializeLogin
+		title: "Sign Up",
+		render: renderSignUp,
+		init: initializeSignUp
 	},
 	'/sign-in':
 	{
