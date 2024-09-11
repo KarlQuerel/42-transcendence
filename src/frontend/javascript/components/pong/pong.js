@@ -106,7 +106,7 @@ const	minHeight = 600;
 /***			Paddle Properties			***/
 const	paddleWidth = 10;
 const	paddleHeight = 100;
-const	paddleSpeed = 4;
+const	paddleSpeed = 3; //HERE caro
 const	paddleOffset = 20;
 
 /***			Player Paddles				***/
@@ -450,7 +450,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 1; //HERE caro
 	}
 
 	// Check collision with Player 2's paddle
@@ -463,7 +463,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP2);
 		if (ball.dx > 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 1; //HERE caro
 	}
 }
 
@@ -477,10 +477,31 @@ function resetAll()
 /***				Resetting Ball			***/
 function resetBall()
 {
-	ball.x = canvas.width / 2;
-	ball.y = canvas.height / 2;
-	ball.dx = -ball.dx;
-	ball.speed = 5; //HERE caro
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+        
+    // Reset the ball speed to the initial speed
+    ball.speed = 5; //HERE caro
+
+    // Reverse the horizontal direction of the ball based on its current direction
+    if (ball.dx > 0)
+    {
+        ball.dx = -ball.speed;
+    }
+    else
+    {
+        ball.dx = ball.speed;
+    }
+
+    // Reset the vertical direction based on its current direction
+    if (ball.dy > 0)
+    {
+        ball.dy = ball.speed;
+    }
+    else
+    {
+        ball.dy = -ball.speed;
+    }
 }
 
 /***			Resetting Paddles			***/
@@ -566,7 +587,6 @@ function updateGameData()
 	data.fieldX_right = canvas.width;
 
 	data.paddleY = player2.y;
-	data.paddle_initial_position = (canvas.height - paddleHeight) / 2;
 	data.paddle_height = paddleHeight;
 	data.paddle_width = paddleWidth;
 }
