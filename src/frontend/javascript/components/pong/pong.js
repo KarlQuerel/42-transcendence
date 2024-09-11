@@ -96,6 +96,7 @@ export default function renderPong()
 let	game_done = false;
 let	game_paused = false;
 let	AI_present = false;
+let	animationFrameId;
 
 /***			Graphics					***/
 let		canvas, ctx;
@@ -105,7 +106,7 @@ const	minHeight = 600;
 /***			Paddle Properties			***/
 const	paddleWidth = 10;
 const	paddleHeight = 100;
-const	paddleSpeed = 8;
+const	paddleSpeed = 4;
 const	paddleOffset = 20;
 
 /***			Player Paddles				***/
@@ -152,7 +153,7 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	console.log('Initializing Pong...');
+	// console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
@@ -195,7 +196,7 @@ export function initializePong()
 		}
 		else
 		{
-			console.log('Rematch button found:', rematchButton);
+			// console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -206,7 +207,7 @@ export function initializePong()
 			return;
 		}
 
-		console.log('Canvas and context retrieved successfully.');
+		// console.log('Canvas and context retrieved successfully.');
 
 		canvas.style.border = "5px solid #00ff00";
 
@@ -360,6 +361,22 @@ function drawPauseMenu()
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.remove('hidden');
+	}
+}
+
+/***			Hiding Pausing GIF		***/
+function hidePauseMenu()
+{
+	const	pausedGif = document.getElementById('paused-gif');
+	if (pausedGif)
+	{
+		pausedGif.classList.add('hidden');
+	}
 }
 
 
@@ -411,12 +428,12 @@ function moveBall()
 	if (ball.x - ball.radius < 0)
 	{
 		player2.score++;
-		resetBall();
+		resetAll();
 	}
 	else if (ball.x + ball.radius > canvas.width)
 	{
 		player1.score++;
-		resetBall();
+		resetAll();
 	}
 }
 
@@ -450,13 +467,27 @@ function checkBallPaddleCollision()
 	}
 }
 
+/***				Resetting All			***/
+function resetAll()
+{
+	resetBall();
+	resetPaddles();
+}
+
 /***				Resetting Ball			***/
 function resetBall()
 {
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
 	ball.dx = -ball.dx;
-	ball.speed = 5;
+	ball.speed = 5; //HERE caro
+}
+
+/***			Resetting Paddles			***/
+function resetPaddles()
+{
+	player1.y = (canvas.height - paddleHeight) / 2;
+	player2.y = (canvas.height - paddleHeight) / 2;
 }
 
 /***********************************************\
@@ -464,20 +495,19 @@ function resetBall()
 \***********************************************/
 function keyDownHandler(e)
 {
-	
-	if (!canvas)
-	{
-		console.error("Canvas element not initialized!");
-		return ;
-	}
-	
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
-		if (game_paused == false)
+		if (game_paused == true)
 		{
-			resetBall();
-			gameLoop();
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
+		}
+		else
+		{
+			cancelAnimationFrame(animationFrameId);
+			animationFrameId = requestAnimationFrame(gameLoop);
+			hidePauseMenu();
 		}
 		return ;
 	}
@@ -510,17 +540,103 @@ function keyUpHandler(e)
 	}
 }
 
+
+/***********************************************\
+-					AI							-
+\***********************************************/
+
+/* imports the function that returns the AI paddle's movement */
+import { getPaddleAction } from './ai.js';
+
+/* imports the uninitialized GameData class */
+import { GameData } from './ai.js';
+
+let data = new GameData();
+
+function updateGameData()
+{
+	data.ballX = ball.x;
+	data.ballY = ball.y;
+	data.ball_radius = ball.radius;
+	data.ballX_velocity = ball.dx;
+	data.ballY_velocity = ball.dy;
+
+	data.fieldY_top = 0;
+	data.fieldY_bottom = canvas.height;
+	data.fieldX_right = canvas.width;
+
+	data.paddleY = player2.y;
+	data.paddle_initial_position = (canvas.height - paddleHeight) / 2;
+	data.paddle_height = paddleHeight;
+	data.paddle_width = paddleWidth;
+}
+
+/* Exports the current game data held inside the data class.
+The information hold inside this class can differ from the actual 
+current game info, since the data class is only updated once per 
+second thanks to the time interval created inside gameLoop(). */
+export function update_game_data()
+{
+	return data;
+}
+
+/* All possible returns from getPaddleAction() */
+const DOWN = 0
+const UP = 1
+const ERROR = 42
+
+//CHECK CARO: simulate key press obligatoire? cf interprétation du sujet
+/* document.addEventListener('keydown', keyDownHandler);
+document.addEventListener('keyup', keyUpHandler);
+
+function simulateKeyPress(key) {
+	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+}
+
+function simulateKeyRelease(key) {
+	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
+} */
+
+/* Simulates a key press from the AI's paddle */
+function moveAiPaddle()
+{
+	//TODO KARL
+/* 	if (getPaddleAction() == ERROR)
+		STOP THE GAME */
+	if (getPaddleAction() == UP)
+	{
+/* 		simulateKeyPress('ArrowUp');
+		simulateKeyRelease('ArrowUp'); */
+		player2.dy = -paddleSpeed;
+	}
+	else if (getPaddleAction() == DOWN)
+	{
+/* 		simulateKeyPress('ArrowDown');
+		simulateKeyRelease('ArrowDown'); */
+		player2.dy = paddleSpeed;
+	}
+}
+
+/***********************************************************************************/
+/************************** Dashboard django database*******************************/
+/***********************************************************************************/
+
+// import { sendGameDataToDjango } from '../sendGameDataToDjango.js';
+
 /***********************************************\
 -				GAME STATUS						-
 \***********************************************/
 
+let startTime;
+let elapsedSeconds;
+let current_sec;
 /***			Main Loop					***/
 export function gameLoop()
 {
 	if (game_paused == true)
 	{
 		drawPauseMenu();
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 		return;
 	}
 
@@ -528,6 +644,23 @@ export function gameLoop()
 		return ;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//---------------------------------- AI ----------------------------------
+	// updates the game data for the AI file immediately before starting the time interval
+	if (data.ball_horizontal == undefined)
+	{
+		startTime = Date.now();
+		current_sec = 0;
+		updateGameData();
+	}
+	elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+	// updates the game data every second
+	if (current_sec != elapsedSeconds)
+		updateGameData();
+	current_sec = elapsedSeconds;
+
+	moveAiPaddle();
+//-----------------------------------------------------------------------
 
 	movePaddles();
 	moveBall();
@@ -549,9 +682,9 @@ export function gameLoop()
 		game_done = true;
 	}
 
-	if (!game_done)
+	if (game_done == false)
 	{
-		requestAnimationFrame(gameLoop);
+		animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
@@ -580,7 +713,7 @@ function resetGame()
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	console.log('Cleaning up Pong...')
+	// console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
