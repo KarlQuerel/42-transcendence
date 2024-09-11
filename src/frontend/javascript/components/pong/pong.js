@@ -473,7 +473,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 0.8;
 	}
 
 	// Check collision with Player 2's paddle
@@ -486,7 +486,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP2);
 		if (ball.dx > 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 0.8;
 	}
 }
 
@@ -502,9 +502,31 @@ function resetBall()
 {
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
-	ball.dx = -ball.dx;
+		
+	// Reset the ball speed to the initial speed
 	ball.speed = 5;
+
+	// Reverse the horizontal direction of the ball based on its current direction
+	if (ball.dx > 0)
+	{
+		ball.dx = -ball.speed;
+	}
+	else
+	{
+		ball.dx = ball.speed;
+	}
+
+	// Reset the vertical direction based on its current direction
+	if (ball.dy > 0)
+	{
+		ball.dy = ball.speed;
+	}
+	else
+	{
+		ball.dy = -ball.speed;
+	}
 }
+
 
 /***			Resetting Paddles			***/
 function resetPaddles()
