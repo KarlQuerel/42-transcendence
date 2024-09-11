@@ -1,4 +1,7 @@
-
+/***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
 
 // document.addEventListener('DOMContentLoaded', function () {
 // 	document.querySelector('button[type="button"]').addEventListener('click', function () {

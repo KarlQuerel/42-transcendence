@@ -1,4 +1,9 @@
 /***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
+/***********************************************\
 -				RENDERING						-
 \***********************************************/
 //TODO Karl: Refactor renderPong()
@@ -171,7 +176,8 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	// console.log('Initializing Pong...');
+	if (DEBUG)
+		console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
@@ -215,7 +221,6 @@ export function initializePong()
 		}
 		else
 		{
-			// console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -225,8 +230,6 @@ export function initializePong()
 				console.error("Context could not be retrieved!");
 			return;
 		}
-
-		// console.log('Canvas and context retrieved successfully.');
 
 		canvas.style.border = "5px solid #00ff00";
 
@@ -763,7 +766,8 @@ function resetGame()
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	// console.log('Cleaning up Pong...')
+	if (DEBUG)
+		console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
