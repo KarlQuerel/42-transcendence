@@ -4,40 +4,40 @@
 //TODO Karl: Refactor renderPong()
 export default function renderPong()
 {
-	const container = document.createElement('div');
+	const	container = document.createElement('div');
 	container.id = 'pong-page';
 	container.className = 'container-fluid p-0';
 
-	const video = document.createElement('video');
+	const	video = document.createElement('video');
 	video.id = 'background-video';
 	video.autoplay = true;
 	video.muted = true;
 	video.loop = true;
 		
-	const source = document.createElement('source');
+	const	source = document.createElement('source');
 	source.src = '../../../assets/images/pong/tunnel_background.mp4';
 	source.type = 'video/mp4';
 	video.appendChild(source);
 
 	container.appendChild(video);
 
-	const overlay = document.createElement('div');
+	const	overlay = document.createElement('div');
 	overlay.id = 'menu-overlay';
 	overlay.className = 'menu-overlay';
 
-	const menuButtonsContainer = document.createElement('div');
+	const	menuButtonsContainer = document.createElement('div');
 	menuButtonsContainer.className = 'menu-buttons-container';
 
-	const singlePlayerButton = document.createElement('button');
+	const	singlePlayerButton = document.createElement('button');
 	singlePlayerButton.id = 'singleplayer-button';
 	singlePlayerButton.className = 'menu-button';
 	singlePlayerButton.textContent = 'Single Player';
 	menuButtonsContainer.appendChild(singlePlayerButton);
 
-	const singlePlayerGifContainer = document.createElement('div');
+	const	singlePlayerGifContainer = document.createElement('div');
 	singlePlayerGifContainer.className = 'menu-gif-container';
 
-	const singlePlayerGif = document.createElement('img');
+	const	singlePlayerGif = document.createElement('img');
 	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
 	singlePlayerGif.alt = '1P GIF';
 	singlePlayerGif.className = 'menu-gif';
@@ -46,16 +46,16 @@ export default function renderPong()
 	menuButtonsContainer.appendChild(singlePlayerGifContainer);
 	overlay.appendChild(menuButtonsContainer);
 
-	const twoPlayerButton = document.createElement('button');
+	const	twoPlayerButton = document.createElement('button');
 	twoPlayerButton.id = 'twoplayer-button';
 	twoPlayerButton.className = 'menu-button';
 	twoPlayerButton.textContent = 'Two Players';
 	menuButtonsContainer.appendChild(twoPlayerButton);
 
-	const twoPlayerGifContainer = document.createElement('div');
+	const	twoPlayerGifContainer = document.createElement('div');
 	twoPlayerGifContainer.className = 'menu-gif-container';
 
-	const twoPlayerGif = document.createElement('img');
+	const	twoPlayerGif = document.createElement('img');
 	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
 	twoPlayerGif.alt = '2P GIF';
 	twoPlayerGif.className = 'menu-gif';
@@ -65,35 +65,35 @@ export default function renderPong()
 
 	container.appendChild(overlay);
 
-	const title = document.createElement('h1');
+	const	title = document.createElement('h1');
 	title.className = 'pong-title';
 	title.textContent = 'Pong Game';
 	container.appendChild(title);
 
-	const winningMessage = document.createElement('div');
+	const	winningMessage = document.createElement('div');
 	winningMessage.id = 'winning-message';
 	winningMessage.className = 'hidden';
 	container.appendChild(winningMessage);
 
-	const rematchButton = document.createElement('button');
+	const	rematchButton = document.createElement('button');
 	rematchButton.id = 'rematch-button';
 	rematchButton.textContent = 'Rematch';
 	container.appendChild(rematchButton);
 
-	const canvas = document.createElement('canvas');
+	const	canvas = document.createElement('canvas');
 	canvas.id = 'pongCanvas';
 	container.appendChild(canvas);
 
-	const instructions = document.createElement('p');
+	const	instructions = document.createElement('p');
 	instructions.className = 'pong-instructions';
 	instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
 	container.appendChild(instructions);
 
-	const pausedGifContainer = document.createElement('div');
+	const	pausedGifContainer = document.createElement('div');
 	pausedGifContainer.id = 'paused-gif-container';
 	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
 		
-	const pausedGif = document.createElement('img');
+	const	pausedGif = document.createElement('img');
 	pausedGif.id = 'paused-gif';
 	pausedGif.src = '../../../assets/images/pong/paused.gif';
 	pausedGif.alt = 'Paused GIF';
@@ -264,6 +264,7 @@ export function initializePong()
 /***			Starting Game				***/
 function startGame(menuOverlay, pongInstructions)
 {
+	// Hide the menu overlay and instructions
 	menuOverlay.classList.add('hidden');
 	pongInstructions.classList.remove('hidden');
 
@@ -630,9 +631,9 @@ export function update_game_data()
 }
 
 /* All possible returns from getPaddleAction() */
-const DOWN = 0
-const UP = 1
-const ERROR = 42
+const	DOWN = 0
+const	UP = 1
+const	ERROR = 42
 
 //CHECK CARO: simulate key press obligatoire? cf interprétation du sujet
 /* document.addEventListener('keydown', keyDownHandler);
@@ -695,20 +696,23 @@ export function gameLoop()
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 //---------------------------------- AI ----------------------------------
-	// updates the game data for the AI file immediately before starting the time interval
-	if (data.ball_horizontal == undefined)
+	if (AI_present == true)
 	{
-		startTime = Date.now();
-		current_sec = 0;
-		updateGameData();
-	}
-	elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-	// updates the game data every second
-	if (current_sec != elapsedSeconds)
-		updateGameData();
-	current_sec = elapsedSeconds;
+		// updates the game data for the AI file immediately before starting the time interval
+		if (data.ball_horizontal == undefined)
+		{
+			startTime = Date.now();
+			current_sec = 0;
+			updateGameData();
+		}
+		elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+		// updates the game data every second
+		if (current_sec != elapsedSeconds)
+			updateGameData();
+		current_sec = elapsedSeconds;
 
-	moveAiPaddle();
+		moveAiPaddle();
+}
 //-----------------------------------------------------------------------
 
 	movePaddles();
