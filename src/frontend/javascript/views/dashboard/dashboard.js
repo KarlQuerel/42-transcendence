@@ -234,9 +234,37 @@ function loadDashboardData()
 		});
 }
 
+//--------------------------------------- TEST DATA JESS -------------------------
+
+async function fetchUserData() {
+    try {
+        const response = await fetch('/api/dashboard/getData/', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('User Data:', data);
+        // Process user data
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        alert('Failed to fetch user data: ' + error.message);
+    }
+}
+
 function loadUserManagementData()
 {
-	fetch('/api/users/signInUser/') //TODO adapter a path et nom fonction jess
+
+	fetchUserData();
+	
+/* 	fetch('/api/users/signInUser/') //TODO adapter a path et nom fonction jess
 		.then(response => {
 			if (!response.ok)
 				throw new Error('Error : network response');
@@ -247,8 +275,11 @@ function loadUserManagementData()
 			console.log('Received user management data:', userData);
 			Avatars(statsData, userData);
 		})
-		.catch(error => console.error('Error : fetch userData', error));
+		.catch(error => console.error('Error : fetch userData', error)); */
 }
+
+//--------------------------------------- FIN TEST -------------------------
+
 
 //TODO: remettre cette fonction qd j aurais decide quoi afficher
 // function ChartBarData(statsData)
