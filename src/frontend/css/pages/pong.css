@@ -31,6 +31,7 @@
 	position: relative;
 	z-index: 1;
 	border-radius: 15px;
+	border: 3px solid #00ff00;
 	overflow: hidden;
 	min-width: 50vh;
 	min-height: 50vh;
@@ -110,16 +111,16 @@
 /*		MENU PRE-LAUNCH		*/
 .menu-overlay
 {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
 }
 
 .menu-gif
@@ -133,12 +134,13 @@
 	display: none;
 }
 
-.menu-gif-container {
-    position: relative;
-    width: 100px;
-    height: auto;
-    display: flex;
-    justify-content: center;
+.menu-gif-container
+{
+	position: relative;
+	width: auto;
+	height: auto;
+	display: flex;
+	justify-content: center;
 }
 
 #singleplayer-button:hover .menu-gif,
@@ -147,25 +149,29 @@
 	display: block;
 }
 
-.menu-buttons-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.menu-buttons-container
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	column-gap: 10px;
 }
 
-.menu-button {
-    padding: 100px;
-    font-family: 'Press Start 2P', cursive;
-    font-size: 24px;
-    text-transform: uppercase;
-    color: #00ff00;
-    background-color: #000;
-    border: 2px solid #00ff00;
-    cursor: pointer;
-    border-radius: 5px;
-    margin: 10px 0;
-    transition: background-color 0.3s, color 0.3s;
-    flex: 1;
+.menu-button
+{
+	/* padding: 30vh 20vh; */
+	width: 30vh;
+	height: 20vh;
+	font-family: 'Press Start 2P', cursive;
+	font-size: 24px;
+	text-transform: uppercase;
+	color: #00ff00;
+	background-color: #000;
+	border: 2px solid #00ff00;
+	cursor: pointer;
+	border-radius: 15px;
+	transition: background-color 0.3s, color 0.3s;
+	flex: 1;
 }
 
 
@@ -184,10 +190,58 @@
 	background-color: #00ff00;
 	color: #000;
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	filter: contrast(1.1);
 }
 
-.menu-button:hover .menu-gif {
-    display: block;
+.menu-button:hover .menu-gif
+{
+	display: block;
+}
+
+.menu-button::before,
+.menu-button::after
+{
+	content: "";
+	position: absolute;
+	top: -10px;
+	left: -10px;
+	right: -10px;
+	bottom: -10px;
+	border: 2px solid #00ff00;
+	border-radius: 15px;
+	clip-path: inset(100% 100% 100% 100%);
+	opacity: 0;
+	transition: clip-path 0.5s ease-in-out, opacity 0.5s;
+}
+
+.menu-button:hover::before,
+.menu-button:hover::after
+{
+	opacity: 1;
+	clip-path: inset(0 0 0 0);
+	animation: clippath 1.5s infinite linear;
+}
+
+@keyframes clippath
+{
+	0%,
+	100%
+	{
+		clip-path: inset(0 0 98% 0);
+	}
+		
+	25%
+	{
+		clip-path: inset(0 98% 0 0);
+	}
+	50%
+	{
+		clip-path: inset(98% 0 0 0);
+	}
+	75%
+	{
+		clip-path: inset(0 0 0 98%);
+	}
 }
 
 /*		PAUSE MENU		*/

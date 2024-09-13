@@ -124,7 +124,7 @@ const	minHeight = 600;
 /***			Paddle Properties			***/
 const	paddleWidth = 10;
 const	paddleHeight = 100;
-const	paddleSpeed = 4;
+const	paddleSpeed = 8;
 const	paddleOffset = 20;
 
 /***			Player Paddles				***/
@@ -226,9 +226,6 @@ export function initializePong()
 			return;
 		}
 
-		// console.log('Canvas and context retrieved successfully.');
-
-		canvas.style.border = "5px solid #00ff00";
 
 		// Set canvas dimensions based on viewport height
 		const	setCanvasDimensions = () =>
@@ -474,7 +471,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.8;
+		ball.speed += 0.5;
 	}
 
 	// Check collision with Player 2's paddle
@@ -487,7 +484,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP2);
 		if (ball.dx > 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.8;
+		ball.speed += 0.5;
 	}
 }
 
