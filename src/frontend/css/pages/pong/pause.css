@@ -1,0 +1,44 @@
+/************************************************
+					PAUSE
+***********************************************/
+#paused-gif
+{
+	width: 15vh;
+	height: auto;
+	animation: moveLeftRight 6s infinite ease-in-out;
+	display: inline-block;
+}
+
+@keyframes moveLeftRight
+{
+	0%
+	{
+		transform: translateX(-375px);
+	}
+	50%
+	{
+		transform: translateX(375px);
+	}
+	100%
+	{
+		transform: translateX(-375px);
+	}
+}
+
+#paused-gif-container
+{
+	position: absolute;
+	top: 75%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 10;
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s ease;
+}
+
+#paused-gif-container.show
+{
+	visibility: visible;
+	opacity: 1;
+}

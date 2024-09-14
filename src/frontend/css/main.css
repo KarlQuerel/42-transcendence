@@ -15,5 +15,11 @@
 /*		Import page-specific styles	*/
 @import url('pages/dashboard.css');
 @import url('pages/homepage.css');
-@import url('pages/pong.css');
 @import url('pages/theteam.css');
+
+/*				Pong				*/
+@import url('pages/pong/general.css');
+@import url('pages/pong/howtoplay.css');
+@import url('pages/pong/menu.css');
+@import url('pages/pong/pause.css');
+@import url('pages/pong/winner.css');

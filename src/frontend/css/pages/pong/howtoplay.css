@@ -1,0 +1,48 @@
+/************************************************
+					HOW TO PLAY
+***********************************************/
+.btn-howtoplay
+{
+	position: absolute;
+	width: 20vh;
+	height: auto;
+	padding: 1px;
+	top: auto;
+	left: 0%;
+	top: 10%;
+	border-radius: 10px;
+}
+
+/* TODO: CONTINUE */
+.how-to-play-card
+{
+	position: absolute;
+	padding: 10px;
+	top: 25%;
+	left: 0%;
+	width: 50vh;
+	z-index: 10000;
+	background-color: dimgray;
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+}
+
+.how-to-play-card.show
+{
+	max-height: 40vh;
+	opacity: 1;
+}
+
+.how-to-play-card .how-to-play-gif
+{
+	max-width: 100%;
+	display: block;
+	margin: auto auto;
+}
+
+.text-center
+{
+	text-align: center;
+}

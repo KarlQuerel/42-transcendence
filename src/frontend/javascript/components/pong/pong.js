@@ -1,103 +1,208 @@
 /***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
+/***********************************************\
 -				RENDERING						-
 \***********************************************/
 export default function renderPong()
 {
-	// Whole page
+	const	container = createContainer();
+	const	video = createVideo();
+	const	overlay = createOverlay();
+
+	container.appendChild(video);
+	container.appendChild(overlay);
+	container.appendChild(createWinningMessage());
+	container.appendChild(createRematchButton());
+	container.appendChild(createCanvas());
+	container.appendChild(createPausedGifContainer());
+
+	return container;
+}
+
+
+/***********************************************\
+-				CREATING ELEMENTS				-
+\***********************************************/
+function createContainer()
+{
 	const	container = document.createElement('div');
 	container.id = 'pong-page';
 	container.className = 'container-fluid p-0';
+	return container;
+}
 
-	// Video
+function createVideo()
+{
 	const	video = document.createElement('video');
 	video.id = 'background-video';
 	video.autoplay = true;
 	video.muted = true;
 	video.loop = true;
-		
+
 	const	source = document.createElement('source');
 	source.src = '../../../assets/images/pong/tunnel_background.mp4';
 	source.type = 'video/mp4';
 	video.appendChild(source);
 
-	container.appendChild(video);
+	return video;
+}
 
-	// Selection Menu
-	const overlay = document.createElement('div');
+function createOverlay()
+{
+	const	overlay = document.createElement('div');
 	overlay.id = 'menu-overlay';
 	overlay.className = 'menu-overlay';
 
-	const menuButtonsContainer = document.createElement('div');
+	const	menuButtonsContainer = document.createElement('div');
 	menuButtonsContainer.className = 'menu-buttons-container';
 
-	const singlePlayerButton = document.createElement('button');
-	singlePlayerButton.id = 'singleplayer-button';
-	singlePlayerButton.className = 'menu-button';
-	singlePlayerButton.textContent = 'Single Player';
+	const	singlePlayerButton = createMenuButton('singleplayer-button', 'Single Player', '../../../assets/images/pong/menu/single_player.gif');
+	const	twoPlayerButton = createMenuButton('twoplayer-button', 'Two Players', '../../../assets/images/pong/menu/two_players.gif');
+	const	howToPlayCard = createHowToPlayCard();
+	const	howToPlayButton = createHowToPlayButton();
 
-	const singlePlayerGif = document.createElement('img');
-	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
-	singlePlayerGif.alt = '1P GIF';
-	singlePlayerGif.className = 'menu-gif';
-
-	singlePlayerButton.appendChild(singlePlayerGif);
 	menuButtonsContainer.appendChild(singlePlayerButton);
-
-	const twoPlayerButton = document.createElement('button');
-	twoPlayerButton.id = 'twoplayer-button';
-	twoPlayerButton.className = 'menu-button';
-	twoPlayerButton.textContent = 'Two Players';
-
-	const twoPlayerGif = document.createElement('img');
-	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
-	twoPlayerGif.alt = '2P GIF';
-	twoPlayerGif.className = 'menu-gif';
-
-	twoPlayerButton.appendChild(twoPlayerGif);
 	menuButtonsContainer.appendChild(twoPlayerButton);
+	menuButtonsContainer.appendChild(howToPlayButton);
+	menuButtonsContainer.appendChild(howToPlayCard);
 
 	overlay.appendChild(menuButtonsContainer);
-	container.appendChild(overlay);
 
-	// Winning message
+	return overlay;
+}
+
+function createMenuButton(id, text, gifSrc)
+{
+	const	button = document.createElement('button');
+	button.id = id;
+	button.className = 'menu-button';
+	button.textContent = text;
+
+	const	gif = document.createElement('img');
+	gif.src = gifSrc;
+	gif.alt = `${text} GIF`;
+	gif.className = 'menu-gif';
+
+	button.appendChild(gif);
+	return button;
+}
+
+function createHowToPlayButton()
+{
+	const	button = document.createElement('button');
+	button.id = 'how-to-play-button';
+	button.className = 'btn btn-home btn-howtoplay';
+	button.textContent = 'How to Play';
+	button.addEventListener('click', () => {
+		const	card = document.getElementById('how-to-play-card');
+		if (card)
+			{
+			card.classList.toggle('show');
+		}
+	});
+
+	return button;
+}
+
+
+function createHowToPlayCard()
+{
+	const	cardDiv = document.createElement('div');
+	cardDiv.id = 'how-to-play-card';
+	cardDiv.className = 'card how-to-play-card';
+
+	const	cardBody = document.createElement('div');
+	cardBody.className = 'card-pong';
+
+	const	sections = [
+		{ title: 'Left Player', gifs: ['../../../assets/images/pong/how_to_play/W.gif', '../../../assets/images/pong/how_to_play/S.gif'] },
+		{ title: 'Right Player', gifs: ['../../../assets/images/pong/how_to_play/UP.gif', '../../../assets/images/pong/how_to_play/DOWN.gif'] },
+		{ title: 'Pause', gifs: ['../../../assets/images/pong/how_to_play/ESC.gif', '../../../assets/images/pong/how_to_play/P.gif'] }
+	];
+
+	sections.forEach(section => {
+		const	row = document.createElement('div');
+		row.className = 'row mb-4 align-items-center'; // Align items center
+
+		const	textCol = document.createElement('div');
+		textCol.className = 'col-md-6 text-center'; // Column for text
+		const	title = document.createElement('h6');
+		title.className = 'card-subtitle mb-2';
+		title.textContent = section.title;
+		textCol.appendChild(title);
+
+		const	gifCol = document.createElement('div');
+		gifCol.className = 'col-md-6 d-flex justify-content-center'; // Column for GIFs, center content
+
+		section.gifs.forEach(src => {
+			const	gif = createCardGif(src, `How to Play ${section.title} GIF`);
+			gif.classList.add('img-fluid', 'how-to-play-gif'); // Make GIF responsive and centered
+			gifCol.appendChild(gif);
+		});
+
+		row.appendChild(textCol);
+		row.appendChild(gifCol);
+		cardBody.appendChild(row);
+	});
+
+	cardDiv.appendChild(cardBody);
+
+	return cardDiv;
+}
+
+
+
+function createCardGif(src, alt)
+{
+	const	gif = document.createElement('img');
+	gif.src = src;
+	gif.alt = alt;
+	gif.className = 'img-fluid';
+	return gif;
+}
+
+function createWinningMessage()
+{
 	const	winningMessage = document.createElement('div');
 	winningMessage.id = 'winning-message';
 	winningMessage.className = 'hidden';
-	container.appendChild(winningMessage);
+	return winningMessage;
+}
 
-	// Rematch TODO: not showing
+function createRematchButton()
+{
 	const	rematchButton = document.createElement('button');
 	rematchButton.id = 'rematch-button';
 	rematchButton.textContent = 'Rematch';
-	container.appendChild(rematchButton);
+	return rematchButton;
+}
 
-	// Playable area + margin on the sides
+function createCanvas()
+{
 	const	canvas = document.createElement('canvas');
 	canvas.id = 'pongCanvas';
-	container.appendChild(canvas);
+	return canvas;
+}
 
-	// Instruction TODO: change it
-	const	instructions = document.createElement('p');
-	instructions.className = 'pong-instructions';
-	instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
-	container.appendChild(instructions);
 
-	// Paused GIF TODO: fix it
-	const	pausedGifContainer = document.createElement('div');
-	pausedGifContainer.id = 'paused-gif-container';
-	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
-		
+function createPausedGifContainer()
+{
+	const	container = document.createElement('div');
+	container.id = 'paused-gif-container';
+	container.className = 'd-flex justify-content-center align-items-center hidden';
+
 	const	pausedGif = document.createElement('img');
 	pausedGif.id = 'paused-gif';
 	pausedGif.src = '../../../assets/images/pong/paused.gif';
 	pausedGif.alt = 'Paused GIF';
-	pausedGif.className = 'img-fluid';
-	pausedGifContainer.appendChild(pausedGif);
 
-	container.appendChild(pausedGifContainer);
-
+	container.appendChild(pausedGif);
 	return container;
 }
+
 
 /***********************************************\
 -				GAME CONFIG						-
@@ -165,7 +270,8 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	// console.log('Initializing Pong...');
+	if (DEBUG)
+		console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
@@ -176,7 +282,6 @@ export function initializePong()
 		const	singleplayerButton = document.getElementById('singleplayer-button');
 		const	twoplayerButton = document.getElementById('twoplayer-button');
 		const	menuOverlay = document.getElementById('menu-overlay');
-		const	pongInstructions = document.querySelector('.pong-instructions');
 
 		if (!canvas)
 		{
@@ -193,13 +298,13 @@ export function initializePong()
 		singleplayerButton.addEventListener('click', () =>
 		{
 			AI_present = true;
-			startGame(menuOverlay, pongInstructions);
+			startGame(menuOverlay);
 		});
 
 		twoplayerButton.addEventListener('click', () =>
 		{
 			AI_present = false;
-			startGame(menuOverlay, pongInstructions);
+			startGame(menuOverlay);
 		})
 
 		if (!rematchButton)
@@ -253,11 +358,10 @@ export function initializePong()
 }
 
 /***			Starting Game				***/
-function startGame(menuOverlay, pongInstructions)
+function startGame(menuOverlay)
 {
-	// Hide the menu overlay and instructions
+	// Hide the menu overlay
 	menuOverlay.classList.add('hidden');
-	pongInstructions.classList.remove('hidden');
 
 	isGameModeSelected = true;
 
@@ -373,7 +477,7 @@ function drawPauseMenu()
 	ctx.font = "48px 'Press Start 2P', cursive";
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
-	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2 - 80);
 
 	const	pausedGifContainer = document.getElementById('paused-gif-container');
 	if (pausedGifContainer)
