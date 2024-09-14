@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
+API_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,7 +31,11 @@ SECRET_KEY = 'django-insecure-1$5lkdio1l5qk4l0(qgb45b@(vwi8=n5gl2a#w_+f6is0!(%_i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+	'127.0.0.1',
+	'localhost',
+]
 
 
 # Application definition
@@ -44,7 +49,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'base',
+    # 'base',
+    'rest_framework_simplejwt',
+    'api',
+    'channels',
 ]
 
 MIDDLEWARE = [
