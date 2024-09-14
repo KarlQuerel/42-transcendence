@@ -1,13 +1,14 @@
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
-//TODO Karl: Refactor renderPong()
 export default function renderPong()
 {
+	// Whole page
 	const	container = document.createElement('div');
 	container.id = 'pong-page';
 	container.className = 'container-fluid p-0';
 
+	// Video
 	const	video = document.createElement('video');
 	video.id = 'background-video';
 	video.autoplay = true;
@@ -21,74 +22,67 @@ export default function renderPong()
 
 	container.appendChild(video);
 
-	const	overlay = document.createElement('div');
+	// Selection Menu
+	const overlay = document.createElement('div');
 	overlay.id = 'menu-overlay';
 	overlay.className = 'menu-overlay';
 
-	const	menuButtonsContainer = document.createElement('div');
+	const menuButtonsContainer = document.createElement('div');
 	menuButtonsContainer.className = 'menu-buttons-container';
 
-	const	singlePlayerButton = document.createElement('button');
+	const singlePlayerButton = document.createElement('button');
 	singlePlayerButton.id = 'singleplayer-button';
 	singlePlayerButton.className = 'menu-button';
 	singlePlayerButton.textContent = 'Single Player';
-	menuButtonsContainer.appendChild(singlePlayerButton);
 
-	const	singlePlayerGifContainer = document.createElement('div');
-	singlePlayerGifContainer.className = 'menu-gif-container';
-
-	const	singlePlayerGif = document.createElement('img');
+	const singlePlayerGif = document.createElement('img');
 	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
 	singlePlayerGif.alt = '1P GIF';
 	singlePlayerGif.className = 'menu-gif';
-	singlePlayerGifContainer.appendChild(singlePlayerGif);
-		
-	menuButtonsContainer.appendChild(singlePlayerGifContainer);
-	overlay.appendChild(menuButtonsContainer);
 
-	const	twoPlayerButton = document.createElement('button');
+	singlePlayerButton.appendChild(singlePlayerGif);
+	menuButtonsContainer.appendChild(singlePlayerButton);
+
+	const twoPlayerButton = document.createElement('button');
 	twoPlayerButton.id = 'twoplayer-button';
 	twoPlayerButton.className = 'menu-button';
 	twoPlayerButton.textContent = 'Two Players';
-	menuButtonsContainer.appendChild(twoPlayerButton);
 
-	const	twoPlayerGifContainer = document.createElement('div');
-	twoPlayerGifContainer.className = 'menu-gif-container';
-
-	const	twoPlayerGif = document.createElement('img');
+	const twoPlayerGif = document.createElement('img');
 	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
 	twoPlayerGif.alt = '2P GIF';
 	twoPlayerGif.className = 'menu-gif';
-	twoPlayerGifContainer.appendChild(twoPlayerGif);
 
-	menuButtonsContainer.appendChild(twoPlayerGifContainer);
+	twoPlayerButton.appendChild(twoPlayerGif);
+	menuButtonsContainer.appendChild(twoPlayerButton);
 
+	overlay.appendChild(menuButtonsContainer);
 	container.appendChild(overlay);
 
-	const	title = document.createElement('h1');
-	title.className = 'pong-title';
-	title.textContent = 'Pong Game';
-	container.appendChild(title);
-
+	// Winning message
 	const	winningMessage = document.createElement('div');
 	winningMessage.id = 'winning-message';
 	winningMessage.className = 'hidden';
 	container.appendChild(winningMessage);
 
+	// Rematch TODO: not showing
 	const	rematchButton = document.createElement('button');
 	rematchButton.id = 'rematch-button';
 	rematchButton.textContent = 'Rematch';
 	container.appendChild(rematchButton);
 
+	// Playable area + margin on the sides
 	const	canvas = document.createElement('canvas');
 	canvas.id = 'pongCanvas';
 	container.appendChild(canvas);
 
+	// Instruction TODO: change it
 	const	instructions = document.createElement('p');
 	instructions.className = 'pong-instructions';
 	instructions.textContent = 'Use W/S keys for Player 1 and Arrow Up/Down for Player 2.';
 	container.appendChild(instructions);
 
+	// Paused GIF TODO: fix it
 	const	pausedGifContainer = document.createElement('div');
 	pausedGifContainer.id = 'paused-gif-container';
 	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';

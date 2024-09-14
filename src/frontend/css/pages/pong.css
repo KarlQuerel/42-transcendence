@@ -33,8 +33,14 @@
 	border-radius: 15px;
 	border: 3px solid #00ff00;
 	overflow: hidden;
-	min-width: 50vh;
-	min-height: 50vh;
+	min-width: 100vh;
+	min-height: 60vh;
+}
+
+.pong-instructions
+{
+	width: auto;
+	height: auto;
 }
 
 /*		WINNING MESSAGE		*/
@@ -123,30 +129,36 @@
 	z-index: 1000;
 }
 
+
+/* GIF */
 .menu-gif
 {
 	position: absolute;
-	top: -50px;
+	top: 60%;
 	left: 50%;
-	transform: translateX(-50%);
-	width: 100px;
-	height: auto;
-	display: none;
+	transform: translate(-50%, -50%);
+	opacity: 0;
+	transition: opacity 0.8s ease-in-out;
+	object-fit: contain;
 }
 
-.menu-gif-container
+.menu-button:hover .menu-gif
 {
-	position: relative;
-	width: auto;
-	height: auto;
-	display: flex;
-	justify-content: center;
+	opacity: 1;
 }
 
-#singleplayer-button:hover .menu-gif,
-#twoplayer-button:hover .menu-gif
+/* Specific rule for single-player GIF */
+#singleplayer-button .menu-gif
 {
-	display: block;
+	width: 50vh;
+	height: auto;
+}
+
+/* Specific rule for two-player GIF */
+#twoplayer-button .menu-gif
+{
+	width: 30vh;
+	height: auto;
 }
 
 .menu-buttons-container
@@ -154,14 +166,14 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	column-gap: 10px;
+	column-gap: 20px;
 }
 
 .menu-button
 {
-	/* padding: 30vh 20vh; */
-	width: 30vh;
-	height: 20vh;
+	width: 35%;
+	height: 50vh;
+	padding: 5%;
 	font-family: 'Press Start 2P', cursive;
 	font-size: 24px;
 	text-transform: uppercase;
@@ -172,17 +184,11 @@
 	border-radius: 15px;
 	transition: background-color 0.3s, color 0.3s;
 	flex: 1;
-}
-
-
-.menu-button:first-child
-{
-	flex: 1;
-}
-
-.menu-button:last-child
-{
-	flex: 1;
+	justify-content: flex-start;
+	align-items: flex-start;
+	position: relative;
+	display: flex;
+	flex-direction: column;
 }
 
 .menu-button:hover
