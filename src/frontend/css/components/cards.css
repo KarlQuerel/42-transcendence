@@ -9,12 +9,12 @@
 
 .card-body
 {
-	background-color: #a3dba3;
-	color: #000000;
+	background-color: var(--base-light-green);
+	color: var(--base-dark);
 }
 
 .card-pong
 {
 	background-color: transparent;
-	color: #ffffff;
+	color: var(--base-white);
 }

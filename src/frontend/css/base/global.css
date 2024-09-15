@@ -15,13 +15,14 @@
 	transition: visibility 0s, opacity 0.5s ease;
 }
 
+/*		COLORS		*/
 :root
 {
 	--base-green: #00ff00;
+	--base-light-green: #a3dba3;
 	--base-dark: #000;
 	--base-white: #fff;
-	--base-gray: #444444;
-	--animation-speed: 0.4s;
+	--base-gray: #262626;
 }
 
 .no-scroll

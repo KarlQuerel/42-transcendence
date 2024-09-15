@@ -1,6 +1,5 @@
 /*		Import base styles			*/
 @import url('base/global.css');
-@import url('base/additional-styles.css');
 @import url('base/body.css');
 
 /*		Import component styles		*/
@@ -14,7 +13,6 @@
 
 /*		Import page-specific styles	*/
 @import url('pages/dashboard.css');
-@import url('pages/homepage.css');
 @import url('pages/theteam.css');
 
 /*				Pong				*/

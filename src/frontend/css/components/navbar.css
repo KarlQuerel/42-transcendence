@@ -3,8 +3,8 @@
 ***********************************************/
 .navbar
 {
-	background-color: black;
-	border-bottom: 2px solid #00ff00;
+	background-color: var(--base-dark);
+	border-bottom: 2px solid var(--base-green);
 	height: 60px;
 }
 
@@ -103,7 +103,7 @@
 
 .btn-flip-side > span:nth-child(2)
 {
-	color: rgb(255, 255, 255);
+	color: var(--base-white);
 	transform: rotateX(90deg) translateZ(25px);
 	background-color: transparent;
 	backface-visibility: hidden;
@@ -111,7 +111,7 @@
 
 .btn-flip-side--green > span:first-child
 {
-	color: 2px solid #00ff00;
+	color: 2px solid var(--base-green);
 	background-color: transparent;
 }
 
@@ -203,7 +203,7 @@
 .navbar-toggler-icon
 {
 	background-image: none!important;
-	background-color: #ffffff;
+	background-color: var(--base-white);
 	height: 3px;
 	width: 25px;
 	margin: 10px 0;
@@ -215,7 +215,7 @@
 .navbar-toggler-icon::before
 {
 	display: block;
-	background-color: #ffffff;
+	background-color: var(--base-white);
 	height: 3px;
 	content: "";
 	position: relative;
@@ -228,13 +228,13 @@
 .navbar-dark .navbar-toggler-icon::before,
 .navbar-dark .navbar-toggler-icon::after
 {
-	background-color: #ffffff;
+	background-color: var(--base-white);
 }
 	
 .navbar-toggler-icon::after
 {
 	display: block;
-	background-color: #ffffff;
+	background-color: var(--base-white);
 	height: 3px;
 	content: "";
 	position: relative;
@@ -247,7 +247,7 @@
 .navbar-dark .navbar-toggler-icon::before,
 .navbar-dark .navbar-toggler-icon::after
 {
-background-color: #ffffff;
+background-color: var(--base-white);
 }
 
 .navbar-toggler:not(.collapsed) .navbar-toggler-icon

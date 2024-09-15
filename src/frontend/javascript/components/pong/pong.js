@@ -61,8 +61,8 @@ function createOverlay()
 
 	const	singlePlayerButton = createMenuButton('singleplayer-button', 'Single Player', '../../../assets/images/pong/menu/single_player.gif');
 	const	twoPlayerButton = createMenuButton('twoplayer-button', 'Two Players', '../../../assets/images/pong/menu/two_players.gif');
-	const	howToPlayCard = createHowToPlayCard();
 	const	howToPlayButton = createHowToPlayButton();
+	const	howToPlayCard = createHowToPlayCard();
 
 	menuButtonsContainer.appendChild(singlePlayerButton);
 	menuButtonsContainer.appendChild(twoPlayerButton);
@@ -99,7 +99,7 @@ function createHowToPlayButton()
 	button.addEventListener('click', () => {
 		const	card = document.getElementById('how-to-play-card');
 		if (card)
-			{
+		{
 			card.classList.toggle('show');
 		}
 	});
@@ -125,21 +125,21 @@ function createHowToPlayCard()
 
 	sections.forEach(section => {
 		const	row = document.createElement('div');
-		row.className = 'row mb-4 align-items-center'; // Align items center
+		row.className = 'row mb-4 align-items-center';
 
 		const	textCol = document.createElement('div');
-		textCol.className = 'col-md-6 text-center'; // Column for text
+		textCol.className = 'col-md-6 text-center';
 		const	title = document.createElement('h6');
-		title.className = 'card-subtitle mb-2';
+		title.className = 'card-subtitle';
 		title.textContent = section.title;
 		textCol.appendChild(title);
 
 		const	gifCol = document.createElement('div');
-		gifCol.className = 'col-md-6 d-flex justify-content-center'; // Column for GIFs, center content
+		gifCol.className = 'col-md-6 d-flex justify-content-center';
 
 		section.gifs.forEach(src => {
 			const	gif = createCardGif(src, `How to Play ${section.title} GIF`);
-			gif.classList.add('img-fluid', 'how-to-play-gif'); // Make GIF responsive and centered
+			gif.classList.add('img-fluid', 'how-to-play-gif');
 			gifCol.appendChild(gif);
 		});
 
@@ -152,8 +152,6 @@ function createHowToPlayCard()
 
 	return cardDiv;
 }
-
-
 
 function createCardGif(src, alt)
 {
@@ -497,7 +495,6 @@ function hidePauseMenu()
 		pausedGifContainer.classList.add('hidden');
 	}
 }
-
 
 /***********************************************\
 -				GAME DYNAMICS					-
