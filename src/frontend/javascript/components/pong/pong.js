@@ -312,7 +312,6 @@ export function initializePong()
 		}
 		else
 		{
-			// console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -859,7 +858,8 @@ function resetGame()
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	// console.log('Cleaning up Pong...')
+	if (DEBUG)
+		console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
