@@ -25,5 +25,6 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
 
-#run "python manage.py populate_db" before "python manage.py runserver"
+#cd src/dashboard/dashboard
+#run "python3 manage.py populate_db" before "python manage.py runserver"
 

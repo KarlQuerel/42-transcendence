@@ -18,12 +18,14 @@ export function renderDashboard() {
 			</div>
 
 			<div id="avatarModal" class="modal"></div>
+
 			<div id="badgeModal" class="modal">
 				<div class="modal-body">
 					<img class="badge-icon" src="" alt="Badge">
 					<p></p>
 				</div>
 			</div>
+			
 			<div class="avatar-container"></div>
 			<table>
 				<thead id="tableHeaderRow"></thead>
