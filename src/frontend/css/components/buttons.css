@@ -8,13 +8,8 @@
 	border: 2px solid var(--base-green);
 	background-color: var(--base-dark);
 	position: relative;
-
-	/* TODO ask group */
-	/* width: auto;
-	height: auto; */
 	width: 50vh;
 	height: 20vh;
-
 	margin: 10px;
 	text-decoration: none;
 	text-align: center;
