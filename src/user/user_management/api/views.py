@@ -44,8 +44,8 @@ def addUser(request):
 
 
 
-
-# @csrf_exempt
+# csrf Token exempté car on utilise les JWTokens à la place
+@csrf_exempt
 def signInUser(request):
 	if request.method == 'POST':
 		try:
@@ -65,10 +65,7 @@ def signInUser(request):
 				refresh = RefreshToken.for_user(user)
 				access_token = str(refresh.access_token)
 				refresh_token = str(refresh)
-				return JsonResponse({
-                    'access': access_token,
-                    'refresh': refresh_token
-                }, status=200)
+				return JsonResponse({'access': access_token, 'refresh': refresh_token}, status=200)
 			else:
 				return JsonResponse({'error': 'Invalid username or password'}, status=400)
 		

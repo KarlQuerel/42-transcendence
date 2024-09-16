@@ -1,103 +1,151 @@
 /*** Render Function ***/
-export default function renderSignUp()
-{
-	return `
-
+export default function renderSignUp() {
+    return `
         <h1>Sign Up</h1>
-        <form>
+        <form id="signupForm">
 
-        <div class="form-group">
-            <label for="first_name">First Name:</label>
-            <input type="text" id="first_name" placeholder="Enter first name">
-        </div>
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" placeholder="Enter first name">
+            </div>
 
-        <div class="form-group">
-            <label for="last_name">Last Name:</label>
-            <input type="text" id="last_name" placeholder="Enter last name">
-        </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" placeholder="Enter last name">
+            </div>
 
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" placeholder="Enter username">
-        </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter username">
+            </div>
 
-        <div class="form-group">
-            <label for="date_of_birth">Date of birth:</label>
-            <input type="date" class="form-control" id="date_of_birth" placeholder="Enter date of birth">
-        </div>
+            <div class="form-group">
+                <label for="date_of_birth">Date of birth:</label>
+                <input type="date" id="date_of_birth" placeholder="Enter date of birth">
+            </div>
 
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter password">
-        </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
 
-        <div class="form-group">
-            <label for="password_confirmation">Password confirmation:</label>
-            <input type="password" id="password_confirmation" placeholder="Enter password confirmation">
-        </div>
+            <div class="form-group">
+                <label for="password_confirmation">Password confirmation:</label>
+                <input type="password" id="password_confirmation" placeholder="Enter password confirmation">
+            </div>
 
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="text" id="email" placeholder="Enter email">
-        </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="text" id="email" placeholder="Enter email">
+            </div>
 
-        <button type="button">Submit</button>
+            <button type="submit">Submit</button>
         </form>
-
     `;
 }
 
 
 
 /*** Initialization Function for Signup Route ***/
-export function initializeSignUp() {
-    const button = document.querySelector('button[type="button"]');
-    if (button)
-    {
-        button.addEventListener('click', function ()
-        {
+// export function initializeSignUp() {
+//     const button = document.querySelector('button[type="button"]');
+//     if (button)
+//     {
+//         button.addEventListener('click', function ()
+//         {
 
-            // first name
+//             // first name
+//             let first_name = getIdentifier('first_name');
+//             let first_name_type = checkIdentifierType(first_name);
+
+//             // last name
+//             let last_name = getIdentifier('last_name');
+//             let last_name_type = checkIdentifierType(last_name);
+
+//             // username
+//             let username = getIdentifier('username');
+//             let username_type = checkIdentifierType(username);
+
+//             // date of birth
+//             let date_of_birth = getIdentifier('date_of_birth');
+//             let date_of_birth_type = checkIdentifierType(date_of_birth);
+
+//             // password
+//             let password = getIdentifier('password');
+//             let password_type = checkIdentifierType(password);
+
+//             // password confirmation
+//             let password_confirmation = getIdentifier('password_confirmation');
+//             let password_confirmation_type = checkIdentifierType(password_confirmation);
+
+//             // email
+//             let email = getIdentifier('email');
+//             let email_type = checkIdentifierType(email);
+
+//             if (allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) == false || password != password_confirmation)
+//             {
+//                 if (password != password_confirmation)
+//                     console.log('Error: Password and password confirmation do not match.');
+//                 sendErrorToConsole(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type);
+//                 return;
+//             }
+//             else
+// 			    addNewUser(username, password, email, date_of_birth, first_name, last_name);
+//         });
+//     }
+//     else
+// 		console.error('Button not found.');
+// }
+
+export function initializeSignUp() {
+    const form = document.getElementById('signupForm');
+    if (form)
+    {
+        form.addEventListener('submit', function (event)
+        {
+            event.preventDefault(); // Prevent default form submission
+
+            // First name
             let first_name = getIdentifier('first_name');
             let first_name_type = checkIdentifierType(first_name);
 
-            // last name
+            // Last name
             let last_name = getIdentifier('last_name');
             let last_name_type = checkIdentifierType(last_name);
 
-            // username
+            // Username
             let username = getIdentifier('username');
             let username_type = checkIdentifierType(username);
 
-            // date of birth
+            // Date of birth
             let date_of_birth = getIdentifier('date_of_birth');
             let date_of_birth_type = checkIdentifierType(date_of_birth);
 
-            // password
+            // Password
             let password = getIdentifier('password');
             let password_type = checkIdentifierType(password);
 
-            // password confirmation
+            // Password confirmation
             let password_confirmation = getIdentifier('password_confirmation');
             let password_confirmation_type = checkIdentifierType(password_confirmation);
 
-            // email
+            // Email
             let email = getIdentifier('email');
             let email_type = checkIdentifierType(email);
 
-            if (allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) == false || password != password_confirmation)
+            if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) || password !== password_confirmation)
             {
-                if (password != password_confirmation)
+                if (password !== password_confirmation)
                     console.log('Error: Password and password confirmation do not match.');
                 sendErrorToConsole(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type);
-                return;
+                return ;
             }
             else
-			    addNewUser(username, password, email, date_of_birth, first_name, last_name);
+                addNewUser(username, password, email, date_of_birth, first_name, last_name);
         });
     }
     else
-		console.error('Button not found.');
+        console.error('Form not found.');
 }
 
 
@@ -232,13 +280,13 @@ function sendErrorToConsole(first_name_type, last_name_type, username_type, date
 
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
-	fetch('/api/users/addUser/',
+    fetch('/api/users/addUser/',
     {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
             username,
             password1: password,
             password2: password,
@@ -246,7 +294,7 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
             date_of_birth,
             first_name,
             last_name }),
-	})
+    })
     .then(response =>
     {
         if (!response.ok) {
