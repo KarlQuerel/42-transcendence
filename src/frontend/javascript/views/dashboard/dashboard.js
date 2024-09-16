@@ -1,7 +1,7 @@
 /***********************************************\
 -			IMPORTING GLOBAL VARIABLES			-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+// import { DEBUG } from '../../main.js';
 
 
 /***********************************************\
@@ -32,7 +32,7 @@ export function renderDashboard()
 			<div id="badgeModal" class="modal">
 				<div class="modal-body">
 					<img class="badge-icon" src="" alt="Badge">
-					<p></p>
+					<p class="badge-message"></p>
 				</div>
 			</div>
 
@@ -40,6 +40,7 @@ export function renderDashboard()
 
 <!-- Badge Images -->
 
+			<img id="gold_badge" src="../../../assets/images/dashboard/regular.png" style="display: none;">
 			<img id="gold_badge" src="../../../assets/images/dashboard/gold.gif" style="display: none;">
 			<img id="silver_badge" src="../../../assets/images/dashboard/silver.gif" style="display: none;">
 			<img id="bronze_badge" src="../../../assets/images/dashboard/bronze.gif" style="display: none;">
@@ -55,10 +56,15 @@ export function renderDashboard()
 -				MAIN FUNCTION					-
 \***********************************************/
 
-export function initializeDashboard()
+export async function initializeDashboard() /*assync and wait needed otherwise we receive 
+a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
 	let userData = loadUserManagementData();
-	let statsData = loadDashboardData(userData);
+	let statsData = await loadDashboardData(userData);
+	//if (DEBUG)
+		console.log("user's data = ", statsData);
+		console.log("user's badge = ", statsData.badge); //TEST
+
 
 	setupEventListeners(statsData); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
@@ -78,7 +84,7 @@ function loadDashboardData(userData)
 		})
 		.then(statsData =>
 		{
-			if (DEBUG)
+			// if (DEBUG)
 				console.log("statsData = ", statsData);
 
 			let i = 0;
@@ -99,7 +105,8 @@ function loadDashboardData(userData)
 		});
 }
 
-function loadUserManagementData() {
+/* function loadUserManagementData()
+{
 	fetch('/api/users/signInUser/')
 		.then(response =>
 		{
@@ -119,7 +126,25 @@ function loadUserManagementData() {
 			throw error; // Re-throw the error
 			//CHECK: if userData is undefined : try/catch that will stop everything
 		});
+} */
+
+//-------------------------------------- TEST waiting for jess' user -------------------------------------
+
+class UserData {
+	constructor(nickname) {
+		this.nickname = nickname;
+	}
 }
+
+function loadUserManagementData()
+{
+	return { // '{' has to be on the same line, otherwise error
+		nickname: 'wfEpocIQ'
+	};
+}
+
+//-------------------------------------- FIN TEST -------------------------------------
+
 
 
 /***********************************************\
@@ -166,38 +191,57 @@ function setupEventListeners(statsData)
 
 function badge(statsData)
 {
-		let badge_img = '';
-		let message = '';
+	console.log("user's badge = ", statsData.badge); //HERE
 
-		// Determine badge image
-		if (statsData.badge == 1) {
-			badge_img = document.getElementById('gold_badge');
-		} else if (statsData.badge == 2) {
-			badge_img = document.getElementById('silver_badge');
-		} else if (statsData.badge == 3) {
-			// badge = 'animated_icons/bronze.gif';
-			badge_img = document.getElementById('bronze_badge');
-		}
+	let badge_img = '';
+	let message = '';
 
-		// Determine ranking position message
-		if (statsData.ranking_position <= 10) {
-			if (statsData.ranking_position > 5) {
-				message += ' You are in the top 10 players!';
-			} else if (statsData.ranking_position > 3) {
-				message += ' You are in the top 5 players!';
-			} else if (statsData.ranking_position > 1) {
-				message += ` You are the top ${statsData.ranking_position} player!`;
-			} else if (statsData.ranking_position == 1) {
-				message += " You're the best player ever!";
-			}
-		}
+	// Determine badge image
+	if (statsData.badge == 0)
+		badge_img = document.getElementById('regular_badge');
+	else if (statsData.badge == 1)
+		badge_img = document.getElementById('gold_badge');
+	else if (statsData.badge == 2)
+		badge_img = document.getElementById('silver_badge');
+	else if (statsData.badge == 3)
+		badge_img = document.getElementById('bronze_badge');
 
-		// Set the modal content dynamically
-		document.querySelector('#badgeModal .modal-body .badge-icon').src = badge;
-		document.querySelector('#badgeModal .modal-body p').textContent = message;
+	// Determine ranking position message
+	if (statsData.ranking_position <= 10)
+	{
+		if (statsData.ranking_position > 5)
+			message += ' You are in the top 10 players!';
+		else if (statsData.ranking_position > 3)
+			message += ' You are in the top 5 players!';
+		else if (statsData.ranking_position > 1)
+			message += ` You are the top ${statsData.ranking_position} player!`;
+		else if (statsData.ranking_position == 1)
+			message += " You're the best player ever!";
+		else
+			message += "You suck"; //TEST
+	}
 
-		// Show the modal
-		document.getElementById('badgeModal').style.display = 'block';
+	//sewt the modal content (= on met les infos dans l'html)
+	const badgeIcon = document.querySelector('#badgeModal .modal-body .badge-icon');
+	const badgeMessage = document.querySelector('#badgeModal .modal-body .badge-message');
+
+	// on check à chaque fois qu'on trouve l'élément html avant de lui donner la valeur correspondante
+	if (badgeIcon)
+		badgeIcon.src = badge_img.src; //.src is necessary!
+	else
+		console.error("Badge icon element not found!");
+
+	if (badgeMessage)
+		badgeMessage.textContent = message;
+	else
+		console.error("Badge message element not found!");
+
+	// Show the modal
+	const badgeModal = document.getElementById('badgeModal');
+	if (badgeModal)
+		badgeModal.style.display = 'block';
+	else
+		console.error('Badge modal element not found!');
 }
 		
 // Function to close the modal when clicking outside of it
