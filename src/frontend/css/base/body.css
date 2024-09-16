@@ -17,44 +17,7 @@
 	padding-bottom: 60px;
 }
 
-/* .main-content
-{
-	background-color: var(--base-gray);
-	min-height: calc(100vh - 100px);
-	padding: 20px;
-	color: var(--base-white);
-} */
-
-/* TODO : ask the team */
-@keyframes gradientMove
-{
-	0%
-	{
-		background-position: 0% 50%;
-	}
-	50%
-	{
-		background-position: 100% 50%;
-	}
-	100%
-	{
-		background-position: 0% 50%;
-	}
-}
-
-@keyframes gradientShift
-{
-  0% { background: linear-gradient(90deg, #ff7e5f, #feb47b); }
-  50% { background: linear-gradient(90deg, #6a11cb, #2575fc); }
-  100% { background: linear-gradient(90deg, #ff7e5f, #feb47b); }
-}
-
 .main-content
 {
-	background: linear-gradient(270deg, #00ff0064, #9af0a2, #00ff0064);
-	background-size: 400% 400%;
-	animation: gradientMove 10s ease infinite;
-	min-height: calc(100vh - 100px);
-	padding: 20px;
 	color: var(--base-white);
 }

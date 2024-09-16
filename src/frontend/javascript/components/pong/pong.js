@@ -22,7 +22,6 @@ export default function renderPong()
 	return container;
 }
 
-
 /***********************************************\
 -				CREATING ELEMENTS				-
 \***********************************************/

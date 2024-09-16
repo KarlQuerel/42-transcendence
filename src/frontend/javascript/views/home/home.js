@@ -1,7 +1,6 @@
 /*
 TODO:
 - Fake reviews - carrousel
-- Global variables - DEBUG
 
 <!-- Carousel at the bottom of the page -->
 <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -409,42 +408,208 @@ const	Accessibility =
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
-export default function renderHome()
+/* NO PARTICLE */
+// export default function renderHome()
+// {
+// 	const	container = document.createElement('div');
+// 	container.id = 'home-content';
+// 	container.className = 'd-flex justify-content-center align-items-center vh-100';
+
+// 	const	row = document.createElement('div');
+// 	row.className = 'd-flex flex-column align-items-center';
+
+// 	const	whatIsPongCard = createWhatIsPongCard();
+// 	if (DEBUG)
+// 		console.log('What is Pong Card:', whatIsPongCard);
+
+// 	const	theTeam = createtheTeam();
+// 	if (DEBUG)
+// 		console.log('The Team:', theTeam);
+
+// 	const	{ button, modal } = createWhatWeDidModal();
+// 	if (DEBUG)
+// 		console.log('What We Did Button:', button);
+
+// 	row.appendChild(whatIsPongCard);
+// 	row.appendChild(theTeam);
+// 	row.appendChild(button);
+// 	container.appendChild(row);
+
+// 	if (!document.getElementById('staticBackdrop')) {
+// 		document.body.appendChild(modal);
+// 	}
+
+// 	return container;
+// }
+
+
+/***********************************************\
+-					PARTICLES					-
+\***********************************************/
+class Particle
 {
-	const	container = document.createElement('div');
-	container.id = 'home-content';
-	container.className = 'd-flex justify-content-center align-items-center vh-100';
-
-	const	row = document.createElement('div');
-	row.className = 'd-flex flex-column align-items-center';
-
-	const	whatIsPongCard = createWhatIsPongCard();
-	if (DEBUG)
-		console.log('What is Pong Card:', whatIsPongCard);
-
-	const	theTeam = createtheTeam();
-	if (DEBUG)
-		console.log('The Team:', theTeam);
-
-	const	{ button, modal } = createWhatWeDidModal();
-	if (DEBUG)
-		console.log('What We Did Button:', button);
-
-	row.appendChild(whatIsPongCard);
-	row.appendChild(theTeam);
-	row.appendChild(button);
-	container.appendChild(row);
-
-	if (!document.getElementById('staticBackdrop')) {
-		document.body.appendChild(modal);
+	constructor(x, y, size, speedX, speedY, color)
+	{
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.speedX = speedX * 0.5; // SPEED MOVEMENT
+		this.speedY = speedY * 0.5;
+		this.color = color;
 	}
 
+	// Draw particle as a square
+	draw(ctx)
+	{
+		ctx.fillStyle = this.color;
+		ctx.fillRect(this.x, this.y, this.size, this.size);
+	}
+
+	// Update particle position
+	update(ctx, mouse)
+	{
+		const	dx = this.x - mouse.x;
+		const	dy = this.y - mouse.y;
+		const	distance = Math.sqrt(dx * dx + dy * dy);
+		const	forceDirectionX = dx / distance;
+		const	forceDirectionY = dy / distance;
+		const	maxDistance = mouse.radius;
+		const	force = (maxDistance - distance) / maxDistance;
+
+		// Apply repulsion force
+		if (distance < mouse.radius)
+		{
+			this.x += forceDirectionX * force * 5; // REPULSE EFFECT
+			this.y += forceDirectionY * force * 5;
+		}
+
+		this.x += this.speedX;
+		this.y += this.speedY;
+
+		// Bounce off walls
+		if (this.x + this.size > ctx.canvas.width || this.x < 0)
+		{
+			this.speedX = -this.speedX;
+		}
+		if (this.y + this.size > ctx.canvas.height || this.y < 0)
+		{
+			this.speedY = -this.speedY;
+		}
+		this.draw(ctx);
+	}
+}
+
+// Function to get random green color
+function getRandomGreen()
+{
+	const	green = Math.floor(Math.random() * 256); // 0-255
+	return `rgb(0, ${green}, 0)`;
+}
+
+function initParticles()
+{
+	const	canvas = document.createElement('canvas');
+	const	ctx = canvas.getContext('2d');
+	const	particlesArray = [];
+	const	mouse = { x: null, y: null, radius: 150 }; // RADIUS
+
+	// Set canvas to full window size
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	document.getElementById('particles-js').appendChild(canvas);
+
+	// Create particles
+	for (let i = 0; i < 8000; i++) // PARTICLES NUMBER
+	{
+		const	size = Math.random() * 10 + 1;
+		const	x = Math.random() * (canvas.width - size * 2) + size;
+		const	y = Math.random() * (canvas.height - size * 2) + size;
+		const	speedX = (Math.random() * 6 - 3) * 0.5;
+		const	speedY = (Math.random() * 6 - 3) * 0.5; 
+		const	color = getRandomGreen();
+		particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
+	}
+
+	// Animate particles
+	function animateParticles()
+	{
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		particlesArray.forEach(particle => particle.update(ctx, mouse));
+		requestAnimationFrame(animateParticles);
+	}
+
+	// Event listeners for mouse movement
+	function setupMouseListeners()
+	{
+		canvas.addEventListener('mousemove', (e) => {
+			mouse.x = e.x;
+			mouse.y = e.y;
+		});
+
+		canvas.addEventListener('mouseleave', () => {
+			mouse.x = null;
+			mouse.y = null;
+		});
+	}
+
+	animateParticles();
+	setupMouseListeners();
+}
+
+/***********************************************\
+-					RENDERING					-
+\***********************************************/
+export default function renderHome()
+{
+	const	container = createHomeContainer();
+	const	particlesContainer = createParticlesContainer();
+	const	row = createContentRow();
+
+	document.body.appendChild(particlesContainer);
+	document.getElementById('app').appendChild(container);
+
+	if (!document.getElementById('staticBackdrop'))
+	{
+		document.body.appendChild(createWhatWeDidModal().modal);
+	}
+
+	initParticles();
 	return container;
 }
 
 /***********************************************\
 -				CREATING DOM ELEMENTS			-
 \***********************************************/
+function createHomeContainer()
+{
+	const	container = document.createElement('div');
+	container.id = 'home-content';
+	container.className = 'd-flex justify-content-center align-items-center vh-100 position-relative';
+	container.appendChild(createContentRow());
+	return container;
+}
+
+function createParticlesContainer()
+{
+	const	particlesContainer = document.createElement('div');
+	particlesContainer.id = 'particles-js';
+	particlesContainer.style.position = 'absolute';
+	particlesContainer.style.width = '100%';
+	particlesContainer.style.height = '100%';
+	particlesContainer.style.zIndex = '0'; // ZINDEX HERE
+	return particlesContainer;
+}
+
+function createContentRow()
+{
+	const	row = document.createElement('div');
+	row.className = 'd-flex flex-column align-items-center position-relative';
+	row.appendChild(createWhatIsPongCard());
+	row.appendChild(createtheTeam());
+	row.appendChild(createWhatWeDidModal().button);
+	return row;
+}
+
 function createWhatIsPongCard()
 {
 	if (DEBUG)
