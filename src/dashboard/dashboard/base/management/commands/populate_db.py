@@ -5,8 +5,8 @@ import random
 import string
 
 # Generate a random username with 8 letters
-username = ''.join(random.choices(string.ascii_letters, k=8))
-nb_of_victories = random.randint(0, 100)
+# username = ''.join(random.choices(string.ascii_letters, k=8))
+# nb_of_victories = random.randint(0, 100)
 
 fake = Faker()
 
@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         for _ in range(10):
             Stats.objects.create(
-                username=''.join(random.choices(string.ascii_letters, k=8)),
+                nickname=''.join(random.choices(string.ascii_letters, k=8)),
                 nb_of_victories=random.randint(0, 100),
                 nb_of_defeats=random.randint(0, 100),
                 badge=random.randint(0, 4),
@@ -25,6 +25,7 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
 
-#cd src/dashboard/dashboard
-#run "python3 manage.py populate_db" before "python manage.py runserver"
+#access the running dashboard container :
+#docker exec -it Dashboard bash
+#run "python manage.py populate_db" before "python manage.py runserver"
 

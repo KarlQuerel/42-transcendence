@@ -1,7 +1,7 @@
 /***********************************************\
 -			IMPORTING GLOBAL VARIABLES			-
 \***********************************************/
-// import { DEBUG } from '../../main.js';
+import { DEBUG } from '../../main.js';
 
 
 /***********************************************\
@@ -57,58 +57,76 @@ export function renderDashboard()
 
 export function initializeDashboard()
 {
-	// let userData = loadUserManagementData();
-	let statsData = loadDashboardData();
+	let userData = loadUserManagementData();
+	let statsData = loadDashboardData(userData);
 
-	setupEventListeners(); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
-
-	//chart_icon
-	// ChartBarData(statsData);
-	// ChartDoughnutData(statsData); //FIX
-
-	//friends_icon
-	// GameHistoryTable(statsData);
-
-	//trophee_icon
-	badge(statsData);
+	setupEventListeners(statsData); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
 
 /***********************************************\
 -					FETCHING DATA				-
 \***********************************************/
 
-function loadDashboardData() {
-	fetch('/api/dashboard/getData/')
-		.then(response => {
+function loadDashboardData(userData)
+{
+	return fetch('/api/dashboard/getData/')
+		.then(response =>
+		{
+			if (!response.ok)
+				throw new Error('Error: network response');
+			return response.json();
+		})
+		.then(statsData =>
+		{
+			if (DEBUG)
+				console.log("statsData = ", statsData);
+
+			let i = 0;
+			while (i < statsData.length)
+			{
+				if (userData.nickname === statsData[i].nickname) // if userData.nickname == the current statsData entry's nickname
+					return statsData[i]; // Return the matching user's stats
+				i++;
+			}
+			//TODO: return error if we arrive here
+			console.log("The connected user's nickname does not match any nickname in the dashbaord database");
+		})
+		.catch(error =>
+		{
+			console.error('Error: fetch statsData', error);
+			throw error; // Re-throw the error
+			//CHECK: if statsData is undefined : try/catch that will stop everything
+		});
+}
+
+function loadUserManagementData() {
+	fetch('/api/users/signInUser/')
+		.then(response =>
+		{
 			if (!response.ok)
 				throw new Error('Error : network response');
 			return response.json();
 		})
-		.then(statsData => {
-			console.log("statsData = ", statsData);
+		.then(userData =>
+		{
+			if (DEBUG)
+				console.log("userData = ", userData);
+			return userData;
 		})
-		.catch(error => console.error('Error : fetch statsData', error));
+		.catch(error =>
+		{
+			console.error('Error : fetch userData', error)
+			throw error; // Re-throw the error
+			//CHECK: if userData is undefined : try/catch that will stop everything
+		});
 }
-
-// function loadUserManagementData() {
-// 	fetch('/api/users/signInUser/')
-// 		.then(response => {
-// 			if (!response.ok)
-// 				throw new Error('Error : network response');
-// 			return response.json();
-// 		})
-// 		.then(userData => {
-// 			console.log("userData = ", userData);
-// 		})
-// 		.catch(error => console.error('Error : fetch userData', error));
-// }
 
 
 /***********************************************\
 -				EVENT LISTENERS					-
 \***********************************************/
 
-function setupEventListeners()
+function setupEventListeners(statsData)
 {
 	const chartIcon = document.getElementById('chart_icon');
 	const friendsIcon = document.getElementById('friends_icon');
@@ -118,6 +136,8 @@ function setupEventListeners()
 	{
 		chartIcon.addEventListener('click', function() {
 			$('#chartModal').modal('show');
+			// ChartBarData(statsData);
+			// ChartDoughnutData(statsData); //FIX
 		});
 	}
 	else
@@ -127,6 +147,7 @@ function setupEventListeners()
 	{
 		friendsIcon.addEventListener('click', function() {
 			$('#avatarModal').modal('show');
+			// GameHistoryTable(statsData);
 		});
 	}
 	else
@@ -135,28 +156,27 @@ function setupEventListeners()
 	if (tropheeIcon)
 	{
 		tropheeIcon.addEventListener('click', function() {
-			$('#badgeModal').modal('show');
+			// $('#badgeModal').modal('show');
+			badge(statsData);
 		});
 	}
 	else
 		console.error('Canvas element with id "badgeModal" not found or context is null.');
-
 }
 
-function badge(statsData) {
-	document.getElementById('trophee_icon').addEventListener('click', function()
-	{
-		let badge = '';
+function badge(statsData)
+{
+		let badge_img = '';
 		let message = '';
 
 		// Determine badge image
 		if (statsData.badge == 1) {
-			badge = document.getElementById('gold_badge').src;
+			badge_img = document.getElementById('gold_badge');
 		} else if (statsData.badge == 2) {
-			badge = document.getElementById('silver_badge').src;
+			badge_img = document.getElementById('silver_badge');
 		} else if (statsData.badge == 3) {
 			// badge = 'animated_icons/bronze.gif';
-			badge = document.getElementById('bronze_badge').src;
+			badge_img = document.getElementById('bronze_badge');
 		}
 
 		// Determine ranking position message
@@ -177,9 +197,7 @@ function badge(statsData) {
 		document.querySelector('#badgeModal .modal-body p').textContent = message;
 
 		// Show the modal
-		// $('#badgeModal').modal('show');
 		document.getElementById('badgeModal').style.display = 'block';
-	});
 }
 		
 // Function to close the modal when clicking outside of it
