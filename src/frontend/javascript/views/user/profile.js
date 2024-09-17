@@ -39,7 +39,6 @@ export default function renderProfile()
 
     const passwordElement = document.createElement('p');
     passwordElement.setAttribute('id', 'password');
-    passwordElement.textContent = 'Password: ******';
 
     const changePasswordButton = document.createElement('button');
     changePasswordButton.setAttribute('id', 'change-password-button');
@@ -72,15 +71,23 @@ export default function renderProfile()
     fetchUserData()
         .then(userData =>
         {
-            if (userData)
+            if (userData && DEBUG)
                 console.log(userData);
             else
                 console.log('No user data found');
+
             firstNameElement.textContent = `First Name: ${userData.first_name}`;
             lastNameElement.textContent = `Last Name: ${userData.last_name}`;
             usernameElement.textContent = `Username: ${userData.username}`;
             dobElement.textContent = `Date of Birth: ${userData.date_of_birth || 'Not provided'}`;
             emailElement.textContent = `Email: ${userData.email}`;
+
+            // Password display in asterisks
+            const password = userData.password;
+            const numAsterisks = Math.max(0, password.length); // Subtracting 3 for "Password: "
+            const passwordText = `Password: ${'*'.repeat(numAsterisks)}`;
+            passwordElement.textContent = passwordText;
+
         })
         .catch(error => {
             console.error('Error fetching user data:', error);

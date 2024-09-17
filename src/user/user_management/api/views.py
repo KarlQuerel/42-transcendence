@@ -94,7 +94,7 @@ def currentlyLoggedInUser(request):
 			'first_name': user.first_name,
 			'last_name': user.last_name,
             'username': user.username,
-			'password': user.password,
+			'password': user.password1,
 			'date_of_birth': user.date_of_birth,
             'email': user.email
         })
