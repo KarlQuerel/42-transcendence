@@ -3,138 +3,136 @@
 \***********************************************/
 import { DEBUG } from '../../main.js';
 
-
 /***********************************************\
-*                   RENDERING                  *
+*                   RENDERING                   *
 \***********************************************/
 
 export default function renderProfile()
 {
-    return `
+    // Create a container for the profile information
+    const container = document.createElement('div');
+    container.setAttribute('id', 'profile-container');
+
+    // Create title for the profile
+    const profileTitle = document.createElement('h1');
+    profileTitle.textContent = 'My Profile';
+
+    // Create section for personal information
+    const personalInfoSection = document.createElement('section');
+    personalInfoSection.setAttribute('id', 'personal-info');
+
+    const personalInfoTitle = document.createElement('h2');
+    personalInfoTitle.textContent = 'Personal Information';
+
+    // Create elements for user data
+    const firstNameElement = document.createElement('p');
+    firstNameElement.setAttribute('id', 'first_name');
+
+    const lastNameElement = document.createElement('p');
+    lastNameElement.setAttribute('id', 'last_name');
+
+    const usernameElement = document.createElement('p');
+    usernameElement.setAttribute('id', 'username');
     
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="/path/to/your/css/main.css">
-</head>
-<body>
-    <div class="container">
-        <div class="profile-header text-center">
-            <h1>My Profile</h1>
-        </div>
+    const dobElement = document.createElement('p');
+    dobElement.setAttribute('id', 'date_of_birth');
 
-        <div class="section">
-            <h2>User Information</h2>
-            <div class="row">
-                <div class="col-md-3 text-center">
-                    <img src="avatar/default.png" alt="User Avatar" class="avatar img-fluid">
-                    <p><strong>Status:</strong> <span class="status-online">Online</span></p>
-                </div>
-                <div class="col-md-9" id="user-info">
-                </div>
-            </div>
-        </div>
+    const passwordElement = document.createElement('p');
+    passwordElement.setAttribute('id', 'password');
+    passwordElement.textContent = 'Password: ******';
 
-        <div class="friends-list">
-            <h2>Friends List</h2>
-            <div class="row">
-                <div class="col-md-6">
-                    <ul class="list-group" id="friends-list-container">
-                    </ul>
-                </div>
-            </div>
-        </div>
+    const changePasswordButton = document.createElement('button');
+    changePasswordButton.setAttribute('id', 'change-password-button');
+    changePasswordButton.textContent = 'Change Password';
 
-        <div class="stats-display-section">
-            <h2>Stats Display</h2>
-            <div class="stats-container" id="stats-container">
-            </div>
-        </div>
+    const emailElement = document.createElement('p');
+    emailElement.setAttribute('id', 'email');
 
-        <div class="match-history-section">
-            <h2>Match History</h2>
-            <div class="match-history-container" id="match-history-container">
-            </div>
-        </div>
-    </div>
+    // Append elements to container
+    personalInfoSection.appendChild(personalInfoTitle);
+    personalInfoSection.appendChild(firstNameElement);
+    personalInfoSection.appendChild(lastNameElement);
+    personalInfoSection.appendChild(usernameElement);
+    personalInfoSection.appendChild(dobElement);
+    personalInfoSection.appendChild(passwordElement);
+    personalInfoSection.appendChild(changePasswordButton);
+    personalInfoSection.appendChild(emailElement);
 
-    <script src="/path/to/your/javascript/profile.js"></script>
-</body>
-</html>
-    `;
-}
+     // Create a logout button
+     const logoutButton = document.createElement('button');
+     logoutButton.setAttribute('id', 'logout-button');
+     logoutButton.textContent = 'Log Out';
+ 
+     // Append all elements to container
+     container.appendChild(profileTitle);
+     container.appendChild(personalInfoSection);
+     container.appendChild(logoutButton);
 
-
-/*** Initialization Function ***/
-export function initializeProfile()
-{
-    if (DEBUG)
-        console.log("1. Calling fetchUserData");
-    fetchUserData();
-
-    if (DEBUG)
-        console.log("2. Calling displayUserData");
-    displayUserData();
-
-}
-
-
-
-
-async function fetchUserData()
-{
-        const token = localStorage.getItem('access_token');
-        
-        if (token) {
-            console.log('Access token found:', token);
-        } else {
-            console.log('No access token found.');
-        }
-
-        fetch('/api/users/currentlyLoggedInUser/', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token,
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Logged in User\'s data:', data);
+    // Fetch user data and display it
+    fetchUserData()
+        .then(userData =>
+        {
+            if (userData)
+                console.log(userData);
+            else
+                console.log('No user data found');
+            firstNameElement.textContent = `First Name: ${userData.first_name}`;
+            lastNameElement.textContent = `Last Name: ${userData.last_name}`;
+            usernameElement.textContent = `Username: ${userData.username}`;
+            dobElement.textContent = `Date of Birth: ${userData.date_of_birth || 'Not provided'}`;
+            emailElement.textContent = `Email: ${userData.email}`;
         })
         .catch(error => {
-            console.error('Error fetching user profile:', error);
+            console.error('Error fetching user data:', error);
+            container.innerHTML = '<p>Failed to load profile data.</p>';
         });
+
+    // Add event listener for logout button
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/sign-in';
+    });
+
+    // TODO: Voir la redirection pour le changement de mot de passe
+    // Add event listener for change password button
+    changePasswordButton.addEventListener('click', () => {
+        window.location.href = '/change-password'; // Assuming you have a change password page
+    });
+
+    return container;
 }
 
 
-
-
-function displayUserData(userData)
+// Fetch user data from the API
+async function fetchUserData()
 {
-    if (!userData)
-    {
-        document.querySelector('.profile-header h1').textContent = `Welcome, Player`;
-        document.querySelector('.avatar').src = 'avatar/default.png'; // Specify a default avatar path
-        document.querySelector('.status-online').textContent = 'Offline';
-        document.querySelector('#user-info').innerHTML = `
-            <p><strong>Username:</strong> </p>
-            <p><strong>Email Address:</strong> </p>
-        `;
-        return;
-    }
+    const token = localStorage.getItem('access_token');
 
-    document.querySelector('.profile-header h1').textContent = `Welcome, ${userData.username}`;
-    document.querySelector('.avatar').src = userData.avatar_url;
-    document.querySelector('.status-online').textContent = userData.is_online ? 'Online' : 'Offline';
-    document.querySelector('.status-online').classList.toggle('status-offline', !userData.is_online);
-    document.querySelector('#user-info').innerHTML = `
-        <p><strong>Username:</strong> ${userData.username}</p>
-        <p><strong>Email Address:</strong> ${userData.email}</p>
-    `;
+    if (!token)
+        throw new Error('No access token found');
+
+    return fetch('/api/users/currentlyLoggedInUser/',
+    {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token, // Add JWT to the Authorization header
+        }
+    })
+    .then(response =>
+    {
+        if (!response.ok)
+            throw new Error('Failed to fetch user data');
+        return response.json();
+    })
+    .then(data =>
+    {
+        if (DEBUG)
+            console.log('User data fetched:', data);
+        return data;
+    });
 }
+
 
 async function refreshToken()
 {

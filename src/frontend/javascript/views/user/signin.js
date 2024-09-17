@@ -63,6 +63,7 @@ export default function renderSignIn()
 
         if (DEBUG)
             console.log('Logging in with:', username, password);
+
         login(username, password);
     });
 

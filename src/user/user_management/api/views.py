@@ -1,14 +1,16 @@
-# from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-# from rest_framework.views import APIView
-from rest_framework import generics, status, permissions
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from api.models import CustomUser
+# from api.models import CustomUser
 from .forms import CustomUserRegistrationForm
-from .serializers import CustomUserRegistrationSerializer
+# from .serializers import CustomUserDisplaySerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+# from rest_framework.views import APIView
 from django.http import JsonResponse
 import json
 import logging
@@ -79,15 +81,25 @@ def signInUser(request):
 # Check which user is authenticated
 
 @api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@login_required
 def currentlyLoggedInUser(request):
-    # Check if the user is authenticated using the token
-    user = request.user
-    if user.is_authenticated:
+    try:
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'User not authenticated'}, status=401)
+        
         return Response({
+			'first_name': user.first_name,
+			'last_name': user.last_name,
             'username': user.username,
+			'password': user.password,
+			'date_of_birth': user.date_of_birth,
             'email': user.email
         })
-    return Response({'error': 'User not authenticated'}, status=401)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 
 
@@ -98,51 +110,19 @@ def currentlyLoggedInUser(request):
 # Temporary code
 
 
-# Sends to the frontend the profile of the currently authenticated user
-class UserProfileView(generics.RetrieveAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserRegistrationSerializer
+# # # Sends to the frontend the profile of the currently authenticated user
+# class CustomUserProfileView(APIView):
+# 	authentication_classes = [JWTAuthentication]
+# 	def get(self, request):
+# 		try:
+# 			serializer = CustomUserDisplaySerializer(request.user)
+# 			return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
+# 		except Exception as e:
+# 			return Response({'error': str(e)}, status=status.HTTP_200_OK)
 
-    def get_object(self):
-        return self.request.user
-        # return CustomUser.objects.get(username='cbernaze')
 
-## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
+# ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
 #########################################
 
 
-
-
-
-
-
-
-
-
-# class	CustomUserAPIView(APIView):
-
-# @api_view(['GET'])
-# def check_existing_username(request):
-# 	if request.method == 'GET':
-# 		username = request.GET.get('username', None)
-# 		if username:
-# 			exists = CustomUser.objects.filter(username=username).exists()
-# 			return Response({'exists': bool(exists)})
-# 		else:
-# 			return Response({'error': 'Username parameter missing'}, status=400)
-# 	else:
-# 		return Response({'error': 'Invalid request method'}, status=405)
-
-# @api_view(['GET'])
-# def check_existing_email(request):
-# 	if request.method == 'GET':
-# 		email = request.GET.get('email', None)
-# 		if email:
-# 			exists = CustomUser.objects.filter(email=email).exists()
-# 			return Response({'exists': bool(exists)})
-# 		else:
-# 			return Response({'error': 'Email parameter missing'}, status=400)
-# 	else:
-# 		return Response({'error': 'Invalid request method'}, status=405)
-	
