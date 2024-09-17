@@ -38,7 +38,7 @@ TODO:
 import { DEBUG } from '../../main.js';
 
 /***********************************************\
--				MODAL DATA						-
+-				MODULES DATA					-
 \***********************************************/
 
 /*					WEB							*/
@@ -406,44 +406,6 @@ const	Accessibility =
 ];
 
 /***********************************************\
--				RENDERING						-
-\***********************************************/
-/* NO PARTICLE */
-// export default function renderHome()
-// {
-// 	const	container = document.createElement('div');
-// 	container.id = 'home-content';
-// 	container.className = 'd-flex justify-content-center align-items-center vh-100';
-
-// 	const	row = document.createElement('div');
-// 	row.className = 'd-flex flex-column align-items-center';
-
-// 	const	whatIsPongCard = createWhatIsPongCard();
-// 	if (DEBUG)
-// 		console.log('What is Pong Card:', whatIsPongCard);
-
-// 	const	theTeam = createtheTeam();
-// 	if (DEBUG)
-// 		console.log('The Team:', theTeam);
-
-// 	const	{ button, modal } = createWhatWeDidModal();
-// 	if (DEBUG)
-// 		console.log('What We Did Button:', button);
-
-// 	row.appendChild(whatIsPongCard);
-// 	row.appendChild(theTeam);
-// 	row.appendChild(button);
-// 	container.appendChild(row);
-
-// 	if (!document.getElementById('staticBackdrop')) {
-// 		document.body.appendChild(modal);
-// 	}
-
-// 	return container;
-// }
-
-
-/***********************************************\
 -					PARTICLES					-
 \***********************************************/
 class Particle
@@ -468,19 +430,23 @@ class Particle
 	// Update particle position
 	update(ctx, mouse)
 	{
-		const	dx = this.x - mouse.x;
-		const	dy = this.y - mouse.y;
-		const	distance = Math.sqrt(dx * dx + dy * dy);
-		const	forceDirectionX = dx / distance;
-		const	forceDirectionY = dy / distance;
-		const	maxDistance = mouse.radius;
-		const	force = (maxDistance - distance) / maxDistance;
-
-		// Apply repulsion force
-		if (distance < mouse.radius)
+		if (mouse.x !== null && mouse.y !== null)
 		{
-			this.x += forceDirectionX * force * 5; // REPULSE EFFECT
-			this.y += forceDirectionY * force * 5;
+			const	dx = this.x - mouse.x;
+			const	dy = this.y - mouse.y;
+			const	distance = Math.sqrt(dx * dx + dy * dy);
+			const	maxDistance = mouse.radius;
+			
+			if (distance < maxDistance)
+			{
+				const	force = (maxDistance - distance) / maxDistance;
+				const	forceX = (dx / distance) * force * 5; // Apply force
+				const	forceY = (dy / distance) * force * 5;
+
+				// Apply repulsion force
+				this.x += forceX;
+				this.y += forceY;
+			}
 		}
 
 		this.x += this.speedX;
@@ -499,61 +465,96 @@ class Particle
 	}
 }
 
-// Function to get random green color
 function getRandomGreen()
 {
 	const	green = Math.floor(Math.random() * 256); // 0-255
 	return `rgb(0, ${green}, 0)`;
 }
 
+function setupMouseListeners(canvas, mouse)
+{
+	canvas.addEventListener('mousemove', (e) =>
+	{
+		const	rect = canvas.getBoundingClientRect();
+		mouse.x = e.clientX - rect.left;
+		mouse.y = e.clientY - rect.top;
+		if (DEBUG)
+			console.log(`Mouse moved: x=${mouse.x}, y=${mouse.y}`);
+	});
+
+	canvas.addEventListener('mouseleave', () =>
+	{
+		mouse.x = null;
+		mouse.y = null;
+		if (DEBUG)
+			console.log('Mouse left canvas');
+	});
+}
+
 function initParticles()
 {
-	const	canvas = document.createElement('canvas');
-	const	ctx = canvas.getContext('2d');
-	const	particlesArray = [];
-	const	mouse = { x: null, y: null, radius: 150 }; // RADIUS
-
-	// Set canvas to full window size
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-	document.getElementById('particles-js').appendChild(canvas);
-
-	// Create particles
-	for (let i = 0; i < 8000; i++) // PARTICLES NUMBER
+	let	canvas = document.getElementById('particles-canvas');
+	if (!canvas)
 	{
-		const	size = Math.random() * 10 + 1;
-		const	x = Math.random() * (canvas.width - size * 2) + size;
-		const	y = Math.random() * (canvas.height - size * 2) + size;
-		const	speedX = (Math.random() * 6 - 3) * 0.5;
-		const	speedY = (Math.random() * 6 - 3) * 0.5; 
-		const	color = getRandomGreen();
-		particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
-	}
+		canvas = document.createElement('canvas');
+		canvas.id = 'particles-canvas';
+		const	ctx = canvas.getContext('2d');
+		const	particlesArray = [];
+		const	mouse = { x: null, y: null, radius: 150 }; // RADIUS
+		if (DEBUG)
+			console.log('Mouse radius:', mouse.radius);
+		
 
-	// Animate particles
-	function animateParticles()
-	{
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		particlesArray.forEach(particle => particle.update(ctx, mouse));
-		requestAnimationFrame(animateParticles);
-	}
+		// Set canvas to full window size
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		canvas.style.position = 'fixed'; // Ensure canvas is fixed to cover the viewport
+		canvas.style.top = '0';
+		canvas.style.left = '0';
+		canvas.style.width = '100%';
+		canvas.style.height = '100%';
+		canvas.style.zIndex = '0'; // Ensure canvas is behind other elements
+		document.body.appendChild(canvas);
 
-	// Event listeners for mouse movement
-	function setupMouseListeners()
-	{
-		canvas.addEventListener('mousemove', (e) => {
-			mouse.x = e.x;
-			mouse.y = e.y;
+		// Ensure listeners are set up after canvas is added
+		setupMouseListeners(canvas, mouse);
+
+		// Create particles
+		for (let i = 0; i < 8000; i++) // NUMBER HERE
+		{ 
+			const	size = Math.random() * 10 + 1;
+			const	x = Math.random() * (canvas.width - size * 2) + size;
+			const	y = Math.random() * (canvas.height - size * 2) + size;
+			const	speedX = (Math.random() * 6 - 3) * 0.5;
+			const	speedY = (Math.random() * 6 - 3) * 0.5;
+			const	color = getRandomGreen();
+			particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
+		}
+
+
+		// Animate particles
+		function animateParticles()
+		{
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			particlesArray.forEach(particle => particle.update(ctx, mouse));
+			requestAnimationFrame(animateParticles);
+		}
+
+		animateParticles();
+
+		// Resize canvas when window is resized
+		window.addEventListener('resize', () =>
+		{
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 		});
 
-		canvas.addEventListener('mouseleave', () => {
-			mouse.x = null;
-			mouse.y = null;
-		});
 	}
-
-	animateParticles();
-	setupMouseListeners();
+	else
+	{
+		if (DEBUG)
+			console.log('Canvas already exists');
+	}
 }
 
 /***********************************************\
@@ -562,16 +563,10 @@ function initParticles()
 export default function renderHome()
 {
 	const	container = createHomeContainer();
-	const	particlesContainer = createParticlesContainer();
+	createParticlesContainer();
 	const	row = createContentRow();
 
-	document.body.appendChild(particlesContainer);
 	document.getElementById('app').appendChild(container);
-
-	if (!document.getElementById('staticBackdrop'))
-	{
-		document.body.appendChild(createWhatWeDidModal().modal);
-	}
 
 	initParticles();
 	return container;
@@ -580,6 +575,8 @@ export default function renderHome()
 /***********************************************\
 -				CREATING DOM ELEMENTS			-
 \***********************************************/
+
+/*					CONTAINERs					*/
 function createHomeContainer()
 {
 	const	container = document.createElement('div');
@@ -591,38 +588,36 @@ function createHomeContainer()
 
 function createParticlesContainer()
 {
-	const	particlesContainer = document.createElement('div');
-	particlesContainer.id = 'particles-js';
-	particlesContainer.style.position = 'absolute';
-	particlesContainer.style.width = '100%';
-	particlesContainer.style.height = '100%';
-	particlesContainer.style.zIndex = '0'; // ZINDEX HERE
+	let	particlesContainer = document.getElementById('particles-js');
+	if (!particlesContainer)
+	{
+		particlesContainer = document.createElement('div');
+		particlesContainer.id = 'particles-js';
+		particlesContainer.style.position = 'fixed';
+		particlesContainer.style.width = '100%';
+		particlesContainer.style.height = '100%';
+		particlesContainer.style.top = '0';
+		particlesContainer.style.left = '0';
+		particlesContainer.style.zIndex = '-1';
+		document.body.appendChild(particlesContainer);
+	}
 	return particlesContainer;
 }
+
 
 function createContentRow()
 {
 	const	row = document.createElement('div');
 	row.className = 'd-flex flex-column align-items-center position-relative';
 	row.appendChild(createWhatIsPongCard());
-	row.appendChild(createtheTeam());
-	row.appendChild(createWhatWeDidModal().button);
+	row.appendChild(createTheTeamCard());
+	row.appendChild(createWhatWeDidCard());
 	return row;
 }
 
-function createWhatIsPongCard()
+/*					BUTTONS						*/
+function createWhatIsPongButton()
 {
-	if (DEBUG)
-		console.log('Creating What Is Pong Card');
-
-	// Create the main column and card structure
-	const	col = createElementWithClass('div', 'mb-auto');
-	const	card = createElementWithClass('div', 'card');
-
-	// Card Header
-	const	cardHeader = createElementWithClass('div', 'card-header d-flex justify-content-center');
-	cardHeader.id = 'headingOne';
-		
 	const	button = createButton(
 	{
 		className: 'btn btn-home',
@@ -633,25 +628,66 @@ function createWhatIsPongCard()
 		ariaExpanded: 'true',
 		ariaControls: 'multiCollapseExample1'
 	});
+	return button;
+}
+
+function createTheTeamButton()
+{
+	const	button = createButton(
+	{
+		className: 'btn btn-home',
+		type: 'button',
+		text: 'The Team',
+		dataToggle: 'collapse',
+		dataTarget: '#multiCollapseExample2',
+		ariaExpanded: 'false',
+		ariaControls: 'multiCollapseExample2'
+	});
+	return button;
+}
+
+function createWhatWeDidButton()
+{
+	const	button = createButton(
+	{
+		className: 'btn btn-home',
+		type: 'button',
+		text: 'What We Did',
+		dataToggle: 'collapse',
+		dataTarget: '#whatWeDidCard',
+		ariaExpanded: 'false',
+		ariaControls: 'whatWeDidCard'
+	});
+	return button;
+}
+
+/*					CARDS						*/
+function createWhatIsPongCard()
+{
+	if (DEBUG)
+		console.log('Creating What is Pong Card');
+
+	const	col = createElementWithClass('div', 'mb-auto');
+	const	card = createElementWithClass('div', 'card');
+	const	cardHeader = createElementWithClass('div', 'card-header d-flex justify-content-center');
+	cardHeader.id = 'headingWhatisPong';
+		
+	const	button = createWhatIsPongButton();
 
 	cardHeader.appendChild(button);
 	card.appendChild(cardHeader);
 
-	// Collapse Section
 	const	collapse = createElementWithClass('div', 'collapse');
 	collapse.id = 'multiCollapseExample1';
-	collapse.setAttribute('aria-labelledby', 'headingOne');
+	collapse.setAttribute('aria-labelledby', 'headingWhatisPong');
 
-	// Card Body with a row for GIF and text
 	const	cardBody = createElementWithClass('div', 'card-body rounded-3');
 	const	row = createElementWithClass('div', 'row');
 
-	// GIF Column
 	const	gifCol = createElementWithClass('div', 'col-md-6 d-flex justify-content-center align-items-center');
 	const	gifElement = createImage('../../../assets/images/home/what_is_pong.gif', 'Pong GIF', 'img-fluid');
 	gifCol.appendChild(gifElement);
 
-	// Text Column
 	const	textCol = createElementWithClass('div', 'col-md-6 d-flex flex-column justify-content-center align-items-center');
 		
 	const	textElement = createTextElement(`
@@ -675,7 +711,6 @@ function createWhatIsPongCard()
 	textCol.appendChild(textElement);
 	textCol.appendChild(moreInfoLink);
 
-	// Append columns to the row, and row to the card body
 	row.appendChild(gifCol);
 	row.appendChild(textCol);
 	cardBody.appendChild(row);
@@ -687,7 +722,8 @@ function createWhatIsPongCard()
 	return col;
 }
 
-function createtheTeam()
+//TODO: finish it
+function createTheTeamCard()
 {
 	if (DEBUG)
 		console.log('Creating The Team Card');
@@ -695,29 +731,60 @@ function createtheTeam()
 	const	col = createElementWithClass('div', 'mb-auto');
 	const	card = createElementWithClass('div', 'card');
 	const	cardHeader = createElementWithClass('div', 'card-header');
-	cardHeader.id = 'headingTwo';
+	cardHeader.id = 'headingtheTeam';
 
-	const	button = createButton(
-	{
-		className: 'btn btn-home',
-		type: 'button',
-		text: 'The Team',
-		dataToggle: 'collapse',
-		dataTarget: '#multiCollapseExample2',
-		ariaExpanded: 'false',
-		ariaControls: 'multiCollapseExample2'
-	});
+	const	button = createTheTeamButton();
+	cardHeader.appendChild(button);
 
 	const	collapse = createElementWithClass('div', 'collapse');
 	collapse.id = 'multiCollapseExample2';
-	collapse.setAttribute('aria-labelledby', 'headingTwo');
+	collapse.setAttribute('aria-labelledby', 'headingtheTeam');
 
-	const	cardBody = createElementWithClass('div', 'card-body text-center rounded-3');
-	const	textElement = createTextElement('Wesh la team ici');
+	const	cardBody = createElementWithClass('div', 'card-body rounded-3 text-center');
 
-	cardBody.appendChild(textElement);
+	// Creating a row for clickable frames
+	const	row = createElementWithClass('div', 'row');
+
+	// Create four clickable frames (using Bootstrap columns)
+	const	frames = 
+	[
+		{ title: 'Frame 1', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link1' },
+		{ title: 'Frame 2', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link2' },
+		{ title: 'Frame 3', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link3' },
+		{ title: 'Frame 4', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link4' },
+	];
+
+	frames.forEach(frame =>
+	{
+		const	frameCol = createElementWithClass('div', 'col-md-3 mb-3'); // Adjust column size as needed
+		const	frameCard = createElementWithClass('div', 'card h-100 clickable-frame');
+		
+		// Image for frame
+		const	img = createImage(frame.imgSrc, frame.title, 'card-img-top');
+		frameCard.appendChild(img);
+
+		// Card body with title and link
+		const	cardBody = createElementWithClass('div', 'card-body text-center');
+		const	title = createElementWithClass('h5', 'card-title');
+		title.textContent = frame.title;
+
+		// Clickable link
+		const	link = document.createElement('a');
+		link.href = frame.link;
+		link.className = 'btn btn-primary';
+		link.textContent = 'Learn More';
+
+		cardBody.appendChild(title);
+		cardBody.appendChild(link);
+		frameCard.appendChild(cardBody);
+
+		frameCol.appendChild(frameCard);
+		row.appendChild(frameCol);
+	});
+
+	// Append the row to the card body
+	cardBody.appendChild(row);
 	collapse.appendChild(cardBody);
-	cardHeader.appendChild(button);
 	card.appendChild(cardHeader);
 	card.appendChild(collapse);
 	col.appendChild(card);
@@ -725,147 +792,126 @@ function createtheTeam()
 	return col;
 }
 
-function createAccordionItem(accordionId, title, badgeType, badgeText, modules)
+//TODO : finish it
+function createWhatWeDidCard()
 {
-	const	accordionItem = createElementWithClass('div', 'accordion-item');
-	const	accordionHeader = createElementWithClass('h2', 'accordion-header d-flex justify-content-between align-items-center');
-	accordionHeader.id = `${accordionId}Accordion`;
+	const	col = createElementWithClass('div', 'mb-auto');
+	const	card = createElementWithClass('div', 'card');
 
-	const	button = createButton(
+	// Card Header
+	const	cardHeader = createElementWithClass('div', 'card-header');
+	cardHeader.id = 'headingWhatWeDid';
+
+	// Appending Button to Card Header
+	const	button = createWhatWeDidButton();
+	cardHeader.appendChild(button);
+
+	// Collapse Section
+	const	collapse = createElementWithClass('div', 'collapse');
+	collapse.id = 'whatWeDidCard'; // This ID is targeted by the button
+	collapse.setAttribute('aria-labelledby', 'headingWhatWeDid');
+
+	// Card Body
+	const	cardBody = createElementWithClass('div', 'card-body rounded-3 text-center');
+
+	// Create Tab Container
+	const	tabContainer = createElementWithClass('ul', 'nav nav-tabs');
+	tabContainer.id = 'whatWeDidTab';
+	tabContainer.setAttribute('role', 'tablist');
+
+	// Create Tab Content Container
+	const	tabContentContainer = createElementWithClass('div', 'tab-content');
+	tabContentContainer.id = 'whatWeDidTabContent';
+
+	// Define Sections with proper data
+	const	sections =
+	[
+		{ id: 'Web', title: 'Web', badgeType: 'warning', badgeText: 'MAJOR', modules: Web },
+		{ id: 'UserManagement', title: 'User Management', badgeType: '', badgeText: '', modules: UserManagement },
+		{ id: 'GameplayUserExperience', title: 'Gameplay & User Experience', badgeType: '', badgeText: '', modules: GameplayUserExperience },
+		{ id: 'AiAlgo', title: 'AI & Algo', badgeType: '', badgeText: '', modules: AiAlgo },
+		{ id: 'Cybersecurity', title: 'Cybersecurity', badgeType: '', badgeText: '', modules: Cybersecurity },
+		{ id: 'DevOps', title: 'DevOps', badgeType: '', badgeText: '', modules: DevOps },
+		{ id: 'Accessibility', title: 'Accessibility', badgeType: '', badgeText: '', modules: Accessibility }
+	];
+
+	// Create Tabs and Tab Content
+	sections.forEach((section, index) =>
 	{
-		className: 'accordion-button',
-		type: 'button',
-		text: title,
-		dataToggle: 'collapse',
-		dataTarget: `#outerCollapse${accordionId}`,
-		ariaExpanded: 'true',
-		ariaControls: `outerCollapse${accordionId}`
-	});
-
-	const	collapse = createElementWithClass('div', 'accordion-collapse collapse');
-	collapse.id = `outerCollapse${accordionId}`;
-	collapse.setAttribute('aria-labelledby', `${accordionId}Accordion`);
-
-	const	accordionBody = createElementWithClass('div', 'accordion-body');
-	const	nestedAccordion = createElementWithClass('div', 'accordion');
-	nestedAccordion.id = `${accordionId}Nested`;
-
-	// Loop through each module
-	modules.forEach(module => {
-		const	moduleItem = createElementWithClass('div', 'accordion-item');
-		const	moduleHeader = createElementWithClass('h2', 'accordion-header');
-		moduleHeader.id = `${accordionId}-${module.id}`;
-
-		const	moduleButton = createButton(
+		// Tab Item
+		const	tabItem = createElementWithClass('li', 'nav-item');
+		const	tabLink = createElementWithClass('a', 'nav-link');
+		tabLink.id = `${section.id}-tab`;
+		tabLink.setAttribute('data-bs-toggle', 'tab');
+		tabLink.href = `#${section.id}`;
+		tabLink.role = 'tab';
+		tabLink.ariaControls = section.id;
+		tabLink.ariaSelected = index === 0 ? 'true' : 'false';
+		if (index === 0)
 		{
-			className: `accordion-button ${module.collapsed ? 'collapsed' : ''} d-flex justify-content-start align-items-center`,
-			type: 'button',
-			text: module.title,
-			dataToggle: 'collapse',
-			dataTarget: `#nested-${accordionId}-${module.id}`,
-			ariaExpanded: module.collapsed ? 'false' : 'true',
-			ariaControls: `nested-${accordionId}-${module.id}`
+			tabLink.classList.add('active'); // Make first tab active
+		}
+		tabLink.innerText = section.title;
+		tabItem.appendChild(tabLink);
+		tabContainer.appendChild(tabItem);
+
+		// Tab Pane (Content for each section)
+		const	tabPane = createElementWithClass('div', 'tab-pane fade');
+		tabPane.id = section.id;
+		tabPane.role = 'tabpanel';
+		tabPane.ariaLabelledBy = `${section.id}-tab`;
+		if (index === 0)
+		{
+			tabPane.classList.add('show', 'active'); // Make first tab content visible
+		}
+
+		// Populate tab pane with module information and expandable sections
+		const	modulesList = createElementWithClass('ul', 'list-group');
+		section.modules.forEach((module, moduleIndex) =>
+		{
+			const	moduleItem = createElementWithClass('li', 'list-group-item');
+			moduleItem.innerText = module.title; // Assuming each module has a title
+
+			// Create expandable content
+			const	expandableContent = createElementWithClass('div', 'collapse');
+			expandableContent.id = `collapse${section.id}${moduleIndex}`;
+			expandableContent.innerHTML = `
+				<p>${module.content}</p> <!-- Assuming each module has content -->
+				<!-- Add more details here as needed -->
+			`;
+
+			const	expandButton = createButton({
+				className: 'btn btn-primary mt-2',
+				type: 'button',
+				text: 'More Details',
+				dataToggle: 'collapse',
+				dataTarget: `#collapse${section.id}${moduleIndex}`
+			});
+
+			moduleItem.appendChild(expandButton);
+			moduleItem.appendChild(expandableContent);
+			modulesList.appendChild(moduleItem);
 		});
-
-		const	badge = createElementWithClass('span', `badge ${module.badgeClass} badge-right me-3`);
-		badge.textContent = module.badgeText;
-		moduleButton.appendChild(badge);
-
-		const	moduleCollapse = createElementWithClass('div', `accordion-collapse collapse ${module.collapsed ? '' : 'show'}`);
-		moduleCollapse.id = `nested-${accordionId}-${module.id}`;
-		moduleCollapse.setAttribute('aria-labelledby', `${accordionId}-${module.id}`);
-
-		const	moduleBody = createElementWithClass('div', 'accordion-body');
-		moduleBody.innerHTML = typeof module.content === 'function' ? module.content() : module.content;
-
-		moduleCollapse.appendChild(moduleBody);
-		moduleItem.appendChild(moduleHeader);
-		moduleItem.appendChild(moduleButton);
-		moduleItem.appendChild(moduleCollapse);
-
-		nestedAccordion.appendChild(moduleItem);
+		tabPane.appendChild(modulesList);
+		tabContentContainer.appendChild(tabPane);
 	});
 
-	accordionBody.appendChild(nestedAccordion);
-	collapse.appendChild(accordionBody);
-	accordionHeader.appendChild(button);
-	accordionItem.appendChild(accordionHeader);
-	accordionItem.appendChild(collapse);
+	// Append tab navigation and content to the card body
+	cardBody.appendChild(tabContainer);
+	cardBody.appendChild(tabContentContainer);
 
-	return accordionItem;
-}
+	// Append card body and collapse to the card
+	collapse.appendChild(cardBody);
+	card.appendChild(cardHeader);
+	card.appendChild(collapse);
+	col.appendChild(card);
 
-function createWhatWeDidModal()
-{
-	const	container = createElementWithClass('div', 'd-flex justify-content-center');
-	const	button = createButton(
-	{
-		className: 'btn btn-home d-flex justify-content-center',
-		type: 'button',
-		text: 'What we Did',
-		dataToggle: 'modal',
-		dataTarget: '#staticBackdrop'
-	});
-
-	container.appendChild(button);
-
-	const	modal = createElementWithClass('div', 'modal fade');
-	modal.id = 'staticBackdrop';
-	modal.setAttribute('data-bs-backdrop', 'static');
-	modal.setAttribute('data-bs-keyboard', 'false');
-	modal.setAttribute('tabindex', '-1');
-	modal.setAttribute('aria-labelledby', 'staticBackdropLabel');
-	modal.setAttribute('aria-hidden', 'true');
-
-	const	modalDialog = createElementWithClass('div', 'modal-dialog modal-xl');
-	modal.appendChild(modalDialog);
-
-	const	modalContent = createElementWithClass('div', 'modal-content');
-	modalDialog.appendChild(modalContent);
-
-	const	modalHeader = createElementWithClass('div', 'modal-header');
-	const	modalTitle = createTextElement('What we did');
-	modalTitle.className = 'modal-title';
-	modalTitle.id = 'staticBackdropLabel';
-	modalHeader.appendChild(modalTitle);
-	modalContent.appendChild(modalHeader);
-
-	const	modalBody = createElementWithClass('div', 'modal-body');
-	modalContent.appendChild(modalBody);
-
-	const	mainAccordion = createElementWithClass('div', 'accordion accordion-flush');
-	mainAccordion.id = 'MainAccordion';
-	modalBody.appendChild(mainAccordion);
-
-	// Add accordion items to the main accordion
-	mainAccordion.appendChild(createAccordionItem('Web', 'Web', 'text-bg-danger', 'MAJOR', Web));
-	mainAccordion.appendChild(createAccordionItem('User', 'User Management', 'text-bg-danger', 'MAJOR', UserManagement));
-	mainAccordion.appendChild(createAccordionItem('Gameplay', 'Gameplay and User Experience', 'text-bg-danger', 'MAJOR', GameplayUserExperience));
-	mainAccordion.appendChild(createAccordionItem('AI', 'AI-Algo', 'text-bg-danger', 'MAJOR', AiAlgo));
-	mainAccordion.appendChild(createAccordionItem('Cyber', 'Cybersecurity', 'text-bg-danger', 'MAJOR', Cybersecurity));
-	mainAccordion.appendChild(createAccordionItem('DevOps', 'DevOps', 'text-bg-danger', 'MAJOR', DevOps));
-	mainAccordion.appendChild(createAccordionItem('Access', 'Accessibility', 'text-bg-danger', 'MAJOR', Accessibility));
-
-	// Create modal footer
-	const	modalFooter = createElementWithClass('div', 'modal-footer');
-	const	closeButton = createButton(
-	{
-		className: 'btn btn-secondary',
-		type: 'button',
-		text: 'Close',
-		dataDismiss: 'modal'
-	});
-
-	modalFooter.appendChild(closeButton);
-	modalContent.appendChild(modalFooter);
-
-	return { button: container, modal };
+	return col;
 }
 
 /***********************************************\
 -				HELPER FUNCTIONS				-
 \***********************************************/
-
 function createElementWithClass(tag, className)
 {
 	const	element = document.createElement(tag);

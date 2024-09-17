@@ -10,6 +10,7 @@
 @import url('components/footer.css');
 @import url('components/gifs.css');
 @import url('components/navbar.css');
+@import url('components/particles.css');
 
 /*		Import page-specific styles	*/
 @import url('pages/dashboard.css');

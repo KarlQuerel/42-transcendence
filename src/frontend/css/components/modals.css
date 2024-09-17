@@ -12,6 +12,8 @@
 {
 	background-color: #f8f9faaf;
 	color: #343a40;
+	max-height: 70vh;
+	overflow-y: auto;
 }
 
 .modal-footer

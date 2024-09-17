@@ -11,7 +11,7 @@ footer
 	border-top: 2px solid var(--base-green);
 	padding: 10px 0;
 	text-align: center;
-	z-index: 1000;
+	z-index: 1020;
 }
 
 .footer-content

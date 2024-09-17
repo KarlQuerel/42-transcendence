@@ -6,6 +6,14 @@
 	background-color: transparent;
 	border-color: transparent;
 	z-index: 1;
+	margin-bottom: 20px;
+}
+
+.card-header
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .card-body
