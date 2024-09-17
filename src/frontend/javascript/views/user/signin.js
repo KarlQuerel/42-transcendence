@@ -4,7 +4,7 @@
 import { DEBUG } from '../../main.js';
 
 /***********************************************\
--				RENDERING						-
+*                   RENDERING                  *
 \***********************************************/
 export default function renderSignIn()
 {
@@ -61,12 +61,12 @@ export default function renderSignIn()
         const password = passwordInput.value;
 
 
-        console.log('Logging in with:', username, password); // DEBUG
+        if (DEBUG)
+            console.log('Logging in with:', username, password);
         login(username, password);
     });
 
 
-	// Return the form element
 	return form;
 }
 
@@ -92,21 +92,21 @@ function login(username, password)
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
 
-            // Optionally, call refreshToken to ensure tokens are up-to-date
             return refreshToken();
         }
 		else
             throw new Error('Login failed: No access token received');
     })
-    .then(newAccessToken => {
-        console.log('Token refreshed:', newAccessToken); // DEBUG
-        // Handle successful login (e.g., redirect to dashboard)
-        // Example:
-        window.location.href = '/home';
+    .then(newAccessToken =>
+    {
+        if (DEBUG)
+            console.log('Token refreshed:', newAccessToken);
+
+        window.location.href = '/profile';
+        console.log('Success:', username, 'is now logged in');
     })
     .catch(error => {
         console.error('Error:', error);
-        // Optionally, display an error message to the user
         alert('Login failed: ' + error.message);
     });
 }
@@ -136,65 +136,22 @@ async function refreshToken()
 }
 
 
-// function login(username, password)
-// {
-//     fetch('/api/token/',
-// 	{
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username: username, password: password }),
-//     })
-//     .then(response => response.json())
-//     .then(data =>
-// 	{
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             localStorage.setItem('refresh_token', data.refresh);
-            
-//             // Call refreshToken to ensure tokens are up-to-date
-//             refreshToken().then(newAccessToken =>
-// 			{
-//                 console.log('Token refreshed:', newAccessToken);
-//                 // Redirect to profile or dashboard
-//             })
-// 			.catch(error => {
-//                 console.error('Token refresh failed:', error);
-//             });
-//         }
-// 		else
-// 		{
-//             console.error('Login failed');
-//         }
-//     })
-//     .catch(error => console.error('Error:', error));
-// }
 
-
-// async function refreshToken()
-// {
-//     const refreshToken = localStorage.getItem('refresh_token');
-//     return fetch('/api/token/refresh/', {
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh: refreshToken }),
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             return data.access;
-//         }
-// 		else
-// 		{
-//             throw new Error('Token refresh failed');
-//         }
-//     });
-// }
+// Futures requetes qui necessitent JWToken
+function fetchData() {
+    const token = localStorage.getItem('accessToken');
+    
+    fetch('/api/protected-endpoint/', {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + token,  // Ajouter le JWT dans l'en-tête Authorization
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Données récupérées:", data);
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+    });
+}
