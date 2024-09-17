@@ -82,34 +82,31 @@ export function initializeProfile()
 
 async function fetchUserData()
 {
-    const token = localStorage.getItem('access_token');
-    let response = await fetch('/api/profile/',
-    {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-    });
+        const token = localStorage.getItem('access_token');
+        
+        if (token) {
+            console.log('Access token found:', token);
+        } else {
+            console.log('No access token found.');
+        }
 
-    if (response.status === 401)
-    {
-        const newToken = await refreshToken();
-        localStorage.setItem('access_token', newToken); // Update the stored token
-        response = await fetch('/api/profile/', { // Retry the original request
+        fetch('/api/users/currentlyLoggedInUser/', {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${newToken}`,
-            },
+                'Authorization': 'Bearer ' + token,
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Logged in User\'s data:', data);
+        })
+        .catch(error => {
+            console.error('Error fetching user profile:', error);
         });
-    }
-
-    if (!response.ok)
-        throw new Error('Network response was not ok');
-    return response.json();
 }
 
 
-// src/frontend/javascript/views/user/profile.js
+
 
 function displayUserData(userData)
 {
@@ -158,3 +155,4 @@ async function refreshToken()
             throw new Error('Failed to refresh token');
     });
 }
+

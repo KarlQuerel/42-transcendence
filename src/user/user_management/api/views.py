@@ -1,7 +1,6 @@
 # from rest_framework.permissions import IsAuthenticated
-# from rest_framework.response import Response
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
-# from rest_framework.decorators import permission_classes
 # from rest_framework.views import APIView
 from rest_framework import generics, status, permissions
 from django.views.decorators.csrf import csrf_exempt
@@ -17,7 +16,7 @@ import logging
 
 #########################################
 
-# # For user registration
+# For user registration
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +41,9 @@ def addUser(request):
 		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+#########################################
 
+# For user login
 
 # csrf Token exempté car on utilise les JWTokens à la place
 @csrf_exempt
@@ -55,8 +56,6 @@ def signInUser(request):
 			password = data.get('password')
 			print(f'username: {username}, password: {password}') # DEBUG
 
-			# Authenticate the user
-			# check_password = check_password(password)
 			user = authenticate(request, username=username, password=password)
 			print(f'Authenticated user: {user}') # DEBUG
 
@@ -75,6 +74,28 @@ def signInUser(request):
 	return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
+#########################################
+
+# Check which user is authenticated
+
+@api_view(['GET'])
+def currentlyLoggedInUser(request):
+    # Check if the user is authenticated using the token
+    user = request.user
+    if user.is_authenticated:
+        return Response({
+            'username': user.username,
+            'email': user.email
+        })
+    return Response({'error': 'User not authenticated'}, status=401)
+
+
+
+
+
+#########################################
+
+# Temporary code
 
 
 # Sends to the frontend the profile of the currently authenticated user
@@ -88,8 +109,7 @@ class UserProfileView(generics.RetrieveAPIView):
 
 ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
 
-
-
+#########################################
 
 
 
