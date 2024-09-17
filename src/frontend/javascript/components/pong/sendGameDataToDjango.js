@@ -1,3 +1,8 @@
+/***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
 export function sendGameDataToDjango(winner, scoreLeft, scoreRight) {
 	const url = 'http://127.0.0.1:8000/api/add/'; //CHECK: pas sure du /add!!
 	const data = 

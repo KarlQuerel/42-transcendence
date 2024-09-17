@@ -31,8 +31,11 @@
 	--bs-bg-opacity: 1;
 }
 
-.custom-btn
+.btn-nav
 {
+	--bs-btn-border-color: none;
+	--bs-btn-active-border-color: none;
+	--bs-btn-hover-border-color: none;
 	text-transform: uppercase;
 	background-color: transparent;
 	border-color: transparent;
@@ -47,22 +50,22 @@
 	transition: width 0.3s ease-in-out, height 0.3s ease-in-out;
 }
 
-.custom-btn:focus,
-.custom-btn:active,
-.custom-btn:focus-visible
+.btn-nav:focus,
+.btn-nav:active,
+.btn-nav:focus-visible
 {
 	box-shadow: none;
 	background-color: transparent !important;
 	outline: none
 }
 
-.custom-btn:hover
+.btn-nav:hover
 {
 	background-color: transparent;
 	border-color: transparent;
 }
 
-.custom-btn:hover .btn-flip-side
+.btn-nav:hover .btn-flip-side
 {
 	transform: rotateX(0);
 }
@@ -134,13 +137,13 @@
 /* Media queries for responsiveness */
 @media (max-width: 992px)
 {
-	.custom-btn
+	.btn-nav
 	{
 		width: auto;
 		height: auto;
 	}
 
-	.custom-btn .btn-flip-side
+	.btn-nav .btn-flip-side
 	{
 		transform: rotateX(0);
 	}
@@ -153,7 +156,7 @@
 
 @media (max-width: 768px)
 {
-	.custom-btn
+	.btn-nav
 	{
 		width: auto;
 		height: auto;
@@ -185,7 +188,7 @@
 
 @media (max-width: 576px)
 {
-	.custom-btn
+	.btn-nav
 	{
 		width: auto;
 		height: auto;

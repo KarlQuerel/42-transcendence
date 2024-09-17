@@ -12,13 +12,21 @@
 {
 	visibility: visible;
 	opacity: 100%;
+	transition: visibility 0s, opacity 0.5s ease;
 }
 
 :root
 {
-	--retro-blue: #0044cc;
-	--retro-green: #00ff00;
-	--dark-gray: #111;
+	--base-green: #00ff00;
+	--base-dark: #000;
+	--base-white: #fff;
+	--base-gray: #444444;
+	--animation-speed: 0.4s;
+}
+
+.no-scroll
+{
+	overflow: hidden;
 }
 
 /*		Reset for different browsers		*/
@@ -26,11 +34,14 @@ html, body
 {
 	margin: 0;
 	padding: 0;
+	min-width: 800px;
+	min-height: 600px;
 }
 
 /***********************************************
 			TODO DELETE IT - TESTING
 ***********************************************/
+
 .testing
 {
 	--s: 250px;   /* the size of the image */
@@ -139,10 +150,10 @@ html, body
 		border-color: #00ff00;
 	}
 	25% {
-		border-color: #ff00ff;
+		border-color: #ff0000;
 	}
 	50% {
-		border-color: #0000ff;
+		border-color: #15ff00;
 	}
 	75% {
 		border-color: #ff0000;

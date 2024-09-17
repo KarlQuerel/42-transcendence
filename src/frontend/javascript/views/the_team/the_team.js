@@ -1,3 +1,8 @@
+/***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
 export function renderTheTeam()
 {
 	return `

@@ -1,6 +1,14 @@
 /***********************************************
 					HOME PAGE
-***********************************************/.nav-frames
+***********************************************/
+
+/*
+
+TODO: peut etre a supprimer mais pas sur
+
+*/
+
+/* .nav-frames
 {
 	display: flex;
 	flex-wrap: wrap;
@@ -18,15 +26,15 @@
 	border-radius: 10px;
 	color: #fff;
 	font-size: 1.5em;
-	background-color: #111; /* Dark background for a retro feel */
-	border: 3px solid #00ff00; /* Retro green border */
+	background-color: #111;
+	border: 3px solid #00ff00;
 	transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .nav-frame:hover
 {
 	transform: scale(1.05);
-	box-shadow: 0 6px 12px rgba(0, 255, 0, 0.75); /* Retro green shadow */
+	box-shadow: 0 6px 12px rgba(0, 255, 0, 0.75);
 }
 
 
@@ -37,4 +45,4 @@
 		width: 100%;
 		margin: 5px 0;
 	}
-}
+} */

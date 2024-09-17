@@ -1,7 +1,7 @@
 /*		Import base styles			*/
+@import url('base/global.css');
 @import url('base/additional-styles.css');
 @import url('base/body.css');
-@import url('base/global.css');
 
 /*		Import component styles		*/
 @import url('components/modals.css');

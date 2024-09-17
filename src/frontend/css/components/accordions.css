@@ -3,8 +3,11 @@
 ***********************************************/
 .accordion-button
 {
-	background-color: #00ff00;
+	background-color: #00ff007c;
 	border-color: #ffffff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .accordion-button:not(.collapsed)
@@ -13,20 +16,7 @@
 	color: #000;
 }
 
-/* .accordion-button
+.badge-right
 {
-	background-color: #6c757d;
-	color: #ffffff;
+	margin-left: auto;
 }
-
-.accordion-button.collapsed
-{
-	background-color: #f8f9fa;
-	color: #343a40;
-}
-
-.accordion-body
-{
-	background-color: #ffffff;
-	color: #343a40;
-} */

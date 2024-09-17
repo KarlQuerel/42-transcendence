@@ -1,92 +1,80 @@
 /***********************************************
 					BUTTONS
 ***********************************************/
-.button-link
+
+/*			Pixelated Button		*/
+.btn-home
 {
-	padding: 10px 20px;
-	font-size: 18px;
-	background-color: #00ff00;
-	color: #000;
-	border: 5px solid transparent;
-	border-radius: 15px;
-	cursor: pointer;
+	border: 2px solid var(--base-green);
+	background-color: var(--base-dark);
+	position: relative;
+	width: auto;
+	height: auto;
+	margin: 20px;
 	text-decoration: none;
-	display: inline-block;
-	transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-}
-
-/* Animation for the border */
-@keyframes borderAnimation
-{
-	0% {
-		border-color: #6eec83a1; /* Start color */
-	}
-	50% {
-		border-color: #00027f; /* Mid color */
-	}
-	100% {
-		border-color: #6eec83a1; /* End color */
-	}
-}
-
-.button-link:hover
-{
-	background-color: #6eec83a1;
-	color: #fff;
-	transform: scale(1.075);
-	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-	border-color: #00ff00;
-	animation: borderAnimation 1s infinite;
-}
-
-
-/*		Bootstrap tuning					*/
-.btn-primary
-{
-	--bs-btn-border-color: none;
-	--bs-btn-active-border-color: none;
-	--bs-btn-active-bg: #1a911a;
-	--bs-btn-hover-border-color: none;
-}
-
-
-
-/* 
-	- TO DO: LATER
-
-test fleeing button
-*/
-/*
-.float-button
-{
-	position: fixed;
-	bottom: 20px;
-	right: 20px;
-	z-index: 1000;
-	border-radius: 50%;
-	padding: 10px 20px;
-	background-color: #007bff;
-	color: #fff;
-	font-size: 16px;
 	text-align: center;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-	transition: background-color 0.3s, transform 0.3s;
-	border: none;
-	text-decoration: none;
-}
-
-.float-button:hover
-{
-	background-color: #0056b3;
-	transform: scale(1.1);
-}
-
-.float-button i
-{
+	text-transform: uppercase;
+	color: var(--base-white);
+	transition: var(--animation-speed);
+	border-radius: 5px;
+	padding: 60px 60px;
 	font-size: 1.5rem;
-	margin-right: 8px;
 }
-*/
+
+.btn-home:hover
+{
+	border: 2px solid var(--base-green);
+	color: var(--base-dark);
+	background: var(--base-green) url('../../assets/images/buttons/pixel_button_green.png');
+	transition-delay: 0.4s;
+	background-size: 220px;
+	animation: animate var(--animation-speed) steps(8) forwards;
+}
+
+@keyframes animate
+{
+	0%
+	{
+		background-position-y: 0;
+	}
+	100%
+	{
+		background-position-y: -480px;
+	}
+}
+
+/*			Secondary Button		*/
+.btn-second
+{
+	outline: 0;
+	grid-gap: 8px;
+	align-items: center;
+	/* background: 0 0; */
+	border: 1px solid #000;
+	border-radius: 10px;
+	cursor: pointer;
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 16px;
+	gap: 8px;
+	justify-content: center;
+	line-height: 1.5;
+	overflow: hidden;
+	padding: auto;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	transition: all .14s ease-out;
+	white-space: nowrap;
+}
+.btn-second:hover
+{
+	box-shadow: 4px 4px 0 #000;
+	transform: translate(-4px,-4px);
+	border: 1px solid #000;
+	border-radius: 10px;
+	background-color: #a3c9db;
+}
+.btn-second:focus-visibl
+{
+	outline-offset: 1px;
+}

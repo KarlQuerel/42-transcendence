@@ -3,12 +3,12 @@
 ***********************************************/
 .card
 {
-	background-color: #f0f0f0;
-	border-color: #00ff00;
+	background-color: transparent;
+	border-color: transparent;
 }
 
 .card-body
 {
-	background-color: #e0ffe0;
-	color: #000;
+	background-color: #a3dba3;
+	color: #000000;
 }

@@ -1,10 +1,17 @@
 /***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
+/***********************************************\
 -				RENDERING						-
 \***********************************************/
+//TODO Karl: Refactor renderPong()
 export default function renderPong()
 {
 	const container = document.createElement('div');
 	container.id = 'pong-page';
+	container.className = 'container-fluid p-0';
 
 	const video = document.createElement('video');
 	video.id = 'background-video';
@@ -22,30 +29,44 @@ export default function renderPong()
 	const overlay = document.createElement('div');
 	overlay.id = 'menu-overlay';
 	overlay.className = 'menu-overlay';
-		
+
+	const menuButtonsContainer = document.createElement('div');
+	menuButtonsContainer.className = 'menu-buttons-container';
+
 	const singlePlayerButton = document.createElement('button');
 	singlePlayerButton.id = 'singleplayer-button';
 	singlePlayerButton.className = 'menu-button';
 	singlePlayerButton.textContent = 'Single Player';
-	overlay.appendChild(singlePlayerButton);
+	menuButtonsContainer.appendChild(singlePlayerButton);
+
+	const singlePlayerGifContainer = document.createElement('div');
+	singlePlayerGifContainer.className = 'menu-gif-container';
 
 	const singlePlayerGif = document.createElement('img');
 	singlePlayerGif.src = '../../../assets/images/pong/single_player.gif';
 	singlePlayerGif.alt = '1P GIF';
 	singlePlayerGif.className = 'menu-gif';
-	overlay.appendChild(singlePlayerGif);
+	singlePlayerGifContainer.appendChild(singlePlayerGif);
+		
+	menuButtonsContainer.appendChild(singlePlayerGifContainer);
+	overlay.appendChild(menuButtonsContainer);
 
 	const twoPlayerButton = document.createElement('button');
 	twoPlayerButton.id = 'twoplayer-button';
 	twoPlayerButton.className = 'menu-button';
 	twoPlayerButton.textContent = 'Two Players';
-	overlay.appendChild(twoPlayerButton);
+	menuButtonsContainer.appendChild(twoPlayerButton);
+
+	const twoPlayerGifContainer = document.createElement('div');
+	twoPlayerGifContainer.className = 'menu-gif-container';
 
 	const twoPlayerGif = document.createElement('img');
 	twoPlayerGif.src = '../../../assets/images/pong/two_players.gif';
 	twoPlayerGif.alt = '2P GIF';
 	twoPlayerGif.className = 'menu-gif';
-	overlay.appendChild(twoPlayerGif);
+	twoPlayerGifContainer.appendChild(twoPlayerGif);
+
+	menuButtonsContainer.appendChild(twoPlayerGifContainer);
 
 	container.appendChild(overlay);
 
@@ -75,12 +96,13 @@ export default function renderPong()
 
 	const pausedGifContainer = document.createElement('div');
 	pausedGifContainer.id = 'paused-gif-container';
-	pausedGifContainer.className = 'hidden';
+	pausedGifContainer.className = 'd-flex justify-content-center align-items-center hidden';
 		
 	const pausedGif = document.createElement('img');
 	pausedGif.id = 'paused-gif';
 	pausedGif.src = '../../../assets/images/pong/paused.gif';
 	pausedGif.alt = 'Paused GIF';
+	pausedGif.className = 'img-fluid';
 	pausedGifContainer.appendChild(pausedGif);
 
 	container.appendChild(pausedGifContainer);
@@ -97,6 +119,7 @@ let	game_done = false;
 let	game_paused = false;
 let	AI_present = false;
 let	animationFrameId;
+let	isGameModeSelected = false;
 
 /***			Graphics					***/
 let		canvas, ctx;
@@ -153,11 +176,13 @@ const	ball =
 \***********************************************/
 export function initializePong()
 {
-	// console.log('Initializing Pong...');
+	if (DEBUG)
+		console.log('Initializing Pong...');
 
 	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
 	{
+		document.body.classList.add('no-scroll');
 		canvas = document.getElementById("pongCanvas");
 		const	rematchButton = document.getElementById('rematch-button');
 		const	singleplayerButton = document.getElementById('singleplayer-button');
@@ -196,7 +221,6 @@ export function initializePong()
 		}
 		else
 		{
-			// console.log('Rematch button found:', rematchButton);
 			rematchButton.addEventListener('click', resetGame);
 		}
 		
@@ -206,8 +230,6 @@ export function initializePong()
 				console.error("Context could not be retrieved!");
 			return;
 		}
-
-		// console.log('Canvas and context retrieved successfully.');
 
 		canvas.style.border = "5px solid #00ff00";
 
@@ -247,6 +269,8 @@ function startGame(menuOverlay, pongInstructions)
 {
 	menuOverlay.classList.add('hidden');
 	pongInstructions.classList.remove('hidden');
+
+	isGameModeSelected = true;
 
 	player1.y = (canvas.height - paddleHeight) / 2;
 	player2.x = canvas.width - paddleWidth - paddleOffset;
@@ -312,7 +336,7 @@ function drawScore()
 	ctx.textBaseline = "middle";
 
 	// Score color and shadow
-	ctx.fillStyle = "var(--retro-green)";
+	ctx.fillStyle = "var(----base-green)";
 	ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
 	ctx.shadowBlur = 10;
 
@@ -362,20 +386,22 @@ function drawPauseMenu()
 	ctx.textBaseline = "middle";
 	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
 
-	const	pausedGif = document.getElementById('paused-gif');
-	if (pausedGif)
+	const	pausedGifContainer = document.getElementById('paused-gif-container');
+	if (pausedGifContainer)
 	{
-		pausedGif.classList.remove('hidden');
+		pausedGifContainer.classList.remove('hidden');
+		pausedGifContainer.classList.add('show');
 	}
 }
 
 /***			Hiding Pausing GIF		***/
 function hidePauseMenu()
 {
-	const	pausedGif = document.getElementById('paused-gif');
-	if (pausedGif)
+	const	pausedGifContainer = document.getElementById('paused-gif-container');
+	if (pausedGifContainer)
 	{
-		pausedGif.classList.add('hidden');
+		pausedGifContainer.classList.remove('show');
+		pausedGifContainer.classList.add('hidden');
 	}
 }
 
@@ -450,7 +476,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP1);
 		if (ball.dx < 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 0.8;
 	}
 
 	// Check collision with Player 2's paddle
@@ -463,7 +489,7 @@ function checkBallPaddleCollision()
 		ball.dy = ball.speed * Math.sin(angleRadP2);
 		if (ball.dx > 0)
 			ball.dx = -ball.dx;
-		ball.speed += 0.1;
+		ball.speed += 0.8;
 	}
 }
 
@@ -479,9 +505,31 @@ function resetBall()
 {
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
-	ball.dx = -ball.dx;
-	ball.speed = 5; //HERE caro
+		
+	// Reset the ball speed to the initial speed
+	ball.speed = 5;
+
+	// Reverse the horizontal direction of the ball based on its current direction
+	if (ball.dx > 0)
+	{
+		ball.dx = -ball.speed;
+	}
+	else
+	{
+		ball.dx = ball.speed;
+	}
+
+	// Reset the vertical direction based on its current direction
+	if (ball.dy > 0)
+	{
+		ball.dy = ball.speed;
+	}
+	else
+	{
+		ball.dy = -ball.speed;
+	}
 }
+
 
 /***			Resetting Paddles			***/
 function resetPaddles()
@@ -495,19 +543,23 @@ function resetPaddles()
 \***********************************************/
 function keyDownHandler(e)
 {
+	if (isGameModeSelected == false)
+		return ;
+	
 	if (e.key === "p" || e.key === "Escape")
 	{
 		game_paused = !game_paused;
 		if (game_paused == true)
 		{
 			cancelAnimationFrame(animationFrameId);
+			drawPauseMenu();
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		else
 		{
 			cancelAnimationFrame(animationFrameId);
-			animationFrameId = requestAnimationFrame(gameLoop);
 			hidePauseMenu();
+			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		return ;
 	}
@@ -707,13 +759,15 @@ function resetGame()
 
 	// Restart the game
 	game_done = false;
+	isGameModeSelected = false;
 	requestAnimationFrame(gameLoop);
 }
 
 /***			Closing Pong Game			***/
 export function cleanUpPong()
 {
-	// console.log('Cleaning up Pong...')
+	if (DEBUG)
+		console.log('Cleaning up Pong...')
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
@@ -731,4 +785,6 @@ export function cleanUpPong()
 	game_done = true;
 	game_paused = false;
 	AI_present = false;
+
+	document.body.classList.remove('no-scroll');
 }
