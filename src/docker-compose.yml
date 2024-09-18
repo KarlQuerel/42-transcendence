@@ -97,12 +97,6 @@ networks:
 volumes:
   postgres_data:
     driver: local
-  frontend:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './nginx/frontend/'
   user:
     driver: local
     driver_opts:

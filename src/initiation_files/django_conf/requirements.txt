@@ -5,3 +5,5 @@ Pillow>=8.0.0
 python-dotenv
 djangorestframework-simplejwt>=5.0.0
 gunicorn==22.0.0
+pytest
+pytest-django

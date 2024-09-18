@@ -47,8 +47,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+	'pytest',
     'api',
-    'channels',
+	'friends',
 ]
 
 ################# Pour les tokens JWT #################
