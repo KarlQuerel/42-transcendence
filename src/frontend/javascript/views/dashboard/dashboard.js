@@ -30,27 +30,54 @@ export function renderDashboard()
 
 <!-- Friends Icon -->
 
-
-
 			<div id="avatarModal" class="modal">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Friends Avatars</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="avatar-container"></div> <!-- Avatar container goes inside the modal body -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Friends Avatars</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="avatar-container"></div> <!-- Avatar container goes inside the modal body -->
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
+<!-- Game History Modal -->
+
+			<div id="tableModal" class="modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Game History</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<table class="table table-striped">
+								<thead>
+									<tr id="tableHeaderRow">
+										<!-- Headers will be populated dynamically -->
+									</tr>
+								</thead>
+								<tbody id="tableBody">
+									<!-- Rows will be populated dynamically -->
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 
 <!-- Trophee Icon -->
@@ -225,7 +252,6 @@ function setupEventListeners(allStats, userStats)
 		friendsIcon.addEventListener('click', function() {
 			Avatars(allStats, userStats);
 			$('#avatarModal').modal('show'); //pour afficher la fenetre
-			// GameHistoryTable(statsData);
 		});
 	}
 	else
@@ -244,6 +270,8 @@ function setupEventListeners(allStats, userStats)
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
+
+//TODO: décider quoi afficher
 
 
 /***********************************************\
@@ -279,17 +307,15 @@ function Avatars(allStats, userStats)
 			avatarContainer.appendChild(avatarBox);
 
 			//TODO: METTRE CET EVENT LISTNENER AVEC LE RESTE EN HAUT?
-			/* avatarBox.addEventListener('click', () => {
-				displayGameHistory(userData.nickname, user.nickname, userData); //affiche le tableau d'historique de jeu pour l'avatar clique
-			}); */
+			avatarBox.addEventListener('click', () => {
+				displayGameHistory(userStats.nickname, user.nickname, userStats); //affiche le tableau d'historique de jeu pour l'avatar clique
+				$('#tableModal').modal('show'); //TEST
+			})
 		}
 	});
 }
 
-
-
-/* 
-function displayGameHistory(connectedUser, chosenOpponent, userData)
+function displayGameHistory(connectedUser, chosenOpponent, userStats)
 {
 	//creation du tableau et ajout des headers avec les params + date
 
@@ -308,15 +334,15 @@ function displayGameHistory(connectedUser, chosenOpponent, userData)
 	nickname2Header.textContent = chosenOpponent; // Opponent user's nickname
 	tableHeaderRow.appendChild(nickname2Header);
 
-	addGameHistory(connectedUser, chosenOpponent, statsData);
+	addGameHistory(connectedUser, chosenOpponent, userStats);
 }
 
-function addGameHistory(connectedUser, chosenOpponent, userData)
+function addGameHistory(connectedUser, chosenOpponent, userStats)
 {
 	const tableBody = document.getElementById('tableBody');
 	tableBody.innerHTML = ''; // Clear existing rows
 
-	statsData.gameHistory.forEach(game => {
+	userStats.games_history.forEach(game => {
 		if (game.opponentNickname === chosenOpponent) 
 		{
 			// Add date row
@@ -345,7 +371,7 @@ function addGameHistory(connectedUser, chosenOpponent, userData)
 		}
 	});
 }
- */
+
 
 /***********************************************\
 -				TROPHEE ICON					-
