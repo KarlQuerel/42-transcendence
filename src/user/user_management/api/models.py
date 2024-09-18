@@ -13,6 +13,7 @@ class CustomUser(AbstractUser):
     date_of_birth = models.DateField(blank=True, null=True)
     password1 = models.CharField(blank=False, null=False, max_length=30, default='default_password')
     password2 = models.CharField(blank=False, null=False, max_length=30, default='default_password')
+    friends = models.ManyToManyField("CustomUser", blank=True)
     # Override AbstractUser existing fields
     groups = None
     user_permissions = None
