@@ -1,0 +1,122 @@
+groups:
+  - name: service-alerts
+    rules:
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Le service {{ $labels.instance }} est en panne"
+          description: "Le service {{ $labels.instance }} ne repond pas depuis 2 minutes."
+
+
+  - name: django-alerts
+    rules:
+      - alert: HighDjango500sErrorRate
+        expr: rate(django_http_requests_total_by_view_transport_method_count{status=~"5.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taux d'erreurs 500's élevé pour {{ $labels.instance }}"
+          description: "Le taux d'erreur 500' pour {{ $labels.instance }} dépasse 5%."
+
+      - alert: HighDjango400sErrorRate
+        expr: rate(django_http_requests_total_by_view_transport_method_count{status=~"4.."}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Taux d'erreurs 400's élevé pour {{ $labels.instance }}"
+          description: "Le taux d'erreur 400's pour {{ $labels.instance }} dépasse 5%."
+
+      - alert: DjangoHighResponseTime
+        expr: avg_over_time(django_http_request_duration_seconds[5m]) > 2s
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Temps de reponses eleve pour {{ $labels.instance }}"
+          descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
+      
+      - alert: DjangoDbHighResponseTime
+        expr: avg_over_time(django_db_query_duration_seconds[5m]) > 2s
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Temps de reponses eleve pour la database de {{ $labels.instance }}"
+          descirption: "Le temps de reponses aux requetes a la database du serveur {{ $labels.instance }} est eleve."
+
+
+  - name: postgres-alerts
+    rules:
+      # - alert: PostgreHighResponseTime
+      #   expr: pg_stat_statements_mean_time[5m] > 2s
+      #   for: 5m
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Temps de reponses eleve pour {{ $labels.instance }}"
+      #     descirption: "Le temps de reponses aux requetes SQL {{ $labels.instance }} est eleve."
+
+      - alert: PostgreHighStorageUsage
+        expr: pg_stat_database_size{datname="pong_database"} > 5 * 1024 * 1024 * 1024
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "La base de données {{ $labels.datname }} est trop grande"
+          description: "La taille de la base de données {{ $labels.datname }} a dépassé 5 Go."
+
+
+  - name: nginx-alerts
+    rules:
+      # - alert: HighNginx500sErrorRate
+      #   expr: rate(nginx_http_requests_total{status=~"5.."}"[5m]) > 0.05
+      #   for: 5m
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Taux d'erreurs 500's élevé pour {{ $labels.instance }}"
+      #     description: "Le taux d'erreur 500's pour {{ $labels.instance }} dépasse 5%."
+
+      # - alert: HighNginx400sErrorRate
+      #   expr: rate(nginx_http_requests_total{status=~"4.."}"[5m]) > 0.05
+      #   for: 5m
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Taux d'erreurs 400's élevé pour {{ $labels.instance }}"
+      #     description: "Le taux d'erreur 400's pour {{ $labels.instance }} dépasse 5%."
+
+      - alert: NginxHighResponseTime
+        expr: avg_over_time(nginx_http_request_duration_seconds[5m]) > 2s
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Temps de reponses eleve pour {{ $labels.instance }}"
+          descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
+
+
+  # - name: system-alerts
+  #   rules:
+  #     - alert: 
+  #       expr:
+  #       for:
+  #       labels:
+  #         severity:
+  #       annotations:
+  #         summary: ""
+  #         descirption: ""
+
+  #     - alert:
+  #       expr:
+  #       for:
+  #       labels:
+  #         severity:
+  #       annotations:
+  #         summary: ""
+  #         descirption: ""          

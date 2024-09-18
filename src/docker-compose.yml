@@ -1,5 +1,80 @@
 services:
 
+#  Service de monitoring
+#  Prometheus récupère les métrics dans les différents services
+  prometheus:
+    user: root
+    container_name: Prometheus
+    image: prom/prometheus
+    networks:
+      - transcendance
+    depends_on:
+      - nginx-exporter
+      - postgres-exporter
+      - profile
+      - dashboard
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml
+      - prometheus_data:/prometheus
+
+
+# Grafana va se sert des metrics de prometheus pour 
+# faire des graphiques afin qu'ils soient plus lisible
+  grafana:
+    user: root
+    container_name: Grafana
+    image: grafana/grafana
+    networks:
+      - transcendance
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/grafana
+      - ./grafana/dashboards.json:/etc/grafana/provisioning/dashboards/dashboards.json
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+
+
+# L'exporter de NGINX qui permet de recuperer des metrics de NGINX
+  nginx-exporter:
+    container_name: Nginx_Exporter
+    image: nginx/nginx-prometheus-exporter:latest
+    ports:
+      - "9113:9113"
+    environment:
+      - NGINX_STATUS_URL=http://localhost:8080/status
+    networks:
+      - transcendance
+    depends_on:
+      - nginx
+
+
+# L'exporter de PostrgreSQL qui recupere les metrics de PostrgreSQL
+  postgres-exporter:
+    container_name: Postgres_Exporter
+    image: quay.io/prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://user:password@postgres:5432/mydb?sslmode=disable"
+    ports:
+      - "9187:9187"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+# Fin du systeme de monitoring
+
+
   database:
     container_name: Database
     image: postgres:13
@@ -95,20 +170,23 @@ networks:
     driver: bridge
 
 volumes:
+
   postgres_data:
     driver: local
-  frontend:
+
+  prometheus_data:
     driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './nginx/frontend/'
+
+  grafana_data:
+    driver: local
+
   user:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
       device: './user/user_management/'
+
   dashboard:
     driver: local
     driver_opts:
