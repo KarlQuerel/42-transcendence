@@ -129,7 +129,7 @@ const	minHeight = 600;
 /***			Paddle Properties			***/
 const	paddleWidth = 10;
 const	paddleHeight = 100;
-const	paddleSpeed = 4;
+const	paddleSpeed = 3; //HERE caro
 const	paddleOffset = 20;
 
 /***			Player Paddles				***/
@@ -618,7 +618,6 @@ function updateGameData()
 	data.fieldX_right = canvas.width;
 
 	data.paddleY = player2.y;
-	data.paddle_initial_position = (canvas.height - paddleHeight) / 2;
 	data.paddle_height = paddleHeight;
 	data.paddle_width = paddleWidth;
 }
