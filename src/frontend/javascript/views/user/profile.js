@@ -17,6 +17,11 @@ export default function renderProfile()
     const profileTitle = document.createElement('h1');
     profileTitle.textContent = 'My Profile';
 
+
+
+    /********** PERSONAL INFORMATION **********/
+
+
     // Create section for personal information
     const personalInfoSection = document.createElement('section');
     personalInfoSection.setAttribute('id', 'personal-info');
@@ -84,7 +89,7 @@ export default function renderProfile()
 
             // Password display in asterisks
             const password = userData.password;
-            const numAsterisks = Math.max(0, password.length); // Subtracting 3 for "Password: "
+            const numAsterisks = Math.max(0, password.length);
             const passwordText = `Password: ${'*'.repeat(numAsterisks)}`;
             passwordElement.textContent = passwordText;
 
@@ -94,7 +99,7 @@ export default function renderProfile()
             container.innerHTML = '<p>Failed to load profile data.</p>';
         });
 
-    // Add event listener for logout button
+    // Event listener for logout button
     logoutButton.addEventListener('click', () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
@@ -102,10 +107,21 @@ export default function renderProfile()
     });
 
     // TODO: Voir la redirection pour le changement de mot de passe
-    // Add event listener for change password button
+    // Event listener for change password button
     changePasswordButton.addEventListener('click', () => {
         window.location.href = '/change-password'; // Assuming you have a change password page
     });
+
+
+    /***************** FRIENDS *****************/
+
+
+
+    /************** GAME HISTORY **************/
+    
+    // 1v1 games, dates, and relevant details, accessible to logged-in users.
+
+
 
     return container;
 }
@@ -141,27 +157,27 @@ async function fetchUserData()
 }
 
 
-async function refreshToken()
-{
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken)
-        throw new Error('No refresh token found');
+// async function refreshToken()
+// {
+//     const refreshToken = localStorage.getItem('refresh_token');
+//     if (!refreshToken)
+//         throw new Error('No refresh token found');
 
-    return fetch('/api/token/refresh/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access) {
-            localStorage.setItem('access_token', data.access);
-            return data.access;
-        }
-		else
-            throw new Error('Failed to refresh token');
-    });
-}
+//     return fetch('/api/token/refresh/', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ refresh: refreshToken }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.access) {
+//             localStorage.setItem('access_token', data.access);
+//             return data.access;
+//         }
+// 		else
+//             throw new Error('Failed to refresh token');
+//     });
+// }
 
