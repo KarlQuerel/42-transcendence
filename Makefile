@@ -33,4 +33,7 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
+fill: #populate database
+	docker exec -it Dashboard bash -c "python manage.py populate_db && python manage.py runserver"
+
 .PHONY: all clean fclean re logs logs-nginx logs-profile logs-dashboard logs-database

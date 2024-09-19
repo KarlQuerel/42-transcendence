@@ -4,19 +4,22 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-# from api.models import CustomUser
+from api.models import CustomUser
 from .forms import CustomUserRegistrationForm
-# from .serializers import CustomUserDisplaySerializer
+# from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 # from rest_framework.views import APIView
+from rest_framework import generics, status, permissions
 from django.http import JsonResponse
 import json
 import logging
+from .serializers import UsernameSerializer #TEST CARO
 
 
 #########################################
+
 
 # For user registration
 
@@ -126,3 +129,37 @@ def currentlyLoggedInUser(request):
 #########################################
 
 
+
+###################################################################################################
+
+
+
+# Sends to the frontend the profile of the currently authenticated user
+# class UserProfileView(generics.RetrieveAPIView):
+#     queryset = CustomUser.objects.all()
+#     serializer_class = CustomUserRegistrationSerializer
+
+#     def get_object(self):
+#         return self.request.user
+
+
+
+###################################################################################################
+
+# @api_view(['GET'])
+# def getUsername(request):
+#     if request.user.is_authenticated:
+#         username = request.user.username
+#         return Response({'username': username})
+#     else:
+#         return Response({'error': 'Utilisateur non authentifié'}, status=401)
+
+
+#TEST CARO
+@api_view(['GET'])
+def getUsername(request):
+    if request.user.is_authenticated:
+        serializer = UsernameSerializer(request.user)
+        return Response(serializer.data)
+    else:
+        return Response({'error': 'User not authenticated'}, status=401)

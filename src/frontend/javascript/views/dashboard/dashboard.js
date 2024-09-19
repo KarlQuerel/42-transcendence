@@ -25,6 +25,8 @@ export function renderDashboard()
 
 <!-- Friends Icon -->
 
+	<!-- Avatars -->
+
 			<div id="avatarModal" class="modal">
 				<div class="modal-dialog">
 					<div class="modal-content">
@@ -44,7 +46,7 @@ export function renderDashboard()
 				</div>
 			</div>
 
-<!-- Game History Modal -->
+	<!-- Game History -->
 
 			<div id="tableModal" class="modal">
 				<div class="modal-dialog">
@@ -74,8 +76,29 @@ export function renderDashboard()
 				</div>
 			</div>
 
+<!-- Chart Icon -->
+
+			<div id="chartModal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Chart</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<canvas id="chartCanvas" width="400" height="400"></canvas>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 <!-- Trophee Icon -->
+
 			<div id="badgeModal" class="modal">
 				<div class="modal-body">
 					<img class="badge-icon" src="" alt="Badge">
@@ -179,32 +202,63 @@ function loadDashboardData(userData, option)
 	}
 }
 
-/* function loadUserManagementData()
+function loadUserManagementData()
 {
-	fetch('/api/users/signInUser/')
-		.then(response =>
-		{
-			if (!response.ok)
-				throw new Error('Error : network response');
-			return response.json();
-		})
-		.then(userData =>
-		{
-			if (DEBUG)
-				console.log("userData = ", userData);
-			return userData;
-		})
-		.catch(error =>
-		{
-			console.error('Error : fetch userData', error)
-			throw error; // Re-throw the error
-			//CHECK: if userData is undefined : try/catch that will stop everything
-		});
-} */
+	fetch('/api/users/getUsername/',
+	{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // body: JSON.stringify({
+        //     username}),
+    })
+	.then(response =>
+	{
+		if (!response.ok)
+			throw new Error('Error : network response');
+		return response.json();
+	})
+	.then(userData =>
+	{
+		if (DEBUG)
+			console.log("userData = ", userData);
+		return userData;
+	})
+	.catch(error =>
+	{
+		console.error('Error : fetch userData', error)
+		throw error; // Re-throw the error
+		//CHECK: if userData is undefined : try/catch that will stop everything
+	});
+}
+
+// function loadUserManagementData()
+// {
+// 	fetch('/api/users/getUsername/')
+// 		.then(response =>
+// 		{
+// 			if (!response.ok)
+// 				throw new Error('Error : network response');
+// 			return response.json();
+// 		})
+// 		.then(userData =>
+// 		{
+// 			if (DEBUG)
+// 				console.log("userData = ", userData);
+// 			return userData;
+// 		})
+// 		.catch(error =>
+// 		{
+// 			console.error('Error : fetch userData', error)
+// 			throw error; // Re-throw the error
+// 			//CHECK: if userData is undefined : try/catch that will stop everything
+// 		});
+// }
 
 //-------------------------------------- TEST waiting for jess' user -------------------------------------
 
-class UserData {
+/* class UserData {
 	constructor(nickname) {
 		this.nickname = nickname;
 	}
@@ -213,9 +267,9 @@ class UserData {
 function loadUserManagementData()
 {
 	return { // '{' has to be on the same line, otherwise error
-		nickname: 'Carolina'
+		nickname: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
 	};
-}
+} */
 
 //-------------------------------------- FIN TEST -------------------------------------
 
@@ -235,8 +289,7 @@ function setupEventListeners(allStats, userStats)
 	{
 		chartIcon.addEventListener('click', function() {
 			$('#chartModal').modal('show');
-			// ChartBarData(statsData);
-			// ChartDoughnutData(statsData); //FIX
+			chartDoughnutData(userStats);
 		});
 	}
 	else
@@ -245,7 +298,7 @@ function setupEventListeners(allStats, userStats)
 	if (friendsIcon)
 	{
 		friendsIcon.addEventListener('click', function() {
-			Avatars(allStats, userStats);
+			avatars(allStats, userStats);
 			$('#avatarModal').modal('show'); //pour afficher la fenetre
 		});
 	}
@@ -265,15 +318,57 @@ function setupEventListeners(allStats, userStats)
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
+let doughnutChart; // Declare a variable to store the Chart instance
 
-//TODO: décider quoi afficher
+function chartDoughnutData(userStats)
+{
+	const chartCanvas = document.getElementById('chartCanvas'); // Get the correct canvas element
+
+	if (!chartCanvas) {
+		console.error('Canvas element with id "chartCanvas" not found.');
+		return;
+	}
+
+	const ctx2 = chartCanvas.getContext('2d'); // Get the context of the canvas
+	if (!ctx2) {
+		console.error('Unable to get context for "chartCanvas".');
+		return;
+	}
+
+	// Destroy the existing Chart instance if it exists
+	if (doughnutChart)
+		doughnutChart.destroy();
+	
+	doughnutChart = new Chart(ctx2, {
+		type: 'doughnut',
+		data: {
+			labels: ['Wins', 'Losses'],
+			datasets: [{
+				label: 'Games',
+				data: [userStats.nb_of_victories, userStats.nb_of_defeats],
+				backgroundColor: ['#36a2eb', '#ff6384'],
+				hoverBackgroundColor: ['#36a2eb', '#ff6384']
+			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			plugins: {
+				legend: {
+					display: true,
+					position: 'bottom'
+				}
+			}
+		}
+	});
+}
 
 
 /***********************************************\
 -				FRIENDS ICON					-
 \***********************************************/
 
-function Avatars(allStats, userStats)
+function avatars(allStats, userStats) //TODO: ask jess where are the avatars so I can fetch them
 {
 	const opponentsList = []; // Ensure only one avatar per user
 	const avatarContainer = document.querySelector('.avatar-container');

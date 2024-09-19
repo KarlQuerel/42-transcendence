@@ -32,3 +32,12 @@ import base64
     #     instance.save()
     #     instance.friends.set(friends_data)
     #     return instance
+
+
+
+#TEST CARO
+
+class UsernameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username']
