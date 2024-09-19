@@ -40,7 +40,7 @@ def addStats(request):
 			opponentScore=rightScore,
 			myScore=leftScore
 		)
-		leftStats.nb_of_games_played += 1
+		# leftStats.nb_of_games_played += 1
 		if leftScore > rightScore:
 			leftStats.nb_of_victories += 1
 		else:
@@ -57,7 +57,7 @@ def addStats(request):
 			opponentScore=leftScore,
 			myScore=rightScore
 		)
-		rightStats.nb_of_games_played += 1
+		# rightStats.nb_of_games_played += 1
 		if rightScore > leftScore:
 			rightStats.nb_of_victories += 1
 		else:

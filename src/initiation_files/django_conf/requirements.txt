@@ -7,3 +7,4 @@ djangorestframework-simplejwt>=5.0.0
 gunicorn==22.0.0
 pytest
 pytest-django
+faker==9.8.1 #to populate database with fake data for tests
