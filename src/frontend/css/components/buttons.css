@@ -8,16 +8,16 @@
 	border: 2px solid var(--base-green);
 	background-color: var(--base-dark);
 	position: relative;
-	width: 50vh;
+	width: 30vh;
 	height: 20vh;
-	margin: 10px;
+	/* margin: 10px; */
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
 	color: var(--base-white);
 	transition: 0.4s;
 	border-radius: 5px;
-	padding: 60px 60px;
+	/* padding: 60px 60px; */
 	font-size: 1.5rem;
 	z-index: 1;
 }

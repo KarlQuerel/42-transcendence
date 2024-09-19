@@ -681,7 +681,7 @@ function createWhatIsPongCard()
 	collapse.id = 'multiCollapseExample1';
 	collapse.setAttribute('aria-labelledby', 'headingWhatisPong');
 
-	const	cardBody = createElementWithClass('div', 'card-body rounded-3');
+	const	cardBody = createElementWithClass('div', 'card-body rounded-3 card-pong');
 	const	row = createElementWithClass('div', 'row');
 
 	const	gifCol = createElementWithClass('div', 'col-md-6 d-flex justify-content-center align-items-center');
@@ -722,7 +722,7 @@ function createWhatIsPongCard()
 	return col;
 }
 
-//TODO: finish it
+//TODO: upload photos
 function createTheTeamCard()
 {
 	if (DEBUG)
@@ -742,42 +742,101 @@ function createTheTeamCard()
 
 	const	cardBody = createElementWithClass('div', 'card-body rounded-3 text-center');
 
-	// Creating a row for clickable frames
 	const	row = createElementWithClass('div', 'row');
 
-	// Create four clickable frames (using Bootstrap columns)
-	const	frames = 
-	[
-		{ title: 'Frame 1', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link1' },
-		{ title: 'Frame 2', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link2' },
-		{ title: 'Frame 3', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link3' },
-		{ title: 'Frame 4', imgSrc: '../../../assets/images/home/1.jpeg', link: '#link4' },
+	const	frames = [
+		{
+			title: 'Carolina<br>Somarriba<br>',
+			imgSrc: '../../../assets/images/home/1.jpeg',
+			linkedIn: 'https://www.linkedin.com/in/carolina-somarriba-2303a812a/',
+			github: 'https://github.com/casomarr'
+		},
+		{
+			title: 'Jessica<br>Rouillon<br>',
+			imgSrc: '../../../assets/images/home/2.jpeg',
+			linkedIn: 'https://www.linkedin.com/in/jessica-rouillon-37a22053/',
+			github: 'https://github.com/Lechonita'
+		},
+		{
+			title: 'Clément<br>Bernazeau<br>',
+			imgSrc: '../../../assets/images/home/1.jpeg',
+			linkedIn: 'https://www.linkedin.com/in/cl%C3%A9ment-bernazeau-9a89a4182/',
+			github: 'https://github.com/ClementBrz'
+		},
+		{
+			title: 'Karl<br>Querel<br>',
+			imgSrc: '../../../assets/images/home/2.jpeg',
+			linkedIn: 'https://www.linkedin.com/in/karlquerel/',
+			github: 'https://github.com/KarlQuerel'
+		}
 	];
 
-	frames.forEach(frame =>
-	{
-		const	frameCol = createElementWithClass('div', 'col-md-3 mb-3'); // Adjust column size as needed
+	frames.forEach(frame => {
+		const	frameCol = createElementWithClass('div', 'col-md-3 mb-0');
 		const	frameCard = createElementWithClass('div', 'card h-100 clickable-frame');
-		
-		// Image for frame
-		const	img = createImage(frame.imgSrc, frame.title, 'card-img-top');
+
+		const	img = createImage(frame.imgSrc, frame.title, 'card-img');
 		frameCard.appendChild(img);
 
-		// Card body with title and link
 		const	cardBody = createElementWithClass('div', 'card-body text-center');
-		const	title = createElementWithClass('h5', 'card-title');
-		title.textContent = frame.title;
+		const	title = createElementWithClass('h5', 'frame-title');
+		title.innerHTML = frame.title;
 
-		// Clickable link
-		const	link = document.createElement('a');
-		link.href = frame.link;
-		link.className = 'btn btn-primary';
-		link.textContent = 'Learn More';
+		const	btnContainer = createElementWithClass('div', 'd-flex justify-content-center align-items-center');
+		btnContainer.style.gap = '10px';
 
+		const	linkedInBtn = document.createElement('a');
+		linkedInBtn.href = frame.linkedIn;
+		linkedInBtn.className = 'btn btn-icon';
+		linkedInBtn.target = '_blank';
+
+
+		const	linkedInIconDefault = document.createElement('img');
+		linkedInIconDefault.src = '../../../assets/images/home/the_team/icons/linkedin_default.svg'; // Path to your default LinkedIn SVG file
+		linkedInIconDefault.alt = 'LinkedIn Logo';
+		linkedInIconDefault.className = 'linkedin-icon linkedin-icon-default'; // Add class for styling
+
+		// Create SVG element for LinkedIn logo (hover state)
+		const	linkedInIconHover = document.createElement('img');
+		linkedInIconHover.src = '../../../assets/images/home/the_team/icons/linkedin_hover.svg'; // Path to your hover LinkedIn SVG file
+		linkedInIconHover.alt = 'LinkedIn Hover Logo';
+		linkedInIconHover.className = 'linkedin-icon linkedin-icon-hover';
+
+		// Append icons to the LinkedIn button
+		linkedInBtn.appendChild(linkedInIconDefault);
+		linkedInBtn.appendChild(linkedInIconHover);
+
+		// GitHub button with SVG images
+		const	githubBtn = document.createElement('a');
+		githubBtn.href = frame.github;
+		githubBtn.className = 'btn btn-icon'; // Use the btn-icon class
+		githubBtn.target = '_blank'; // Open in a new tab
+
+		// Create SVG element for GitHub logo (default state)
+		const	githubIconDefault = document.createElement('img');
+		githubIconDefault.src = '../../../assets/images/home/the_team/icons/github_default.svg'; // Path to your default GitHub SVG file
+		githubIconDefault.alt = 'GitHub Logo';
+		githubIconDefault.className = 'github-icon github-icon-default'; // Add class for styling
+
+		// Create SVG element for GitHub logo (hover state)
+		const	githubIconHover = document.createElement('img');
+		githubIconHover.src = '../../../assets/images/home/the_team/icons/github_hover.svg'; // Path to your hover GitHub SVG file
+		githubIconHover.alt = 'GitHub Hover Logo';
+		githubIconHover.className = 'github-icon github-icon-hover';
+
+		// Append icons to the GitHub button
+		githubBtn.appendChild(githubIconDefault);
+		githubBtn.appendChild(githubIconHover);
+
+		// Append buttons to the button container
+		btnContainer.appendChild(linkedInBtn);
+		btnContainer.appendChild(githubBtn);
+
+		// Append title and button container to the card body
 		cardBody.appendChild(title);
-		cardBody.appendChild(link);
-		frameCard.appendChild(cardBody);
+		cardBody.appendChild(btnContainer);
 
+		frameCard.appendChild(cardBody);
 		frameCol.appendChild(frameCard);
 		row.appendChild(frameCol);
 	});
@@ -791,6 +850,8 @@ function createTheTeamCard()
 
 	return col;
 }
+
+
 
 //TODO : finish it
 function createWhatWeDidCard()

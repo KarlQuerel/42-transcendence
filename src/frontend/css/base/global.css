@@ -19,7 +19,7 @@
 :root
 {
 	--base-green: #00ff00;
-	--base-light-green: #a3dba3;
+	--base-light-green: rgba(163, 219, 163, 0.8);
 	--base-dark: #000;
 	--base-white: #fff;
 	--base-gray: #262626;

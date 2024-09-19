@@ -6,7 +6,6 @@
 	background-color: transparent;
 	border-color: transparent;
 	z-index: 1;
-	margin-bottom: 20px;
 }
 
 .card-header
@@ -20,10 +19,84 @@
 {
 	background-color: var(--base-light-green);
 	color: var(--base-dark);
+	padding: 1vh;
 }
 
 .card-pong
 {
-	background-color: transparent;
-	color: var(--base-white);
+	width: 120vh;
+}
+
+/*	The Team Card	*/
+.frame-title
+{
+	font-size: 0.8rem;
+}
+
+.card-img
+{
+	width: 20vh;
+	height: 20vh;
+	object-fit: cover;
+}
+
+.btn-icon
+{
+	padding: 0;
+	display: inline-block;
+	position: relative;
+}
+
+.linkedin-icon
+{
+	width: 7vh;
+	height: 7vh;
+	display: block;
+}
+
+.linkedin-icon-default
+{
+	display: block;
+}
+
+.linkedin-icon-hover
+{
+	display: none;
+}
+
+.btn-icon:hover .linkedin-icon-default
+{
+	display: none;
+}
+
+.btn-icon:hover .linkedin-icon-hover
+{
+	display: block;
+}
+
+.github-icon
+{
+	width: 5.8vh;
+	height: 5.8vh;
+	display: block;
+}
+
+.github-icon-default
+{
+	display: block;
+}
+
+.github-icon-hover
+{
+	display: none;
+}
+
+.btn-icon:hover .github-icon-default
+{
+	display: none;
+}
+
+.btn-icon:hover .github-icon-hover
+{
+	display: block;
 }
