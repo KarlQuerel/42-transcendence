@@ -207,32 +207,63 @@ function loadDashboardData(userData, option)
 	}
 }
 
-/* function loadUserManagementData()
+function loadUserManagementData()
 {
-	fetch('/api/users/signInUser/')
-		.then(response =>
-		{
-			if (!response.ok)
-				throw new Error('Error : network response');
-			return response.json();
-		})
-		.then(userData =>
-		{
-			if (DEBUG)
-				console.log("userData = ", userData);
-			return userData;
-		})
-		.catch(error =>
-		{
-			console.error('Error : fetch userData', error)
-			throw error; // Re-throw the error
-			//CHECK: if userData is undefined : try/catch that will stop everything
-		});
-} */
+	fetch('/api/users/getUsername/',
+	{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        // body: JSON.stringify({
+        //     username}),
+    })
+	.then(response =>
+	{
+		if (!response.ok)
+			throw new Error('Error : network response');
+		return response.json();
+	})
+	.then(userData =>
+	{
+		if (DEBUG)
+			console.log("userData = ", userData);
+		return userData;
+	})
+	.catch(error =>
+	{
+		console.error('Error : fetch userData', error)
+		throw error; // Re-throw the error
+		//CHECK: if userData is undefined : try/catch that will stop everything
+	});
+}
+
+// function loadUserManagementData()
+// {
+// 	fetch('/api/users/getUsername/')
+// 		.then(response =>
+// 		{
+// 			if (!response.ok)
+// 				throw new Error('Error : network response');
+// 			return response.json();
+// 		})
+// 		.then(userData =>
+// 		{
+// 			if (DEBUG)
+// 				console.log("userData = ", userData);
+// 			return userData;
+// 		})
+// 		.catch(error =>
+// 		{
+// 			console.error('Error : fetch userData', error)
+// 			throw error; // Re-throw the error
+// 			//CHECK: if userData is undefined : try/catch that will stop everything
+// 		});
+// }
 
 //-------------------------------------- TEST waiting for jess' user -------------------------------------
 
-class UserData {
+/* class UserData {
 	constructor(nickname) {
 		this.nickname = nickname;
 	}
@@ -241,9 +272,9 @@ class UserData {
 function loadUserManagementData()
 {
 	return { // '{' has to be on the same line, otherwise error
-		nickname: 'Jess' //FIX: avatars appear with Carolina but not with the others --> WTF
+		nickname: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
 	};
-}
+} */
 
 //-------------------------------------- FIN TEST -------------------------------------
 
