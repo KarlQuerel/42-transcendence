@@ -3,7 +3,7 @@ groups:
     rules:
       - alert: ServiceDown
         expr: up == 0
-        for: 2m
+        for: 10s
         labels:
           severity: critical
         annotations:
@@ -13,110 +13,127 @@ groups:
 
   - name: django-alerts
     rules:
-      - alert: HighDjango500sErrorRate
-        expr: rate(django_http_requests_total_by_view_transport_method_count{status=~"5.."}[5m]) > 0.05
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          summary: "Taux d'erreurs 500's élevé pour {{ $labels.instance }}"
-          description: "Le taux d'erreur 500' pour {{ $labels.instance }} dépasse 5%."
+      # - alert: DjangoHigh500sErrorRate
+      #   expr: rate(django_http_requests_total_by_view_transport_method_total{status=~"5.."}[10s]) > 0.05
+      #   for: 10s
+      #   labels:
+      #     severity: warning
+      #   annotations:
+      #     summary: "Taux d'erreurs 500's élevé pour {{ $labels.instance }}"
+      #     description: "Le taux d'erreur 500' pour {{ $labels.instance }} dépasse 5%."
 
-      - alert: HighDjango400sErrorRate
-        expr: rate(django_http_requests_total_by_view_transport_method_count{status=~"4.."}[5m]) > 0.05
-        for: 5m
+      - alert: DjangoHigh404ErrorRate
+        expr: rate(django_http_responses_total_by_status_total{status="404"}[10s]) > 0.05
+        for: 10s
         labels:
           severity: warning
         annotations:
           summary: "Taux d'erreurs 400's élevé pour {{ $labels.instance }}"
           description: "Le taux d'erreur 400's pour {{ $labels.instance }} dépasse 5%."
 
-      - alert: DjangoHighResponseTime
-        expr: avg_over_time(django_http_request_duration_seconds[5m]) > 2s
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Temps de reponses eleve pour {{ $labels.instance }}"
-          descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
+      # - alert: DjangoHighResponseTime
+      #   expr: avg_over_time(django_http_request_duration_seconds[10s]) > 2s
+      #   for: 10s
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Temps de reponses eleve pour {{ $labels.instance }}"
+      #     descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
       
-      - alert: DjangoDbHighResponseTime
-        expr: avg_over_time(django_db_query_duration_seconds[5m]) > 2s
-        for: 5m
-        labels:
-          severity: critical
-        annotations:
-          summary: "Temps de reponses eleve pour la database de {{ $labels.instance }}"
-          descirption: "Le temps de reponses aux requetes a la database du serveur {{ $labels.instance }} est eleve."
+      # - alert: DjangoDbHighResponseTime
+      #   expr: avg_over_time(django_db_query_duration_seconds[10s]) > 2s
+      #   for: 10s
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Temps de reponses eleve pour la database de {{ $labels.instance }}"
+      #     descirption: "Le temps de reponses aux requetes a la database du serveur {{ $labels.instance }} est eleve."
 
 
   - name: postgres-alerts
     rules:
       # - alert: PostgreHighResponseTime
-      #   expr: pg_stat_statements_mean_time[5m] > 2s
-      #   for: 5m
+      #   expr: avg_over_time(pg_stat_statements_mean_time[10s]) > 0.01
+      #   for: 10s
       #   labels:
       #     severity: critical
       #   annotations:
       #     summary: "Temps de reponses eleve pour {{ $labels.instance }}"
       #     descirption: "Le temps de reponses aux requetes SQL {{ $labels.instance }} est eleve."
 
-      - alert: PostgreHighStorageUsage
-        expr: pg_stat_database_size{datname="pong_database"} > 5 * 1024 * 1024 * 1024
-        for: 1h
+      # - alert: PostgreHighStorageUsage
+      #   expr: pg_stat_database_size{datname="pong_database"} > 0.0005 * 1024 * 1024 * 1024
+      #   for: 10s
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "La base de données {{ $labels.datname }} est trop grande"
+      #     description: "La taille de la base de données {{ $labels.datname }} a dépassé 5 Go."
+
+      - alert: PostgreSQLDown
+        expr: pg_up == 0
+        for: 10s
         labels:
           severity: critical
         annotations:
-          summary: "La base de données {{ $labels.datname }} est trop grande"
-          description: "La taille de la base de données {{ $labels.datname }} a dépassé 5 Go."
-
+          summary: "PostgreSQL est en panne"
+          description: "Le service PostgreSQL ne fonctionne plus."
 
   - name: nginx-alerts
     rules:
-      # - alert: HighNginx500sErrorRate
-      #   expr: rate(nginx_http_requests_total{status=~"5.."}"[5m]) > 0.05
-      #   for: 5m
+      # - alert: NginxHigh500sErrorRate
+      #   expr: rate(nginx_http_requests_total{status=~"5.."}[10s]) > 0.05
+      #   for: 10s
       #   labels:
       #     severity: critical
       #   annotations:
       #     summary: "Taux d'erreurs 500's élevé pour {{ $labels.instance }}"
       #     description: "Le taux d'erreur 500's pour {{ $labels.instance }} dépasse 5%."
 
-      # - alert: HighNginx400sErrorRate
-      #   expr: rate(nginx_http_requests_total{status=~"4.."}"[5m]) > 0.05
-      #   for: 5m
+      # - alert: NginxHigh400sErrorRate
+      #   expr: rate(nginx_http_requests_total{status=~"4.."}[10s]) > 0.05
+      #   for: 10s
       #   labels:
       #     severity: critical
       #   annotations:
       #     summary: "Taux d'erreurs 400's élevé pour {{ $labels.instance }}"
       #     description: "Le taux d'erreur 400's pour {{ $labels.instance }} dépasse 5%."
 
-      - alert: NginxHighResponseTime
-        expr: avg_over_time(nginx_http_request_duration_seconds[5m]) > 2s
-        for: 5m
+      # - alert: NginxHighResponseTime
+      #   expr: avg_over_time(nginx_http_request_duration_seconds[10s]) > 2s
+      #   for: 10s
+      #   labels:
+      #     severity: critical
+      #   annotations:
+      #     summary: "Temps de reponses eleve pour {{ $labels.instance }}"
+      #     descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
+
+      - alert: NginxDown
+        expr: nginx_up == 0
+        for: 10s
         labels:
           severity: critical
         annotations:
-          summary: "Temps de reponses eleve pour {{ $labels.instance }}"
-          descirption: "Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve."
+          summary: "Nginx est en panne"
+          description: "Le service Nginx ne fonctionne plus."
 
 
-  # - name: system-alerts
-  #   rules:
-  #     - alert: 
-  #       expr:
-  #       for:
-  #       labels:
-  #         severity:
-  #       annotations:
-  #         summary: ""
-  #         descirption: ""
+  - name: system-alerts
+    rules:
+      - alert: LowDiskSpaceAvaible
+        expr: node_filesystem_avail_bytes{mountpoint="/home/cbernaze"} < 700000000000 * 1024 * 1024 * 1024
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Peu d'espace disponible sur le disque dur"
+          descirption: "L'espace disponible sur le disque dur est tres bas."
 
-  #     - alert:
-  #       expr:
-  #       for:
-  #       labels:
-  #         severity:
-  #       annotations:
-  #         summary: ""
-  #         descirption: ""          
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 70
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Memoire trop utilisee"
+          descirption: "L'utilisation de la memoire a depace les 70%."
