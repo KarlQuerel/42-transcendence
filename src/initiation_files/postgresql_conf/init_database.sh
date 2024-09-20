@@ -17,7 +17,7 @@ sleep 5
 
 # Switch to the postgres user and execute the following commands
 su postgres <<EOF
-psql -lqt | cut -d \| -f 1 | grep -qw '${DB_BASENAME}'
+psql -lqt | cut -d \| -f 1 | grep -qw '${DB_NAME}'
 EOF
 
 if [ "$?" -eq "0" ]; then
@@ -30,8 +30,8 @@ else
 
 
   psql -c "CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASSWORD}';"
-  psql -c "CREATE DATABASE ${DB_BASENAME} OWNER ${DB_USER};"
-  psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_BASENAME} TO ${DB_USER};"
+  psql -c "CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};"
+  psql -c "GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};"
   psql -c "GRANT ALL PRIVILEGES ON SCHEMA public TO ${DB_USER};"
 EOF
 

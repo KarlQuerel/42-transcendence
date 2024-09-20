@@ -1,7 +1,14 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG } from '../../main.js';
+import { apiRequest } from '../user/signin.js';
+import { getAuthHeaders } from '../user/signin.js';
+
+
+/***********************************************\
+*                   RENDERING                   *
+\***********************************************/
 
 export function renderDashboard()
 {
@@ -201,37 +208,55 @@ function loadDashboardData(userData, option)
 		});
 	}
 }
-
-function loadUserManagementData()
+async function loadUserManagementData()
 {
-	fetch('/api/users/getUsername/',
-	{
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        // body: JSON.stringify({
-        //     username}),
-    })
-	.then(response =>
-	{
-		if (!response.ok)
-			throw new Error('Error : network response');
-		return response.json();
-	})
-	.then(userData =>
-	{
-		if (DEBUG)
-			console.log("userData = ", userData);
-		return userData;
-	})
-	.catch(error =>
-	{
-		console.error('Error : fetch userData', error)
-		throw error; // Re-throw the error
-		//CHECK: if userData is undefined : try/catch that will stop everything
-	});
+    try {
+        const userData = await apiRequest('/api/users/getUsername/', {
+            method: 'GET',
+            headers: {
+				...getAuthHeaders(),
+            },
+        });
+        if (DEBUG) {
+            console.log("userData = ", userData);
+        }
+        return userData;
+    } catch (error) {
+        console.error('Error: fetch userData', error);
+        throw error; // Re-throw the error
+    }
 }
+
+// function loadUserManagementData()
+// {
+// 	fetch('/api/users/getUsername/',
+// 	{
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         // body: JSON.stringify({
+//         //     username}),
+//     })
+// 	.then(response =>
+// 	{
+// 		if (!response.ok)
+// 			throw new Error('Error : network response');
+// 		return response.json();
+// 	})
+// 	.then(userData =>
+// 	{
+// 		if (DEBUG)
+// 			console.log("userData = ", userData);
+// 		return userData;
+// 	})
+// 	.catch(error =>
+// 	{
+// 		console.error('Error : fetch userData', error)
+// 		throw error; // Re-throw the error
+// 		//CHECK: if userData is undefined : try/catch that will stop everything
+// 	});
+// }
 
 // function loadUserManagementData()
 // {

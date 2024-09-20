@@ -1,7 +1,8 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG } from '../../main.js';
+import { apiRequest } from './signin.js';
 
 /***********************************************\
 *                   RENDERING                   *
@@ -76,7 +77,7 @@ export default function renderProfile()
     fetchUserData()
         .then(userData =>
         {
-            if (userData && DEBUG)
+            if (userData || DEBUG)
                 console.log(userData);
             else
                 console.log('No user data found');
@@ -99,62 +100,104 @@ export default function renderProfile()
             container.innerHTML = '<p>Failed to load profile data.</p>';
         });
 
-    // Event listener for logout button
-    logoutButton.addEventListener('click', () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        window.location.href = '/sign-in';
-    });
 
-    // TODO: Voir la redirection pour le changement de mot de passe
-    // Event listener for change password button
-    changePasswordButton.addEventListener('click', () => {
-        window.location.href = '/change-password'; // Assuming you have a change password page
-    });
-
-
-    /***************** FRIENDS *****************/
-
-
-
-    /************** GAME HISTORY **************/
-    
-    // 1v1 games, dates, and relevant details, accessible to logged-in users.
+        // TODO: Voir la redirection pour le changement de mot de passe
+        // Event listener for change password button
+        changePasswordButton.addEventListener('click', () => {
+            window.location.href = '/change-password'; // Assuming you have a change password page
+        });
+        
+        
+        /***************** FRIENDS *****************/
+        
+        
+        
+        /************** MATCH HISTORY **************/
+        
+        // 1v1 games, dates, and relevant details, accessible to logged-in users.
+        
 
 
+
+        // Event listener for logout button
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/sign-in';
+        });
 
     return container;
 }
 
 
+
+/***********************************************\
+*              FETCH DATA FUNCTIONS             *
+\***********************************************/
+
 // Fetch user data from the API
-async function fetchUserData()
-{
-    const token = localStorage.getItem('access_token');
-
-    if (!token)
-        throw new Error('No access token found');
-
-    return fetch('/api/users/currentlyLoggedInUser/',
-    {
+async function fetchUserData() {
+    return apiRequest('/api/users/currentlyLoggedInUser/', {
         method: 'GET',
-        headers: {
-            'Authorization': 'Bearer ' + token, // Add JWT to the Authorization header
-        }
     })
-    .then(response =>
-    {
-        if (!response.ok)
-            throw new Error('Failed to fetch user data');
-        return response.json();
-    })
-    .then(data =>
-    {
-        if (DEBUG)
+    .then(data => {
+        if (DEBUG) {
             console.log('User data fetched:', data);
+        }
         return data;
     });
 }
+
+// Fetch game history data from the API
+async function fetchGameHistoryData() {
+    try {
+        const userData = await apiRequest('/api/dashboard/getGameHistory/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        if (DEBUG) {
+            console.log("userData = ", userData);
+        }
+        return userData;
+    } catch (error) {
+        console.error('Error: fetch userData', error);
+        throw error; // Re-throw the error
+    }
+}
+
+
+// OLD CODE
+// async function fetchUserData()
+// {
+//     const token = localStorage.getItem('access_token');
+
+//     if (!token)
+//         throw new Error('No access token found');
+
+//     return fetch('/api/users/currentlyLoggedInUser/',
+//     {
+//         method: 'GET',
+//         headers: {
+//             'Authorization': 'Bearer ' + token, // Add JWT to the Authorization header
+//         }
+//     })
+//     .then(response =>
+//     {
+//         if (!response.ok)
+//             throw new Error('Failed to fetch user data');
+//         return response.json();
+//     })
+//     .then(data =>
+//     {
+//         if (DEBUG)
+//             console.log('User data fetched:', data);
+//         return data;
+//     });
+// }
+
+
 
 
 // async function refreshToken()
@@ -180,4 +223,10 @@ async function fetchUserData()
 //             throw new Error('Failed to refresh token');
 //     });
 // }
+
+
+
+
+
+
 

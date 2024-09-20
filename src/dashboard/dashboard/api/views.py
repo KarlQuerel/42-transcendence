@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from rest_framework.decorators import api_view
 from base.models import Stats, GameHistory
-from .serializers import statsSerializer
+from .serializers import statsSerializer, GameHistorySerializer
 
 
 
@@ -66,3 +66,13 @@ def addStats(request):
 
 	# Response can be adjusted based on what you need to return
 	return Response({"message": "Stats updated successfully for existing nicknames"})
+
+
+#TEST JESS
+@api_view(['GET'])
+def getGameHistory(request):
+    if request.user.is_authenticated:
+        serializer = GameHistorySerializer(request.user)
+        return Response(serializer.data)
+    else:
+        return Response({'error': 'User not authenticated'}, status=401)
