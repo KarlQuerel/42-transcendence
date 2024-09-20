@@ -24,11 +24,13 @@ export class GameData
 		this.fieldX_right = undefined; //field's right bound X coordinate
 
 		this.paddleY = undefined;
-		this.paddle_initial_position = undefined;
 		this.paddle_height = undefined;
 		this.paddle_width = undefined;
 	}
 }
+
+let ball_going_left = false;
+let standby_position = 0;
 
 /* We calculate intersectionY thanks to the ball's direction.
 If it is inside the field's boundaries, it means there will be 
@@ -41,9 +43,18 @@ function	predict_ball_paddle_intersection(data)
 	let intersectionX = data.fieldX_right - data.paddle_width;
 	let intersectionY; //value we are looking for
 
-	//if the ball is moving left : the paddle should move back to initial position
-	if (data.ballX_velocity < 0)
-		return data.paddle_initial_position;
+	//if the ball is moving left : the paddle moves to a random position
+	if (data.ballX_velocity < 0 && ball_going_left == false)
+	{
+		ball_going_left = true;
+		standby_position = Math.random() * data.fieldY_bottom;
+		console.log("standby = ", standby_position);
+		return standby_position;
+	}
+	if (data.ballX_velocity < 0 && ball_going_left == true)
+		return standby_position;
+	if (data.ballX_velocity > 0)
+		ball_going_left = false;
 
 	//FIX : oscillements
 	if (data.ballY > data.paddleY - 5 && data.ballY < data.paddleY + 5 )

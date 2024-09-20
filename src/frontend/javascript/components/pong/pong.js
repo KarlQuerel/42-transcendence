@@ -706,7 +706,6 @@ function updateGameData()
 	data.fieldX_right = canvas.width;
 
 	data.paddleY = player2.y;
-	data.paddle_initial_position = (canvas.height - paddleHeight) / 2;
 	data.paddle_height = paddleHeight;
 	data.paddle_width = paddleWidth;
 }
