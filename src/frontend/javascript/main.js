@@ -23,8 +23,9 @@ from "./components/pong/pong.js";
 import { renderDashboard, initializeDashboard }
 from "./views/dashboard/dashboard.js";
 
-import { renderTheTeam }
-from "./views/the_team/the_team.js";
+/***			Particles					***/
+import { initParticles, destroyParticles }
+from "./components/particles/particles.js"
 
 /***			User						***/
 import renderSignIn
@@ -73,11 +74,6 @@ const routes =
 		title: "Dashboard",
 		render: renderDashboard,
 		init: initializeDashboard
-	},
-	'/team':
-	{
-		title: "The Team",
-		render: renderTheTeam
 	},
 	'/pong':
 	{
@@ -161,12 +157,24 @@ function router()
 			appElement.appendChild(renderedContent);
 		}
 
+			// Initialize or destroy particles based on the route
+			if (path !== '/pong') {
+				initParticles();
+			} else {
+				destroyParticles();
+				if (DEBUG)
+					console.log('Particles effect disabled on /pong route');
+			}
+
 		if (route.init)
 		{
 			if (DEBUG)
 				console.log('Initializing route:', path);
 			route.init();
 		}
+
+		// Scrolling to the top of the page
+		window.scroll(0, 0);
 	}
 	else
 	{

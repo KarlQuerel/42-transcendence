@@ -38,6 +38,17 @@ TODO:
 import { DEBUG } from '../../main.js';
 
 /***********************************************\
+-				IMPORTING SCRIPTS				-
+\***********************************************/
+import { initParticles, destroyParticles, createParticlesContainer }
+from '../../components/particles/particles.js';
+
+/***********************************************\
+-				VARIABLES						-
+\***********************************************/
+let	buttonsHidden = false;
+
+/***********************************************\
 -				MODULES DATA					-
 \***********************************************/
 
@@ -406,158 +417,6 @@ const	Accessibility =
 ];
 
 /***********************************************\
--					PARTICLES					-
-\***********************************************/
-class Particle
-{
-	constructor(x, y, size, speedX, speedY, color)
-	{
-		this.x = x;
-		this.y = y;
-		this.size = size;
-		this.speedX = speedX * 0.5; // SPEED MOVEMENT
-		this.speedY = speedY * 0.5;
-		this.color = color;
-	}
-
-	// Draw particle as a square
-	draw(ctx)
-	{
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x, this.y, this.size, this.size);
-	}
-
-	// Update particle position
-	update(ctx, mouse)
-	{
-		if (mouse.x !== null && mouse.y !== null)
-		{
-			const	dx = this.x - mouse.x;
-			const	dy = this.y - mouse.y;
-			const	distance = Math.sqrt(dx * dx + dy * dy);
-			const	maxDistance = mouse.radius;
-			
-			if (distance < maxDistance)
-			{
-				const	force = (maxDistance - distance) / maxDistance;
-				const	forceX = (dx / distance) * force * 5; // Apply force
-				const	forceY = (dy / distance) * force * 5;
-
-				// Apply repulsion force
-				this.x += forceX;
-				this.y += forceY;
-			}
-		}
-
-		this.x += this.speedX;
-		this.y += this.speedY;
-
-		// Bounce off walls
-		if (this.x + this.size > ctx.canvas.width || this.x < 0)
-		{
-			this.speedX = -this.speedX;
-		}
-		if (this.y + this.size > ctx.canvas.height || this.y < 0)
-		{
-			this.speedY = -this.speedY;
-		}
-		this.draw(ctx);
-	}
-}
-
-function getRandomGreen()
-{
-	const	green = Math.floor(Math.random() * 256); // 0-255
-	return `rgb(0, ${green}, 0)`;
-}
-
-function setupMouseListeners(canvas, mouse)
-{
-	canvas.addEventListener('mousemove', (e) =>
-	{
-		const	rect = canvas.getBoundingClientRect();
-		mouse.x = e.clientX - rect.left;
-		mouse.y = e.clientY - rect.top;
-		if (DEBUG)
-			console.log(`Mouse moved: x=${mouse.x}, y=${mouse.y}`);
-	});
-
-	canvas.addEventListener('mouseleave', () =>
-	{
-		mouse.x = null;
-		mouse.y = null;
-		if (DEBUG)
-			console.log('Mouse left canvas');
-	});
-}
-
-function initParticles()
-{
-	let	canvas = document.getElementById('particles-canvas');
-	if (!canvas)
-	{
-		canvas = document.createElement('canvas');
-		canvas.id = 'particles-canvas';
-		const	ctx = canvas.getContext('2d');
-		const	particlesArray = [];
-		const	mouse = { x: null, y: null, radius: 150 }; // RADIUS
-		if (DEBUG)
-			console.log('Mouse radius:', mouse.radius);
-		
-
-		// Set canvas to full window size
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-		canvas.style.position = 'fixed'; // Ensure canvas is fixed to cover the viewport
-		canvas.style.top = '0';
-		canvas.style.left = '0';
-		canvas.style.width = '100%';
-		canvas.style.height = '100%';
-		canvas.style.zIndex = '0'; // Ensure canvas is behind other elements
-		document.body.appendChild(canvas);
-
-		// Ensure listeners are set up after canvas is added
-		setupMouseListeners(canvas, mouse);
-
-		// Create particles
-		for (let i = 0; i < 8000; i++) // NUMBER HERE
-		{ 
-			const	size = Math.random() * 10 + 1;
-			const	x = Math.random() * (canvas.width - size * 2) + size;
-			const	y = Math.random() * (canvas.height - size * 2) + size;
-			const	speedX = (Math.random() * 6 - 3) * 0.5;
-			const	speedY = (Math.random() * 6 - 3) * 0.5;
-			const	color = getRandomGreen();
-			particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
-		}
-
-
-		// Animate particles
-		function animateParticles()
-		{
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			particlesArray.forEach(particle => particle.update(ctx, mouse));
-			requestAnimationFrame(animateParticles);
-		}
-
-		animateParticles();
-
-		// Resize canvas when window is resized
-		window.addEventListener('resize', () =>
-		{
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
-		});
-
-	}
-	else
-	{
-		if (DEBUG)
-			console.log('Canvas already exists');
-	}
-}
-
-/***********************************************\
 -					RENDERING					-
 \***********************************************/
 export default function renderHome()
@@ -568,7 +427,8 @@ export default function renderHome()
 
 	document.getElementById('app').appendChild(container);
 
-	initParticles();
+	if (window.location.pathname !== '/pong')
+		initParticles();
 	return container;
 }
 
@@ -586,25 +446,6 @@ function createHomeContainer()
 	return container;
 }
 
-function createParticlesContainer()
-{
-	let	particlesContainer = document.getElementById('particles-js');
-	if (!particlesContainer)
-	{
-		particlesContainer = document.createElement('div');
-		particlesContainer.id = 'particles-js';
-		particlesContainer.style.position = 'fixed';
-		particlesContainer.style.width = '100%';
-		particlesContainer.style.height = '100%';
-		particlesContainer.style.top = '0';
-		particlesContainer.style.left = '0';
-		particlesContainer.style.zIndex = '-1';
-		document.body.appendChild(particlesContainer);
-	}
-	return particlesContainer;
-}
-
-
 function createContentRow()
 {
 	const	row = document.createElement('div');
@@ -618,47 +459,17 @@ function createContentRow()
 /*					BUTTONS						*/
 function createWhatIsPongButton()
 {
-	const	button = createButton(
-	{
-		className: 'btn btn-home',
-		type: 'button',
-		text: 'What is Pong?',
-		dataToggle: 'collapse',
-		dataTarget: '#multiCollapseExample1',
-		ariaExpanded: 'true',
-		ariaControls: 'multiCollapseExample1'
-	});
-	return button;
+	return createButtonWithListener('What is Pong?', '#multiCollapseExample1', 'true');
 }
 
 function createTheTeamButton()
 {
-	const	button = createButton(
-	{
-		className: 'btn btn-home',
-		type: 'button',
-		text: 'The Team',
-		dataToggle: 'collapse',
-		dataTarget: '#multiCollapseExample2',
-		ariaExpanded: 'false',
-		ariaControls: 'multiCollapseExample2'
-	});
-	return button;
+	return createButtonWithListener('The Team', '#multiCollapseExample2', 'false');
 }
 
 function createWhatWeDidButton()
 {
-	const	button = createButton(
-	{
-		className: 'btn btn-home',
-		type: 'button',
-		text: 'What We Did',
-		dataToggle: 'collapse',
-		dataTarget: '#whatWeDidCard',
-		ariaExpanded: 'false',
-		ariaControls: 'whatWeDidCard'
-	});
-	return button;
+	return createButtonWithListener('What We Did', '#whatWeDidCard', 'false');
 }
 
 /*					CARDS						*/
@@ -747,31 +558,32 @@ function createTheTeamCard()
 	const	frames = [
 		{
 			title: 'Carolina<br>Somarriba<br>',
-			imgSrc: '../../../assets/images/home/1.jpeg',
+			imgSrc: '../../../assets/images/home/1.jpeg', //todo photos here
 			linkedIn: 'https://www.linkedin.com/in/carolina-somarriba-2303a812a/',
 			github: 'https://github.com/casomarr'
 		},
 		{
 			title: 'Jessica<br>Rouillon<br>',
-			imgSrc: '../../../assets/images/home/2.jpeg',
+			imgSrc: '../../../assets/images/home/2.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/jessica-rouillon-37a22053/',
 			github: 'https://github.com/Lechonita'
 		},
 		{
 			title: 'Clément<br>Bernazeau<br>',
-			imgSrc: '../../../assets/images/home/1.jpeg',
+			imgSrc: '../../../assets/images/home/1.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/cl%C3%A9ment-bernazeau-9a89a4182/',
 			github: 'https://github.com/ClementBrz'
 		},
 		{
 			title: 'Karl<br>Querel<br>',
-			imgSrc: '../../../assets/images/home/2.jpeg',
+			imgSrc: '../../../assets/images/home/2.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/karlquerel/',
 			github: 'https://github.com/KarlQuerel'
 		}
 	];
 
-	frames.forEach(frame => {
+	frames.forEach(frame =>
+	{
 		const	frameCol = createElementWithClass('div', 'col-md-3 mb-0');
 		const	frameCard = createElementWithClass('div', 'card h-100 clickable-frame');
 
@@ -790,49 +602,40 @@ function createTheTeamCard()
 		linkedInBtn.className = 'btn btn-icon';
 		linkedInBtn.target = '_blank';
 
-
 		const	linkedInIconDefault = document.createElement('img');
-		linkedInIconDefault.src = '../../../assets/images/home/the_team/icons/linkedin_default.svg'; // Path to your default LinkedIn SVG file
+		linkedInIconDefault.src = '../../../assets/images/home/the_team/icons/linkedin_default.svg';
 		linkedInIconDefault.alt = 'LinkedIn Logo';
-		linkedInIconDefault.className = 'linkedin-icon linkedin-icon-default'; // Add class for styling
+		linkedInIconDefault.className = 'linkedin-icon linkedin-icon-default';
 
-		// Create SVG element for LinkedIn logo (hover state)
 		const	linkedInIconHover = document.createElement('img');
-		linkedInIconHover.src = '../../../assets/images/home/the_team/icons/linkedin_hover.svg'; // Path to your hover LinkedIn SVG file
+		linkedInIconHover.src = '../../../assets/images/home/the_team/icons/linkedin_hover.svg';
 		linkedInIconHover.alt = 'LinkedIn Hover Logo';
 		linkedInIconHover.className = 'linkedin-icon linkedin-icon-hover';
-
-		// Append icons to the LinkedIn button
+	
 		linkedInBtn.appendChild(linkedInIconDefault);
 		linkedInBtn.appendChild(linkedInIconHover);
 
-		// GitHub button with SVG images
 		const	githubBtn = document.createElement('a');
 		githubBtn.href = frame.github;
-		githubBtn.className = 'btn btn-icon'; // Use the btn-icon class
-		githubBtn.target = '_blank'; // Open in a new tab
+		githubBtn.className = 'btn btn-icon';
+		githubBtn.target = '_blank';
 
-		// Create SVG element for GitHub logo (default state)
 		const	githubIconDefault = document.createElement('img');
-		githubIconDefault.src = '../../../assets/images/home/the_team/icons/github_default.svg'; // Path to your default GitHub SVG file
+		githubIconDefault.src = '../../../assets/images/home/the_team/icons/github_default.svg';
 		githubIconDefault.alt = 'GitHub Logo';
-		githubIconDefault.className = 'github-icon github-icon-default'; // Add class for styling
+		githubIconDefault.className = 'github-icon github-icon-default';
 
-		// Create SVG element for GitHub logo (hover state)
 		const	githubIconHover = document.createElement('img');
-		githubIconHover.src = '../../../assets/images/home/the_team/icons/github_hover.svg'; // Path to your hover GitHub SVG file
+		githubIconHover.src = '../../../assets/images/home/the_team/icons/github_hover.svg';
 		githubIconHover.alt = 'GitHub Hover Logo';
 		githubIconHover.className = 'github-icon github-icon-hover';
 
-		// Append icons to the GitHub button
 		githubBtn.appendChild(githubIconDefault);
 		githubBtn.appendChild(githubIconHover);
 
-		// Append buttons to the button container
 		btnContainer.appendChild(linkedInBtn);
 		btnContainer.appendChild(githubBtn);
 
-		// Append title and button container to the card body
 		cardBody.appendChild(title);
 		cardBody.appendChild(btnContainer);
 
@@ -841,7 +644,6 @@ function createTheTeamCard()
 		row.appendChild(frameCol);
 	});
 
-	// Append the row to the card body
 	cardBody.appendChild(row);
 	collapse.appendChild(cardBody);
 	card.appendChild(cardHeader);
@@ -850,8 +652,6 @@ function createTheTeamCard()
 
 	return col;
 }
-
-
 
 //TODO : finish it
 function createWhatWeDidCard()
@@ -980,6 +780,22 @@ function createElementWithClass(tag, className)
 	return element;
 }
 
+function createImage(src, alt, className)
+{
+	const	img = document.createElement('img');
+	img.src = src;
+	img.alt = alt;
+	img.className = className;
+	return img;
+}
+
+function createTextElement(html)
+{
+	const	p = document.createElement('p');
+	p.innerHTML = html;
+	return p;
+}
+
 function createButton({ className, type, text, dataToggle, dataTarget, ariaExpanded, ariaControls, dataDismiss, href, fontSize, padding, target })
 {
 	const	button = document.createElement(href ? 'a' : 'button');
@@ -1009,18 +825,67 @@ function createButton({ className, type, text, dataToggle, dataTarget, ariaExpan
 	return button;
 }
 
-function createImage(src, alt, className)
+function createButtonWithListener(text, targetId, expanded)
 {
-	const	img = document.createElement('img');
-	img.src = src;
-	img.alt = alt;
-	img.className = className;
-	return img;
+	const	button = createButton(
+	{
+		className: 'btn btn-home',
+		type: 'button',
+		text: text,
+		dataToggle: 'collapse',
+		dataTarget: targetId,
+		ariaExpanded: expanded,
+		ariaControls: targetId
+	});
+
+	button.addEventListener('click', () =>
+	{
+		toggleButtons(text);
+	});
+
+	return button;
 }
 
-function createTextElement(html)
+function toggleButtons(clickedButton)
 {
-	const	p = document.createElement('p');
-	p.innerHTML = html;
-	return p;
+	const	buttonElement = Array.from(document.getElementsByClassName('btn btn-home')).find(btn => btn.textContent === clickedButton);
+
+	if (buttonsHidden)
+	{
+		showButtons();
+		buttonsHidden = false;
+	}
+	else
+	{
+		hideOtherButtons(clickedButton);
+		buttonsHidden = true;
+	}
+}
+
+function hideOtherButtons(clickedButton)
+{
+	const	buttons = ['What is Pong?', 'The Team', 'What We Did'];
+
+	buttons.forEach(buttonText =>
+		{
+		if (buttonText !== clickedButton)
+		{
+			const	buttonElement = Array.from(document.getElementsByClassName('btn btn-home')).find(btn => btn.textContent === buttonText);
+			if (buttonElement)
+			{
+				buttonElement.classList.add('hidden-animation');
+				buttonElement.classList.remove('show-animation');
+			}
+		}
+	});
+}
+
+function showButtons()
+{
+	const	hiddenButtons = document.getElementsByClassName('btn-home hidden-animation');
+	Array.from(hiddenButtons).forEach(button =>
+	{
+		button.classList.remove('hidden-animation');
+		button.classList.add('show-animation');
+	});
 }

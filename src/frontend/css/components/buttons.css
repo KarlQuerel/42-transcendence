@@ -8,9 +8,9 @@
 	border: 2px solid var(--base-green);
 	background-color: var(--base-dark);
 	position: relative;
-	width: 30vh;
+	width: 40vh;
 	height: 20vh;
-	/* margin: 10px; */
+	margin: 10px;
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
@@ -78,3 +78,4 @@
 {
 	outline-offset: 1px;
 }
+

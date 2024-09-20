@@ -1,11 +1,25 @@
 /***********************************************
 				GLOBAL
 ***********************************************/
+
+/*	SHOWING + HIDING	*/
 .hidden
 {
 	visibility: hidden;
 	opacity: 0;
 	transition: visibility 0s, opacity 0.5s ease;
+}
+
+.hidden-animation
+{
+	opacity: 0;
+	transition: opacity 0.5 ease;
+}
+
+.show-animation
+{
+	opacity: 1;
+	transition: opacity 0.5 ease;
 }
 
 .show
@@ -15,19 +29,19 @@
 	transition: visibility 0s, opacity 0.5s ease;
 }
 
+.no-scroll
+{
+	overflow: hidden;
+}
+
 /*		COLORS		*/
 :root
 {
 	--base-green: #00ff00;
-	--base-light-green: rgba(163, 219, 163, 0.8);
+	--base-light-green: rgba(163, 219, 163, 0.7);
 	--base-dark: #000;
 	--base-white: #fff;
 	--base-gray: #262626;
-}
-
-.no-scroll
-{
-	overflow: hidden;
 }
 
 /*		Reset for different browsers		*/
@@ -46,8 +60,9 @@ canvas
 	position: fixed;
 	top: 0;
 	left: 0;
-	width: 100vh;
-	height: 100vh;
+	/* TEST MAYBE TO UNCOMMENT */
+	/* width: 100vh; */
+	/* height: 100vh; */
 	z-index: -1;
 }
 
