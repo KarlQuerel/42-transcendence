@@ -106,7 +106,7 @@ function login(username, password)
     });
 }
 
-async function refreshToken()
+/* async function refreshToken()
 {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken)
@@ -128,7 +128,7 @@ async function refreshToken()
 		else
             throw new Error('Failed to refresh token');
     });
-}
+} */
 
 
 // function login(username, password)
@@ -193,3 +193,81 @@ async function refreshToken()
 //         }
 //     });
 // }
+
+
+
+
+
+/***********************************************\
+*                 API FUNCTIONS                 *
+\***********************************************/
+
+
+// Get the access token from local storage and return it as a header object
+function getAuthHeaders() {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        throw new Error('No access token found');
+    }
+    return {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+    };
+}
+
+// Send a request to the server to refresh the access token
+async function refreshToken()
+{
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken)
+        throw new Error('No refresh token found');
+
+    return fetch('/api/token/refresh/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh: refreshToken }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.access) {
+            localStorage.setItem('access_token', data.access);
+            return data.access;
+        }
+        else
+            throw new Error('Failed to refresh token');
+    });
+}
+
+
+// Send a request to the server to refresh the access token
+// Function to be called at every request
+
+export async function apiRequest(url, options = {}) {
+    try {
+        // Attach the access token to the request headers
+        options.headers = {
+            ...options.headers,
+            ...getAuthHeaders(),
+        };
+
+        let response = await fetch(url, options);
+
+        // If the token has expired, refresh it and retry the request
+        if (response.status === 401) {
+            const newAccessToken = await refreshToken();
+            options.headers['Authorization'] = 'Bearer ' + newAccessToken;
+            response = await fetch(url, options);
+        }
+
+        if (!response.ok) {
+            throw new Error('Request failed');
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error('API request error:', error);
+        throw error;
+    }
+}

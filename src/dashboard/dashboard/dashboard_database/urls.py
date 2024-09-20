@@ -27,5 +27,4 @@ from django.urls import include
 urlpatterns = [
 	path('api/', include('api.urls')),
 	path('api/dashboard/', include('api.urls')), #"dashboard" : dans nginx file
-	# path('api/users/', include('users.urls')), #TEST
 ]

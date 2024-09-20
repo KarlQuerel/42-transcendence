@@ -1,7 +1,7 @@
 /***********************************************\
 -			IMPORTING GLOBAL VARIABLES			-
 \***********************************************/
-// import { DEBUG } from '../../main.js';
+// import { DEBUG } from '../main.js';
 
 
 /***********************************************\
@@ -138,12 +138,9 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const userData = loadUserManagementData();
-	const allStats = await loadDashboardData(userData, ALL_STATS);
+	const userData = /* await */ loadUserManagementData();
+	const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
 	const userStats = await loadDashboardData(userData, USER_STATS);
-	//if (DEBUG)
-		console.log("allStats = ", allStats);
-		console.log("userStats = ", userStats);
 
 	setupEventListeners(allStats, userStats); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
@@ -168,6 +165,8 @@ function loadDashboardData(userData, option)
 		})
 		.then(allStats =>
 		{
+			// if (DEBUG)
+				console.log("allStats = ", allStats);
 			return allStats;
 		})
 		.catch(error =>
@@ -191,12 +190,16 @@ function loadDashboardData(userData, option)
 			let i = 0;
 			while (i < allStats.length)
 			{
-				if (userData.nickname === allStats[i].nickname) // if userData.nickname == the current allStats entry's nickname
+				if (userData.username === allStats[i].username) // if userData.username == the current allStats entry's username
+				{
+					// if (DEBUG)
+						console.log("userStats = ", allStats[i]);
 					return allStats[i]; // Return the matching user's stats
+				}
 				i++;
 			}
 			//TODO: return error if we arrive here
-			console.log("The connected user's nickname does not match any nickname in the dashbaord database");
+			console.log("The connected user's username does not match any username in the dashbaord database");
 		})
 		.catch(error =>
 		{
@@ -207,74 +210,39 @@ function loadDashboardData(userData, option)
 	}
 }
 
-function loadUserManagementData()
-{
-	fetch('/api/users/getUsername/',
-	{
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        // body: JSON.stringify({
-        //     username}),
-    })
-	.then(response =>
-	{
-		if (!response.ok)
-			throw new Error('Error : network response');
-		return response.json();
-	})
-	.then(userData =>
-	{
-		if (DEBUG)
-			console.log("userData = ", userData);
-		return userData;
-	})
-	.catch(error =>
-	{
-		console.error('Error : fetch userData', error)
-		throw error; // Re-throw the error
-		//CHECK: if userData is undefined : try/catch that will stop everything
-	});
-}
+/* import { apiRequest } from '../user/signin.js';
 
-// function loadUserManagementData()
-// {
-// 	fetch('/api/users/getUsername/')
-// 		.then(response =>
-// 		{
-// 			if (!response.ok)
-// 				throw new Error('Error : network response');
-// 			return response.json();
-// 		})
-// 		.then(userData =>
-// 		{
-// 			if (DEBUG)
-// 				console.log("userData = ", userData);
-// 			return userData;
-// 		})
-// 		.catch(error =>
-// 		{
-// 			console.error('Error : fetch userData', error)
-// 			throw error; // Re-throw the error
-// 			//CHECK: if userData is undefined : try/catch that will stop everything
-// 		});
-// }
+async function loadUserManagementData() {
+    try {
+        const userData = await apiRequest('/api/users/getUsername/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+		// if (DEBUG)
+			console.log("userData = ", userData);
+        return userData;
+    } catch (error) {
+        console.error('Error: fetch userData', error);
+        throw error; // Re-throw the error
+    }
+} */
 
 //-------------------------------------- TEST waiting for jess' user -------------------------------------
 
-/* class UserData {
-	constructor(nickname) {
-		this.nickname = nickname;
+class UserData {
+	constructor(username) {
+		this.username = username;
 	}
 }
 
 function loadUserManagementData()
 {
 	return { // '{' has to be on the same line, otherwise error
-		nickname: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
+		username: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
 	};
-} */
+}
 
 //-------------------------------------- FIN TEST -------------------------------------
 
@@ -380,22 +348,22 @@ function avatars(allStats, userStats) //TODO: ask jess where are the avatars so 
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
 	userStats.games_history.forEach(game => { //HERE: forEach not appliable
-		if (!opponentsList.includes(game.opponentNickname)) //if NOT already in list
-			opponentsList.push(game.opponentNickname);
+		if (!opponentsList.includes(game.opponentUsername)) //if NOT already in list
+			opponentsList.push(game.opponentUsername);
 	})
 
 	allStats.forEach(user => {
-		if (opponentsList.includes(user.nickname)) //if current user is inside opponentsList : display avatar
+		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
 		{
 			const avatarBox = document.createElement('div');
 
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.toggle = 'tableModal';
-			avatarBox.dataset.nickname = user.nickname;
+			avatarBox.dataset.username = user.username;
 
 			const avatarImg = document.createElement('img');
 			avatarImg.src = user.avatar_url;
-			avatarImg.alt = `Avatar of ${user.nickname}`; //TODO: faire en sorte que le nickname apparaisse juste en passant la souris sur l'avatar?
+			avatarImg.alt = `Avatar of ${user.username}`; //TODO: faire en sorte que le username apparaisse juste en passant la souris sur l'avatar?
 			avatarImg.className = 'avatar-icon';
 
 			avatarBox.appendChild(avatarImg);
@@ -403,7 +371,7 @@ function avatars(allStats, userStats) //TODO: ask jess where are the avatars so 
 
 			//TODO: METTRE CET EVENT LISTNENER AVEC LE RESTE EN HAUT?
 			avatarBox.addEventListener('click', () => {
-				displayGameHistory(userStats.nickname, user.nickname, userStats); //affiche le tableau d'historique de jeu pour l'avatar clique
+				displayGameHistory(userStats.username, user.username, userStats); //affiche le tableau d'historique de jeu pour l'avatar clique
 				$('#tableModal').modal('show'); //TEST
 			})
 		}
@@ -421,13 +389,13 @@ function displayGameHistory(connectedUser, chosenOpponent, userStats)
 	dateHeader.textContent = 'Date';
 	tableHeaderRow.appendChild(dateHeader);
 
-	const nickname1Header = document.createElement('th');
-	nickname1Header.textContent = connectedUser; // Current user's nickname
-	tableHeaderRow.appendChild(nickname1Header);
+	const username1Header = document.createElement('th');
+	username1Header.textContent = connectedUser; // Current user's username
+	tableHeaderRow.appendChild(username1Header);
 
-	const nickname2Header = document.createElement('th');
-	nickname2Header.textContent = chosenOpponent; // Opponent user's nickname
-	tableHeaderRow.appendChild(nickname2Header);
+	const username2Header = document.createElement('th');
+	username2Header.textContent = chosenOpponent; // Opponent user's username
+	tableHeaderRow.appendChild(username2Header);
 
 	addGameHistory(connectedUser, chosenOpponent, userStats);
 }
@@ -438,7 +406,7 @@ function addGameHistory(connectedUser, chosenOpponent, userStats)
 	tableBody.innerHTML = ''; // Clear existing rows
 
 	userStats.games_history.forEach(game => {
-		if (game.opponentNickname === chosenOpponent) 
+		if (game.opponentUsername === chosenOpponent) 
 		{
 			// Add date row
 			const dateRow = document.createElement('tr');
@@ -451,13 +419,13 @@ function addGameHistory(connectedUser, chosenOpponent, userStats)
 			// Add score row
 			const scoreRow = document.createElement('tr');
 
-			const nickname1Cell = document.createElement('td');
-			nickname1Cell.textContent = connectedUser;
-			scoreRow.appendChild(nickname1Cell);
+			const username1Cell = document.createElement('td');
+			username1Cell.textContent = connectedUser;
+			scoreRow.appendChild(username1Cell);
 
-			const nickname2Cell = document.createElement('td');
-			nickname2Cell.textContent = game.opponentNickname;
-			scoreRow.appendChild(nickname2Cell);
+			const username2Cell = document.createElement('td');
+			username2Cell.textContent = game.opponentUsername;
+			scoreRow.appendChild(username2Cell);
 
 			const scoresCell = document.createElement('td');
 			scoresCell.textContent = `${game.myScore} - ${game.opponentScore}`;
@@ -497,7 +465,7 @@ function badge(allStats, userStats)
 	// Get the ranking position of the connected user
 	allStats.forEach(user =>
 	{
-		if (user.nickname === userStats.nickname)
+		if (user.username === userStats.username)
 			ranking_position = user.ranking_position;
 	});
 

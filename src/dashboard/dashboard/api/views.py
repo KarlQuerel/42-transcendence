@@ -31,12 +31,12 @@ def addStats(request):
 	rightScore = request.data.get('rightScore')
 
 	# Check if Stats instance exists for leftNick
-	leftStats = Stats.objects.filter(nickname=leftNick).first()
+	leftStats = Stats.objects.filter(username=leftNick).first()
 	if leftStats:
 		# Update game history for leftNick
 		GameHistory.objects.create(
 			stats=leftStats,
-			opponentNickname=rightNick,
+			opponentUsername=rightNick,
 			opponentScore=rightScore,
 			myScore=leftScore
 		)
@@ -48,12 +48,12 @@ def addStats(request):
 		leftStats.save()
 
 	# Check if Stats instance exists for rightNick
-	rightStats = Stats.objects.filter(nickname=rightNick).first()
+	rightStats = Stats.objects.filter(username=rightNick).first()
 	if rightStats:
 		# Update game history for rightNick
 		GameHistory.objects.create(
 			stats=rightStats,
-			opponentNickname=leftNick,
+			opponentUsername=leftNick,
 			opponentScore=leftScore,
 			myScore=rightScore
 		)
@@ -65,4 +65,4 @@ def addStats(request):
 		rightStats.save()
 
 	# Response can be adjusted based on what you need to return
-	return Response({"message": "Stats updated successfully for existing nicknames"})
+	return Response({"message": "Stats updated successfully for existing usernames"})

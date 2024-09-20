@@ -152,6 +152,7 @@ class UserProfileView(generics.RetrieveAPIView):
 
 #TEST CARO
 @api_view(['GET'])
+@login_required
 def getUsername(request):
     if request.user.is_authenticated:
         serializer = UsernameSerializer(request.user)
