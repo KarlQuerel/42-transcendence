@@ -106,7 +106,6 @@ function createHowToPlayButton()
 	return button;
 }
 
-
 function createHowToPlayCard()
 {
 	const	cardDiv = document.createElement('div');
@@ -184,7 +183,6 @@ function createCanvas()
 	return canvas;
 }
 
-
 function createPausedGifContainer()
 {
 	const	container = document.createElement('div');
@@ -199,7 +197,6 @@ function createPausedGifContainer()
 	container.appendChild(pausedGif);
 	return container;
 }
-
 
 /***********************************************\
 -				GAME CONFIG						-
@@ -249,7 +246,6 @@ const	player2 =
 	dy: 0,
 	score: 0
 };
-
 
 /***			Ball Properties				***/
 const	ball =
@@ -405,7 +401,6 @@ function drawPaddle(paddle)
 	ctx.shadowColor = 'transparent';
 }
 
-
 /***		Drawing Ball					***/
 function drawBall()
 {
@@ -438,7 +433,6 @@ function drawScore()
 	// Reset shadow to avoid affecting other drawings
 	ctx.shadowColor = "transparent";
 }
-
 
 /***			Drawing Winning Message		***/
 function drawWinMessage(winner)
@@ -618,7 +612,6 @@ function resetBall()
 	}
 }
 
-
 /***			Resetting Paddles			***/
 function resetPaddles()
 {
@@ -680,10 +673,10 @@ function keyUpHandler(e)
 	}
 }
 
-
 /***********************************************\
--					AI							-
-\***********************************************/
+ -					AI							-
+ \***********************************************/
+ //TODO KARL - refactor this fucking long file
 
 /* imports the function that returns the AI paddle's movement */
 import { getPaddleAction } from './ai.js';
@@ -877,4 +870,44 @@ export function cleanUpPong()
 	AI_present = false;
 
 	document.body.classList.remove('no-scroll');
+}
+
+/***********************************************\
+-				AUTHENTICATION					-
+\***********************************************/
+//TODO - KARL fix it, not working
+
+//TODO KARL - change simulated variable to actual authentication
+let isUserConnected = false; // DELETE LATER
+
+function redirectToSignIn()
+{
+	if (window.location.pathname !== '/sign-in')
+	{
+		window.location.href = '/sign-in';
+	}
+}
+
+function checkAuthentication()
+{
+	if (isUserConnected === false)
+	{
+		redirectToSignIn();
+	}
+}
+
+// Call the checkAuthentication function only if the Pong game page is loaded
+document.addEventListener('DOMContentLoaded', () =>
+	{
+	const	pongPageElement = document.getElementById('pong');
+	if (pongPageElement)
+	{
+		checkAuthentication();
+	}
+});
+
+// Example function to simulate user connection status (for testing purposes)
+function simulateUserConnection()
+{
+	isUserConnected = true; // Set this based on actual authentication status
 }

@@ -17,14 +17,12 @@ class Particle
 		this.color = color;
 	}
 
-	// Draw particle as a square
 	draw(ctx)
 	{
 		ctx.fillStyle = this.color;
 		ctx.fillRect(this.x, this.y, this.size, this.size);
 	}
 
-	// Update particle position
 	update(ctx, mouse)
 	{
 		if (mouse.x !== null && mouse.y !== null)
@@ -37,10 +35,9 @@ class Particle
 			if (distance < maxDistance)
 			{
 				const	force = (maxDistance - distance) / maxDistance;
-				const	forceX = (dx / distance) * force * 5; // Apply force
+				const	forceX = (dx / distance) * force * 5; // FORCE
 				const	forceY = (dy / distance) * force * 5;
 
-				// Apply repulsion force
 				this.x += forceX;
 				this.y += forceY;
 			}
@@ -49,7 +46,6 @@ class Particle
 		this.x += this.speedX;
 		this.y += this.speedY;
 
-		// Bounce off walls
 		if (this.x + this.size > ctx.canvas.width || this.x < 0)
 		{
 			this.speedX = -this.speedX;
@@ -98,8 +94,8 @@ export function initParticles()
 		setupMouseListeners(canvas, mouse);
 
 		// Create particles
-		for (let i = 0; i < 8000; i++)
-		{ // NUMBER HERE
+		for (let i = 0; i < 8000; i++) // NUMBER
+		{
 			const	size = Math.random() * 10 + 1;
 			const	x = Math.random() * (canvas.width - size * 2) + size;
 			const	y = Math.random() * (canvas.height - size * 2) + size;
@@ -139,9 +135,10 @@ export function destroyParticles()
 	const	canvas = document.getElementById('particles-canvas');
 	if (canvas)
 	{
-		cancelAnimationFrame(animationFrameId); // Stop the animation loop
-		canvas.remove(); // Remove the canvas element
-		console.log('Particles effect destroyed');
+		cancelAnimationFrame(animationFrameId);
+		canvas.remove();
+		if (DEBUG)
+			console.log('Particles effect destroyed');
 	}
 }
 
