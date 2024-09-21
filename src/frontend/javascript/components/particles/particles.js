@@ -12,8 +12,8 @@ class Particle
 		this.x = x;
 		this.y = y;
 		this.size = size;
-		this.speedX = speedX * 0.2; // SPEED MOVEMENT
-		this.speedY = speedY * 0.2;
+		this.speedX = speedX * 0.09; // SPEED MOVEMENT
+		this.speedY = speedY * 0.09;
 		this.color = color;
 	}
 
@@ -94,7 +94,7 @@ export function initParticles()
 		setupMouseListeners(canvas, mouse);
 
 		// Create particles
-		for (let i = 0; i < 8000; i++) // NUMBER
+		for (let i = 0; i < 6000; i++) // NUMBER
 		{
 			const	size = Math.random() * 10 + 1;
 			const	x = Math.random() * (canvas.width - size * 2) + size;

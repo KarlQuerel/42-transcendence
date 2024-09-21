@@ -1,5 +1,7 @@
 /*
-TODO:
+TODO: Implement fake reviews carrousel
+maybe on home page maybe on another webpage
+
 - Fake reviews - carrousel
 
 <!-- Carousel at the bottom of the page -->
@@ -47,6 +49,7 @@ from '../../components/particles/particles.js';
 -				VARIABLES						-
 \***********************************************/
 let	buttonsHidden = false;
+let	buttonsDisabled = false;
 
 /***********************************************\
 -				MODULES DATA					-
@@ -423,9 +426,10 @@ export default function renderHome()
 {
 	const	container = createHomeContainer();
 	createParticlesContainer();
-	const	row = createContentRow();
+	createContentRow();
 
 	document.getElementById('app').appendChild(container);
+	document.body.classList.add('no-scroll');
 
 	if (window.location.pathname !== '/pong')
 		initParticles();
@@ -441,7 +445,7 @@ function createHomeContainer()
 {
 	const	container = document.createElement('div');
 	container.id = 'home-content';
-	container.className = 'd-flex justify-content-center align-items-center vh-100 position-relative';
+	container.className = 'd-flex justify-content-center align-items-center position-relative';
 	container.appendChild(createContentRow());
 	return container;
 }
@@ -453,6 +457,7 @@ function createContentRow()
 	row.appendChild(createWhatIsPongCard());
 	row.appendChild(createTheTeamCard());
 	row.appendChild(createWhatWeDidCard());
+	row.appendChild(createTheyTrustedUsCard());
 	return row;
 }
 
@@ -470,6 +475,11 @@ function createTheTeamButton()
 function createWhatWeDidButton()
 {
 	return createButtonWithListener('What We Did', '#whatWeDidCard', 'false');
+}
+
+function createTheyTrustedUsButton()
+{
+	return createButtonWithListener('They Trusted Us', '#TheyTrustedUsCarousel', 'false');
 }
 
 /*					CARDS						*/
@@ -496,7 +506,7 @@ function createWhatIsPongCard()
 	const	row = createElementWithClass('div', 'row');
 
 	const	gifCol = createElementWithClass('div', 'col-md-6 d-flex justify-content-center align-items-center');
-	const	gifElement = createImage('../../../assets/images/home/what_is_pong.gif', 'Pong GIF', 'img-fluid');
+	const	gifElement = createImage('../../../assets/images/home/what_is_pong/what_is_pong.gif', 'Pong GIF', 'img-fluid');
 	gifCol.appendChild(gifElement);
 
 	const	textCol = createElementWithClass('div', 'col-md-6 d-flex flex-column justify-content-center align-items-center');
@@ -558,25 +568,25 @@ function createTheTeamCard()
 	const	frames = [
 		{
 			title: 'Carolina<br>Somarriba<br>',
-			imgSrc: '../../../assets/images/home/1.jpeg', //todo photos here
+			imgSrc: '../../../assets/images/home/the_team/photos/caro_team.jpg',
 			linkedIn: 'https://www.linkedin.com/in/carolina-somarriba-2303a812a/',
 			github: 'https://github.com/casomarr'
 		},
 		{
 			title: 'Jessica<br>Rouillon<br>',
-			imgSrc: '../../../assets/images/home/2.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/jessica-rouillon-37a22053/',
 			github: 'https://github.com/Lechonita'
 		},
 		{
 			title: 'Clément<br>Bernazeau<br>',
-			imgSrc: '../../../assets/images/home/1.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/cl%C3%A9ment-bernazeau-9a89a4182/',
 			github: 'https://github.com/ClementBrz'
 		},
 		{
 			title: 'Karl<br>Querel<br>',
-			imgSrc: '../../../assets/images/home/2.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
 			linkedIn: 'https://www.linkedin.com/in/karlquerel/',
 			github: 'https://github.com/KarlQuerel'
 		}
@@ -653,7 +663,7 @@ function createTheTeamCard()
 	return col;
 }
 
-//TODO : finish it
+//TODO : finish it decide where to put it with the team
 function createWhatWeDidCard()
 {
 	const	col = createElementWithClass('div', 'mb-auto');
@@ -770,6 +780,127 @@ function createWhatWeDidCard()
 	return col;
 }
 
+function createTheyTrustedUsCard() {
+	const col = createElementWithClass('div', 'mb-auto');
+	const card = createElementWithClass('div', 'card');
+
+	// Card Header
+	const cardHeader = createElementWithClass('div', 'card-header');
+	const button = createTheyTrustedUsButton();
+	cardHeader.appendChild(button);
+
+	// Collapse Section
+	const collapse = createElementWithClass('div', 'collapse');
+	collapse.id = 'TheyTrustedUsCarousel';
+	collapse.setAttribute('aria-labelledby', 'headingTrustedUs');
+
+	// Carousel
+	const carousel = createElementWithClass('div', 'carousel slide');
+	carousel.setAttribute('data-bs-ride', 'carousel');
+
+	// Carousel Inner
+	const carouselInner = createElementWithClass('div', 'carousel-inner');
+		
+	// Example items for the carousel
+	const items =
+	[
+		{ imgSrc: '../../../assets/images/home/they_trusted_us/caro_testimonial.jpg', alt: 'First Slide' },
+		{ imgSrc: '../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', alt: 'Second Slide' },
+		{ imgSrc: 'path/to/image3.jpg', alt: 'Third Slide' }
+	];
+
+	items.forEach((item, index) => {
+		const carouselItem = createElementWithClass('div', 'carousel-item');
+		if (index === 0) carouselItem.classList.add('active'); // Make first item active
+
+		const img = createImage(item.imgSrc, item.alt, 'd-block w-100');
+		carouselItem.appendChild(img);
+		carouselInner.appendChild(carouselItem);
+	});
+
+	carousel.appendChild(carouselInner);
+
+	// Controls (optional)
+	const prevButton = createElementWithClass('button', 'carousel-control-prev');
+	prevButton.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+	prevButton.setAttribute('data-bs-slide', 'prev');
+	prevButton.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
+		
+	const nextButton = createElementWithClass('button', 'carousel-control-next');
+	nextButton.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+	nextButton.setAttribute('data-bs-slide', 'next');
+	nextButton.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
+
+	carousel.appendChild(prevButton);
+	carousel.appendChild(nextButton);
+		
+	// Append everything
+	collapse.appendChild(carousel);
+	card.appendChild(cardHeader);
+	card.appendChild(collapse);
+	col.appendChild(card);
+
+	return col;
+}
+
+
+/*					CAROUSEL					*/
+function createTheyTrustedUsCarousel()
+{
+	const	carouselDiv = createElementWithClass('div', 'carousel slide');
+	carouselDiv.id = 'TheyTrustedUsCarousel';
+	carouselDiv.setAttribute('data-bs-ride', 'carousel');
+
+	const	carouselInner = createElementWithClass('div', 'carousel-inner');
+
+	// Example slides (replace with your own images and content)
+	const	slides = [
+		{
+			imgSrc: '../../../assets/images/home/trust1.jpg',
+			alt: 'Trusted Company 1',
+			isActive: true
+		},
+		{
+			imgSrc: '../../../assets/images/home/trust2.jpg',
+			alt: 'Trusted Company 2',
+			isActive: false
+		},
+		{
+			imgSrc: '../../../assets/images/home/trust3.jpg',
+			alt: 'Trusted Company 3',
+			isActive: false
+		}
+	];
+
+	slides.forEach((slide) => {
+		const	itemDiv = createElementWithClass('div', `carousel-item ${slide.isActive ? 'active' : ''}`);
+		const	img = createImage(slide.imgSrc, slide.alt, 'd-block w-100');
+		itemDiv.appendChild(img);
+		carouselInner.appendChild(itemDiv);
+	});
+
+	carouselDiv.appendChild(carouselInner);
+
+	// Add controls (optional)
+	const	prevControl = createElementWithClass('button', 'carousel-control-prev');
+	prevControl.setAttribute('type', 'button');
+	prevControl.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+	prevControl.setAttribute('data-bs-slide', 'prev');
+	prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>';
+
+	const	nextControl = createElementWithClass('button', 'carousel-control-next');
+	nextControl.setAttribute('type', 'button');
+	nextControl.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+	nextControl.setAttribute('data-bs-slide', 'next');
+	nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>';
+
+	carouselDiv.appendChild(prevControl);
+	carouselDiv.appendChild(nextControl);
+
+	return carouselDiv;
+}
+
+
 /***********************************************\
 -				HELPER FUNCTIONS				-
 \***********************************************/
@@ -840,6 +971,7 @@ function createButtonWithListener(text, targetId, expanded)
 
 	button.addEventListener('click', () =>
 	{
+		// moveButtonToCenter(button); // TODO FIX IT
 		toggleButtons(text);
 	});
 
@@ -848,44 +980,48 @@ function createButtonWithListener(text, targetId, expanded)
 
 function toggleButtons(clickedButton)
 {
-	const	buttonElement = Array.from(document.getElementsByClassName('btn btn-home')).find(btn => btn.textContent === clickedButton);
-
-	if (buttonsHidden)
+	if (buttonsDisabled)
 	{
-		showButtons();
-		buttonsHidden = false;
+		enableButtons();
+		buttonsDisabled = false;
 	}
 	else
 	{
-		hideOtherButtons(clickedButton);
-		buttonsHidden = true;
+		disableOtherButtons(clickedButton);
+		buttonsDisabled = true;
 	}
 }
 
-function hideOtherButtons(clickedButton)
+function disableOtherButtons(clickedButton)
 {
 	const	buttons = ['What is Pong?', 'The Team', 'What We Did'];
 
 	buttons.forEach(buttonText =>
-		{
+	{
 		if (buttonText !== clickedButton)
 		{
 			const	buttonElement = Array.from(document.getElementsByClassName('btn btn-home')).find(btn => btn.textContent === buttonText);
 			if (buttonElement)
 			{
-				buttonElement.classList.add('hidden-animation');
-				buttonElement.classList.remove('show-animation');
+				buttonElement.disabled = true;
+				buttonElement.style.display = 'none';
 			}
 		}
 	});
 }
 
-function showButtons()
+function enableButtons()
 {
-	const	hiddenButtons = document.getElementsByClassName('btn-home hidden-animation');
-	Array.from(hiddenButtons).forEach(button =>
+	const	buttons = Array.from(document.getElementsByClassName('btn btn-home'));
+	buttons.forEach(button =>
 	{
-		button.classList.remove('hidden-animation');
-		button.classList.add('show-animation');
+		button.disabled = false;
+		button.style.display = 'inline-block';
 	});
+}
+
+// HERE CHECK IF NECESSARY
+function moveButtonToCenter(button)
+{
+	button.classList.add('center-button');
 }
