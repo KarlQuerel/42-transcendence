@@ -551,11 +551,9 @@ function createTheTeamCard()
 
 	const	col = createElementWithClass('div', 'mb-auto');
 	const	card = createElementWithClass('div', 'card');
-	const	cardHeader = createElementWithClass('div', 'card-header');
-	cardHeader.id = 'headingtheTeam';
 
 	const	button = createTheTeamButton();
-	cardHeader.appendChild(button);
+	const	cardHeader = createCardHeader(button, 'headingtheTeam');
 
 	const	collapse = createElementWithClass('div', 'collapse');
 	collapse.id = 'multiCollapseExample2';
@@ -574,26 +572,25 @@ function createTheTeamCard()
 		},
 		{
 			title: 'Jessica<br>Rouillon<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/jessica-rouillon-37a22053/',
 			github: 'https://github.com/Lechonita'
 		},
 		{
 			title: 'Clément<br>Bernazeau<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/cl%C3%A9ment-bernazeau-9a89a4182/',
 			github: 'https://github.com/ClementBrz'
 		},
 		{
 			title: 'Karl<br>Querel<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', //here
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/karlquerel/',
 			github: 'https://github.com/KarlQuerel'
 		}
 	];
 
-	frames.forEach(frame =>
-	{
+	frames.forEach(frame => {
 		const	frameCol = createElementWithClass('div', 'col-md-3 mb-0');
 		const	frameCard = createElementWithClass('div', 'card h-100 clickable-frame');
 
@@ -621,7 +618,7 @@ function createTheTeamCard()
 		linkedInIconHover.src = '../../../assets/images/home/the_team/icons/linkedin_hover.svg';
 		linkedInIconHover.alt = 'LinkedIn Hover Logo';
 		linkedInIconHover.className = 'linkedin-icon linkedin-icon-hover';
-	
+
 		linkedInBtn.appendChild(linkedInIconDefault);
 		linkedInBtn.appendChild(linkedInIconHover);
 
@@ -648,13 +645,14 @@ function createTheTeamCard()
 
 		cardBody.appendChild(title);
 		cardBody.appendChild(btnContainer);
-
 		frameCard.appendChild(cardBody);
+
 		frameCol.appendChild(frameCard);
 		row.appendChild(frameCol);
 	});
 
 	cardBody.appendChild(row);
+
 	collapse.appendChild(cardBody);
 	card.appendChild(cardHeader);
 	card.appendChild(collapse);
@@ -670,12 +668,8 @@ function createWhatWeDidCard()
 	const	card = createElementWithClass('div', 'card');
 
 	// Card Header
-	const	cardHeader = createElementWithClass('div', 'card-header');
-	cardHeader.id = 'headingWhatWeDid';
-
-	// Appending Button to Card Header
 	const	button = createWhatWeDidButton();
-	cardHeader.appendChild(button);
+	const	cardHeader = createCardHeader(button, 'headingWhatWeDid');
 
 	// Collapse Section
 	const	collapse = createElementWithClass('div', 'collapse');
@@ -719,9 +713,7 @@ function createWhatWeDidCard()
 		tabLink.ariaControls = section.id;
 		tabLink.ariaSelected = index === 0 ? 'true' : 'false';
 		if (index === 0)
-		{
 			tabLink.classList.add('active'); // Make first tab active
-		}
 		tabLink.innerText = section.title;
 		tabItem.appendChild(tabLink);
 		tabContainer.appendChild(tabItem);
@@ -732,9 +724,7 @@ function createWhatWeDidCard()
 		tabPane.role = 'tabpanel';
 		tabPane.ariaLabelledBy = `${section.id}-tab`;
 		if (index === 0)
-		{
 			tabPane.classList.add('show', 'active'); // Make first tab content visible
-		}
 
 		// Populate tab pane with module information and expandable sections
 		const	modulesList = createElementWithClass('ul', 'list-group');
@@ -746,12 +736,10 @@ function createWhatWeDidCard()
 			// Create expandable content
 			const	expandableContent = createElementWithClass('div', 'collapse');
 			expandableContent.id = `collapse${section.id}${moduleIndex}`;
-			expandableContent.innerHTML = `
-				<p>${module.content}</p> <!-- Assuming each module has content -->
-				<!-- Add more details here as needed -->
-			`;
+			expandableContent.innerHTML = `<p>${module.content}</p>`;
 
-			const	expandButton = createButton({
+			const	expandButton = createButton(
+			{
 				className: 'btn btn-primary mt-2',
 				type: 'button',
 				text: 'More Details',
@@ -773,133 +761,148 @@ function createWhatWeDidCard()
 
 	// Append card body and collapse to the card
 	collapse.appendChild(cardBody);
-	card.appendChild(cardHeader);
+	card.appendChild(cardHeader); // Use reusable header
 	card.appendChild(collapse);
 	col.appendChild(card);
 
 	return col;
 }
 
-function createTheyTrustedUsCard() {
-	const col = createElementWithClass('div', 'mb-auto');
-	const card = createElementWithClass('div', 'card');
+function createTheyTrustedUsCard()
+{
+	const	col = createElementWithClass('div', 'mb-auto');
+	const	card = createElementWithClass('div', 'card');
 
-	// Card Header
-	const cardHeader = createElementWithClass('div', 'card-header');
-	const button = createTheyTrustedUsButton();
-	cardHeader.appendChild(button);
+	// Card Header with Reusable Function
+	const	button = createTheyTrustedUsButton();
+	const	cardHeader = createCardHeader(button, 'headingTrustedUs');
 
 	// Collapse Section
-	const collapse = createElementWithClass('div', 'collapse');
+	const	collapse = createElementWithClass('div', 'collapse');
 	collapse.id = 'TheyTrustedUsCarousel';
 	collapse.setAttribute('aria-labelledby', 'headingTrustedUs');
 
 	// Carousel
-	const carousel = createElementWithClass('div', 'carousel slide');
-	carousel.setAttribute('data-bs-ride', 'carousel');
-
-	// Carousel Inner
-	const carouselInner = createElementWithClass('div', 'carousel-inner');
-		
-	// Example items for the carousel
-	const items =
-	[
-		{ imgSrc: '../../../assets/images/home/they_trusted_us/caro_testimonial.jpg', alt: 'First Slide' },
-		{ imgSrc: '../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', alt: 'Second Slide' },
-		{ imgSrc: 'path/to/image3.jpg', alt: 'Third Slide' }
-	];
-
-	items.forEach((item, index) => {
-		const carouselItem = createElementWithClass('div', 'carousel-item');
-		if (index === 0) carouselItem.classList.add('active'); // Make first item active
-
-		const img = createImage(item.imgSrc, item.alt, 'd-block w-100');
-		carouselItem.appendChild(img);
-		carouselInner.appendChild(carouselItem);
-	});
-
-	carousel.appendChild(carouselInner);
-
-	// Controls (optional)
-	const prevButton = createElementWithClass('button', 'carousel-control-prev');
-	prevButton.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
-	prevButton.setAttribute('data-bs-slide', 'prev');
-	prevButton.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span>';
-		
-	const nextButton = createElementWithClass('button', 'carousel-control-next');
-	nextButton.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
-	nextButton.setAttribute('data-bs-slide', 'next');
-	nextButton.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span>';
-
-	carousel.appendChild(prevButton);
-	carousel.appendChild(nextButton);
-		
-	// Append everything
+	const	carousel = createCarousel();
 	collapse.appendChild(carousel);
+
+	// Append everything
 	card.appendChild(cardHeader);
 	card.appendChild(collapse);
 	col.appendChild(card);
 
+	// Check if carousel is already initialized
+	const	carouselElement = collapse.querySelector('.carousel');
+	if (!carouselElement.classList.contains('carousel'))
+	{
+		new bootstrap.Carousel(carouselElement);
+	}
+
 	return col;
 }
 
-
-/*					CAROUSEL					*/
-function createTheyTrustedUsCarousel()
+function createCardHeader(button, headerId)
 {
-	const	carouselDiv = createElementWithClass('div', 'carousel slide');
-	carouselDiv.id = 'TheyTrustedUsCarousel';
-	carouselDiv.setAttribute('data-bs-ride', 'carousel');
-
-	const	carouselInner = createElementWithClass('div', 'carousel-inner');
-
-	// Example slides (replace with your own images and content)
-	const	slides = [
-		{
-			imgSrc: '../../../assets/images/home/trust1.jpg',
-			alt: 'Trusted Company 1',
-			isActive: true
-		},
-		{
-			imgSrc: '../../../assets/images/home/trust2.jpg',
-			alt: 'Trusted Company 2',
-			isActive: false
-		},
-		{
-			imgSrc: '../../../assets/images/home/trust3.jpg',
-			alt: 'Trusted Company 3',
-			isActive: false
-		}
-	];
-
-	slides.forEach((slide) => {
-		const	itemDiv = createElementWithClass('div', `carousel-item ${slide.isActive ? 'active' : ''}`);
-		const	img = createImage(slide.imgSrc, slide.alt, 'd-block w-100');
-		itemDiv.appendChild(img);
-		carouselInner.appendChild(itemDiv);
-	});
-
-	carouselDiv.appendChild(carouselInner);
-
-	// Add controls (optional)
-	const	prevControl = createElementWithClass('button', 'carousel-control-prev');
-	prevControl.setAttribute('type', 'button');
-	prevControl.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
-	prevControl.setAttribute('data-bs-slide', 'prev');
-	prevControl.innerHTML = '<span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span>';
-
-	const	nextControl = createElementWithClass('button', 'carousel-control-next');
-	nextControl.setAttribute('type', 'button');
-	nextControl.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
-	nextControl.setAttribute('data-bs-slide', 'next');
-	nextControl.innerHTML = '<span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span>';
-
-	carouselDiv.appendChild(prevControl);
-	carouselDiv.appendChild(nextControl);
-
-	return carouselDiv;
+	const	cardHeader = createElementWithClass('div', 'card-header');
+	cardHeader.id = headerId;
+	cardHeader.appendChild(button);
+	return cardHeader;
 }
 
+/*					CAROUSEL					*/
+function createCarousel()
+{
+	const	carousel = createElementWithClass('div', 'carousel slide');
+	carousel.id = 'TheyTrustedUsCarousel';
+	carousel.setAttribute('data-bs-ride', 'carousel');
+
+	// Carousel indicators
+	const	indicators = createCarouselIndicators();
+	carousel.appendChild(indicators);
+
+	const	carouselInner = createCarouselInner();
+	carousel.appendChild(carouselInner);
+
+	// Optional controls
+	const	prevButton = createCarouselControl('prev');
+	const	nextButton = createCarouselControl('next');
+
+	carousel.appendChild(prevButton);
+	carousel.appendChild(nextButton);
+
+	return carousel;
+}
+
+function createCarouselIndicators()
+{
+	const	indicators = createElementWithClass('div', 'carousel-indicators');
+	const	itemsCount = 4; // Adjust based on the number of items
+
+	for (let i = 0; i < itemsCount; i++) {
+		const	indicator = createElementWithClass('button', '');
+		indicator.type = 'button';
+		indicator.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+		indicator.setAttribute('data-bs-slide-to', i);
+		indicator.setAttribute('aria-label', `Slide ${i + 1}`);
+		if (i === 0)
+		{
+			indicator.classList.add('active');
+			indicator.setAttribute('aria-current', 'true');
+		}
+		indicators.appendChild(indicator);
+	}
+
+	return indicators;
+}
+
+function createCarouselInner()
+{
+	const	carouselInner = createElementWithClass('div', 'carousel-inner');
+
+	const	items =
+	[
+		{ imgSrc: '../../../assets/images/home/they_trusted_us/caro_testimonial.jpg', alt: 'First Slide', caption: 'Caro Mango', text: 'I simply cannot sleep without it.' },
+		{ imgSrc: '../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', alt: 'Second Slide', caption: 'Karlo Tango', text: 'This website changed my life...' },
+		{ imgSrc: '../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', alt: 'Third Slide', caption: 'Third slide label', text: 'I use it almost every day!' },
+		{ imgSrc: '../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', alt: 'Third Slide', caption: 'Third slide label', text: 'Pong is so nice, I sold my kids to buy it' }
+	];
+
+	items.forEach((item, index) =>
+	{
+		const	carouselItem = createElementWithClass('div', 'carousel-item');
+		if (index === 0) carouselItem.classList.add('active');
+
+		const	img = createImage(item.imgSrc, item.alt, 'd-block w-50 img-fluid');
+		carouselItem.appendChild(img);
+
+		// Carousel caption
+		const	caption = createElementWithClass('div', 'carousel-caption d-none d-md-block');
+		const	captionTitle = createElementWithClass('h5', '');
+		captionTitle.textContent = item.caption;
+		const	captionText = createElementWithClass('p', '');
+		captionText.textContent = item.text;
+
+		caption.appendChild(captionTitle);
+		caption.appendChild(captionText);
+		carouselItem.appendChild(caption);
+
+		carouselInner.appendChild(carouselItem);
+	});
+
+	return carouselInner;
+}
+
+function createCarouselControl(direction)
+{
+	const	button = createElementWithClass('button', `carousel-control-${direction}`);
+	button.setAttribute('data-bs-target', '#TheyTrustedUsCarousel');
+	button.setAttribute('data-bs-slide', direction);
+	button.innerHTML = `
+		<span class="carousel-control-${direction}-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">${direction === 'prev' ? 'Previous' : 'Next'}</span>
+	`;
+	return button;
+}
 
 /***********************************************\
 -				HELPER FUNCTIONS				-
@@ -994,7 +997,7 @@ function toggleButtons(clickedButton)
 
 function disableOtherButtons(clickedButton)
 {
-	const	buttons = ['What is Pong?', 'The Team', 'What We Did'];
+	const	buttons = ['What is Pong?', 'The Team', 'What We Did', 'They Trusted Us'];
 
 	buttons.forEach(buttonText =>
 	{
@@ -1020,7 +1023,7 @@ function enableButtons()
 	});
 }
 
-// HERE CHECK IF NECESSARY
+// TODO: CHECK IF NECESSARY
 function moveButtonToCenter(button)
 {
 	button.classList.add('center-button');

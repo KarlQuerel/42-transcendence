@@ -115,12 +115,14 @@ function createHowToPlayCard()
 	const	cardBody = document.createElement('div');
 	cardBody.className = 'card-pong';
 
-	const	sections = [
+	const	sections =
+	[
 		{ title: 'Left Player', gifs: ['../../../assets/images/pong/how_to_play/W.gif', '../../../assets/images/pong/how_to_play/S.gif'] },
 		{ title: 'Right Player', gifs: ['../../../assets/images/pong/how_to_play/UP.gif', '../../../assets/images/pong/how_to_play/DOWN.gif'] },
 		{ title: 'Pause', gifs: ['../../../assets/images/pong/how_to_play/ESC.gif', '../../../assets/images/pong/how_to_play/P.gif'] }
 	];
 
+	// TODO FIX IT sttucture + positioning - dont change the css too much
 	sections.forEach(section => {
 		const	row = document.createElement('div');
 		row.className = 'row mb-4 align-items-center';
@@ -133,7 +135,7 @@ function createHowToPlayCard()
 		textCol.appendChild(title);
 
 		const	gifCol = document.createElement('div');
-		gifCol.className = 'col-md-6 d-flex justify-content-center';
+		gifCol.className = 'col-md-6 d-flex flex-column align-items-center justify-content-center';
 
 		section.gifs.forEach(src => {
 			const	gif = createCardGif(src, `How to Play ${section.title} GIF`);
