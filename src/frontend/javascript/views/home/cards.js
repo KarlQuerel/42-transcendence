@@ -378,8 +378,16 @@ const	Web =
 	badgeClass: 'text-bg-danger',
 	badgeText: 'MAJOR',
 	content:
-
-	'<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>'
+	`
+	<div class="row">
+	<div class="col-md-8">
+		<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>
+	</div>
+	<div class="col-md-4">
+		<img src="../../../assets/images/home/what_we_did/web/django_logo.png" alt="Django Logo" class="img-fluid rounded float-end">
+	</div>
+</div>`
+	// '<p>We used our best friend <a href="https://www.djangoproject.com/start/overview/" target="_blank">Django</a> as framework.</p>'
 	//  (() => {
 	// 	const	row = document.createElement('div');
 	// 	row.className = 'row';
