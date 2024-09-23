@@ -10,7 +10,6 @@
 	position: relative;
 	width: 50vh;
 	height: 15vh;
-	/* margin: 10px; */
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
@@ -71,7 +70,7 @@
 	transform: translate(-4px,-4px);
 	border: 1px solid var(--base-dark);
 	border-radius: 10px;
-	background-color: #a3c9db;
+	background-color: var(--base-light-blue);
 }
 .btn-second:focus-visibl
 {

@@ -41,9 +41,6 @@ from "./views/user/signup.js";
 import renderPrivacyPolicy
 from "./views/privacy_policy/privacy_policy.js";
 
-import renderTermsOfService
-from "./views/terms_of_service/terms_of_service.js";
-
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
@@ -63,11 +60,6 @@ const routes =
 	{
 		title: "Privacy Policy",
 		render: renderPrivacyPolicy
-	},
-	'/terms-of-service':
-	{
-		title: "Terms of Service",
-		render: renderTermsOfService
 	},
 	'/dashboard':
 	{
@@ -121,6 +113,11 @@ function normalizePath(path)
 	return path;
 }
 
+
+// TO DO KARL HERE : replace this variable with the actual token mechanism
+// check (next todo karl)
+export let	isSignedIn = false;
+
 /***			Router Function				***/
 function router()
 {
@@ -143,6 +140,14 @@ function router()
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
 
+	// TODO KARL change this logic when user is implemented
+	if (path === '/pong' && isSignedIn == false)
+	{
+		alert("You must be logged in to access the Pong game.");
+		window.location.href = '/sign-in';
+		return ;
+	}
+	
 	if (route)
 	{
 		document.title = route.title;
@@ -158,9 +163,12 @@ function router()
 		}
 
 			// Initialize or destroy particles based on the route
-			if (path !== '/pong') {
+			if (path !== '/pong')
+			{
 				initParticles();
-			} else {
+			}
+			else
+			{
 				destroyParticles();
 				if (DEBUG)
 					console.log('Particles effect disabled on /pong route');

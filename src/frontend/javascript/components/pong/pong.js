@@ -112,32 +112,46 @@ function createHowToPlayCard()
 	cardDiv.id = 'how-to-play-card';
 	cardDiv.className = 'card how-to-play-card';
 
-	const	cardBody = document.createElement('div');
-	cardBody.className = 'card-pong';
+	const	container = document.createElement('div');
+	container.className = 'container';
+
+	const	row = document.createElement('div');
+	row.className = 'row';
 
 	const	sections =
 	[
-		{ title: 'Left Player', gifs: ['../../../assets/images/pong/how_to_play/W.gif', '../../../assets/images/pong/how_to_play/S.gif'] },
-		{ title: 'Right Player', gifs: ['../../../assets/images/pong/how_to_play/UP.gif', '../../../assets/images/pong/how_to_play/DOWN.gif'] },
-		{ title: 'Pause', gifs: ['../../../assets/images/pong/how_to_play/ESC.gif', '../../../assets/images/pong/how_to_play/P.gif'] }
+		{
+			title: 'Left Player',
+			text: 'Press W or S to move',
+			gifs: ['../../../assets/images/pong/how_to_play/W.gif', '../../../assets/images/pong/how_to_play/S.gif']
+		},
+		{
+			title: 'Right Player',
+			text: 'Press the UP or DOWN arrows to move',
+			gifs: ['../../../assets/images/pong/how_to_play/UP.gif', '../../../assets/images/pong/how_to_play/DOWN.gif']
+		},
+		{
+			title: 'Pause',
+			text: 'Press ESC or P to pause',
+			gifs: ['../../../assets/images/pong/how_to_play/ESC.gif', '../../../assets/images/pong/how_to_play/P.gif']
+		}
 	];
 
-	// TODO FIX IT sttucture + positioning - dont change the css too much
-	sections.forEach(section => {
-		const	row = document.createElement('div');
-		row.className = 'row mb-4 align-items-center';
-
+	sections.forEach(section =>
+	{
 		const	textCol = document.createElement('div');
-		textCol.className = 'col-md-6 text-center';
+		textCol.className = 'col';
 		const	title = document.createElement('h6');
-		title.className = 'card-subtitle';
 		title.textContent = section.title;
+		const	text = document.createElement('p');
+		text.textContent = section.text;
 		textCol.appendChild(title);
+		textCol.appendChild(text);
 
 		const	gifCol = document.createElement('div');
-		gifCol.className = 'col-md-6 d-flex flex-column align-items-center justify-content-center';
-
-		section.gifs.forEach(src => {
+		gifCol.className = 'col d-flex justify-content-center';
+		section.gifs.forEach(src =>
+		{
 			const	gif = createCardGif(src, `How to Play ${section.title} GIF`);
 			gif.classList.add('img-fluid', 'how-to-play-gif');
 			gifCol.appendChild(gif);
@@ -145,13 +159,18 @@ function createHowToPlayCard()
 
 		row.appendChild(textCol);
 		row.appendChild(gifCol);
-		cardBody.appendChild(row);
+
+		const	rowBreak = document.createElement('div');
+		rowBreak.className = 'w-100';
+		row.appendChild(rowBreak);
 	});
 
-	cardDiv.appendChild(cardBody);
+	container.appendChild(row);
+	cardDiv.appendChild(container);
 
 	return cardDiv;
 }
+
 
 function createCardGif(src, alt)
 {

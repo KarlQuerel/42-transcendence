@@ -106,6 +106,7 @@ function login(username, password)
 		if (DEBUG)
 			console.log('Token refreshed:', newAccessToken);
 
+		
 		window.location.href = '/profile';
 		console.log('Success:', username, 'is now logged in');
 	})

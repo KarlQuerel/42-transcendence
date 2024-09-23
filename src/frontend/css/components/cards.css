@@ -100,3 +100,9 @@
 {
 	display: block;
 }
+
+/*	What We Did Card	*/
+.list-group-item
+{
+	background-color: var(--base-light-green);
+}
