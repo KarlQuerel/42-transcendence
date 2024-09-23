@@ -18,7 +18,7 @@ import string
 #     def handle(self, *args, **kwargs):
 #         for _ in range(10):
 #             Stats.objects.create(
-#                 nickname=''.join(random.choices(string.ascii_letters, k=8)),
+#                 username=''.join(random.choices(string.ascii_letters, k=8)),
 #                 nb_of_victories=random.randint(0, 100),
 #                 nb_of_defeats=random.randint(0, 100),
 #                 badge=random.randint(0, 4),
@@ -38,56 +38,56 @@ class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
 		predefined_data = [
 			{
-				'nickname': 'Karl',
+				'username': 'Karl',
 				'nb_of_victories': 2,
 				'nb_of_defeats': 5,
 				'games': [
-					{'opponentNickname': 'Clément', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-10'},
-					{'opponentNickname': 'Jess', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Clément', 'opponentScore': 10, 'myScore': 2, 'date': '2024-09-10'},
-					{'opponentNickname': 'Jess', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
-					{'opponentNickname': 'Carolina', 'opponentScore': 10, 'myScore': 4, 'date': '2024-09-11'},
-					{'opponentNickname': 'Carolina', 'opponentScore': 10, 'myScore': 8, 'date': '2024-09-11'},
-					{'opponentNickname': 'AI', 'opponentScore': 10, 'myScore': 9, 'date': '2024-09-11'},
+					{'opponentUsername': 'Clément', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-10'},
+					{'opponentUsername': 'Jess', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Clément', 'opponentScore': 10, 'myScore': 2, 'date': '2024-09-10'},
+					{'opponentUsername': 'Jess', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
+					{'opponentUsername': 'Carolina', 'opponentScore': 10, 'myScore': 4, 'date': '2024-09-11'},
+					{'opponentUsername': 'Carolina', 'opponentScore': 10, 'myScore': 8, 'date': '2024-09-11'},
+					{'opponentUsername': 'AI', 'opponentScore': 10, 'myScore': 9, 'date': '2024-09-11'},
 				]
 			},
 			{
-				'nickname': 'Clément',
+				'username': 'Clément',
 				'nb_of_victories': 3,
 				'nb_of_defeats': 2,
 				'games': [
-					{'opponentNickname': 'AI', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'AI', 'opponentScore': 10, 'myScore': 6, 'date': '2024-09-11'},
-					{'opponentNickname': 'Jess', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Karl', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Carolina', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
+					{'opponentUsername': 'AI', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'AI', 'opponentScore': 10, 'myScore': 6, 'date': '2024-09-11'},
+					{'opponentUsername': 'Jess', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Karl', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Carolina', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
 				]
 			},
 			{
-				'nickname': 'Jess',
+				'username': 'Jess',
 				'nb_of_victories': 2,
 				'nb_of_defeats': 1,
 				'games': [
-					{'opponentNickname': 'Clément', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Karl', 'opponentScore': 9, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Carolina', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
+					{'opponentUsername': 'Clément', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Karl', 'opponentScore': 9, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Carolina', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
 				]
 			},
 			{
-				'nickname': 'Carolina',
+				'username': 'Carolina',
 				'nb_of_victories': 10,
 				'nb_of_defeats': 0,
 				'games': [
-					{'opponentNickname': 'Karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Jess', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'AI', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Clément', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Jess', 'opponentScore': 4, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Karl', 'opponentScore': 1, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'AI', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Jess', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentNickname': 'Clément', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Jess', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'AI', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Clément', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Jess', 'opponentScore': 4, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Karl', 'opponentScore': 1, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'AI', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Jess', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'Clément', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
 				]
 			},
 		]
@@ -95,7 +95,7 @@ class Command(BaseCommand):
 		# Iterate over predefined data and create entries in the database
 		for user_data in predefined_data:
 			stats_entry = Stats.objects.create(
-				nickname=user_data['nickname'],
+				username=user_data['username'],
 				nb_of_victories=user_data['nb_of_victories'],
 				nb_of_defeats=user_data['nb_of_defeats'],
 			)
@@ -104,13 +104,38 @@ class Command(BaseCommand):
 		for game in user_data['games']:
 			GameHistory.objects.create(
 				stats=stats_entry, # Link to the Stats entry
-				opponentNickname=game['opponentNickname'],
+				opponentUsername=game['opponentUsername'],
 				opponentScore=game['opponentScore'],
 				myScore=game['myScore'],
 				date=game['date']
 			)
 
 		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined users'))
+
+		# for user_data in predefined_data:
+		# 	user, created = Stats.objects.get_or_create(username=user_data['username'])
+		# 	user.nb_of_victories = user_data['nb_of_victories']
+		# 	user.nb_of_defeats = user_data['nb_of_defeats']
+		# 	user.save()
+
+		# 	for game_data in user_data['games']:
+		# 		try:
+		# 			opponent = Stats.objects.get(username=game_data['opponentUsername'])
+		# 		except Stats.DoesNotExist:
+		# 			print(f"Opponent {game_data['opponentUsername']} does not exist. Skipping this game.")
+		# 			continue
+
+		# 		# Create GameHistory entry
+		# 		GameHistory.objects.create(
+		# 			stats=user,
+		# 			opponentUsername=game_data['opponentUsername'],
+		# 			opponentScore=game_data['opponentScore'],
+		# 			myScore=game_data['myScore'],
+		# 			date=game_data['date']
+		# 		)
+
+		# 	print(f"User {user.username} with games: {user_data['games']} saved successfully.")
+
 
 
 
