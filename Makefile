@@ -34,7 +34,8 @@ logs-database:
 	cd src && docker-compose logs -f database
 
 fill: #populate database
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py populate_db && python manage.py runserver"
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_db && python manage.py runserver"
+	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_db && python manage.py runserver"
 # docker exec -it Dashboard bash -c "python manage.py makemigrations"
 
 

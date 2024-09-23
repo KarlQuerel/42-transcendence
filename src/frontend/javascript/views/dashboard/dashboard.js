@@ -201,7 +201,7 @@ function loadDashboardData(userData, option)
 				i++;
 			}
 			//TODO: return error if we arrive here
-			console.log("The connected user's username does not match any username in the dashbaord database");
+			console.log("The connected user's username does not match any username in the dashboard database");
 		})
 		.catch(error =>
 		{

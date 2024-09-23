@@ -110,7 +110,7 @@ class Command(BaseCommand):
 				date=game['date']
 			)
 
-		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined users'))
+		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined game data'))
 
 		# for user_data in predefined_data:
 		# 	user, created = Stats.objects.get_or_create(username=user_data['username'])

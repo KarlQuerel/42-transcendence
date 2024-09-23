@@ -4,35 +4,62 @@ from faker import Faker
 import random
 import string
 
-# Generate a random username with 8 letters
-username = ''.join(random.choices(string.ascii_letters, k=8))
-nb_of_victories = random.randint(0, 100)
 
-fake = Faker()
-
-def generate_random_username(length=8):
-    return ''.join(random.choices(string.ascii_letters, k=length))
-
-# Generating a random number of friends between 1 and 10
-num_friends = random.randint(1, 10)
-friends_list = [generate_random_username() for _ in range(num_friends)]
-
-
+#********************************************
+#			ADD MANUALLY ENTERED USERS		#
+#********************************************
 
 class Command(BaseCommand):
-    help = 'Populates the database with random user and User data'
-
     def handle(self, *args, **kwargs):
-        for _ in range(10):
-            CustomUser.objects.create(
-                username=''.join(random.choices(string.ascii_letters, k=8)),
-                display_name=''.join(random.choices(string.ascii_letters, k=8)),
-                password=''.join(random.choices(string.ascii_letters, k=8)),
-                email=''.join(random.choices(string.ascii_letters, k=8)),
-                online=random.choice([True, False]),
-                friends=friends_list,
-            )
-        self.stdout.write(self.style.SUCCESS('Successfully populated the database'))
+        predefined_data = [
+        {
+            'username': 'Karl',
+            'password1': 'password123',
+            'password2': 'password123',
+            'email': 'karl@email.com',
+            'date_of_birth': '1992-09-29',
+            'first_name': 'Karl',
+            'last_name': 'Querel',
+        },
+        {
+            'username': 'Clément',
+            'password1': 'password123',
+            'password2': 'password123',
+            'email': 'clément@email.com',
+            'date_of_birth': '1997-01-28',
+            'first_name': 'Clément',
+            'last_name': 'Bernazeau',
+        },
+        {
+            'username': 'Carolina',
+            'password1': 'password123',
+            'password2': 'password123',
+            'email': 'carolina@email.com',
+            'date_of_birth': '1997-07-04',
+            'first_name': 'Carolina',
+            'last_name': 'Somarriba',
+        },
+        {
+            'username': 'Jess',
+            'password1': 'password123',
+            'password2': 'password123',
+            'email': 'jess@email.com',
+            'date_of_birth': '1994-05-13',
+            'first_name': 'Jessica',
+            'last_name': 'Rouillon',
+        },
+    ]
 
-#run "python manage.py populate_db" before "python manage.py runserver"
+        # Iterate over predefined data and create entries in the database
+        for user_data in predefined_data:
+            user_entry = CustomUser.objects.create(
+				username=user_data['username'],
+				password1=user_data['password1'],
+                password2=user_data['password2'],
+                email=user_data['email'],
+                date_of_birth=user_data['date_of_birth'],
+                first_name=user_data['first_name'],
+                last_name=user_data['last_name'],
+			)
 
+        self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined user data'))
