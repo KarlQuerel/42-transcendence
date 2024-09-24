@@ -1,9 +1,5 @@
 from django.core.management.base import BaseCommand
-from api.models import CustomUser
-from faker import Faker
-import random
-import string
-
+from api_user.models import CustomUser
 
 #********************************************
 #			ADD MANUALLY ENTERED USERS		#

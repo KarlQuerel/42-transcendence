@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
-from api.models import CustomUser
+# from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 # from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -93,7 +93,7 @@ def currentlyLoggedInUser(request):
         if not user.is_authenticated:
             return Response({'error': 'User not authenticated'}, status=401)
         
-        return Response({
+        return Response({'Authentication success': True,
 			'first_name': user.first_name,
 			'last_name': user.last_name,
             'username': user.username,

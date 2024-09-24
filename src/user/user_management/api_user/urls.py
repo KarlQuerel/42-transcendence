@@ -1,6 +1,5 @@
 from django.urls import path, include
 from . import views
-# from api.views import CustomUserAPIView
 
 urlpatterns = [
 	path('addUser/', views.addUser, name='add-user'),

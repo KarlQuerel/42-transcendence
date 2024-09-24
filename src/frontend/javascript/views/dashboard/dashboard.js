@@ -154,63 +154,90 @@ a promise that is still pending when we pass statsData into evenlisteners and th
 const ALL_STATS = 0;
 const USER_STATS = 1;
 
-function loadDashboardData(userData, option)
-{
-	if (option == ALL_STATS)
-	{
-		return fetch('/api/dashboard/getData/')
-		.then(response =>
-		{
-			if (!response.ok)
-				throw new Error('Error: network response');
-			return response.json();
-		})
-		.then(allStats =>
-		{
-			// if (DEBUG)
-				console.log("allStats = ", allStats);
-			return allStats;
-		})
-		.catch(error =>
-		{
-			console.error('Error: fetch allStats', error);
-			throw error; // Re-throw the error
-			//CHECK: if allStats is undefined : try/catch that will stop everything
-		});
-	}
-	else if (option == USER_STATS)
-	{
-		return fetch('/api/dashboard/getData/')
-		.then(response =>
-		{
-			if (!response.ok)
-				throw new Error('Error: network response');
-			return response.json();
-		})
-		.then(allStats =>
-		{
-			let i = 0;
-			while (i < allStats.length)
-			{
-				if (userData.username === allStats[i].username) // if userData.username == the current allStats entry's username
-				{
-					// if (DEBUG)
-						console.log("userStats = ", allStats[i]);
-					return allStats[i]; // Return the matching user's stats
-				}
-				i++;
-			}
-			//TODO: return error if we arrive here
-			console.log("The connected user's username does not match any username in the dashboard database");
-		})
-		.catch(error =>
-		{
-			console.error('Error: fetch allStats', error);
-			throw error; // Re-throw the error
-			//CHECK: if allStats is undefined : try/catch that will stop everything
-		});
-	}
+async function loadDashboardData(userData, option) {
+    try {
+        const allStats = await apiRequest('/api/dashboard/getData/', {
+            method: 'GET',
+        });
+
+        if (option == ALL_STATS) {
+            console.log("allStats = ", allStats);
+            return allStats;
+        } else if (option == USER_STATS) {
+            let i = 0;
+            while (i < allStats.length) {
+                if (userData.username === allStats[i].username) {
+                    console.log("userStats = ", allStats[i]);
+                    return allStats[i]; // Return the matching user's stats
+                }
+                i++;
+            }
+            console.log("The connected user's username does not match any username in the dashboard database");
+        }
+    } catch (error) {
+        console.error('Error: fetch allStats', error);
+        throw error; // Re-throw the error
+    }
 }
+
+// function loadDashboardData(userData, option)
+// {
+// 	if (option == ALL_STATS)
+// 	{
+// 		return fetch('/api/dashboard/getData/')
+// 		.then(response =>
+// 		{
+// 			if (!response.ok)
+// 				throw new Error('Error: network response');
+// 			return response.json();
+// 		})
+// 		.then(allStats =>
+// 		{
+// 			// if (DEBUG)
+// 				console.log("allStats = ", allStats);
+// 			return allStats;
+// 		})
+// 		.catch(error =>
+// 		{
+// 			console.error('Error: fetch allStats', error);
+// 			throw error; // Re-throw the error
+// 			//CHECK: if allStats is undefined : try/catch that will stop everything
+// 		});
+// 	}
+// 	else if (option == USER_STATS)
+// 	{
+// 		return fetch('/api/dashboard/getData/')
+// 		.then(response =>
+// 		{
+// 			if (!response.ok)
+// 				throw new Error('Error: network response');
+// 			return response.json();
+// 		})
+// 		.then(allStats =>
+// 		{
+// 			let i = 0;
+// 			while (i < allStats.length)
+// 			{
+// 				if (userData.username === allStats[i].username) // if userData.username == the current allStats entry's username
+// 				{
+// 					// if (DEBUG)
+// 						console.log("userStats = ", allStats[i]);
+// 					return allStats[i]; // Return the matching user's stats
+// 				}
+// 				i++;
+// 			}
+// 			//TODO: return error if we arrive here
+// 			console.log("The connected user's username does not match any username in the dashboard database");
+// 		})
+// 		.catch(error =>
+// 		{
+// 			console.error('Error: fetch allStats', error);
+// 			throw error; // Re-throw the error
+// 			//CHECK: if allStats is undefined : try/catch that will stop everything
+// 		});
+// 	}
+// }
+
 
 async function loadUserManagementData()
 {

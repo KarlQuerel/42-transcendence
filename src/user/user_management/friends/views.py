@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from api.models import CustomUser
+from api_user.models import CustomUser
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 

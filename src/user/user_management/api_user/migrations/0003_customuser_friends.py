@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('api', '0002_customuser_password1_customuser_password2'),
+        ('api_user', '0002_customuser_password1_customuser_password2'),
     ]
 
     operations = [

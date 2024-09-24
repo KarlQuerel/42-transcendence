@@ -17,7 +17,12 @@ class CustomUser(AbstractUser):
     # Override AbstractUser existing fields
     groups = None
     user_permissions = None
+    # pour lier avec dashboard
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return self.username
 
     # groups = models.ManyToManyField(
     #     'auth.Group',

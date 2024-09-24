@@ -1,5 +1,5 @@
 from django.db import models
-from api.models import CustomUser
+from api_user.models import CustomUser
 #a recuperer sur phind
 class FriendRequest(models.Model):
 	sender = models.ForeignKey(CustomUser, related_name='friend_request_sent', on_delete=models.CASCADE)
