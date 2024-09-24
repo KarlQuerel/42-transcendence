@@ -19,9 +19,15 @@ from django.urls import path
 from django.urls import include
 from django_prometheus import exports
 
-urlpatterns = [
+""" urlpatterns = [
 	path('admin/', admin.site.urls),
 	path('', include('api.urls')),
 	path('metrics/', exports.ExportToDjangoView, name='metrics')
 	# path('', include('django_prometheus.urls'))
+]
+ """
+
+urlpatterns = [
+	path('api/', include('api.urls')),
+	path('api/dashboard/', include('api.urls')), #"dashboard" : dans nginx file
 ]

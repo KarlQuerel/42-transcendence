@@ -1,4 +1,9 @@
 /***********************************************\
+-				GLOBAL VARIABLES				-
+\***********************************************/
+export	const	DEBUG = true;
+
+/***********************************************\
 -				IMPORTING SCRIPTS				-
 \***********************************************/
 
@@ -18,8 +23,9 @@ from "./components/pong/pong.js";
 import { renderDashboard, initializeDashboard }
 from "./views/dashboard/dashboard.js";
 
-import { renderTheTeam }
-from "./views/the_team/the_team.js";
+/***			Particles					***/
+import { initParticles, destroyParticles }
+from "./components/particles/particles.js"
 
 /***			User						***/
 import renderSignIn
@@ -28,15 +34,12 @@ from "./views/user/signin.js";
 import renderProfile, { initializeProfile }
 from "./views/user/profile.js";
 
-import renderLogin, { initializeLogin }
-from "./views/user/login.js";
+import renderSignUp, { initializeSignUp }
+from "./views/user/signup.js";
 
 /***			Footer						***/
 import renderPrivacyPolicy
 from "./views/privacy_policy/privacy_policy.js";
-
-import renderTermsOfService
-from "./views/terms_of_service/terms_of_service.js";
 
 /***********************************************\
 -				DEFINING ROUTES					-
@@ -58,21 +61,11 @@ const routes =
 		title: "Privacy Policy",
 		render: renderPrivacyPolicy
 	},
-	'/terms-of-service':
-	{
-		title: "Terms of Service",
-		render: renderTermsOfService
-	},
 	'/dashboard':
 	{
 		title: "Dashboard",
 		render: renderDashboard,
 		init: initializeDashboard
-	},
-	'/team':
-	{
-		title: "The Team",
-		render: renderTheTeam
 	},
 	'/pong':
 	{
@@ -92,11 +85,11 @@ const routes =
 		title: "Page Not Found",
 		render: renderError404
 	},
-	'/login':
+	'/sign-up':
 	{
-		title: "Log In",
-		render: renderLogin,
-		init: initializeLogin
+		title: "Sign Up",
+		render: renderSignUp,
+		init: initializeSignUp
 	},
 	'/sign-in':
 	{
@@ -120,6 +113,11 @@ function normalizePath(path)
 	return path;
 }
 
+
+// TO DO KARL HERE : replace this variable with the actual token mechanism
+// check (next todo karl)
+export let	isSignedIn = false;
+
 /***			Router Function				***/
 function router()
 {
@@ -132,13 +130,24 @@ function router()
 	const previousRoute = routes[currentPath]
 	const route = routes[path] || routes['/404'];
 
-	console.log('Current path:', path);
-	console.log('Route:', route);
+	if (DEBUG)
+	{
+		console.log('Current path:', path);
+		console.log('Route:', route);	
+	}
 
 	//	Clear previous route if necessary
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
 
+	// TODO KARL change this logic when user is implemented
+	if (path === '/pong' && isSignedIn == false)
+	{
+		alert("You must be logged in to access the Pong game.");
+		window.location.href = '/sign-in';
+		return ;
+	}
+	
 	if (route)
 	{
 		document.title = route.title;
@@ -153,11 +162,27 @@ function router()
 			appElement.appendChild(renderedContent);
 		}
 
+			// Initialize or destroy particles based on the route
+			if (path !== '/pong')
+			{
+				initParticles();
+			}
+			else
+			{
+				destroyParticles();
+				if (DEBUG)
+					console.log('Particles effect disabled on /pong route');
+			}
+
 		if (route.init)
 		{
-			console.log('Initializing route:', path);
+			if (DEBUG)
+				console.log('Initializing route:', path);
 			route.init();
 		}
+
+		// Scrolling to the top of the page
+		window.scroll(0, 0);
 	}
 	else
 	{
@@ -190,7 +215,8 @@ document.addEventListener("DOMContentLoaded", () =>
 		{
 			event.preventDefault();
 			const href = link.getAttribute('href');
-			console.log(`Navigating to ${href}`);
+			if (DEBUG)
+				console.log(`Navigating to ${href}`);
 			navigateTo(href);
 		}
 	});

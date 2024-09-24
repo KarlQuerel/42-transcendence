@@ -2,12 +2,12 @@ from rest_framework import serializers
 from api.models import CustomUser
 import base64
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class CustomUserRegistrationSerializer(serializers.ModelSerializer):
     # avatar_data = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password', 'email', 'date_of_birth', 'first_name', 'last_name']
 
 
     # def get_avatar_data(self, obj):

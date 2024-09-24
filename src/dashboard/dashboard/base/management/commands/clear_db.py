@@ -11,5 +11,6 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS('Successfully deleted all users and users'))
 
-
+#access the running dashboard container :
+#docker exec -it Dashboard bash
 #run "python manage.py clear_db" before "python manage.py runserver"

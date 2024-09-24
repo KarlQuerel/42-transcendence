@@ -1,0 +1,26 @@
+/************************************************
+					WINNER
+***********************************************/
+#winning-message
+{
+	background-color: black;
+	border: 3px solid var(----base-green);
+	color: var(----base-green);
+	font-family: 'Press Start 2P', cursive;
+	font-size: 36px;
+	text-align: center;
+	padding: 20px;
+	margin: 0;
+	width: fit-content;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 10;
+	display: none;
+}
+
+#winning-message.show
+{
+	display: block;
+}
