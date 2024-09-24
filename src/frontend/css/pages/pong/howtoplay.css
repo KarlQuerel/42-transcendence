@@ -1,0 +1,54 @@
+/************************************************
+					HOW TO PLAY
+***********************************************/
+.btn-howtoplay, .btn-howtoplay:active
+{
+	position: absolute;
+	width: 20vh;
+	height: auto;
+	padding: 1px;
+	top: auto;
+	left: 0%;
+	top: 10%;
+	border-radius: 15px;
+	border: 2px solid var(--base-green);
+}
+
+.how-to-play-card
+{
+	position: absolute;
+	padding: 10px;
+	top: 22%;
+	left: 0%;
+	width: 50vh;
+	z-index: 10000;
+	background-color: rgba(105, 105, 105, 0.437);
+	overflow: hidden;
+	max-height: 0;
+	opacity: 0;
+	transition: max-height 0.4s ease-out, opacity 0.4s ease-out;
+	border-radius: 15px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	color: var(--base-white);
+}
+
+.how-to-play-card.show
+{
+	max-height: 40vh;
+	opacity: 1;
+}
+
+.how-to-play-card .how-to-play-gif
+{
+	max-width: 100%;
+	display: block;
+	margin: auto;
+	/* TODO KARL FIX GIF HERE */
+}
+
+.text-center
+{
+	text-align: center;
+}

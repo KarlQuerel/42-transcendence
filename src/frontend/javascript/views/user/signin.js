@@ -18,6 +18,7 @@ export default function renderSignIn()
 	emailInput.setAttribute('id', 'email');
 	emailInput.setAttribute('name', 'email');
 	emailInput.setAttribute('placeholder', 'Email or Username');
+	emailInput.classList.add('form-input');
 
 	// Create password input
 	const passwordInput = document.createElement('input');
@@ -25,17 +26,20 @@ export default function renderSignIn()
 	passwordInput.setAttribute('id', 'password');
 	passwordInput.setAttribute('name', 'password');
 	passwordInput.setAttribute('placeholder', 'Password');
+	passwordInput.classList.add('form-input');
 
 	// Create log in button
 	const loginButton = document.createElement('button');
 	loginButton.setAttribute('type', 'submit');
 	loginButton.textContent = 'Log In';
+	loginButton.classList.add('form-input');
 
 	// Create sign up button
 	const signUpButton = document.createElement('button');
 	signUpButton.setAttribute('type', 'button');
 	signUpButton.setAttribute('id', 'sign-up-button');
 	signUpButton.textContent = 'Sign Up';
+	signUpButton.classList.add('form-input');
 
 	// Append the inputs and buttons to the form
 	form.appendChild(emailInput);
@@ -51,11 +55,11 @@ export default function renderSignIn()
 	});
 
 	// Add event listener to the Log In button to handle login
-    form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the default form submission
+	form.addEventListener('submit', (event) => {
+		event.preventDefault(); // Prevent the default form submission
 
-        const username = emailInput.value;
-        const password = passwordInput.value;
+		const username = emailInput.value;
+		const password = passwordInput.value;
 
 
         if (DEBUG)
@@ -77,23 +81,23 @@ export default function renderSignIn()
 
 function login(username, password)
 {
-    fetch('/api/users/signInUser/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access)
+	fetch('/api/users/signInUser/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ username, password }),
+	})
+	.then(response => response.json())
+	.then(data => {
+		if (data.access)
 		{
-            // Store tokens in local storage
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
+			// Store tokens in local storage
+			localStorage.setItem('access_token', data.access);
+			localStorage.setItem('refresh_token', data.refresh);
 
-            return refreshToken();
-        }
+			return refreshToken();
+		}
 		else
             throw new Error('Login failed: No access token received');
     })

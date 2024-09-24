@@ -8,17 +8,16 @@
 	border: 2px solid var(--base-green);
 	background-color: var(--base-dark);
 	position: relative;
-	width: auto;
-	height: auto;
-	margin: 20px;
+	width: 50vh;
+	height: 15vh;
 	text-decoration: none;
 	text-align: center;
 	text-transform: uppercase;
 	color: var(--base-white);
-	transition: var(--animation-speed);
+	transition: 0.4s;
 	border-radius: 5px;
-	padding: 60px 60px;
 	font-size: 1.5rem;
+	z-index: 1;
 }
 
 .btn-home:hover
@@ -28,7 +27,7 @@
 	background: var(--base-green) url('../../assets/images/buttons/pixel_button_green.png');
 	transition-delay: 0.4s;
 	background-size: 220px;
-	animation: animate var(--animation-speed) steps(8) forwards;
+	animation: animate 0.4s steps(8) forwards;
 }
 
 @keyframes animate
@@ -49,8 +48,7 @@
 	outline: 0;
 	grid-gap: 8px;
 	align-items: center;
-	/* background: 0 0; */
-	border: 1px solid #000;
+	border: 1px solid var(--base-dark);
 	border-radius: 10px;
 	cursor: pointer;
 	display: inline-flex;
@@ -68,11 +66,11 @@
 }
 .btn-second:hover
 {
-	box-shadow: 4px 4px 0 #000;
+	box-shadow: 4px 4px 0 var(--base-dark);
 	transform: translate(-4px,-4px);
-	border: 1px solid #000;
+	border: 1px solid var(--base-dark);
 	border-radius: 10px;
-	background-color: #a3c9db;
+	background-color: var(--base-light-blue);
 }
 .btn-second:focus-visibl
 {
