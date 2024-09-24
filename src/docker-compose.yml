@@ -51,8 +51,8 @@ services:
   nginx-exporter:
     container_name: Nginx_Exporter
     image: nginx/nginx-prometheus-exporter:latest
-    ports:
-      - "9113:9113"
+    expose:
+      - "9113"
     command:
       - -nginx.scrape-uri
       - http://nginx:8080/stub_status
@@ -70,8 +70,8 @@ services:
     image: quay.io/prometheuscommunity/postgres-exporter
     environment:
       DATA_SOURCE_NAME: "postgresql://postgres:pong_password@database:5432/pong_database?sslmode=disable"
-    ports:
-      - "9187:9187"
+    expose:
+      - "9187"
     networks:
       - transcendance
     depends_on:
@@ -83,8 +83,8 @@ services:
     user: root
     container_name: Node_Exporter
     image: prom/node-exporter:latest
-    ports:
-      - "9200:9100"
+    expose:
+      - "9100"
     networks:
       - transcendance
     restart: unless-stopped
@@ -106,8 +106,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - transcendance
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     env_file:
       - .env
 
@@ -118,7 +118,7 @@ services:
       context: ./nginx/
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "4430:443"
     volumes:
       - ./frontend:/usr/share/nginx/html
     networks:
@@ -145,10 +145,8 @@ services:
       python manage.py migrate &&
       gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
-      - "8080"
-      - "5432"
-    ports:
-      - "8200:8200"
+      - "8200"
+      - "5432" #ne mettre qu'un seul port?
     networks:
       - transcendance
     depends_on:
@@ -172,10 +170,8 @@ services:
       python manage.py migrate &&
       gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
-      - "8080"
-      - "5432"
-    ports:
-      - "8100:8100"
+      - "8100"
+      - "5432" #ne mettre qu'un seul port?
     networks:
       - transcendance
     depends_on:
@@ -194,10 +190,17 @@ volumes:
 
   prometheus_data:
     driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './prometheus/'
 
   grafana_data:
     driver: local
-
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './grafana/'
   user:
     driver: local
     driver_opts:

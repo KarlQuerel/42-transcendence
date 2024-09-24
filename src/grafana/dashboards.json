@@ -303,8 +303,8 @@
 	  "list": []
 	},
 	"time": {
-	  "from": "2024-09-20T11:40:01.561Z",
-	  "to": "2024-09-20T11:51:45.643Z"
+	  "from": "now-5m",
+	  "to": "now"
 	},
 	"timepicker": {},
 	"timezone": "browser",
