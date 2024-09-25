@@ -33,28 +33,94 @@
 
 #singleplayer-button .menu-gif
 {
-	width: 50vh;
+	width: 55vh;
 	height: auto;
+	top : 78%;
 }
 
 #twoplayer-button .menu-gif
 {
+	width: 25vh;
+	height: auto;
+	top : 63%;
+}
+
+#tournament-button .menu-gif
+{
 	width: 30vh;
 	height: auto;
+	top : 40%;
+}
+
+.tournament-gif-left
+{
+	left: 20%;
+	animation: moveLeft 2s ease-in-out infinite alternate;
+}
+
+.tournament-gif-right
+{
+	right: 20%;
+	animation: moveRight 2s ease-in-out infinite alternate;
+}
+
+@keyframes moveLeft
+{
+	0%
+	{
+		transform: translateX(0);
+	}
+	100%
+	{
+		transform: translateX(-50%);
+	}
+}
+
+@keyframes moveRight
+{
+	0%
+	{
+		transform: translateX(0);
+	}
+	100%
+	{
+		transform: translateX(30%);
+	}
+}
+
+#tournament-button
+{
+	width: 80vh;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	position: relative;
+	padding-bottom: 17.5vh;
 }
 
 .menu-buttons-container
 {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	align-items: center;
-	column-gap: 20px;
+	row-gap: 2vh;
+}
+
+.row-container
+{
+	display: flex;
+	flex-direction: row;
+	column-gap: 2vh;
+	justify-content: center;
+	width: 80vh;
 }
 
 .menu-button
 {
 	width: 35%;
-	height: 50vh;
+	height: 40vh;
 	padding: 5%;
 	font-family: 'Press Start 2P', cursive;
 	font-size: 24px;
@@ -79,6 +145,19 @@
 	color: var(--base-dark);
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 	filter: contrast(1.1);
+}
+
+#tournament-button:hover
+{
+	background-color: var(--base-green);
+	color: var(--base-dark);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	filter: contrast(1.1);
+}
+
+#tournament-button:hover .menu-gif
+{
+	display: block;
 }
 
 .menu-button:hover .menu-gif

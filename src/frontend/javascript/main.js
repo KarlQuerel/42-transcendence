@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = false;
+export	const	DEBUG = true;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
@@ -116,7 +116,7 @@ function normalizePath(path)
 
 // TO DO KARL HERE : replace this variable with the actual token mechanism
 // check (next todo karl)
-export let	isSignedIn = false;
+export let	isSignedIn = true;
 
 /***			Router Function				***/
 function router()

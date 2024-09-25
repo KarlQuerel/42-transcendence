@@ -58,13 +58,23 @@ function createOverlay()
 	const	menuButtonsContainer = document.createElement('div');
 	menuButtonsContainer.className = 'menu-buttons-container';
 
+	// Container for the first two buttons (row)
+	const	rowContainer = document.createElement('div');
+	rowContainer.className = 'row-container';
+
 	const	singlePlayerButton = createMenuButton('singleplayer-button', 'Single Player', '../../../assets/images/pong/menu/single_player.gif');
 	const	twoPlayerButton = createMenuButton('twoplayer-button', 'Two Players', '../../../assets/images/pong/menu/two_players.gif');
+	const	tournamentButton = createTournamentButton();
 	const	howToPlayButton = createHowToPlayButton();
 	const	howToPlayCard = createHowToPlayCard();
 
-	menuButtonsContainer.appendChild(singlePlayerButton);
-	menuButtonsContainer.appendChild(twoPlayerButton);
+	// Append the first two buttons to the row container
+	rowContainer.appendChild(singlePlayerButton);
+	rowContainer.appendChild(twoPlayerButton);
+
+	// Append the row container and the tournament button to the main container
+	menuButtonsContainer.appendChild(rowContainer);
+	menuButtonsContainer.appendChild(tournamentButton);
 	menuButtonsContainer.appendChild(howToPlayButton);
 	menuButtonsContainer.appendChild(howToPlayCard);
 
@@ -77,7 +87,7 @@ function createMenuButton(id, text, gifSrc)
 {
 	const	button = document.createElement('button');
 	button.id = id;
-	button.className = 'menu-button';
+	button.className = 'menu-button btn';
 	button.textContent = text;
 
 	const	gif = document.createElement('img');
@@ -86,6 +96,29 @@ function createMenuButton(id, text, gifSrc)
 	gif.className = 'menu-gif';
 
 	button.appendChild(gif);
+	return button;
+}
+
+function createTournamentButton()
+{
+	const	button = document.createElement('button');
+	button.id = 'tournament-button';
+	button.className = 'menu-button btn';
+	button.textContent = 'Tournament';
+
+	const	gif1 = document.createElement('img');
+	gif1.src = '../../../assets/images/pong/menu/tournament_blue.gif';
+	gif1.alt = 'Tournament GIF 1';
+	gif1.className = 'menu-gif tournament-gif-left';
+
+	const	gif2 = document.createElement('img');
+	gif2.src = '../../../assets/images/pong/menu/tournament_red.gif';
+	gif2.alt = 'Tournament GIF 2';
+	gif2.className = 'menu-gif tournament-gif-right';
+
+	button.appendChild(gif1);
+	button.appendChild(gif2);
+	
 	return button;
 }
 
@@ -295,6 +328,7 @@ export function initializePong()
 		const	rematchButton = document.getElementById('rematch-button');
 		const	singleplayerButton = document.getElementById('singleplayer-button');
 		const	twoplayerButton = document.getElementById('twoplayer-button');
+		const	tournamentButton = document.getElementById('tournament-button');
 		const	menuOverlay = document.getElementById('menu-overlay');
 
 		if (!canvas)
@@ -303,7 +337,7 @@ export function initializePong()
 			return;
 		}
 
-		if (!singleplayerButton || !twoplayerButton)
+		if (!singleplayerButton || !twoplayerButton || !tournamentButton)
 		{
 			console.error('Menu buttons not found!');
 			return ;
@@ -318,6 +352,13 @@ export function initializePong()
 		twoplayerButton.addEventListener('click', () =>
 		{
 			AI_present = false;
+			startGame(menuOverlay);
+		})
+
+		tournamentButton.addEventListener('click', () =>
+		{
+			AI_present = false;
+			// TODO + input form with get name + launch tournament
 			startGame(menuOverlay);
 		})
 
