@@ -33,6 +33,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
 	'127.0.0.1',
 	'localhost',
+	'profile',
 ]
 
 
@@ -45,8 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework_simplejwt',
+	'django_prometheus',
     'rest_framework',
     'api_user',
 	'friends',
@@ -93,6 +94,7 @@ CHANNEL_LAYERS = {
 
 
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -100,6 +102,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
+
 ]
 
 ROOT_URLCONF = 'user_management_database.urls'

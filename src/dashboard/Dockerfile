@@ -39,7 +39,6 @@ RUN chmod -R 777 /app
 
 # Voir avec les autres quel port
 EXPOSE 8100
-EXPOSE 5432
 
 # Define environment variable
 ENV PYTHONUNBUFFERED=1
