@@ -774,7 +774,7 @@ function moveAiPaddle()
 /************************** Dashboard django database*******************************/
 /***********************************************************************************/
 
-// import { sendGameDataToDjango } from '../sendGameDataToDjango.js';
+// import { sendGameDataToDjango } from './sendGameDataToDjango.js'; 
 
 /***********************************************\
 -				GAME STATUS						-

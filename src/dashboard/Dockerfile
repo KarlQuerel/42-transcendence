@@ -34,6 +34,7 @@ RUN chmod 777 /tmp/init_database.sh
 
 # Copy the rest of the application code
 COPY dashboard/dashboard/ /app
+COPY ../user/user_management/api_user /app/api_user
 RUN chmod -R 777 /app
 
 # Voir avec les autres quel port

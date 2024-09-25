@@ -1,17 +1,17 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = true;
+export	const	DEBUG = false;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
 \***********************************************/
 
-/***			Page Not Found				***/
+/***			  Page Not Found		 	 ***/
 import renderError404
 from "./views/error_404/error_404.js";
 
-/***			Nav Bar						***/
+/***			    Nav Bar					 ***/
 import renderHome
 from "./views/home/home.js";
 
@@ -31,7 +31,7 @@ from "./components/particles/particles.js"
 import renderSignIn
 from "./views/user/signin.js";
 
-import renderProfile, { initializeProfile }
+import renderProfile
 from "./views/user/profile.js";
 
 import renderSignUp, { initializeSignUp }
@@ -78,7 +78,7 @@ const routes =
 	{
 		title: "My Profile",
 		render: renderProfile,
-		init: initializeProfile
+		// init: initializeProfile
 	},
 	'/404':
 	{

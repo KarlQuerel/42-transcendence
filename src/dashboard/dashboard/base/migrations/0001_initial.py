@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='Stats',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nickname', models.CharField(max_length=200)),
+                ('username', models.CharField(max_length=200)),
                 ('nb_of_victories', models.IntegerField()),
                 ('nb_of_defeats', models.IntegerField()),
                 ('badge', models.IntegerField()),
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name='GameHistory',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('opponentNickname', models.CharField(max_length=200)),
+                ('opponentUsername', models.CharField(max_length=200)),
                 ('opponentScore', models.IntegerField()),
                 ('myScore', models.IntegerField()),
                 ('date', models.DateTimeField(blank=True, null=True)),

@@ -27,7 +27,6 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('username', models.CharField(max_length=12, unique=True)),
-                # ('display_name', models.CharField(max_length=12)),
                 ('email', models.EmailField(max_length=254, unique=True)),
                 ('date_of_birth', models.DateField(blank=True, null=True)),
                 # ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='customuser_set', to='auth.group', verbose_name='groups')),

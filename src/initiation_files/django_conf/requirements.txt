@@ -5,5 +5,10 @@ Pillow>=8.0.0
 python-dotenv
 djangorestframework-simplejwt>=5.0.0
 gunicorn==22.0.0
+<<<<<<< HEAD
 django-prometheus==2.3.1
+=======
+pytest
+pytest-django
+>>>>>>> main
 faker==9.8.1 #to populate database with fake data for tests

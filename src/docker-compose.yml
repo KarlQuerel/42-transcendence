@@ -131,6 +131,7 @@ services:
     user: root
     volumes:
       - user:/app/
+      - ./user/user_management/api_user:/app/api_user
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -155,6 +156,7 @@ services:
     container_name: Dashboard
     volumes:
       - dashboard:/app/
+      - ./user/user_management/api_user:/app/api_user
     build:
       context: .
       dockerfile: dashboard/Dockerfile
@@ -171,6 +173,7 @@ services:
       - transcendance
     depends_on:
       - database
+      - profile
     env_file:
       - .env
 
