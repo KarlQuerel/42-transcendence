@@ -113,7 +113,7 @@
 			"fullMetaSearch": false,
 			"includeNullMetadata": true,
 			"instant": false,
-			"legendFormat": "__auto",
+			"legendFormat": "Time spent reading data file blocks by backends in this database, in milliseconds",
 			"range": true,
 			"refId": "A",
 			"useBackend": false
@@ -214,7 +214,7 @@
 			"fullMetaSearch": false,
 			"includeNullMetadata": true,
 			"instant": false,
-			"legendFormat": "__auto",
+			"legendFormat": "Nginx HTTP Requests Total",
 			"range": true,
 			"refId": "A",
 			"useBackend": false
@@ -286,7 +286,7 @@
 			"fullMetaSearch": false,
 			"includeNullMetadata": true,
 			"instant": false,
-			"legendFormat": "__auto",
+			"legendFormat": "{{job}}: \"status={{status}}\"",
 			"range": true,
 			"refId": "A",
 			"useBackend": false

@@ -9,8 +9,8 @@ RUN apt-get update -y && \
 		-newkey rsa:2048 \
 		-nodes \
 		-days 365 \
-		-out /etc/nginx/ssl/inception.crt \
-		-keyout /etc/nginx/ssl/inception.key \
+		-out /etc/nginx/ssl/nginx.crt \
+		-keyout /etc/nginx/ssl/nginx.key \
 		-subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=transcendance.42.fr/UID=transcendance" && \
 	mkdir -p /var/run/nginx
 

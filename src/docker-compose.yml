@@ -11,8 +11,7 @@ services:
     depends_on:
       - nginx-exporter
       - postgres-exporter
-      - profile
-      - dashboard
+      - nginx
     restart: unless-stopped
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -36,12 +35,19 @@ services:
       - prometheus
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3000:443"
+    command: >
+      - apk update
+      - apk upgrade
+      - apk add openssl
+      - mkdir /etc/grafana/ssl
+      - openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/grafana/ssl/grafana.key -out /etc/grafana/ssl/grafana.crt -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=transcendance.42.fr/UID=transcendance"
     volumes:
       - grafana_data:/grafana
       - ./grafana/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
       - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
       - ./grafana/dashboards.json:/var/lib/grafana/dashboards/dashboards.json
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
@@ -55,7 +61,7 @@ services:
       - "9113"
     command:
       - -nginx.scrape-uri
-      - http://nginx:8080/stub_status
+      - https://nginx:443/stub_status
     networks:
       - transcendance
     depends_on:
@@ -146,7 +152,6 @@ services:
       gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
       - "8200"
-      - "5432" #ne mettre qu'un seul port?
     networks:
       - transcendance
     depends_on:
@@ -171,7 +176,6 @@ services:
       gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
       - "8100"
-      - "5432" #ne mettre qu'un seul port?
     networks:
       - transcendance
     depends_on:
