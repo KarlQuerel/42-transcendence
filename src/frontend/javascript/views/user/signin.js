@@ -1,14 +1,16 @@
 /***********************************************\
--				RENDERING						-
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
+/***********************************************\
+*                   RENDERING                   *
 \***********************************************/
 export default function renderSignIn()
 {
 	// Create the form element
 	const form = document.createElement('form');
 	form.setAttribute('id', 'sign-in-form');
-	// TODO: JESS peut etre passer de GET a POST avec ca:
-	// form.setAttribute('method', 'POST'); // Change the method to POST
-
 
 	// Create email/username input
 	const emailInput = document.createElement('input');
@@ -16,6 +18,7 @@ export default function renderSignIn()
 	emailInput.setAttribute('id', 'email');
 	emailInput.setAttribute('name', 'email');
 	emailInput.setAttribute('placeholder', 'Email or Username');
+	emailInput.classList.add('form-input');
 
 	// Create password input
 	const passwordInput = document.createElement('input');
@@ -23,17 +26,20 @@ export default function renderSignIn()
 	passwordInput.setAttribute('id', 'password');
 	passwordInput.setAttribute('name', 'password');
 	passwordInput.setAttribute('placeholder', 'Password');
+	passwordInput.classList.add('form-input');
 
 	// Create log in button
 	const loginButton = document.createElement('button');
 	loginButton.setAttribute('type', 'submit');
 	loginButton.textContent = 'Log In';
+	loginButton.classList.add('form-input');
 
 	// Create sign up button
 	const signUpButton = document.createElement('button');
 	signUpButton.setAttribute('type', 'button');
 	signUpButton.setAttribute('id', 'sign-up-button');
 	signUpButton.textContent = 'Sign Up';
+	signUpButton.classList.add('form-input');
 
 	// Append the inputs and buttons to the form
 	form.appendChild(emailInput);
@@ -49,152 +55,65 @@ export default function renderSignIn()
 	});
 
 	// Add event listener to the Log In button to handle login
-    form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent the default form submission
+	form.addEventListener('submit', (event) => {
+		event.preventDefault(); // Prevent the default form submission
 
-        const username = emailInput.value;
-        const password = passwordInput.value;
+		const username = emailInput.value;
+		const password = passwordInput.value;
 
 
-        console.log('Logging in with:', username, password); // DEBUG
+        if (DEBUG)
+            console.log('About to sign in with:', username, password);
+
         login(username, password);
     });
 
 
-	// Return the form element
 	return form;
 }
 
 
 
 
-// Pour les JWTokens
+/***********************************************\
+*                     LOGIN                     *
+\***********************************************/
 
 function login(username, password)
 {
-    fetch('/api/users/signInUser/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access)
+	fetch('/api/users/signInUser/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ username, password }),
+	})
+	.then(response => response.json())
+	.then(data => {
+		if (data.access)
 		{
-            // Store tokens in local storage
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
+			// Store tokens in local storage
+			localStorage.setItem('access_token', data.access);
+			localStorage.setItem('refresh_token', data.refresh);
 
-            // Optionally, call refreshToken to ensure tokens are up-to-date
-            return refreshToken();
-        }
+			return refreshToken();
+		}
 		else
             throw new Error('Login failed: No access token received');
     })
-    .then(newAccessToken => {
-        console.log('Token refreshed:', newAccessToken); // DEBUG
-        // Handle successful login (e.g., redirect to dashboard)
-        // Example:
-        window.location.href = '/home';
+    .then(newAccessToken =>
+    {
+        if (DEBUG)
+            console.log('Token refreshed:', newAccessToken);
+        
+        window.location.href = '/profile';
+        console.log('Success:', username, 'is now logged in');
     })
     .catch(error => {
         console.error('Error:', error);
-        // Optionally, display an error message to the user
         alert('Login failed: ' + error.message);
     });
 }
-
-/* async function refreshToken()
-{
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken)
-        throw new Error('No refresh token found');
-
-    return fetch('/api/token/refresh/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access) {
-            localStorage.setItem('access_token', data.access);
-            return data.access;
-        }
-		else
-            throw new Error('Failed to refresh token');
-    });
-} */
-
-
-// function login(username, password)
-// {
-//     fetch('/api/token/',
-// 	{
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ username: username, password: password }),
-//     })
-//     .then(response => response.json())
-//     .then(data =>
-// 	{
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             localStorage.setItem('refresh_token', data.refresh);
-            
-//             // Call refreshToken to ensure tokens are up-to-date
-//             refreshToken().then(newAccessToken =>
-// 			{
-//                 console.log('Token refreshed:', newAccessToken);
-//                 // Redirect to profile or dashboard
-//             })
-// 			.catch(error => {
-//                 console.error('Token refresh failed:', error);
-//             });
-//         }
-// 		else
-// 		{
-//             console.error('Login failed');
-//         }
-//     })
-//     .catch(error => console.error('Error:', error));
-// }
-
-
-// async function refreshToken()
-// {
-//     const refreshToken = localStorage.getItem('refresh_token');
-//     return fetch('/api/token/refresh/', {
-//         method: 'POST',
-//         headers:
-// 		{
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh: refreshToken }),
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.access)
-// 		{
-//             localStorage.setItem('access_token', data.access);
-//             return data.access;
-//         }
-// 		else
-// 		{
-//             throw new Error('Token refresh failed');
-//         }
-//     });
-// }
-
-
 
 
 
@@ -204,7 +123,7 @@ function login(username, password)
 
 
 // Get the access token from local storage and return it as a header object
-function getAuthHeaders() {
+export function getAuthHeaders() {
     const token = localStorage.getItem('access_token');
     if (!token) {
         throw new Error('No access token found');
@@ -215,29 +134,33 @@ function getAuthHeaders() {
     };
 }
 
-// Send a request to the server to refresh the access token
-async function refreshToken()
-{
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken)
-        throw new Error('No refresh token found');
 
-    return fetch('/api/token/refresh/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refresh: refreshToken }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.access) {
-            localStorage.setItem('access_token', data.access);
-            return data.access;
-        }
-        else
+// Send a request to the server to refresh the access token
+async function refreshToken() {
+    const refreshToken = localStorage.getItem('refresh_token');
+    if (!refreshToken) {
+        throw new Error('No refresh token found');
+    }
+
+    try {
+        const response = await fetch('/api/token/refresh/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ refresh: refreshToken }),
+        });
+
+        const data = await response.json();
+        if (!data.access) {
             throw new Error('Failed to refresh token');
-    });
+        }
+        localStorage.setItem('access_token', data.access);
+        return data.access;
+    } catch (error) {
+        console.error('Token refresh failed:', error);
+        throw error;
+    }
 }
 
 
@@ -251,16 +174,18 @@ export async function apiRequest(url, options = {}) {
             ...options.headers,
             ...getAuthHeaders(),
         };
-
+        
         let response = await fetch(url, options);
-
+        
         // If the token has expired, refresh it and retry the request
         if (response.status === 401) {
+            if (DEBUG)
+                console.log('Token expired, refreshing...');
             const newAccessToken = await refreshToken();
             options.headers['Authorization'] = 'Bearer ' + newAccessToken;
             response = await fetch(url, options);
         }
-
+        
         if (!response.ok) {
             throw new Error('Request failed');
         }
@@ -271,3 +196,33 @@ export async function apiRequest(url, options = {}) {
         throw error;
     }
 }
+
+
+
+
+
+
+// OLD CODE
+// async function refreshToken()
+// {
+//     const refreshToken = localStorage.getItem('refresh_token');
+//     if (!refreshToken)
+//         throw new Error('No refresh token found');
+
+//     return fetch('/api/token/refresh/', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ refresh: refreshToken }),
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.access) {
+//             localStorage.setItem('access_token', data.access);
+//             return data.access;
+//         }
+//         else
+//             throw new Error('Failed to refresh token');
+//     });
+// }

@@ -41,6 +41,7 @@ services:
     user: root
     volumes:
       - user:/app/
+      - ./user/user_management/api_user:/app/api_user
     build:
       context: .
       dockerfile: user/Dockerfile
@@ -53,7 +54,7 @@ services:
       gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
       - "8080"
-      - "5432"
+      # - "5432"
     ports:
       - "8200:8200"
     networks:
@@ -68,6 +69,7 @@ services:
     container_name: Dashboard
     volumes:
       - dashboard:/app/
+      - ./user/user_management/api_user:/app/api_user
     build:
       context: .
       dockerfile: dashboard/Dockerfile
@@ -80,13 +82,14 @@ services:
       gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
     expose:
       - "8080"
-      - "5432"
+      # - "5432"
     ports:
       - "8100:8100"
     networks:
       - transcendance
     depends_on:
       - database
+      - profile
     env_file:
       - .env
 
@@ -97,12 +100,6 @@ networks:
 volumes:
   postgres_data:
     driver: local
-  frontend:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: './nginx/frontend/'
   user:
     driver: local
     driver_opts:

@@ -6,21 +6,21 @@
 	font-family: 'Press Start 2P', cursive;
 	margin: 0;
 	padding: 0;
-	background-color: #000;
-	color: #fff;
+	background-color: var(--base-dark);
+	color: var(--base-white);
 	font-size: 0.7em;
 	display: flex;
 	flex-direction: column;
 	min-width: 800px;
 	min-height: 600px;
-	padding-top: 56px;
+	padding-top: 60px;
 	padding-bottom: 60px;
 }
 
 .main-content
 {
-	background-color: #1a1a1a;
-	min-height: calc(100vh - 100px);
-	padding: 20px;
-	color: #fff;
+	color: var(--base-white);
+	padding-top: 60px;
+	padding-bottom: 60px;
+	min-height: calc(100vh - 120px);
 }

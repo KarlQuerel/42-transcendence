@@ -1,3 +1,8 @@
+/***********************************************\
+-			IMPORTING GLOBAL VARIABLES			-
+\***********************************************/
+import { DEBUG } from '../../main.js';
+
 // all possible AI returns (all paddle movement possibilities)
 const DOWN = 0
 const UP = 1
