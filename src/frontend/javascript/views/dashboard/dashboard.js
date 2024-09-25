@@ -138,7 +138,7 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const userData = /* await */ loadUserManagementData();
+	const userData = await loadUserManagementData();
 	const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
 	const userStats = await loadDashboardData(userData, USER_STATS);
 
@@ -210,7 +210,7 @@ function loadDashboardData(userData, option)
 	}
 }
 
-/* import { apiRequest } from '../user/signin.js';
+import { apiRequest } from '../user/signin.js';
 
 async function loadUserManagementData() {
     try {
@@ -227,22 +227,22 @@ async function loadUserManagementData() {
         console.error('Error: fetch userData', error);
         throw error; // Re-throw the error
     }
-} */
+}
 
 //-------------------------------------- TEST waiting for jess' user -------------------------------------
 
-class UserData {
-	constructor(username) {
-		this.username = username;
-	}
-}
+// class UserData {
+// 	constructor(username) {
+// 		this.username = username;
+// 	}
+// }
 
-function loadUserManagementData()
-{
-	return { // '{' has to be on the same line, otherwise error
-		username: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
-	};
-}
+// function loadUserManagementData()
+// {
+// 	return { // '{' has to be on the same line, otherwise error
+// 		username: 'Clément' //FIX: avatars appear with Carolina but not with the others --> WTF
+// 	};
+// }
 
 //-------------------------------------- FIN TEST -------------------------------------
 

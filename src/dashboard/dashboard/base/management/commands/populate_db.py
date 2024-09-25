@@ -92,23 +92,45 @@ class Command(BaseCommand):
 			},
 		]
 
+		# # Iterate over predefined data and create entries in the database
+		# for user_data in predefined_data:
+		# 	stats_entry = Stats.objects.create(
+		# 		username=user_data['username'],
+		# 		nb_of_victories=user_data['nb_of_victories'],
+		# 		nb_of_defeats=user_data['nb_of_defeats'],
+		# 	)
+
+		# # Create GameHistory entries
+		# for game in user_data['games']:
+		# 	GameHistory.objects.create(
+		# 		stats=stats_entry, # Link to the Stats entry
+		# 		opponentUsername=game['opponentUsername'],
+		# 		opponentScore=game['opponentScore'],
+		# 		myScore=game['myScore'],
+		# 		date=game['date']
+		# 	)
+
 		# Iterate over predefined data and create entries in the database
 		for user_data in predefined_data:
+			print(f"Processing user: {user_data['username']}")
 			stats_entry = Stats.objects.create(
 				username=user_data['username'],
 				nb_of_victories=user_data['nb_of_victories'],
 				nb_of_defeats=user_data['nb_of_defeats'],
 			)
+			print(f"Created Stats entry for {user_data['username']}")
 
-		# Create GameHistory entries
-		for game in user_data['games']:
-			GameHistory.objects.create(
-				stats=stats_entry, # Link to the Stats entry
-				opponentUsername=game['opponentUsername'],
-				opponentScore=game['opponentScore'],
-				myScore=game['myScore'],
-				date=game['date']
-			)
+			# Create GameHistory entries
+			for game in user_data['games']:
+				print(f"Creating GameHistory for {user_data['username']} against {game['opponentUsername']}")
+				GameHistory.objects.create(
+					stats=stats_entry,  # Link to the Stats entry
+					opponentUsername=game['opponentUsername'],
+					opponentScore=game['opponentScore'],
+					myScore=game['myScore'],
+					date=game['date']
+				)
+			print(f"Finished processing games for {user_data['username']}")
 
 		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined users'))
 
