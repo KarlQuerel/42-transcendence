@@ -67,10 +67,10 @@ export default function renderSignUp()
 	container.appendChild(form);
 
 	// Add event listener to the Submit button to redirect to /sign-in
-	submitButton.addEventListener('click', () =>
-	{
-		window.location.href = '/sign-in';
-	});
+	// submitButton.addEventListener('click', () => //CARO: pour pouvoir faire des tests
+	// {
+	// 	window.location.href = '/sign-in';
+	// });
 
 	return container;
 }

@@ -132,7 +132,7 @@ class Command(BaseCommand):
 				)
 			print(f"Finished processing games for {user_data['username']}")
 
-		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined game data'))
+		self.stdout.write(self.style.SUCCESS('Successfully populated the database with predefined users'))
 
 		# for user_data in predefined_data:
 		# 	user, created = Stats.objects.get_or_create(username=user_data['username'])
@@ -168,4 +168,3 @@ class Command(BaseCommand):
 #TODO: mettre ça dans le makefile ou le dockerfile : il faut le faire à chaque make pour avoir des données persistantes
 #access the running dashboard container : "docker exec -it Dashboard bash"
 #run "python manage.py populate_db" before "python manage.py runserver"
-
