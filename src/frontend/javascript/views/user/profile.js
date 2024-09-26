@@ -89,8 +89,8 @@ export default function renderProfile()
             emailElement.textContent = `Email: ${userData.email}`;
 
             // Password display in asterisks
-            const password = userData.password;
-            const numAsterisks = Math.max(0, password.length);
+            const passwordLength = 8;
+            const numAsterisks = Math.max(0, passwordLength);
             const passwordText = `Password: ${'*'.repeat(numAsterisks)}`;
             passwordElement.textContent = passwordText;
 
@@ -106,8 +106,8 @@ export default function renderProfile()
         changePasswordButton.addEventListener('click', () => {
             window.location.href = '/change-password'; // Assuming you have a change password page
         });
-        
-        
+
+
         /***************** FRIENDS *****************/
         
         
@@ -118,6 +118,8 @@ export default function renderProfile()
         
 
 
+
+        /***************** LOG OUT *****************/
 
         // Event listener for logout button
         logoutButton.addEventListener('click', () => {
@@ -140,11 +142,8 @@ async function fetchUserData() {
     return apiRequest('/api/users/currentlyLoggedInUser/', {
         method: 'GET',
     })
-    .then(data => {
-        if (DEBUG) {
-            console.log('User data fetched:', data);
-        }
-        return data;
+    .catch(error => {
+        console.error('Error fetching user data:', error);
     });
 }
 

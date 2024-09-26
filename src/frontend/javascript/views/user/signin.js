@@ -73,11 +73,32 @@ export default function renderSignIn()
 }
 
 
+/***********************************************\
+*                 UTIL FUNCTIONS                *
+\***********************************************/
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 
 /***********************************************\
-*                     LOGIN                     *
+*                 MAIN FUNCTION                 *
 \***********************************************/
+
 
 function login(username, password)
 {
@@ -85,6 +106,7 @@ function login(username, password)
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
 		},
 		body: JSON.stringify({ username, password }),
 	})
@@ -174,7 +196,7 @@ export async function apiRequest(url, options = {}) {
             ...options.headers,
             ...getAuthHeaders(),
         };
-        
+
         let response = await fetch(url, options);
         
         // If the token has expired, refresh it and retry the request
@@ -185,7 +207,7 @@ export async function apiRequest(url, options = {}) {
             options.headers['Authorization'] = 'Bearer ' + newAccessToken;
             response = await fetch(url, options);
         }
-        
+
         if (!response.ok) {
             throw new Error('Request failed');
         }
