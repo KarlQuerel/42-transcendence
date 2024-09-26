@@ -13,15 +13,15 @@
 {
 	0%
 	{
-		transform: translateX(-375px);
+		transform: translateX(-40vh);
 	}
 	50%
 	{
-		transform: translateX(375px);
+		transform: translateX(40vh);
 	}
 	100%
 	{
-		transform: translateX(-375px);
+		transform: translateX(-40vh);
 	}
 }
 

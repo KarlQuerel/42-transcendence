@@ -204,7 +204,6 @@ function createHowToPlayCard()
 	return cardDiv;
 }
 
-
 function createCardGif(src, alt)
 {
 	const	gif = document.createElement('img');
@@ -320,102 +319,238 @@ export function initializePong()
 	if (DEBUG)
 		console.log('Initializing Pong...');
 
-	// Ensure initialization runs after content is rendered
 	requestAnimationFrame(() =>
 	{
-		document.body.classList.add('no-scroll');
-		canvas = document.getElementById("pongCanvas");
-		const	rematchButton = document.getElementById('rematch-button');
-		const	singleplayerButton = document.getElementById('singleplayer-button');
-		const	twoplayerButton = document.getElementById('twoplayer-button');
-		const	tournamentButton = document.getElementById('tournament-button');
-		const	menuOverlay = document.getElementById('menu-overlay');
-
-		if (!canvas)
-		{
-			console.error("Canvas element not found!");
-			return;
-		}
-
-		if (!singleplayerButton || !twoplayerButton || !tournamentButton)
-		{
-			console.error('Menu buttons not found!');
-			return ;
-		}
-
-		singleplayerButton.addEventListener('click', () =>
-		{
-			AI_present = true;
-			startGame(menuOverlay);
-		});
-
-		twoplayerButton.addEventListener('click', () =>
-		{
-			AI_present = false;
-			startGame(menuOverlay);
-		})
-
-		tournamentButton.addEventListener('click', () =>
-		{
-			AI_present = false;
-			// TODO + input form with get name + launch tournament
-			startGame(menuOverlay);
-		})
-
-		if (!rematchButton)
-		{
-			console.error('Rematch button not found!');
-			return ;
-		}
-		else
-		{
-			rematchButton.addEventListener('click', resetGame);
-		}
-		
-		ctx = canvas.getContext("2d");
-		if (!ctx)
-		{
-				console.error("Context could not be retrieved!");
-			return;
-		}
-
-
-		// Set canvas dimensions based on viewport height
-		const	setCanvasDimensions = () =>
-		{
-			const	viewportHeight = window.innerHeight;
-			canvas.width = viewportHeight * 0.8; // 80% of viewport height
-			canvas.height = viewportHeight * 0.6; // 60% of viewport height
-		};
-
-		setCanvasDimensions();
-
-		// Adjust canvas size on window resize
-		window.addEventListener('resize', () =>
-		{
-			setCanvasDimensions();
-
-			// Enforce minimum window size
-			if (window.innerWidth < minWidth || window.innerHeight < minHeight)
-			{
-				window.resizeTo
-				(
-					Math.max(window.innerWidth, minWidth),
-					Math.max(window.innerHeight, minHeight)
-				);
-			}
-		});
-
-		document.addEventListener("keydown", keyDownHandler);
-		document.addEventListener("keyup", keyUpHandler);
+		setupCanvas();
+		setupMenuButtons();
+		setupEventListeners();
+		setupCanvasDimensions();
 	});
 }
 
-/***			Starting Game				***/
-function startGame(menuOverlay)
+function setupCanvas()
 {
-	// Hide the menu overlay
+	document.body.classList.add('no-scroll');
+	canvas = document.getElementById("pongCanvas");
+
+	if (canvas)
+	{
+		ctx = canvas.getContext("2d");
+		if (!ctx)
+		{
+			console.error("Context could not be retrieved!");
+		}
+	}
+	else
+	{
+		console.error("Canvas element not found!");
+	}
+}
+
+function setupMenuButtons()
+{
+	const	singleplayerButton = document.getElementById('singleplayer-button');
+	const	twoplayerButton = document.getElementById('twoplayer-button');
+	const	tournamentButton = document.getElementById('tournament-button');
+	const	rematchButton = document.getElementById('rematch-button');
+	const	menuOverlay = document.getElementById('menu-overlay');
+
+	if (!singleplayerButton || !twoplayerButton || !tournamentButton)
+	{
+		console.error('Menu buttons not found!');
+		return;
+	}
+
+	singleplayerButton.addEventListener('click', () => prepareGame(menuOverlay, true));
+	twoplayerButton.addEventListener('click', () => prepareGame(menuOverlay, false));
+	tournamentButton.addEventListener('click', () => startTournament(menuOverlay));
+
+	if (!rematchButton)
+	{
+		console.error('Rematch button not found!');
+	}
+	else
+	{
+		rematchButton.addEventListener('click', resetGame);
+	}
+}
+
+function setupEventListeners()
+{
+	window.addEventListener('resize', handleResize);
+	document.addEventListener("keydown", keyDownHandler);
+	document.addEventListener("keyup", keyUpHandler);
+}
+
+function setupCanvasDimensions()
+{
+	const	setCanvasDimensions = () =>
+	{
+		const	viewportHeight = window.innerHeight;
+		canvas.width = viewportHeight * 0.8; // 80% of viewport height
+		canvas.height = viewportHeight * 0.6; // 60% of viewport height
+	};
+
+	setCanvasDimensions();
+}
+
+function handleResize()
+{
+	setupCanvasDimensions();
+	enforceMinimumWindowSize();
+}
+
+function enforceMinimumWindowSize()
+{
+	const	minWidth = 800; // TODO KARL check for responsiveness
+	const	minHeight = 600;
+
+	if (window.innerWidth < minWidth || window.innerHeight < minHeight)
+	{
+		window.resizeTo(Math.max(window.innerWidth, minWidth), Math.max(window.innerHeight, minHeight));
+	}
+}
+
+/***				Matchmaking				***/
+function startTournament(menuOverlay)
+{
+	AI_present = false;
 	menuOverlay.classList.add('hidden');
+	displayTournamentForm();
+}
+
+function displayTournamentForm()
+{
+	// Create the form container
+	const	tournamentForm = document.createElement('div');
+	tournamentForm.id = 'tournament-form';
+	tournamentForm.className = 'tournament-form';
+
+	// Create the title
+	const	formTitle = document.createElement('h3');
+	formTitle.textContent = 'Enter Player Names';
+	tournamentForm.appendChild(formTitle);
+
+	// Create form inputs
+	const	players = ['Player 1 (You)', 'Player 2', 'Player 3', 'Player 4'];
+	players.forEach((label, index) =>
+	{
+		const	inputGroup = document.createElement('div');
+		inputGroup.className = 'input-group-lg mb-3';
+
+		const	inputLabel = document.createElement('span');
+		inputLabel.className = 'input-group-text-center';
+		inputLabel.textContent = label;
+
+		const	playerInput = document.createElement('input');
+		playerInput.type = 'text-center';
+		playerInput.className = 'form-control';
+
+		if (index === 0)
+		{
+			// Lock first input with signed-in username
+			playerInput.value = getSignedInUsername(); // TODO KARL - check if an existing function exists
+			playerInput.disabled = true;
+		}
+		else
+		{
+			playerInput.placeholder = `Enter ${label}`;
+		}
+
+		inputGroup.appendChild(inputLabel);
+		inputGroup.appendChild(playerInput);
+		tournamentForm.appendChild(inputGroup);
+	});
+
+	// Add a submit button
+	const	submitButton = document.createElement('button');
+	submitButton.className = 'btn btn-second'; // TODO KARL - change button here
+	submitButton.textContent = 'Start Tournament';
+	submitButton.addEventListener('click', () =>
+	{
+		startTournamentGame(tournamentForm);
+	});
+
+	tournamentForm.appendChild(submitButton);
+	document.body.appendChild(tournamentForm);
+}
+
+// TODO KARL - check with Jess
+function getSignedInUsername()
+{
+	// Replace with the logic to get the actual signed-in username
+	return 'SignedInUser';
+}
+
+function startTournamentGame(tournamentForm)
+{
+	const	playerInputs = tournamentForm.querySelectorAll('input');
+	const	playerNames = [];
+
+	playerInputs.forEach(input =>
+	{
+		playerNames.push(input.value.trim());
+	});
+
+	if (playerNames.some(name => name === ''))
+	{
+		alert('Please fill in all player names');
+		return;
+	}
+
+	console.log('Tournament starting with players:', playerNames);
+	tournamentForm.remove(); // Remove the form after submission
+
+	// Start the tournament game logic here
+	initializeTournamentMode(playerNames);
+}
+
+function initializeTournamentMode(playerNames)
+{
+	// TODO: Implement the game initialization logic for the tournament mode using playerNames
+	console.log('Initializing tournament mode with players:', playerNames);
+}
+
+
+/***			Starting Game				***/
+function prepareGame(menuOverlay, isSinglePlayer)
+{
+
+	AI_present = isSinglePlayer;
+	menuOverlay.classList.add('hidden');
+
+	const	countdownDisplay = document.createElement('div');
+	countdownDisplay.className = 'countdown';
+	document.body.appendChild(countdownDisplay);
+
+	let countdown = 3;
+	countdownDisplay.textContent = countdown;
+	const	countdownInterval = setInterval(() =>
+	{
+		countdown--;
+		if (countdown > 0)
+		{
+			countdownDisplay.textContent = countdown;
+		}
+		else
+		{
+			countdownDisplay.textContent = 'GO!';
+			clearInterval(countdownInterval);
+			setTimeout(() =>
+			{
+				document.body.removeChild(countdownDisplay);
+				startGame();
+			}, 1000);
+		}
+	}, 1000);
+}
+
+function startGame()
+{
+	if (canvas)
+	{
+		canvas.style.zIndex = 1;
+	}
 
 	isGameModeSelected = true;
 
@@ -424,6 +559,7 @@ function startGame(menuOverlay)
 	player2.y = (canvas.height - paddleHeight) / 2;
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
+	console.log("AI_present value:", AI_present);
 
 	game_done = false;
 	gameLoop();
