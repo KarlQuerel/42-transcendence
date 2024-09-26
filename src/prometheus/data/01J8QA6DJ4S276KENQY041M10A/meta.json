@@ -1,0 +1,17 @@
+{
+	"ulid": "01J8QA6DJ4S276KENQY041M10A",
+	"minTime": 1727348498910,
+	"maxTime": 1727352000000,
+	"stats": {
+		"numSamples": 307696,
+		"numSeries": 2674,
+		"numChunks": 2679
+	},
+	"compaction": {
+		"level": 1,
+		"sources": [
+			"01J8QA6DJ4S276KENQY041M10A"
+		]
+	},
+	"version": 1
+}

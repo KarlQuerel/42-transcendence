@@ -140,12 +140,14 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const userData = await loadUserManagementData();
-	// const userData = "Clément"; //FIX: avatars appear with Carolina but not with the others --> WTF
-	const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
-	const userStats = await loadDashboardData(userData, USER_STATS);
+	// const userData = await loadUserManagementData();
+	// const userData = "clement"; //FIX: avatars appear with Carolina but not with the others --> WTF
+	const allStats = await loadDashboardData(); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
+	
+	// const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
+	// const userStats = await loadDashboardData(userData, USER_STATS);
 
-	setupEventListeners(allStats, userStats); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	// setupEventListeners(allStats, userStats); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
 
 /***********************************************\
@@ -154,6 +156,30 @@ a promise that is still pending when we pass statsData into evenlisteners and th
 
 const ALL_STATS = 0;
 const USER_STATS = 1;
+
+
+// function loadDashboardData()
+// {
+// 		return fetch('/api/dashboard/getData/')
+// 		.then(response =>
+// 		{
+// 			if (!response.ok)
+// 				throw new Error('Error: network response');
+// 			return response.json();
+// 		})
+// 		.then(allStats =>
+// 		{
+// 			console.log("allStats = ", allStats);
+// 			return allStats;
+// 		})
+// 		.catch(error =>
+// 		{
+// 			console.error('Error: fetch allStats', error);
+// 			throw error; // Re-throw the error
+// 			//CHECK: if allStats is undefined : try/catch that will stop everything
+// 		});
+// }
+
 
 async function loadDashboardData(userData, option) {
     try {
@@ -179,8 +205,7 @@ async function loadDashboardData(userData, option) {
                 }
                 i++;
             }
-            console.log("userData = ", userData); //TEST
-			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `pa la place de la dashboard si aucune partie de pong jouée)
+			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `à la place de la dashboard si aucune partie de pong jouée)
             console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
         }
     } catch (error) {
