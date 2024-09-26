@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# from django_prometheus import exports as django_prometheus_exports
+from django_prometheus import exports
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -25,8 +27,7 @@ urlpatterns = [
 	# path('admin/', admin.site.urls),
 	path('api/', include('api_user.urls')),
 	path('api/users/', include('api_user.urls')),
-    # path('api/users/', include('users.urls')), #TEST
-    # path('api/users/', include('users.api_user.urls')), #TEST
-	path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-	path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+	path('metrics/', exports.ExportToDjangoView, name='metrics')
 ]

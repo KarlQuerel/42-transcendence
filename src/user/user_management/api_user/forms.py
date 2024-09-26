@@ -2,11 +2,13 @@ from django import forms
 from .models import CustomUser
 from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 
+# 'password1', 'password2'
+
 class CustomUserRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password1', 'password2', 'email', 'date_of_birth', 'first_name', 'last_name']
+        fields = ['username', 'password', 'email', 'date_of_birth', 'first_name', 'last_name']
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -22,7 +24,7 @@ class CustomUserRegistrationForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
+        user.set_password(self.cleaned_data["password"])
         if commit:
             user.save()
         return user

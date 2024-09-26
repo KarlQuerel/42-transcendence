@@ -3,7 +3,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 # from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 # from .serializers import CustomUserRegistrationSerializer
@@ -23,6 +23,8 @@ from .serializers import UsernameSerializer #TEST CARO
 
 # For user registration
 
+# password1
+
 logger = logging.getLogger(__name__)
 
 @api_view(['POST'])
@@ -37,7 +39,7 @@ def addUser(request):
 
 	if form.is_valid():
 		user = form.save(commit=False)
-		user.set_password(form.cleaned_data['password1'])
+		user.set_password(form.cleaned_data['password'])
 		user.save()
 		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
 
@@ -82,7 +84,7 @@ def signInUser(request):
 #########################################
 
 # Check which user is authenticated
-
+# password1
 @api_view(['GET'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
@@ -92,12 +94,12 @@ def currentlyLoggedInUser(request):
         user = request.user
         if not user.is_authenticated:
             return Response({'error': 'User not authenticated'}, status=401)
-        
+
         return Response({'Authentication success': True,
 			'first_name': user.first_name,
 			'last_name': user.last_name,
             'username': user.username,
-			'password': user.password1,
+			'password': user.password,
 			'date_of_birth': user.date_of_birth,
             'email': user.email
         })
@@ -105,54 +107,7 @@ def currentlyLoggedInUser(request):
         return Response({'error': str(e)}, status=500)
 
 
-
-
-
 #########################################
-
-# Temporary code
-
-
-# # # Sends to the frontend the profile of the currently authenticated user
-# class CustomUserProfileView(APIView):
-# 	authentication_classes = [JWTAuthentication]
-# 	def get(self, request):
-# 		try:
-# 			serializer = CustomUserDisplaySerializer(request.user)
-# 			return Response({'user': serializer.data, 'success': True},status=status.HTTP_200_OK)
-# 		except Exception as e:
-# 			return Response({'error': str(e)}, status=status.HTTP_200_OK)
-
-
-# ## Ne peut pas etre testé avec une entrée fixe, comme 'cbernaze'. Il faut que l'utilisateur soit authentifié pour que la requête fonctionne.
-
-#########################################
-
-
-
-###################################################################################################
-
-
-
-# Sends to the frontend the profile of the currently authenticated user
-# class UserProfileView(generics.RetrieveAPIView):
-#     queryset = CustomUser.objects.all()
-#     serializer_class = CustomUserRegistrationSerializer
-
-#     def get_object(self):
-#         return self.request.user
-
-
-
-###################################################################################################
-
-# @api_view(['GET'])
-# def getUsername(request):
-#     if request.user.is_authenticated:
-#         username = request.user.username
-#         return Response({'username': username})
-#     else:
-#         return Response({'error': 'Utilisateur non authentifié'}, status=401)
 
 
 #TEST CARO
