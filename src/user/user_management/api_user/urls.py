@@ -8,4 +8,8 @@ urlpatterns = [
     path('currentlyLoggedInUser/', views.currentlyLoggedInUser, name='currently-logged-in-user'),
 	path('friends/', include('friends.urls')),
     path('getUsername/', views.getUsername, name='get-username'),
+    path('changePassword/', views.changePassword, name='change-password'),
+    path('checkAuthentication/', views.checkAuthentication, name='check-authentication'),
+    path('verifyPassword/', views.verifyPassword, name='verify-password'),
+    path('hashAndChangePassword/', views.hashAndChangePassword, name='hash-and-change-password'),
 ]

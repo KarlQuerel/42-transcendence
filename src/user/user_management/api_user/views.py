@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
+from django.contrib.auth.forms import SetPasswordForm
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -9,6 +10,7 @@ from .forms import CustomUserRegistrationForm
 # from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 # from rest_framework.views import APIView
 from rest_framework import generics, status, permissions
@@ -48,7 +50,9 @@ def addUser(request):
 		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
 #########################################
+
 
 # For user login
 
@@ -82,6 +86,7 @@ def signInUser(request):
 
 
 #########################################
+
 
 # Check which user is authenticated
 # password1
@@ -119,3 +124,94 @@ def getUsername(request):
         return Response(serializer.data)
     else:
         return Response({'error': 'User not authenticated'}, status=401)
+
+
+
+
+##################################################
+##             CHANGE PASSWORD VIEWS            ##
+##################################################
+
+
+# For changing password, using Django's built-in password change form (SetPasswordForm)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def changePassword(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		form = SetPasswordForm(user, request.data)
+
+		if form.is_valid():
+			form.save()
+			return Response({'success': 'Password changed successfully'}, status=status.HTTP_200_OK)
+		else:
+			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
+	
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+	
+
+
+#########################################
+
+
+#For checking if a user is connected
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def checkAuthentication(request):
+	user = request.user
+	if not user.is_authenticated:
+			return Response({'authenticated': False}, status=401)
+	return Response({'authenticated': True}, status=200)
+
+
+#########################################
+
+
+# For checking if old password is correct
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def verifyPassword(request):
+    user = request.user
+    old_password = request.data.get('oldPassword')
+
+    if not old_password:
+        return Response({'error': 'Old password is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if user.check_password(old_password):
+        return Response({'valid': True, 'currentPassword': user.password}, status=status.HTTP_200_OK)
+    else:
+        return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#########################################
+
+
+
+# For changing the old password with the new hashed password
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def hashAndChangePassword(request):
+	user = request.user
+	new_password = request.data.get('newPassword')
+
+	if not new_password:
+		return Response({'error': 'New password is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+	try:
+		hashed_password = make_password(new_password)
+		user.password = hashed_password
+		user.save()
+		return Response({'success': 'Password changed successfully'}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

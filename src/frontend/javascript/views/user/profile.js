@@ -3,6 +3,7 @@
 \***********************************************/
 import { DEBUG } from '../../main.js';
 import { apiRequest } from './signin.js';
+import { initializeChangePassword } from './change_password.js';
 
 /***********************************************\
 *                   RENDERING                   *
@@ -95,16 +96,17 @@ export default function renderProfile()
             passwordElement.textContent = passwordText;
 
         })
-        .catch(error => {
+        .catch(error =>
+        {
             console.error('Error fetching user data:', error);
             container.innerHTML = '<p>Failed to load profile data.</p>';
         });
 
 
-        // TODO: Voir la redirection pour le changement de mot de passe
         // Event listener for change password button
-        changePasswordButton.addEventListener('click', () => {
-            window.location.href = '/change-password'; // Assuming you have a change password page
+        changePasswordButton.addEventListener('click', () =>
+        {
+            window.location.href = '/change-password';
         });
 
 

@@ -37,6 +37,9 @@ from "./views/user/profile.js";
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
 
+import renderChangePassword, { initializeChangePassword }
+from "./views/user/change_password.js";
+
 /***			Footer						***/
 import renderPrivacyPolicy
 from "./views/privacy_policy/privacy_policy.js";
@@ -95,6 +98,12 @@ const routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
+	},
+	'/change-password':
+	{
+		title: "Change Password",
+		render: renderChangePassword,
+		init: initializeChangePassword
 	}
 };
 
