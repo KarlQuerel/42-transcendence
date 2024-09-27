@@ -11,15 +11,14 @@ export	const	DEBUG = true;
 import renderError404
 from "./views/error_404/error_404.js";
 
-/***			    Nav Bar					 ***/
+/***			Nav Bar						***/
 import renderHome
 from "./views/home/home.js";
 
 import renderPong, { cleanUpPong, initializePong }
 from "./components/pong/pong.js";
 
-
-/***			TO DETERMINE				***/
+/***			Dashbpard					***/
 import { renderDashboard, initializeDashboard }
 from "./views/dashboard/dashboard.js";
 
@@ -114,9 +113,30 @@ function normalizePath(path)
 }
 
 
-// TO DO KARL HERE : replace this variable with the actual token mechanism
-// check (next todo karl)
-export let	isSignedIn = true;
+
+/***			Authentication				***/
+//HERE = CARE WORK IN PROGRESS !
+let	accessToken = localStorage.getItem('access_token');
+let	isSignedIn;
+
+if (accessToken)
+{
+	isSignedIn = true;
+}
+else
+{
+	isSignedIn = false;
+}
+
+export function setSignedInState(state)
+{
+	isSignedIn = state;
+}
+
+export function getSignedInState()
+{
+	return isSignedIn;
+}
 
 /***			Router Function				***/
 function router()
@@ -139,6 +159,9 @@ function router()
 	//	Clear previous route if necessary
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
+
+	if (DEBUG)
+		console.log('isSignedIn = ', isSignedIn);
 
 	// TODO KARL change this logic when user is implemented
 	if (path === '/pong' && isSignedIn == false)

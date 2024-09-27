@@ -1,7 +1,7 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG, setSignedInState, getSignedInState } from '../../main.js';
 
 /***********************************************\
 *                   RENDERING                   *
@@ -17,6 +17,7 @@ export default function renderSignIn()
 	emailInput.setAttribute('type', 'text');
 	emailInput.setAttribute('id', 'email');
 	emailInput.setAttribute('name', 'email');
+    emailInput.setAttribute('autocomplete', 'username'); // Karl
 	emailInput.setAttribute('placeholder', 'Email or Username');
 	emailInput.classList.add('form-input');
 
@@ -25,6 +26,7 @@ export default function renderSignIn()
 	passwordInput.setAttribute('type', 'password');
 	passwordInput.setAttribute('id', 'password');
 	passwordInput.setAttribute('name', 'password');
+    passwordInput.setAttribute('autocomplete', 'current-password'); // Karl
 	passwordInput.setAttribute('placeholder', 'Password');
 	passwordInput.classList.add('form-input');
 
@@ -128,6 +130,7 @@ function login(username, password)
         if (DEBUG)
             console.log('Token refreshed:', newAccessToken);
         
+        setSignedInState(true);
         window.location.href = '/profile';
         console.log('Success:', username, 'is now logged in');
     })

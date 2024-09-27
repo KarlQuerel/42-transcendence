@@ -239,7 +239,7 @@ async function loadDashboardData(userData, option) {
 // }
 
 
-async function loadUserManagementData()
+export async function loadUserManagementData()
 {
     try {
         const userData = await apiRequest('/api/users/getUsername/', {

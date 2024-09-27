@@ -1,7 +1,14 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG }
+from '../../main.js';
+
+import { GameVar }
+from './gameVariables.js';
+
+import { startTournament, displayTournamentForm, startTournamentGame, initializeTournamentMode}
+from './tournament.js'
 
 /***********************************************\
 -				RENDERING						-
@@ -255,13 +262,6 @@ function createPausedGifContainer()
 -				GAME CONFIG						-
 \***********************************************/
 
-/***			General						***/
-let	game_done = false;
-let	game_paused = false;
-let	AI_present = false;
-let	animationFrameId;
-let	isGameModeSelected = false;
-
 /***			Graphics					***/
 let		canvas, ctx;
 const	minWidth = 800;
@@ -411,112 +411,11 @@ function enforceMinimumWindowSize()
 	}
 }
 
-/***				Matchmaking				***/
-function startTournament(menuOverlay)
-{
-	AI_present = false;
-	menuOverlay.classList.add('hidden');
-	displayTournamentForm();
-}
-
-function displayTournamentForm()
-{
-	// Create the form container
-	const	tournamentForm = document.createElement('div');
-	tournamentForm.id = 'tournament-form';
-	tournamentForm.className = 'tournament-form';
-
-	// Create the title
-	const	formTitle = document.createElement('h3');
-	formTitle.textContent = 'Enter Player Names';
-	tournamentForm.appendChild(formTitle);
-
-	// Create form inputs
-	const	players = ['Player 1 (You)', 'Player 2', 'Player 3', 'Player 4'];
-	players.forEach((label, index) =>
-	{
-		const	inputGroup = document.createElement('div');
-		inputGroup.className = 'input-group-lg mb-3';
-
-		const	inputLabel = document.createElement('span');
-		inputLabel.className = 'input-group-text-center';
-		inputLabel.textContent = label;
-
-		const	playerInput = document.createElement('input');
-		playerInput.type = 'text-center';
-		playerInput.className = 'form-control';
-
-		if (index === 0)
-		{
-			// Lock first input with signed-in username
-			playerInput.value = getSignedInUsername(); // TODO KARL - check if an existing function exists
-			playerInput.disabled = true;
-		}
-		else
-		{
-			playerInput.placeholder = `Enter ${label}`;
-		}
-
-		inputGroup.appendChild(inputLabel);
-		inputGroup.appendChild(playerInput);
-		tournamentForm.appendChild(inputGroup);
-	});
-
-	// Add a submit button
-	const	submitButton = document.createElement('button');
-	submitButton.className = 'btn btn-second'; // TODO KARL - change button here
-	submitButton.textContent = 'Start Tournament';
-	submitButton.addEventListener('click', () =>
-	{
-		startTournamentGame(tournamentForm);
-	});
-
-	tournamentForm.appendChild(submitButton);
-	document.body.appendChild(tournamentForm);
-}
-
-// TODO KARL - check with Jess
-function getSignedInUsername()
-{
-	// Replace with the logic to get the actual signed-in username
-	return 'SignedInUser';
-}
-
-function startTournamentGame(tournamentForm)
-{
-	const	playerInputs = tournamentForm.querySelectorAll('input');
-	const	playerNames = [];
-
-	playerInputs.forEach(input =>
-	{
-		playerNames.push(input.value.trim());
-	});
-
-	if (playerNames.some(name => name === ''))
-	{
-		alert('Please fill in all player names');
-		return;
-	}
-
-	console.log('Tournament starting with players:', playerNames);
-	tournamentForm.remove(); // Remove the form after submission
-
-	// Start the tournament game logic here
-	initializeTournamentMode(playerNames);
-}
-
-function initializeTournamentMode(playerNames)
-{
-	// TODO: Implement the game initialization logic for the tournament mode using playerNames
-	console.log('Initializing tournament mode with players:', playerNames);
-}
-
-
 /***			Starting Game				***/
 function prepareGame(menuOverlay, isSinglePlayer)
 {
 
-	AI_present = isSinglePlayer;
+	GameVar.AI_present = isSinglePlayer;
 	menuOverlay.classList.add('hidden');
 
 	const	countdownDisplay = document.createElement('div');
@@ -545,23 +444,22 @@ function prepareGame(menuOverlay, isSinglePlayer)
 	}, 1000);
 }
 
-function startGame()
+export function startGame()
 {
 	if (canvas)
 	{
 		canvas.style.zIndex = 1;
 	}
 
-	isGameModeSelected = true;
+	GameVar.isGameModeSelected = true;
 
 	player1.y = (canvas.height - paddleHeight) / 2;
 	player2.x = canvas.width - paddleWidth - paddleOffset;
 	player2.y = (canvas.height - paddleHeight) / 2;
 	ball.x = canvas.width / 2;
 	ball.y = canvas.height / 2;
-	console.log("AI_present value:", AI_present);
 
-	game_done = false;
+	GameVar.game_done = false;
 	gameLoop();
 }
 
@@ -822,23 +720,23 @@ function resetPaddles()
 \***********************************************/
 function keyDownHandler(e)
 {
-	if (isGameModeSelected == false)
+	if (GameVar.isGameModeSelected == false)
 		return ;
 	
 	if (e.key === "p" || e.key === "Escape")
 	{
-		game_paused = !game_paused;
+		GameVar.game_paused = !GameVar.game_paused;
 		if (game_paused == true)
 		{
-			cancelAnimationFrame(animationFrameId);
+			cancelAnimationFrame(GameVar.animationFrameId);
 			drawPauseMenu();
-			animationFrameId = requestAnimationFrame(gameLoop);
+			GameVar.animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		else
 		{
-			cancelAnimationFrame(animationFrameId);
+			cancelAnimationFrame(GameVar.animationFrameId);
 			hidePauseMenu();
-			animationFrameId = requestAnimationFrame(gameLoop);
+			GameVar.animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		return ;
 	}
@@ -963,20 +861,20 @@ let current_sec;
 /***			Main Loop					***/
 export function gameLoop()
 {
-	if (game_paused == true)
+	if (GameVar.game_paused == true)
 	{
 		drawPauseMenu();
-		animationFrameId = requestAnimationFrame(gameLoop);
+		GameVar.animationFrameId = requestAnimationFrame(gameLoop);
 		return;
 	}
 
-	if (game_done == true)
+	if (GameVar.game_done == true)
 		return ;
 	
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 //---------------------------------- AI ----------------------------------
-	if (AI_present == true)
+	if (GameVar.AI_present == true)
 	{
 		// updates the game data for the AI file immediately before starting the time interval
 		if (data.ball_horizontal == undefined)
@@ -1007,17 +905,17 @@ export function gameLoop()
 	if (player1.score === 10)
 	{
 		drawWinMessage("Player 1");
-		game_done = true;
+		GameVar.game_done = true;
 	}
 	else if (player2.score === 10)
 	{
 		drawWinMessage("Player 2");
-		game_done = true;
+		GameVar.game_done = true;
 	}
 
-	if (game_done == false)
+	if (GameVar.game_done == false)
 	{
-		animationFrameId = requestAnimationFrame(gameLoop);
+		GameVar.animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
@@ -1039,8 +937,8 @@ function resetGame()
 	rematchButton.classList.add('hidden');
 
 	// Restart the game
-	game_done = false;
-	isGameModeSelected = false;
+	GameVar.game_done = false;
+	GameVar.isGameModeSelected = false;
 	requestAnimationFrame(gameLoop);
 }
 
@@ -1063,49 +961,9 @@ export function cleanUpPong()
 			canvas.remove();
 
 	// Resetting Game Variables
-	game_done = true;
-	game_paused = false;
-	AI_present = false;
+	GameVar.game_done = true;
+	GameVar.game_paused = false;
+	GameVar.AI_present = false;
 
 	document.body.classList.remove('no-scroll');
-}
-
-/***********************************************\
--				AUTHENTICATION					-
-\***********************************************/
-//TODO - KARL fix it, not working
-
-//TODO KARL - change simulated variable to actual authentication
-let isUserConnected = false; // DELETE LATER
-
-function redirectToSignIn()
-{
-	if (window.location.pathname !== '/sign-in')
-	{
-		window.location.href = '/sign-in';
-	}
-}
-
-function checkAuthentication()
-{
-	if (isUserConnected === false)
-	{
-		redirectToSignIn();
-	}
-}
-
-// Call the checkAuthentication function only if the Pong game page is loaded
-document.addEventListener('DOMContentLoaded', () =>
-	{
-	const	pongPageElement = document.getElementById('pong');
-	if (pongPageElement)
-	{
-		checkAuthentication();
-	}
-});
-
-// Example function to simulate user connection status (for testing purposes)
-function simulateUserConnection()
-{
-	isUserConnected = true; // Set this based on actual authentication status
 }
