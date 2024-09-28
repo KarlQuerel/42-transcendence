@@ -140,7 +140,7 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const userData = /* await */ loadUserManagementData();
+	const userData = await loadUserManagementData();
 	const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
 	const userStats = await loadDashboardData(userData, USER_STATS);
 
@@ -160,83 +160,33 @@ async function loadDashboardData(userData, option) {
             method: 'GET',
         });
 
-        if (option == ALL_STATS) {
-            console.log("allStats = ", allStats);
+        if (option == ALL_STATS)
+		{
+			// if (DEBUG)
+				console.log("allStats = ", allStats);
             return allStats;
-        } else if (option == USER_STATS) {
+        }
+		else if (option == USER_STATS)
+		{
             let i = 0;
             while (i < allStats.length) {
-                if (userData.username === allStats[i].username) {
-                    console.log("userStats = ", allStats[i]);
+                if (userData.username === allStats[i].username)
+				{
+					// if (DEBUG)
+                    	console.log("userStats = ", allStats[i]);
                     return allStats[i]; // Return the matching user's stats
                 }
                 i++;
             }
-            console.log("The connected user's username does not match any username in the dashboard database");
+			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `à la place de la dashboard si aucune partie de pong jouée)
+            console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
         }
     } catch (error) {
         console.error('Error: fetch allStats', error);
         throw error; // Re-throw the error
+		//CHECK: if allStats is undefined : try/catch that will stop everything
     }
 }
-
-// function loadDashboardData(userData, option)
-// {
-// 	if (option == ALL_STATS)
-// 	{
-// 		return fetch('/api/dashboard/getData/')
-// 		.then(response =>
-// 		{
-// 			if (!response.ok)
-// 				throw new Error('Error: network response');
-// 			return response.json();
-// 		})
-// 		.then(allStats =>
-// 		{
-// 			// if (DEBUG)
-// 				console.log("allStats = ", allStats);
-// 			return allStats;
-// 		})
-// 		.catch(error =>
-// 		{
-// 			console.error('Error: fetch allStats', error);
-// 			throw error; // Re-throw the error
-// 			//CHECK: if allStats is undefined : try/catch that will stop everything
-// 		});
-// 	}
-// 	else if (option == USER_STATS)
-// 	{
-// 		return fetch('/api/dashboard/getData/')
-// 		.then(response =>
-// 		{
-// 			if (!response.ok)
-// 				throw new Error('Error: network response');
-// 			return response.json();
-// 		})
-// 		.then(allStats =>
-// 		{
-// 			let i = 0;
-// 			while (i < allStats.length)
-// 			{
-// 				if (userData.username === allStats[i].username) // if userData.username == the current allStats entry's username
-// 				{
-// 					// if (DEBUG)
-// 						console.log("userStats = ", allStats[i]);
-// 					return allStats[i]; // Return the matching user's stats
-// 				}
-// 				i++;
-// 			}
-// 			//TODO: return error if we arrive here
-// 			console.log("The connected user's username does not match any username in the dashboard database");
-// 		})
-// 		.catch(error =>
-// 		{
-// 			console.error('Error: fetch allStats', error);
-// 			throw error; // Re-throw the error
-// 			//CHECK: if allStats is undefined : try/catch that will stop everything
-// 		});
-// 	}
-// }
 
 
 async function loadUserManagementData()
@@ -248,87 +198,14 @@ async function loadUserManagementData()
 				...getAuthHeaders(),
             },
         });
-        if (DEBUG) {
+        if (DEBUG)
             console.log("userData = ", userData);
-        }
         return userData;
     } catch (error) {
         console.error('Error: fetch userData', error);
         throw error; // Re-throw the error
     }
 }
-
-// function loadUserManagementData()
-// {
-// 	fetch('/api/users/getUsername/',
-// 	{
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         // body: JSON.stringify({
-//         //     username}),
-//     })
-// 	.then(response =>
-// 	{
-// 		if (!response.ok)
-// 			throw new Error('Error : network response');
-// 		return response.json();
-// 	})
-// 	.then(userData =>
-// 	{
-// 		if (DEBUG)
-// 			console.log("userData = ", userData);
-// 		return userData;
-// 	})
-// 	.catch(error =>
-// 	{
-// 		console.error('Error : fetch userData', error)
-// 		throw error; // Re-throw the error
-// 		//CHECK: if userData is undefined : try/catch that will stop everything
-// 	});
-// }
-
-// function loadUserManagementData()
-// {
-// 	fetch('/api/users/getUsername/')
-// 		.then(response =>
-// 		{
-// 			if (!response.ok)
-// 				throw new Error('Error : network response');
-// 			return response.json();
-// 		})
-// 		.then(userData =>
-// 		{
-// 			if (DEBUG)
-// 				console.log("userData = ", userData);
-// 			return userData;
-// 		})
-// 		.catch(error =>
-// 		{
-// 			console.error('Error : fetch userData', error)
-// 			throw error; // Re-throw the error
-// 			//CHECK: if userData is undefined : try/catch that will stop everything
-// 		});
-// }
-
-//-------------------------------------- TEST waiting for jess' user -------------------------------------
-
-class UserData {
-	constructor(username) {
-		this.username = username;
-	}
-}
-
-// function loadUserManagementData()
-// {
-// 	return { // '{' has to be on the same line, otherwise error
-// 		username: 'Carolina' //FIX: avatars appear with Carolina but not with the others --> WTF
-// 	};
-// }
-
-//-------------------------------------- FIN TEST -------------------------------------
-
 
 
 /***********************************************\
