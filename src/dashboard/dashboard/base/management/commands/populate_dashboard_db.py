@@ -381,8 +381,8 @@ class Command(BaseCommand):
 			},
 			{
 				'username': 'carolina',
-				'nb_of_victories': 10,
-				'nb_of_defeats': 0,
+				'nb_of_victories': 9,
+				'nb_of_defeats': 2,
 				'games': [
 					{'opponentUsername': 'karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
 					{'opponentUsername': 'jess', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
@@ -392,8 +392,8 @@ class Command(BaseCommand):
 					{'opponentUsername': 'karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
 					{'opponentUsername': 'karl', 'opponentScore': 1, 'myScore': 10, 'date': '2024-09-11'},
 					{'opponentUsername': 'AI', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentUsername': 'jess', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
-					{'opponentUsername': 'clement', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
+					{'opponentUsername': 'jess', 'opponentScore': 10, 'myScore': 6, 'date': '2024-09-11'},
+					{'opponentUsername': 'clement', 'opponentScore': 10, 'myScore': 5, 'date': '2024-09-11'},
 				]
 			},
 		]
@@ -403,33 +403,29 @@ class Command(BaseCommand):
 				# Check if the user exists in the CustomUser model
 				user = CustomUser.objects.get(username=user_data['username'])
 				self.stdout.write(self.style.SUCCESS(f'User "{user_data["username"]}" exists in the user database'))
-
-				# Create or update the Stats entry in the dashboard database
-				stats_entry, created = Stats.objects.update_or_create(
-					username=user_data['username'],
-					defaults={
-						'nb_of_victories': user_data['nb_of_victories'],
-						'nb_of_defeats': user_data['nb_of_defeats']
-					}
-				)
-
-				if created:
-					self.stdout.write(self.style.SUCCESS(f'Created new stats entry for "{user_data["username"]}"'))
+				if GameHistory.objects.filter(stats__username=user_data['username']).exists():
+					self.stdout.write(self.style.WARNING(f'User "{user_data["username"]}" already has stats: skipping'))
 				else:
-					self.stdout.write(self.style.SUCCESS(f'Updated stats entry for "{user_data["username"]}"'))
-
-				# Add game history
-				for game in user_data['games']:
-					GameHistory.objects.create(
-						stats=stats_entry,
-						opponentUsername=game['opponentUsername'],
-						opponentScore=game['opponentScore'],
-						myScore=game['myScore'],
-						date=game['date']
-					)
-					self.stdout.write(self.style.SUCCESS(f'Added game history: {game} for user "{user_data["username"]}"'))
+					self.stdout.write(self.style.SUCCESS(f'Creating new stats entries for user "{user_data["username"]}"'))
+					# Create the Stats entry in the dashboard database
+					stats_entry, created = Stats.objects.update_or_create(
+						username=user_data['username'],
+						defaults={
+							'nb_of_victories': user_data['nb_of_victories'],
+							'nb_of_defeats': user_data['nb_of_defeats']
+						})
+					# Add game history
+					for game in user_data['games']:
+						GameHistory.objects.create(
+							stats=stats_entry,
+							opponentUsername=game['opponentUsername'],
+							opponentScore=game['opponentScore'],
+							myScore=game['myScore'],
+							date=game['date']
+						)
+				self.stdout.write(self.style.SUCCESS('Successfully populated the dashboard database'))
 
 			except CustomUser.DoesNotExist:
 				self.stdout.write(self.style.WARNING(f'User "{user_data["username"]}" does not exist in the user database, skipping'))
 
-		self.stdout.write(self.style.SUCCESS('Successfully populated the dashboard database with predefined user data'))
+		
