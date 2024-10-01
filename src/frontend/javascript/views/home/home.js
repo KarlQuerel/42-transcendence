@@ -9,7 +9,8 @@ import { DEBUG } from '../../main.js';
 import { initParticles, destroyParticles, createParticlesContainer }
 from '../../components/particles/particles.js';
 
-import { createWhatIsPongCard, createTheTeamCard, createWhatWeDidCard, createTheyTrustedUsCard }
+import { createWhatIsPongCard, createTheTeamCard, createWhatWeDidCard,
+createTheyTrustedUsCard }
 from './cards.js'
 
 import { createElementWithClass, createImage, createTextElement,

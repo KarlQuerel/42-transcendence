@@ -7,17 +7,19 @@ from '../../main.js';
 import { loadUserManagementData }
 from '../../views/dashboard/dashboard.js';
 
-import { GameVar }
+import { GameState }
 from './gameVariables.js';
 
 import { startGame }
 from './pong.js'
 
 
-/***				Matchmaking				***/
+/***********************************************\
+-					TOURNAMENT					-
+\***********************************************/
 export function startTournament(menuOverlay)
 {
-	GameVar.AI_present = false;
+	GameState.AI_present = false;
 	menuOverlay.classList.add('hidden');
 	displayTournamentForm();
 }
@@ -54,7 +56,8 @@ export async function displayTournamentForm()
 			// Lock first input with signed-in username
 			try
 			{
-				const	username = await loadUserManagementData(); // FIXME + TODO ask caro how she managed to print username in the frontend
+				const	username = await getUsername(); // FIXME + TODO ask caro how she managed to print username in the frontend
+				// HERE getUsername();
 				if (DEBUG)
 					console.log('username is : ', username);
 				playerInput.value = username;
@@ -120,32 +123,35 @@ export function initializeTournamentMode(playerNames)
 	displayMatchups(matchups);
 
 	startGame();
+	// StartGame();
 }
 
 function createMatchups(playerNames) {
-    // Shuffle the array to randomize the order
-    const shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
+	// Shuffle the array to randomize the order
+	const shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
 
-    // Pair the players into matchups
-    const matchups = [
-        [shuffledPlayers[0], shuffledPlayers[1]], // Match 1
-        [shuffledPlayers[2], shuffledPlayers[3]]  // Match 2
-    ];
-    return matchups;
+	// Pair the players into matchups
+	const matchups = [
+		[shuffledPlayers[0], shuffledPlayers[1]], // Match 1
+		[shuffledPlayers[2], shuffledPlayers[3]]  // Match 2
+	];
+	return matchups;
 }
 
 // TODO KARL FINISH THIS
-function displayMatchups(matchups) {
-    const matchupsContainer = document.createElement('div');
-    matchupsContainer.className = 'matchups-container';
+function displayMatchups(matchups)
+{
+	const matchupsContainer = document.createElement('div');
+	matchupsContainer.className = 'matchups-container';
 
-    matchups.forEach((pair, index) => {
-        const matchup = document.createElement('div');
-        matchup.className = 'matchup';
-        matchup.textContent = `Match ${index + 1}: ${pair[0]} vs ${pair[1]}`;
-        matchupsContainer.appendChild(matchup);
-    });
+	matchups.forEach((pair, index) =>
+	{
+		const matchup = document.createElement('div');
+		matchup.className = 'matchup';
+		matchup.textContent = `Match ${index + 1}: ${pair[0]} vs ${pair[1]}`;
+		matchupsContainer.appendChild(matchup);
+	});
 
-    // Append matchups container to the body or a specific section of your UI
-    document.body.appendChild(matchupsContainer);
+	// Append matchups container to the body or a specific section of your UI
+	document.body.appendChild(matchupsContainer);
 }

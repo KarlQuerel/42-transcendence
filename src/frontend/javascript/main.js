@@ -164,12 +164,12 @@ function router()
 		console.log('isSignedIn = ', isSignedIn);
 
 	// TODO KARL change this logic when user is implemented
-	if (path === '/pong' && isSignedIn == false)
-	{
-		alert("You must be logged in to access the Pong game.");
-		window.location.href = '/sign-in';
-		return ;
-	}
+	// if (path === '/pong' && isSignedIn == false)
+	// {
+	// 	alert("You must be logged in to access the Pong game.");
+	// 	window.location.href = '/sign-in';
+	// 	return ;
+	// }
 	
 	if (route)
 	{

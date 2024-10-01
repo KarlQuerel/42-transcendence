@@ -4,11 +4,20 @@
 import { DEBUG }
 from '../../main.js';
 
-import { GameVar }
+import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
-import { startTournament, displayTournamentForm, startTournamentGame, initializeTournamentMode}
+import { startTournament, displayTournamentForm, startTournamentGame,
+initializeTournamentMode}
 from './tournament.js'
+
+import { createContainer, createVideo, createOverlay, createMenuButton,
+createTournamentButton, createHowToPlayButton, createHowToPlayCard, createCardGif,
+createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer }
+from './createElements.js'
+
+import { drawPaddle, drawBall, drawScore, drawWinMessage, drawPauseMenu, hidePauseMenu }
+from './drawing.js'
 
 /***********************************************\
 -				RENDERING						-
@@ -30,288 +39,6 @@ export default function renderPong()
 }
 
 /***********************************************\
--				CREATING ELEMENTS				-
-\***********************************************/
-function createContainer()
-{
-	const	container = document.createElement('div');
-	container.id = 'pong-page';
-	container.className = 'container-fluid p-0';
-	return container;
-}
-
-function createVideo()
-{
-	const	video = document.createElement('video');
-	video.id = 'background-video';
-	video.autoplay = true;
-	video.muted = true;
-	video.loop = true;
-
-	const	source = document.createElement('source');
-	source.src = '../../../assets/images/pong/tunnel_background.mp4';
-	source.type = 'video/mp4';
-	video.appendChild(source);
-
-	return video;
-}
-
-function createOverlay()
-{
-	const	overlay = document.createElement('div');
-	overlay.id = 'menu-overlay';
-	overlay.className = 'menu-overlay';
-
-	const	menuButtonsContainer = document.createElement('div');
-	menuButtonsContainer.className = 'menu-buttons-container';
-
-	// Container for the first two buttons (row)
-	const	rowContainer = document.createElement('div');
-	rowContainer.className = 'row-container';
-
-	const	singlePlayerButton = createMenuButton('singleplayer-button', 'Single Player', '../../../assets/images/pong/menu/single_player.gif');
-	const	twoPlayerButton = createMenuButton('twoplayer-button', 'Two Players', '../../../assets/images/pong/menu/two_players.gif');
-	const	tournamentButton = createTournamentButton();
-	const	howToPlayButton = createHowToPlayButton();
-	const	howToPlayCard = createHowToPlayCard();
-
-	// Append the first two buttons to the row container
-	rowContainer.appendChild(singlePlayerButton);
-	rowContainer.appendChild(twoPlayerButton);
-
-	// Append the row container and the tournament button to the main container
-	menuButtonsContainer.appendChild(rowContainer);
-	menuButtonsContainer.appendChild(tournamentButton);
-	menuButtonsContainer.appendChild(howToPlayButton);
-	menuButtonsContainer.appendChild(howToPlayCard);
-
-	overlay.appendChild(menuButtonsContainer);
-
-	return overlay;
-}
-
-function createMenuButton(id, text, gifSrc)
-{
-	const	button = document.createElement('button');
-	button.id = id;
-	button.className = 'menu-button btn';
-	button.textContent = text;
-
-	const	gif = document.createElement('img');
-	gif.src = gifSrc;
-	gif.alt = `${text} GIF`;
-	gif.className = 'menu-gif';
-
-	button.appendChild(gif);
-	return button;
-}
-
-function createTournamentButton()
-{
-	const	button = document.createElement('button');
-	button.id = 'tournament-button';
-	button.className = 'menu-button btn';
-	button.textContent = 'Tournament';
-
-	const	gif1 = document.createElement('img');
-	gif1.src = '../../../assets/images/pong/menu/tournament_blue.gif';
-	gif1.alt = 'Tournament GIF 1';
-	gif1.className = 'menu-gif tournament-gif-left';
-
-	const	gif2 = document.createElement('img');
-	gif2.src = '../../../assets/images/pong/menu/tournament_red.gif';
-	gif2.alt = 'Tournament GIF 2';
-	gif2.className = 'menu-gif tournament-gif-right';
-
-	button.appendChild(gif1);
-	button.appendChild(gif2);
-	
-	return button;
-}
-
-function createHowToPlayButton()
-{
-	const	button = document.createElement('button');
-	button.id = 'how-to-play-button';
-	button.className = 'btn btn-home btn-howtoplay';
-	button.textContent = 'How to Play';
-	button.addEventListener('click', () => {
-		const	card = document.getElementById('how-to-play-card');
-		if (card)
-		{
-			card.classList.toggle('show');
-		}
-	});
-
-	return button;
-}
-
-function createHowToPlayCard()
-{
-	const	cardDiv = document.createElement('div');
-	cardDiv.id = 'how-to-play-card';
-	cardDiv.className = 'card how-to-play-card';
-
-	const	container = document.createElement('div');
-	container.className = 'container';
-
-	const	row = document.createElement('div');
-	row.className = 'row';
-
-	const	sections =
-	[
-		{
-			title: 'Left Player',
-			text: 'Press W or S to move',
-			gifs: ['../../../assets/images/pong/how_to_play/W.gif', '../../../assets/images/pong/how_to_play/S.gif']
-		},
-		{
-			title: 'Right Player',
-			text: 'Press the UP or DOWN arrows to move',
-			gifs: ['../../../assets/images/pong/how_to_play/UP.gif', '../../../assets/images/pong/how_to_play/DOWN.gif']
-		},
-		{
-			title: 'Pause',
-			text: 'Press ESC or P to pause',
-			gifs: ['../../../assets/images/pong/how_to_play/ESC.gif', '../../../assets/images/pong/how_to_play/P.gif']
-		}
-	];
-
-	sections.forEach(section =>
-	{
-		const	textCol = document.createElement('div');
-		textCol.className = 'col';
-		const	title = document.createElement('h6');
-		title.textContent = section.title;
-		const	text = document.createElement('p');
-		text.textContent = section.text;
-		textCol.appendChild(title);
-		textCol.appendChild(text);
-
-		const	gifCol = document.createElement('div');
-		gifCol.className = 'col d-flex justify-content-center';
-		section.gifs.forEach(src =>
-		{
-			const	gif = createCardGif(src, `How to Play ${section.title} GIF`);
-			gif.classList.add('img-fluid', 'how-to-play-gif');
-			gifCol.appendChild(gif);
-		});
-
-		row.appendChild(textCol);
-		row.appendChild(gifCol);
-
-		const	rowBreak = document.createElement('div');
-		rowBreak.className = 'w-100';
-		row.appendChild(rowBreak);
-	});
-
-	container.appendChild(row);
-	cardDiv.appendChild(container);
-
-	return cardDiv;
-}
-
-function createCardGif(src, alt)
-{
-	const	gif = document.createElement('img');
-	gif.src = src;
-	gif.alt = alt;
-	gif.className = 'img-fluid';
-	return gif;
-}
-
-function createWinningMessage()
-{
-	const	winningMessage = document.createElement('div');
-	winningMessage.id = 'winning-message';
-	winningMessage.className = 'hidden';
-	return winningMessage;
-}
-
-function createRematchButton()
-{
-	const	rematchButton = document.createElement('button');
-	rematchButton.id = 'rematch-button';
-	rematchButton.textContent = 'Rematch';
-	return rematchButton;
-}
-
-function createCanvas()
-{
-	const	canvas = document.createElement('canvas');
-	canvas.id = 'pongCanvas';
-	return canvas;
-}
-
-function createPausedGifContainer()
-{
-	const	container = document.createElement('div');
-	container.id = 'paused-gif-container';
-	container.className = 'd-flex justify-content-center align-items-center hidden';
-
-	const	pausedGif = document.createElement('img');
-	pausedGif.id = 'paused-gif';
-	pausedGif.src = '../../../assets/images/pong/paused.gif';
-	pausedGif.alt = 'Paused GIF';
-
-	container.appendChild(pausedGif);
-	return container;
-}
-
-/***********************************************\
--				GAME CONFIG						-
-\***********************************************/
-
-/***			Graphics					***/
-let		canvas, ctx;
-const	minWidth = 800;
-const	minHeight = 600;
-
-/***			Paddle Properties			***/
-const	paddleWidth = 10;
-const	paddleHeight = 100;
-const	paddleSpeed = 8;
-const	paddleOffset = 20;
-
-/***			Player Paddles				***/
-const	player1 =
-{
-	x: paddleOffset,
-	y: 0,
-	width: paddleWidth,
-	height: paddleHeight,
-	color: "cyan",
-	shadowColor: 'rgba(0, 255, 255, 0.8)',
-	shadowBlur: 20,
-	dy: 0,
-	score: 0
-};
-
-const	player2 =
-{
-	x: 0,
-	y: 0,
-	width: paddleWidth,
-	height: paddleHeight,
-	color: "magenta",
-	shadowColor: 'rgba(255, 0, 255, 0.8)',
-	shadowBlur: 20,
-	dy: 0,
-	score: 0
-};
-
-/***			Ball Properties				***/
-const	ball =
-{
-	x: 0,
-	y: 0,
-	radius: 10,
-	speed: 5,
-	dx: 5,
-	dy: 5
-};
-
-/***********************************************\
 -				INITIALIZE PONG					-
 \***********************************************/
 export function initializePong()
@@ -331,12 +58,12 @@ export function initializePong()
 function setupCanvas()
 {
 	document.body.classList.add('no-scroll');
-	canvas = document.getElementById("pongCanvas");
+	GraphConf.canvas = document.getElementById("pongCanvas");
 
-	if (canvas)
+	if (GraphConf.canvas)
 	{
-		ctx = canvas.getContext("2d");
-		if (!ctx)
+		GraphConf.ctx = GraphConf.canvas.getContext("2d");
+		if (!GraphConf.ctx)
 		{
 			console.error("Context could not be retrieved!");
 		}
@@ -387,11 +114,14 @@ function setupCanvasDimensions()
 	const	setCanvasDimensions = () =>
 	{
 		const	viewportHeight = window.innerHeight;
-		canvas.width = viewportHeight * 0.8; // 80% of viewport height
-		canvas.height = viewportHeight * 0.6; // 60% of viewport height
+		GraphConf.canvas.width = viewportHeight * 0.8; // FIXME for later = zooming problem
+		GraphConf.canvas.height = viewportHeight * 0.6;
 	};
 
 	setCanvasDimensions();
+
+	// HERE IMPORTANT CHECK IF WORKING
+	// window.addEventListener('resize', setCanvasDimensions);
 }
 
 function handleResize()
@@ -402,12 +132,9 @@ function handleResize()
 
 function enforceMinimumWindowSize()
 {
-	const	minWidth = 800; // TODO KARL check for responsiveness
-	const	minHeight = 600;
-
-	if (window.innerWidth < minWidth || window.innerHeight < minHeight)
+	if (window.innerWidth < GraphConf.minWidth || window.innerHeight < GraphConf.minHeight)
 	{
-		window.resizeTo(Math.max(window.innerWidth, minWidth), Math.max(window.innerHeight, minHeight));
+		window.resizeTo(Math.max(window.innerWidth, GraphConf.minWidth), Math.max(window.innerHeight, GraphConf.minHeight));
 	}
 }
 
@@ -415,7 +142,7 @@ function enforceMinimumWindowSize()
 function prepareGame(menuOverlay, isSinglePlayer)
 {
 
-	GameVar.AI_present = isSinglePlayer;
+	GameState.AI_present = isSinglePlayer;
 	menuOverlay.classList.add('hidden');
 
 	const	countdownDisplay = document.createElement('div');
@@ -446,142 +173,21 @@ function prepareGame(menuOverlay, isSinglePlayer)
 
 export function startGame()
 {
-	if (canvas)
+	if (GraphConf.canvas)
 	{
-		canvas.style.zIndex = 1;
+		GraphConf.canvas.style.zIndex = 1;
 	}
 
-	GameVar.isGameModeSelected = true;
+	GameState.isGameModeSelected = true;
 
-	player1.y = (canvas.height - paddleHeight) / 2;
-	player2.x = canvas.width - paddleWidth - paddleOffset;
-	player2.y = (canvas.height - paddleHeight) / 2;
-	ball.x = canvas.width / 2;
-	ball.y = canvas.height / 2;
+	player1.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
+	player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
+	player2.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
+	BallConf.x = GraphConf.canvas.width / 2;
+	BallConf.y = GraphConf.canvas.height / 2;
 
-	GameVar.game_done = false;
+	GameState.game_done = false;
 	gameLoop();
-}
-
-/***********************************************\
--				RENDERING						-
-\***********************************************/
-
-/***			Drawing Paddles				***/
-function drawPaddle(paddle)
-{
-	ctx.fillStyle = paddle.color;
-	ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)';
-	ctx.shadowBlur = paddle.shadowBlur || 100;
-
-	// Set rounded corners
-	const	cornerRadius = 5;
-	ctx.lineJoin = "round";
-	ctx.lineCap = "round";
-	ctx.lineWidth = 10;
-
-	// Begin drawing the paddle with rounded corners
-	ctx.beginPath();
-	ctx.moveTo(paddle.x + cornerRadius, paddle.y);
-	ctx.lineTo(paddle.x + paddle.width - cornerRadius, paddle.y);
-	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y, paddle.x + paddle.width, paddle.y + cornerRadius);
-	ctx.lineTo(paddle.x + paddle.width, paddle.y + paddle.height - cornerRadius);
-	ctx.quadraticCurveTo(paddle.x + paddle.width, paddle.y + paddle.height, paddle.x + paddle.width - cornerRadius, paddle.y + paddle.height);
-	ctx.lineTo(paddle.x + cornerRadius, paddle.y + paddle.height);
-	ctx.quadraticCurveTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y + paddle.height - cornerRadius);
-	ctx.lineTo(paddle.x, paddle.y + cornerRadius);
-	ctx.quadraticCurveTo(paddle.x, paddle.y, paddle.x + cornerRadius, paddle.y);
-	ctx.closePath();
-
-	ctx.fill();
-	ctx.shadowColor = 'transparent';
-}
-
-/***		Drawing Ball					***/
-function drawBall()
-{
-	ctx.beginPath();
-	ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-	ctx.fillStyle = "white";
-	ctx.fill();
-	ctx.closePath();
-}
-
-/***		Drawing Score					***/
-function drawScore()
-{
-	// Set font properties
-	ctx.font = "48px 'Press Start 2P', cursive";
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-
-	// Score color and shadow
-	ctx.fillStyle = "var(----base-green)";
-	ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
-	ctx.shadowBlur = 10;
-
-	// Draw Player 1's score
-	ctx.fillText(player1.score, canvas.width / 4, 50);
-
-	// Draw Player 2's score
-	ctx.fillText(player2.score, 3 * canvas.width / 4, 50);
-
-	// Reset shadow to avoid affecting other drawings
-	ctx.shadowColor = "transparent";
-}
-
-/***			Drawing Winning Message		***/
-function drawWinMessage(winner)
-{
-	const	messageElement = document.getElementById('winning-message');
-	const	rematchButton = document.getElementById('rematch-button');
-
-	if (!messageElement)
-	{
-		console.error('Winning message element not foun!');
-		return ;
-	}
-	messageElement.textContent = winner + " Wins!";
-	messageElement.classList.add('show');
-
-	if (!rematchButton)
-	{
-		console.error('Rematch button element not found!');
-		return ;
-	}
-	rematchButton.classList.remove('hidden');
-	rematchButton.classList.add('show');
-}
-
-/***			Drawing Pause Menu			***/
-function drawPauseMenu()
-{
-	ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-	ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-	ctx.fillStyle = "white";
-	ctx.font = "48px 'Press Start 2P', cursive";
-	ctx.textAlign = "center";
-	ctx.textBaseline = "middle";
-	ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2 - 80);
-
-	const	pausedGifContainer = document.getElementById('paused-gif-container');
-	if (pausedGifContainer)
-	{
-		pausedGifContainer.classList.remove('hidden');
-		pausedGifContainer.classList.add('show');
-	}
-}
-
-/***			Hiding Pausing GIF		***/
-function hidePauseMenu()
-{
-	const	pausedGifContainer = document.getElementById('paused-gif-container');
-	if (pausedGifContainer)
-	{
-		pausedGifContainer.classList.remove('show');
-		pausedGifContainer.classList.add('hidden');
-	}
 }
 
 /***********************************************\
@@ -596,8 +202,8 @@ function movePaddles()
 		player1.y += player1.dy;
 		if (player1.y < 0)
 			player1.y = 0;
-		else if (player1.y + player1.height > canvas.height)
-			player1.y = canvas.height - player1.height;
+		else if (player1.y + player1.height > GraphConf.canvas.height)
+			player1.y = GraphConf.canvas.height - player1.height;
 	}
 
 	if (player2.dy !== 0)
@@ -605,36 +211,36 @@ function movePaddles()
 		player2.y += player2.dy;
 		if (player2.y < 0)
 			player2.y = 0;
-		else if (player2.y + player2.height > canvas.height)
-			player2.y = canvas.height - player2.height;
+		else if (player2.y + player2.height > GraphConf.canvas.height)
+			player2.y = GraphConf.canvas.height - player2.height;
 	}
 }
 
 /***			Moving Ball					***/
 function moveBall()
 {
-	ball.x += ball.dx;
-	ball.y += ball.dy;
+	BallConf.x += BallConf.dx;
+	BallConf.y += BallConf.dy;
 
-	if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0)
+	if (BallConf.y + BallConf.radius > GraphConf.canvas.height || BallConf.y - BallConf.radius < 0)
 	{
-		ball.dy *= -1;
+		BallConf.dy *= -1;
 	}
 
 	if (
-		(ball.x - ball.radius < player1.x + player1.width && ball.y > player1.y && ball.y < player1.y + player1.height) ||
-		(ball.x + ball.radius > player2.x && ball.y > player2.y && ball.y < player2.y + player2.height)
+		(BallConf.x - BallConf.radius < player1.x + player1.width && BallConf.y > player1.y && BallConf.y < player1.y + player1.height) ||
+		(BallConf.x + BallConf.radius > player2.x && BallConf.y > player2.y && BallConf.y < player2.y + player2.height)
 	)
 	{
-		ball.dx *= -1;
+		BallConf.dx *= -1;
 	}
 
-	if (ball.x - ball.radius < 0)
+	if (BallConf.x - BallConf.radius < 0)
 	{
 		player2.score++;
 		resetAll();
 	}
-	else if (ball.x + ball.radius > canvas.width)
+	else if (BallConf.x + BallConf.radius > GraphConf.canvas.width)
 	{
 		player1.score++;
 		resetAll();
@@ -645,29 +251,29 @@ function moveBall()
 function checkBallPaddleCollision()
 {
 	// Check collision with Player 1's paddle
-	if (ball.x - ball.radius < player1.x + player1.width && ball.x + ball.radius > player1.x && ball.y + ball.radius > player1.y && ball.y - ball.radius < player1.y + player1.height)
+	if (BallConf.x - BallConf.radius < player1.x + player1.width && BallConf.x + BallConf.radius > player1.x && BallConf.y + BallConf.radius > player1.y && BallConf.y - BallConf.radius < player1.y + player1.height)
 	{
-		let collidePointP1 = (ball.y - (player1.y + player1.height / 2));
+		let collidePointP1 = (BallConf.y - (player1.y + player1.height / 2));
 		collidePointP1 = collidePointP1 / (player1.height / 2);
 		let angleRadP1 = collidePointP1 * Math.PI / 4;
-		ball.dx = ball.speed * Math.cos(angleRadP1);
-		ball.dy = ball.speed * Math.sin(angleRadP1);
-		if (ball.dx < 0)
-			ball.dx = -ball.dx;
-		ball.speed += 0.5;
+		BallConf.dx = BallConf.speed * Math.cos(angleRadP1);
+		BallConf.dy = BallConf.speed * Math.sin(angleRadP1);
+		if (BallConf.dx < 0)
+			BallConf.dx = -BallConf.dx;
+		BallConf.speed += 0.5;
 	}
 
 	// Check collision with Player 2's paddle
-	if (ball.x - ball.radius < player2.x + player2.width && ball.x + ball.radius > player2.x && ball.y + ball.radius > player2.y && ball.y - ball.radius < player2.y + player2.height)
+	if (BallConf.x - BallConf.radius < player2.x + player2.width && BallConf.x + BallConf.radius > player2.x && BallConf.y + BallConf.radius > player2.y && BallConf.y - BallConf.radius < player2.y + player2.height)
 	{
-		let collidePointP2 = (ball.y - (player2.y + player2.height / 2));
+		let collidePointP2 = (BallConf.y - (player2.y + player2.height / 2));
 		collidePointP2 = collidePointP2 / (player2.height / 2);
 		let angleRadP2 = collidePointP2 * Math.PI / 4;
-		ball.dx = ball.speed * Math.cos(angleRadP2);
-		ball.dy = ball.speed * Math.sin(angleRadP2);
-		if (ball.dx > 0)
-			ball.dx = -ball.dx;
-		ball.speed += 0.5;
+		BallConf.dx = BallConf.speed * Math.cos(angleRadP2);
+		BallConf.dy = BallConf.speed * Math.sin(angleRadP2);
+		if (BallConf.dx > 0)
+			BallConf.dx = -BallConf.dx;
+		BallConf.speed += 0.5;
 	}
 }
 
@@ -681,38 +287,38 @@ function resetAll()
 /***				Resetting Ball			***/
 function resetBall()
 {
-	ball.x = canvas.width / 2;
-	ball.y = canvas.height / 2;
+	BallConf.x = GraphConf.canvas.width / 2;
+	BallConf.y = GraphConf.canvas.height / 2;
 		
 	// Reset the ball speed to the initial speed
-	ball.speed = 5;
+	BallConf.speed = 5;
 
 	// Reverse the horizontal direction of the ball based on its current direction
-	if (ball.dx > 0)
+	if (BallConf.dx > 0)
 	{
-		ball.dx = -ball.speed;
+		BallConf.dx = -BallConf.speed;
 	}
 	else
 	{
-		ball.dx = ball.speed;
+		BallConf.dx = BallConf.speed;
 	}
 
 	// Reset the vertical direction based on its current direction
-	if (ball.dy > 0)
+	if (BallConf.dy > 0)
 	{
-		ball.dy = ball.speed;
+		BallConf.dy = BallConf.speed;
 	}
 	else
 	{
-		ball.dy = -ball.speed;
+		BallConf.dy = -BallConf.speed;
 	}
 }
 
 /***			Resetting Paddles			***/
 function resetPaddles()
 {
-	player1.y = (canvas.height - paddleHeight) / 2;
-	player2.y = (canvas.height - paddleHeight) / 2;
+	player1.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
+	player2.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
 }
 
 /***********************************************\
@@ -720,23 +326,23 @@ function resetPaddles()
 \***********************************************/
 function keyDownHandler(e)
 {
-	if (GameVar.isGameModeSelected == false)
+	if (GameState.isGameModeSelected == false)
 		return ;
 	
 	if (e.key === "p" || e.key === "Escape")
 	{
-		GameVar.game_paused = !GameVar.game_paused;
-		if (game_paused == true)
+		GameState.game_paused = !GameState.game_paused;
+		if (GameState.game_paused == true)
 		{
-			cancelAnimationFrame(GameVar.animationFrameId);
+			cancelAnimationFrame(GameState.animationFrameId);
 			drawPauseMenu();
-			GameVar.animationFrameId = requestAnimationFrame(gameLoop);
+			GameState.animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		else
 		{
-			cancelAnimationFrame(GameVar.animationFrameId);
+			cancelAnimationFrame(GameState.animationFrameId);
 			hidePauseMenu();
-			GameVar.animationFrameId = requestAnimationFrame(gameLoop);
+			GameState.animationFrameId = requestAnimationFrame(gameLoop);
 		}
 		return ;
 	}
@@ -744,16 +350,16 @@ function keyDownHandler(e)
 	if (e.key === "w" || e.key === "ArrowUp")
 	{
 		if (e.key === "w")
-			player1.dy = -paddleSpeed;
+			player1.dy = -PaddleConf.speed;
 		else if (e.key === "ArrowUp")
-			player2.dy = -paddleSpeed;
+			player2.dy = -PaddleConf.speed;
 	}
 	else if (e.key === "s" || e.key === "ArrowDown")
 	{
 		if (e.key === "s")
-			player1.dy = paddleSpeed;
+			player1.dy = PaddleConf.speed;
 		else if (e.key === "ArrowDown")
-			player2.dy = paddleSpeed;
+			player2.dy = PaddleConf.speed;
 	}
 }
 
@@ -774,6 +380,7 @@ function keyUpHandler(e)
  \***********************************************/
  //TODO KARL - refactor this fucking long file
 
+
 /* imports the function that returns the AI paddle's movement */
 import { getPaddleAction } from './ai.js';
 
@@ -782,21 +389,23 @@ import { GameData } from './ai.js';
 
 let data = new GameData();
 
+// TODO rajouter GameState. devant tous les trucs de droites apres le =
+
 function updateGameData()
 {
-	data.ballX = ball.x;
-	data.ballY = ball.y;
-	data.ball_radius = ball.radius;
-	data.ballX_velocity = ball.dx;
-	data.ballY_velocity = ball.dy;
+	data.ballX = BallConf.x;
+	data.ballY = BallConf.y;
+	data.ball_radius = BallConf.radius;
+	data.ballX_velocity = BallConf.dx;
+	data.ballY_velocity = BallConf.dy;
 
 	data.fieldY_top = 0;
-	data.fieldY_bottom = canvas.height;
-	data.fieldX_right = canvas.width;
+	data.fieldY_bottom = GraphConf.canvas.height;
+	data.fieldX_right = GraphConf.canvas.width;
 
 	data.paddleY = player2.y;
-	data.paddle_height = paddleHeight;
-	data.paddle_width = paddleWidth;
+	data.paddle_height = PaddleConf.height;
+	data.paddle_width = PaddleConf.width;
 }
 
 /* Exports the current game data held inside the data class.
@@ -835,13 +444,13 @@ function moveAiPaddle()
 	{
 /* 		simulateKeyPress('ArrowUp');
 		simulateKeyRelease('ArrowUp'); */
-		player2.dy = -paddleSpeed;
+		player2.dy = -PaddleConf.speed;
 	}
 	else if (getPaddleAction() == DOWN)
 	{
 /* 		simulateKeyPress('ArrowDown');
 		simulateKeyRelease('ArrowDown'); */
-		player2.dy = paddleSpeed;
+		player2.dy = PaddleConf.speed;
 	}
 }
 
@@ -858,23 +467,27 @@ function moveAiPaddle()
 let startTime;
 let elapsedSeconds;
 let current_sec;
+
 /***			Main Loop					***/
 export function gameLoop()
 {
-	if (GameVar.game_paused == true)
+	if (GameState.game_paused == true)
 	{
 		drawPauseMenu();
-		GameVar.animationFrameId = requestAnimationFrame(gameLoop);
+		GameState.animationFrameId = requestAnimationFrame(gameLoop);
 		return;
 	}
 
-	if (GameVar.game_done == true)
+	if (GameState.game_done == true)
+	{
+		// TODO remplir la class results + dependamment de tournoi ou pas rematch ou next
 		return ;
+	}
 	
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
 
 //---------------------------------- AI ----------------------------------
-	if (GameVar.AI_present == true)
+	if (GameState.AI_present == true)
 	{
 		// updates the game data for the AI file immediately before starting the time interval
 		if (data.ball_horizontal == undefined)
@@ -905,17 +518,17 @@ export function gameLoop()
 	if (player1.score === 10)
 	{
 		drawWinMessage("Player 1");
-		GameVar.game_done = true;
+		GameState.game_done = true;
 	}
 	else if (player2.score === 10)
 	{
 		drawWinMessage("Player 2");
-		GameVar.game_done = true;
+		GameState.game_done = true;
 	}
 
-	if (GameVar.game_done == false)
+	if (GameState.game_done == false)
 	{
-		GameVar.animationFrameId = requestAnimationFrame(gameLoop);
+		GameState.animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
@@ -925,9 +538,9 @@ function resetGame()
 	// Reset game state
 	player1.score = 0;
 	player2.score = 0;
-	ball.speed = 5;
-	ball.dx = 5;
-	ball.dy = 5;
+	BallConf.speed = 5;
+	BallConf.dx = 5;
+	BallConf.dy = 5;
 
 	// Hide the winning message and rematch button
 	const	messageElement = document.getElementById('winning-message');
@@ -937,8 +550,8 @@ function resetGame()
 	rematchButton.classList.add('hidden');
 
 	// Restart the game
-	GameVar.game_done = false;
-	GameVar.isGameModeSelected = false;
+	GameState.game_done = false;
+	GameState.isGameModeSelected = false;
 	requestAnimationFrame(gameLoop);
 }
 
@@ -961,9 +574,9 @@ export function cleanUpPong()
 			canvas.remove();
 
 	// Resetting Game Variables
-	GameVar.game_done = true;
-	GameVar.game_paused = false;
-	GameVar.AI_present = false;
+	GameState.game_done = true;
+	GameState.game_paused = false;
+	GameState.AI_present = false;
 
 	document.body.classList.remove('no-scroll');
 }

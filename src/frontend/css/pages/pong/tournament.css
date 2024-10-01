@@ -1,5 +1,6 @@
-/* TODO FINISH */
-
+/************************************************
+					TOURNAMENT
+***********************************************/
 .matchups-container
 {
 	margin: 20px;
@@ -9,6 +10,8 @@
 	border-radius: 5px;
 	position: relative;
 	z-index: 10000;
+	top: 50%;
+	bottom: 50%;
 }
 
 .matchup
@@ -17,4 +20,6 @@
 	padding: 5px;
 	margin: 5px 0;
 	text-align: center;
+	top: 50%;
+	bottom: 50%;
 }
