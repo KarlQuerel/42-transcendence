@@ -12,9 +12,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(blank=False, null=False, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
-    # Override AbstractUser existing fields
-    groups = None
-    user_permissions = None
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png')
     # pour lier avec dashboard
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -30,4 +28,4 @@ class CustomUser(AbstractUser):
 # 		default_avatar_path = os.path.join(settings.API_DIR, 'static', 'avatars', 'default.png')
 # 		with open(default_avatar_path, 'rb') as f:
 # 			default_avatar = File(f)
-# 			var = instance.avatar.save('default.png', default_avatar, save=False)
+# 			instance.avatar.save('default.png', default_avatar, save=False)
