@@ -142,6 +142,12 @@ function enforceMinimumWindowSize()
 function prepareGame(menuOverlay, isSinglePlayer)
 {
 
+	if (GameState.isCountdownActive)
+	{
+		clearInterval(GameState.countdownInterval);
+		document.querySelectorAll('.countdown').forEach(el => el.remove());
+	}
+
 	GameState.AI_present = isSinglePlayer;
 	menuOverlay.classList.add('hidden');
 
@@ -151,7 +157,9 @@ function prepareGame(menuOverlay, isSinglePlayer)
 
 	let countdown = 3;
 	countdownDisplay.textContent = countdown;
-	const	countdownInterval = setInterval(() =>
+
+	GameState.isCountdownActive = true;
+	GameState.countdownInterval = setInterval(() =>
 	{
 		countdown--;
 		if (countdown > 0)
@@ -161,10 +169,11 @@ function prepareGame(menuOverlay, isSinglePlayer)
 		else
 		{
 			countdownDisplay.textContent = 'GO!';
-			clearInterval(countdownInterval);
+			clearInterval(GameState.countdownInterval);
 			setTimeout(() =>
 			{
 				document.body.removeChild(countdownDisplay);
+				GameState.isCountdownActive = false;
 				startGame();
 			}, 1000);
 		}
@@ -383,7 +392,8 @@ export function cleanUpPong()
 	document.removeEventListener("keyup", keyUpHandler);
 
 	// Stopping Game Loop
-	cancelAnimationFrame(gameLoop);
+	// cancelAnimationFrame(gameLoop);
+	cancelAnimationFrame(GameState.animationFrameId);
 
 	// Removing Game Elements
 	const	canvas = document.getElementById("pongCanvas");
@@ -394,6 +404,17 @@ export function cleanUpPong()
 	GameState.game_done = true;
 	GameState.game_paused = false;
 	GameState.AI_present = false;
+
+	// Cleaning up the countdown
+	clearInterval(GameState.countdownInterval);
+	GameState.isCountdownActive = false;
+	document.querySelectorAll('.countdown').forEach(el => el.remove());
+
+	const	tournamentForm = document.getElementById('tournament-form');
+	if (tournamentForm)
+	{
+		tournamentForm.remove();
+	}
 
 	document.body.classList.remove('no-scroll');
 }

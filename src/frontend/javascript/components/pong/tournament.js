@@ -80,7 +80,7 @@ export async function displayTournamentForm()
 
 	// Add a submit button
 	const	submitButton = document.createElement('button');
-	submitButton.className = 'btn btn-second'; // TODO KARL - change button here
+	submitButton.className = 'btn menu-button start-tournament-btn';
 	submitButton.textContent = 'Start Tournament';
 	submitButton.addEventListener('click', () =>
 	{

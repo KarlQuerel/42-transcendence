@@ -26,8 +26,14 @@ export const	GameState =
 	// Did user select a mode?
 	isGameModeSelected: false,
 
-	// Is Tournament?
-	isTournament :false
+	// Is it a Tournament?
+	isTournament :false,
+
+	// Is countdown active?
+	isCountdownActive: false,
+
+	// Interval between Countdowns
+	countdownInterval: null
 }
 
 /***			Graphics Config			***/

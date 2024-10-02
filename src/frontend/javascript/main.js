@@ -36,10 +36,6 @@ from "./views/user/profile.js";
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
 
-/***			Footer						***/
-import renderPrivacyPolicy
-from "./views/privacy_policy/privacy_policy.js";
-
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
@@ -158,12 +154,12 @@ function router()
 		console.log('isSignedIn = ', isSignedIn);
 
 	// HERE - Check if authentication is working
-	if (path === '/pong' && isSignedIn == false)
-	{
-		alert("You must be logged in to access the Pong game.");
-		window.location.href = '/sign-in';
-		return ;
-	}
+	// if (path === '/pong' && isSignedIn == false)
+	// {
+	// 	alert("You must be logged in to access the Pong game.");
+	// 	window.location.href = '/sign-in';
+	// 	return ;
+	// }
 	
 	if (route)
 	{
