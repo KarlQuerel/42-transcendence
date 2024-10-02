@@ -55,11 +55,6 @@ const routes =
 		title: "Home",
 		render: renderHome
 	},
-	'/privacy-policy':
-	{
-		title: "Privacy Policy",
-		render: renderPrivacyPolicy
-	},
 	'/dashboard':
 	{
 		title: "Dashboard",
@@ -77,7 +72,6 @@ const routes =
 	{
 		title: "My Profile",
 		render: renderProfile,
-		// init: initializeProfile
 	},
 	'/404':
 	{
@@ -115,7 +109,7 @@ function normalizePath(path)
 
 
 /***			Authentication				***/
-//HERE = CARE WORK IN PROGRESS !
+//HERE - Check if authentication is working properly (see router function)
 let	accessToken = localStorage.getItem('access_token');
 let	isSignedIn;
 
@@ -163,13 +157,13 @@ function router()
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
-	// TODO KARL change this logic when user is implemented
-	// if (path === '/pong' && isSignedIn == false)
-	// {
-	// 	alert("You must be logged in to access the Pong game.");
-	// 	window.location.href = '/sign-in';
-	// 	return ;
-	// }
+	// HERE - Check if authentication is working
+	if (path === '/pong' && isSignedIn == false)
+	{
+		alert("You must be logged in to access the Pong game.");
+		window.location.href = '/sign-in';
+		return ;
+	}
 	
 	if (route)
 	{

@@ -306,7 +306,6 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'X-CSRFToken': getCookie('csrftoken'),
 		},
 		body: JSON.stringify({
 			username,

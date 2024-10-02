@@ -235,35 +235,39 @@ const	DOWN = 0
 const	UP = 1
 const	ERROR = 42
 
-//CHECK CARO: simulate key press obligatoire? cf interprétation du sujet
-/* document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-
-function simulateKeyPress(key) {
+function simulateKeyPress(key)
+{
 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
 }
 
-function simulateKeyRelease(key) {
+function simulateKeyRelease(key)
+{
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
-} */
+}
 
 /* Simulates a key press from the AI's paddle */
 function moveAiPaddle()
 {
-	//TODO KARL
+
 /* 	if (getPaddleAction() == ERROR)
 		STOP THE GAME */
 	if (getPaddleAction() == UP)
 	{
-/* 		simulateKeyPress('ArrowUp');
-		simulateKeyRelease('ArrowUp'); */
-		player2.dy = -PaddleConf.speed;
+		simulateKeyPress('ArrowUp');
+		setTimeout(() =>
+		{
+			simulateKeyRelease('ArrowUp');
+		}, 50); // Delay of 50 milliseconds --> sans ça il ne le comprend pas et le paddle de l'IA ne bouge pas DU TOUT
+		// player2.dy = -PaddleConf.speed; //HERE check which one
 	}
 	else if (getPaddleAction() == DOWN)
 	{
-/* 		simulateKeyPress('ArrowDown');
-		simulateKeyRelease('ArrowDown'); */
-		player2.dy = PaddleConf.speed;
+		simulateKeyPress('ArrowDown');
+		setTimeout(() =>
+		{
+			simulateKeyRelease('ArrowUp');
+		}, 50);
+		// player2.dy = PaddleConf.speed; //HERE check which one
 	}
 }
 
