@@ -6,6 +6,8 @@ from '../../main.js';
 
 let	animationFrameId = null;
 
+export const	keysPressed = {};
+
 /***			Game State			***/
 export const	GameState =
 {
