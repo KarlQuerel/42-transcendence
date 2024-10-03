@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-# from api_user.models import CustomUser
+from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 # from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,6 +16,7 @@ from django.http import JsonResponse
 import json
 import logging
 from .serializers import UsernameSerializer #TEST CARO
+from pprint import pprint
 
 
 #########################################
@@ -86,15 +87,10 @@ def signInUser(request):
 # Check which user is authenticated
 # password1
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-@login_required
 def currentlyLoggedInUser(request):
     try:
         user = request.user
-        if not user.is_authenticated:
-            return Response({'error': 'User not authenticated'}, status=401)
-
         return Response({'Authentication success': True,
 			'first_name': user.first_name,
 			'last_name': user.last_name,
@@ -106,6 +102,30 @@ def currentlyLoggedInUser(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def	usersList(request):
+	try:
+		users = CustomUser.objects.exclude(id=request.user.id)
+		users_data = [
+			{
+				"id": user.id,
+				"username": user.username,
+				# "avatar": user.avatar,
+				"friendship_status": get_friendship_status(request.user, user),
+			}
+			for user in users
+		]
+		return Response(users_data)
+	except Exception as e:
+		return Response({'error': str(e)}, status=510)
+
+def get_friendship_status(user1, user2):
+	for friend in user1.friends.all():
+		if friend.username == user2.username:
+			return 'already_friends'
+	return 'not_friends'
 
 #########################################
 

@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = false;
+export	const	DEBUG = true;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
@@ -33,6 +33,9 @@ from "./views/user/signin.js";
 
 import renderProfile
 from "./views/user/profile.js";
+
+import renderFriendsList
+from "./views/user/friends.js";
 
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
@@ -95,6 +98,11 @@ const routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
+	},
+	'/friends':
+	{
+		title: "Friends List",
+		render: renderFriendsList
 	}
 };
 

@@ -8,4 +8,5 @@ urlpatterns = [
     path('currentlyLoggedInUser/', views.currentlyLoggedInUser, name='currently-logged-in-user'),
 	path('friends/', include('friends.urls')),
     path('getUsername/', views.getUsername, name='get-username'),
+    path('users-list/', views.usersList, name='users-list'),
 ]
