@@ -90,21 +90,21 @@ def signInUser(request):
 @permission_classes([IsAuthenticated])
 @login_required
 def currentlyLoggedInUser(request):
-    try:
-        user = request.user
-        if not user.is_authenticated:
-            return Response({'error': 'User not authenticated'}, status=401)
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
 
-        return Response({'Authentication success': True,
+		return Response({'Authentication success': True,
 			'first_name': user.first_name,
 			'last_name': user.last_name,
-            'username': user.username,
+			'username': user.username,
 			'password': user.password,
 			'date_of_birth': user.date_of_birth,
-            'email': user.email
-        })
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
+			'email': user.email
+		})
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
 
 
 #########################################
@@ -114,8 +114,8 @@ def currentlyLoggedInUser(request):
 @api_view(['GET'])
 @login_required
 def getUsername(request):
-    if request.user.is_authenticated:
-        serializer = UsernameSerializer(request.user)
-        return Response(serializer.data)
-    else:
-        return Response({'error': 'User not authenticated'}, status=401)
+	if request.user.is_authenticated:
+		serializer = UsernameSerializer(request.user)
+		return Response(serializer.data)
+	else:
+		return Response({'error': 'User not authenticated'}, status=401)

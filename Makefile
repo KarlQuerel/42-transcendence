@@ -34,7 +34,6 @@ logs-database:
 	cd src && docker-compose logs -f database
 
 # DJANGO
-#CARO: faire tests make fill_db plusieurs fois de suite (il manque probablement des protections dans les fichiers populate_db)
 
 fill_dashboard: #populate database
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
@@ -43,10 +42,11 @@ fill_user:
 	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
 
 erase_user:
-	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"
-	docker exec -it User bash -c "python manage.py flush --no-input"
+# docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"
+# docker exec -it User bash -c "python manage.py flush --no-input"
 
 erase_dashboard:
+# docker exec -it Dashboard bash -c "python manage.py clear_db"
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
 	docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
 

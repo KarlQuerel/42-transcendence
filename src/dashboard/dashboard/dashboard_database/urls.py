@@ -30,4 +30,5 @@ urlpatterns = [
 	path('api/', include('api.urls')),
 	path('api/dashboard/', include('api.urls')), #"dashboard" : dans nginx file
 	path('metrics/', exports.ExportToDjangoView, name='metrics')
+	# path('api_user/', include('api_user.urls')), #test
 ]
