@@ -98,13 +98,45 @@ function	decide_paddle_movement(paddleY, predicted_intersection)
 		return DO_NOT_MOVE;
 }
 
+function follow_ball(paddleY, ballY)
+{
+	if (paddleY > ballY)
+		return UP;
+	else if (paddleY < ballY)
+		return DOWN;
+	else
+		return DO_NOT_MOVE;
+}
+
+function make_the_AI_loose_sometimes_to_avoid_human_frustration(predicted_intersection)
+{
+	//random number between 1 and 4
+	//iuf the random number = 3 then instead of returning
+	//predicted_intersection we return the predicted intersection + 50
+
+	let random_number = Math.floor(Math.random() * 4) + 1;
+	if (random_number <= 2)
+		return predicted_intersection + 500;
+	else
+		return predicted_intersection;
+}
+
 /* We calculate the predicted intersection of the ball and field's 
 right wall and decide accordingly the AI paddle's movement. */
 function	ai_action(data)
 {
-	let predicted_intersection = predict_ball_paddle_intersection(data);
-	let paddle_movement = decide_paddle_movement(data.paddleY, predicted_intersection);
+	let paddle_movement;
+	//the following if/else allows the AI to move later and therefore make its movements more human like
+	if (data.ballX < (data.fieldX_right / 2)) //if ball is on the left side of the field
+		paddle_movement = follow_ball(data.paddleY, data.ballY);
+	else //if ball is on the right side of the field
+	{
+		let predicted_intersection = predict_ball_paddle_intersection(data);
+		predicted_intersection = make_the_AI_loose_sometimes_to_avoid_human_frustration(predicted_intersection);
 
+		paddle_movement = decide_paddle_movement(data.paddleY, predicted_intersection);
+	}
+	
 	return paddle_movement;
 }
 

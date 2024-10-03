@@ -34,11 +34,11 @@ export default function renderSignUp()
 	[
 		{ label: 'First Name:', type: 'text', id: 'first_name', placeholder: 'Enter first name' },
 		{ label: 'Last Name:', type: 'text', id: 'last_name', placeholder: 'Enter last name' },
-		{ label: 'Username:', type: 'text', id: 'username', placeholder: 'Enter username' },
+		{ label: 'Username:', type: 'text', id: 'username', placeholder: 'Enter username', autocomplete: 'username' },
 		{ label: 'Date of Birth:', type: 'date', id: 'date_of_birth', placeholder: '' },
-		{ label: 'Password:', type: 'password', id: 'password', placeholder: 'Enter password' },
-		{ label: 'Password Confirmation:', type: 'password', id: 'password_confirmation', placeholder: 'Enter password confirmation' },
-		{ label: 'Email:', type: 'text', id: 'email', placeholder: 'Enter email' }
+		{ label: 'Password:', type: 'password', id: 'password', placeholder: 'Enter password', autocomplete: 'new-password' },
+		{ label: 'Password Confirmation:', type: 'password', id: 'password_confirmation', placeholder: 'Enter password confirmation', autocomplete: 'new-password' },
+		{ label: 'Email:', type: 'text', id: 'email', placeholder: 'Enter email', autocomplete: 'email' }
 	];
 
 	fields.forEach(field =>
@@ -57,6 +57,12 @@ export default function renderSignUp()
 		input.setAttribute('id', field.id);
 		input.setAttribute('placeholder', field.placeholder);
 		input.classList.add('form-input');
+
+		if (field.autocomplete)
+			input.setAttribute('autocomplete', field.autocomplete);
+		if (field.accept)
+			input.setAttribute('accept', field.accept);
+
 		formGroup.appendChild(input);
 
 		form.appendChild(formGroup);
@@ -124,7 +130,7 @@ export function initializeSignUp() {
 			{
 				if (password !== password_confirmation)
 					console.log('Error: Password and password confirmation do not match.');
-				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type);
+				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 				return ;
 			}
 			else
@@ -182,6 +188,22 @@ function checkIdentifierType(identifier, str)
         return 'email';
     if (str == 'password_confirmation' && identifier != '')
 		return 'password';
+	// if (str == 'avatar' && identifier != '')
+	// {
+	// 	const avatarFile = document.getElementById('avatar').files[0];
+	// 	if (avatarFile)
+	// 	{
+	// 		const fileType = avatarFile.type;
+	// 		const fileSize = avatarFile.size;
+	// 		const maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
+
+	// 		if (fileSize > maxFileSize)
+	// 			return 'error';
+	// 		if (fileType != 'image/png' && fileType != 'image/jpeg' && fileType != 'image/jpg')
+	// 			return 'error';
+	// 		return 'avatar';
+	// 	}
+	// }
 	return 'error';
 }
 
@@ -256,7 +278,7 @@ function allValuesAreValid(first_name_type, last_name_type, username_type, date_
 	return true;
 }
 
-function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type)
+function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
 {
 	const errorMessages = {
         first_name: 'Error: bad first name. First name must be less than 30 characters and can only contain letters.',
@@ -264,7 +286,7 @@ function sendErrorToFrontend(first_name_type, last_name_type, username_type, dat
         date_of_birth: 'Error: bad date of birth.',
         username: 'Error: bad username. Username has to be less than 13 characters and can only contain letters, numbers, underscores, and hyphens.',
         password: 'Error: bad password. Password has to be at least 6 characters long.',
-        email: 'Error: bad email.'
+        email: 'Error: bad email.',
     };
 
     const fields = [
@@ -273,7 +295,7 @@ function sendErrorToFrontend(first_name_type, last_name_type, username_type, dat
         { type: date_of_birth_type, id: 'date_of_birth', message: errorMessages.date_of_birth },
         { type: username_type, id: 'username', message: errorMessages.username },
         { type: password_type, id: 'password', message: errorMessages.password },
-        { type: email_type, id: 'email', message: errorMessages.email }
+        { type: email_type, id: 'email', message: errorMessages.email },
     ];
 
     fields.forEach(field => {
@@ -295,9 +317,6 @@ function sendErrorToFrontend(first_name_type, last_name_type, username_type, dat
 /***********************************************\
 *                 MAIN FUNCTION                 *
 \***********************************************/
-
-// password1: password,
-// password2: password,
 
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {

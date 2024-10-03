@@ -14,52 +14,55 @@ export default function renderSignIn()
 
 	// Create email/username input
 	const emailInput = document.createElement('input');
-	emailInput.setAttribute('type', 'text');
-	emailInput.setAttribute('id', 'email');
-	emailInput.setAttribute('name', 'email');
-	emailInput.setAttribute('placeholder', 'Email or Username');
-	emailInput.classList.add('form-input');
+    emailInput.setAttribute('type', 'text');
+    emailInput.setAttribute('id', 'email');
+    emailInput.setAttribute('name', 'email');
+    emailInput.setAttribute('placeholder', 'Username');
+    emailInput.classList.add('form-input');
+    emailInput.setAttribute('autocomplete', 'username');
 
 	// Create password input
 	const passwordInput = document.createElement('input');
-	passwordInput.setAttribute('type', 'password');
-	passwordInput.setAttribute('id', 'password');
-	passwordInput.setAttribute('name', 'password');
-	passwordInput.setAttribute('placeholder', 'Password');
-	passwordInput.classList.add('form-input');
+    passwordInput.setAttribute('type', 'password');
+    passwordInput.setAttribute('id', 'password');
+    passwordInput.setAttribute('name', 'password');
+    passwordInput.setAttribute('placeholder', 'Password');
+    passwordInput.classList.add('form-input');
+    passwordInput.setAttribute('autocomplete', 'current-password');
 
 	// Create log in button
 	const loginButton = document.createElement('button');
-	loginButton.setAttribute('type', 'submit');
-	loginButton.textContent = 'Log In';
-	loginButton.classList.add('form-input');
+    loginButton.setAttribute('type', 'submit');
+    loginButton.textContent = 'Log In';
+    loginButton.classList.add('form-input');
 
 	// Create sign up button
-	const signUpButton = document.createElement('button');
-	signUpButton.setAttribute('type', 'button');
-	signUpButton.setAttribute('id', 'sign-up-button');
-	signUpButton.textContent = 'Sign Up';
-	signUpButton.classList.add('form-input');
+    const signUpButton = document.createElement('button');
+    signUpButton.setAttribute('type', 'button');
+    signUpButton.setAttribute('id', 'sign-up-button');
+    signUpButton.textContent = 'Sign Up';
+    signUpButton.classList.add('form-input');
 
 	// Append the inputs and buttons to the form
-	form.appendChild(emailInput);
-	form.appendChild(passwordInput);
-	form.appendChild(loginButton);
-	form.appendChild(document.createElement('br')); // Line break
-	form.appendChild(signUpButton);
+    form.appendChild(emailInput);
+    form.appendChild(passwordInput);
+    form.appendChild(loginButton);
+    form.appendChild(document.createElement('br')); // Line break
+    form.appendChild(signUpButton);
+
 
 	// Add event listener to the Sign Up button to redirect to /sign-up
-	signUpButton.addEventListener('click', () =>
-	{
-		window.location.href = '/sign-up';
-	});
+    signUpButton.addEventListener('click', () =>
+    {
+        window.location.href = '/sign-up';
+    });
 
 	// Add event listener to the Log In button to handle login
-	form.addEventListener('submit', (event) => {
-		event.preventDefault(); // Prevent the default form submission
+    form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevent the default form submission
 
-		const username = emailInput.value;
-		const password = passwordInput.value;
+        const username = emailInput.value;
+        const password = passwordInput.value;
 
 
         if (DEBUG)
@@ -102,6 +105,9 @@ function getCookie(name) {
 
 function login(username, password)
 {
+    if (DEBUG)
+        console.log('Entering login function');
+
 	fetch('/api/users/signInUser/', {
 		method: 'POST',
 		headers: {
@@ -114,6 +120,9 @@ function login(username, password)
 	.then(data => {
 		if (data.access)
 		{
+            if (DEBUG)
+                console.log('Data obtained. Generating tokens');
+
 			// Store tokens in local storage
 			localStorage.setItem('access_token', data.access);
 			localStorage.setItem('refresh_token', data.refresh);
@@ -127,9 +136,9 @@ function login(username, password)
     {
         if (DEBUG)
             console.log('Token refreshed:', newAccessToken);
-        
-        window.location.href = '/profile';
+
         console.log('Success:', username, 'is now logged in');
+        window.location.href = '/profile';
     })
     .catch(error => {
         console.error('Error:', error);

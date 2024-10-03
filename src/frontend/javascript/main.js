@@ -81,7 +81,6 @@ const routes =
 	{
 		title: "My Profile",
 		render: renderProfile,
-		// init: initializeProfile
 	},
 	'/404':
 	{
@@ -125,7 +124,7 @@ function normalizePath(path)
 
 // TO DO KARL HERE : replace this variable with the actual token mechanism
 // check (next todo karl)
-export let	isSignedIn = false;
+export let	isSignedIn = true; //CARO: pour pouvoir faire des tests
 
 /***			Router Function				***/
 function router()

@@ -1,5 +1,7 @@
 from django.urls import path, include
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
 	path('addUser/', views.addUser, name='add-user'),
@@ -12,4 +14,9 @@ urlpatterns = [
     path('checkAuthentication/', views.checkAuthentication, name='check-authentication'),
     path('verifyPassword/', views.verifyPassword, name='verify-password'),
     path('hashAndChangePassword/', views.hashAndChangePassword, name='hash-and-change-password'),
+    path('updateProfileInfo/', views.updateProfileInfo, name='update-profile-info'),
+    path('getAvatar/', views.getAvatar, name='get-avatar'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

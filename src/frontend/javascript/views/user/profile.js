@@ -19,6 +19,15 @@ export default function renderProfile()
     const profileTitle = document.createElement('h1');
     profileTitle.textContent = 'My Profile';
 
+    // Create an image element for the avatar
+    const avatarElement = document.createElement('img');
+    avatarElement.setAttribute('id', 'avatar');
+    avatarElement.setAttribute('alt', 'User Avatar');
+    avatarElement.setAttribute('src', '/media/avatars/default.png');
+    avatarElement.style.width = '150px';
+    avatarElement.style.height = '150px';
+
+    container.appendChild(avatarElement);
 
 
     /********** PERSONAL INFORMATION **********/
@@ -102,6 +111,26 @@ export default function renderProfile()
             container.innerHTML = '<p>Failed to load profile data.</p>';
         });
 
+        // Fetch user avatar and display it
+        fetchUserAvatar()
+        .then(avatarData =>
+        {
+            if (avatarData || DEBUG)
+                console.log(avatarData);
+            else
+                console.log('No avatar data found');
+
+            if (avatarData.avatar_url)
+                avatarElement.src = avatarData.avatar_url;
+            else
+                avatarElement.src = '/media/avatars/default.png';
+        })
+        .catch(error =>
+        {
+            console.error('Error fetching user avatar:', error);
+            avatarElement.src = '/media/avatars/default.png';
+        });
+
 
         // Event listener for change password button
         changePasswordButton.addEventListener('click', () =>
@@ -145,9 +174,21 @@ async function fetchUserData() {
         method: 'GET',
     })
     .catch(error => {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching user profile data:', error);
     });
 }
+
+
+// Fetch user avatar from the API
+async function fetchUserAvatar() {
+    return apiRequest('/api/users/getAvatar/', {
+        method: 'GET',
+    })
+    .catch(error => {
+        console.error('Error fetching user profile avatar:', error);
+    });
+}
+
 
 // Fetch game history data from the API
 async function fetchGameHistoryData() {
