@@ -4,11 +4,11 @@
 import { DEBUG }
 from '../../main.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
-
 import { GameState }
 from './gameVariables.js';
+
+import { loadUserManagementData }
+from '../../views/dashboard/dashboard.js';
 
 import { startGame }
 from './pong.js'
@@ -56,11 +56,10 @@ export async function displayTournamentForm()
 			// Lock first input with signed-in username
 			try
 			{
-				const	username = await getUsername(); // FIXME + TODO ask caro how she managed to print username in the frontend
-				// HERE getUsername();
+				const	username = await loadUserManagementData();
 				if (DEBUG)
-					console.log('username is : ', username);
-				playerInput.value = username;
+					console.log("Username:", username);
+				playerInput.value = username.username;
 				playerInput.disabled = true;
 			}
 			catch (error)
@@ -126,7 +125,8 @@ export function initializeTournamentMode(playerNames)
 	// StartGame();
 }
 
-function createMatchups(playerNames) {
+function createMatchups(playerNames)
+{
 	// Shuffle the array to randomize the order
 	const shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
 

@@ -73,6 +73,41 @@ export function drawScore()
 }
 
 /***			Drawing Winning Message		***/
+// export function drawWinMessage(winner)
+// {
+// 	const	messageElement = document.getElementById('winning-message');
+// 	const	rematchButton = document.getElementById('rematch-button');
+
+// 	if (!messageElement)
+// 	{
+// 		console.error('Winning message element not found!');
+// 		return ;
+// 	}
+
+// 	// Clearing previous message and GIF
+// 	// messageElement.innerHTML = '';
+
+// 	const	winText = document.createElement('span');
+// 	winText.textContent = winner + "Wins!";
+
+	// const	gifElement = document.createElement('img');
+	// gifElement.src = '../../../assets/images/pong/win.gif';
+	// gifElement.alt = 'Winner GIF';
+	// gifElement.classList.add('win-gif');
+	// messageElement.appendChild(gifElement);
+
+// 	messageElement.classList.add('show');
+
+// 	if (!rematchButton)
+// 	{
+// 		console.error('Rematch button element not found!');
+// 		return ;
+// 	}
+// 	rematchButton.classList.remove('hidden');
+// 	rematchButton.classList.add('show');
+// }
+
+// FIXME FINISH IT
 export function drawWinMessage(winner)
 {
 	const	messageElement = document.getElementById('winning-message');
@@ -80,11 +115,17 @@ export function drawWinMessage(winner)
 
 	if (!messageElement)
 	{
-		console.error('Winning message element not foun!');
+		console.error('Winning message element not found!');
 		return ;
 	}
 	messageElement.textContent = winner + " Wins!";
 	messageElement.classList.add('show');
+
+	const	gifElement = document.createElement('img');
+	gifElement.src = '../../../assets/images/pong/win.gif';
+	gifElement.alt = 'Winner GIF';
+	gifElement.classList.add('win-gif');
+	messageElement.appendChild(gifElement);
 
 	if (!rematchButton)
 	{

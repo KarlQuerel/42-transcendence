@@ -1,8 +1,6 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
-from '../../main.js';
 
 let	animationFrameId = null;
 
@@ -78,7 +76,8 @@ export const player2 =
 	shadowColor: 'rgba(255, 0, 255, 0.8)',
 	shadowBlur: 20,
 	dy: 0,
-	score: 0
+	score: 0,
+	name: "Jean Pierre"
 };
 
 /***			Ball Config			***/
@@ -92,13 +91,24 @@ export const BallConf =
 	dy: 5
 };
 
+//HERE
 /***			Results				***/
-export class	Results
+// export class	Results
+// {
+// 	username = undefined;
+// 	identified = undefined;
+// 	score = undefined;
+// 	opponent_username = undefined;
+// 	opponent_score = undefined;
+// 	tournament_date = undefined;
+// }
+
+export const	Results =
 {
-	username = undefined;
-	identified = undefined;
-	score = undefined;
-	opponent_username = undefined;
-	opponent_score = undefined;
-	tournament_date = undefined;
+	username : undefined,
+	identified : undefined,
+	score : undefined,
+	opponent_username : undefined,
+	opponent_score : undefined,
+	tournament_date : undefined
 }

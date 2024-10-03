@@ -15,10 +15,14 @@ from "./views/error_404/error_404.js";
 import renderHome
 from "./views/home/home.js";
 
-import renderPong, { cleanUpPong, initializePong }
+/***			Pong						***/
+import { renderPong, initializePong }
 from "./components/pong/pong.js";
 
-/***			Dashbpard					***/
+import { cleanUpPong }
+from "./components/pong/postGame.js";
+
+/***			Dashboard					***/
 import { renderDashboard, initializeDashboard }
 from "./views/dashboard/dashboard.js";
 
@@ -153,13 +157,13 @@ function router()
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
-	// HERE - Check if authentication is working
-	// if (path === '/pong' && isSignedIn == false)
-	// {
-	// 	alert("You must be logged in to access the Pong game.");
-	// 	window.location.href = '/sign-in';
-	// 	return ;
-	// }
+	// Check user authentication
+	if (path === '/pong' && isSignedIn == false)
+	{
+		alert("You must be logged in to access the Pong game.");
+		window.location.href = '/sign-in';
+		return ;
+	}
 	
 	if (route)
 	{

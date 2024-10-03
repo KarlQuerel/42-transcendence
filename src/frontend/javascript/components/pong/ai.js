@@ -48,7 +48,7 @@ function	predict_ball_paddle_intersection(data)
 	{
 		ball_going_left = true;
 		standby_position = Math.random() * data.fieldY_bottom;
-		console.log("standby = ", standby_position);
+		// console.log("standby = ", standby_position);
 		return standby_position;
 	}
 	if (data.ballX_velocity < 0 && ball_going_left == true)

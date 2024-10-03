@@ -7,6 +7,12 @@ from '../../main.js';
 import { keysPressed, BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
+import { drawPauseMenu, hidePauseMenu }
+from './drawing.js';
+
+import { gameLoop }
+from './pong.js';
+
 /***********************************************\
 -					MOVEMENT					-
 \***********************************************/

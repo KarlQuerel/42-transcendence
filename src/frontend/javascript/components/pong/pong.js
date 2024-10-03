@@ -22,10 +22,19 @@ from './drawing.js'
 import { movePaddles, moveBall, checkBallPaddleCollision, keyDownHandler, keyUpHandler }
 from './gameDynamics.js'
 
+import { getPaddleAction, GameData }
+from './ai.js';
+
+import { loadUserManagementData }
+from '../../views/dashboard/dashboard.js';
+
+import { fillingResults }
+from './postGame.js';
+
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
-export default function renderPong()
+export function renderPong()
 {
 	const	container = createContainer();
 	const	video = createVideo();
@@ -206,10 +215,6 @@ export function startGame()
 
 
 /* imports the function that returns the AI paddle's movement */
-import { getPaddleAction } from './ai.js';
-
-/* imports the uninitialized GameData class */
-import { GameData } from './ai.js';
 
 let data = new GameData();
 
@@ -266,8 +271,7 @@ function moveAiPaddle()
 		setTimeout(() =>
 		{
 			simulateKeyRelease('ArrowUp');
-		}, 50); // Delay of 50 milliseconds --> sans ça il ne le comprend pas et le paddle de l'IA ne bouge pas DU TOUT
-		// player2.dy = -PaddleConf.speed; //HERE check which one
+		}, 50);
 	}
 	else if (getPaddleAction() == DOWN)
 	{
@@ -276,15 +280,8 @@ function moveAiPaddle()
 		{
 			simulateKeyRelease('ArrowUp');
 		}, 50);
-		// player2.dy = PaddleConf.speed; //HERE check which one
 	}
 }
-
-/***********************************************************************************/
-/************************** Dashboard django database*******************************/
-/***********************************************************************************/
-
-// import { sendGameDataToDjango } from './sendGameDataToDjango.js'; 
 
 /***********************************************\
 -				GAME STATUS						-
@@ -295,7 +292,7 @@ let elapsedSeconds;
 let current_sec;
 
 /***			Main Loop					***/
-export function gameLoop()
+export async function gameLoop()
 {
 	if (GameState.game_paused == true)
 	{
@@ -306,7 +303,6 @@ export function gameLoop()
 
 	if (GameState.game_done == true)
 	{
-		// TODO remplir la class results + dependamment de tournoi ou pas rematch ou next
 		return ;
 	}
 	
@@ -340,15 +336,28 @@ export function gameLoop()
 	drawPaddle(player2);
 	drawBall();
 	drawScore();
+	
+	// wait promise to be resolved from username object
+	const	username = await loadUserManagementData();
 
-	if (player1.score === 10)
+	if (player1.score === 2)
 	{
-		drawWinMessage("Player 1");
+		drawWinMessage(username.username);
+		fillingResults(username);
 		GameState.game_done = true;
 	}
-	else if (player2.score === 10)
+	else if (player2.score === 2)
 	{
-		drawWinMessage("Player 2");
+		if (GameState.AI_present == true)
+		{
+			drawWinMessage('AI');
+			fillingResults(username);
+		}
+		else if (GameState.AI_present == false)
+		{
+			drawWinMessage('player 2'); // FIX ME get second player
+			fillingResults(username);
+		}
 		GameState.game_done = true;
 	}
 
@@ -379,42 +388,4 @@ function resetGame()
 	GameState.game_done = false;
 	GameState.isGameModeSelected = false;
 	requestAnimationFrame(gameLoop);
-}
-
-/***			Closing Pong Game			***/
-export function cleanUpPong()
-{
-	if (DEBUG)
-		console.log('Cleaning up Pong...')
-
-	// Removing Events Listener
-	document.removeEventListener("keydown", keyDownHandler);
-	document.removeEventListener("keyup", keyUpHandler);
-
-	// Stopping Game Loop
-	// cancelAnimationFrame(gameLoop);
-	cancelAnimationFrame(GameState.animationFrameId);
-
-	// Removing Game Elements
-	const	canvas = document.getElementById("pongCanvas");
-	if (canvas)
-			canvas.remove();
-
-	// Resetting Game Variables
-	GameState.game_done = true;
-	GameState.game_paused = false;
-	GameState.AI_present = false;
-
-	// Cleaning up the countdown
-	clearInterval(GameState.countdownInterval);
-	GameState.isCountdownActive = false;
-	document.querySelectorAll('.countdown').forEach(el => el.remove());
-
-	const	tournamentForm = document.getElementById('tournament-form');
-	if (tournamentForm)
-	{
-		tournamentForm.remove();
-	}
-
-	document.body.classList.remove('no-scroll');
 }

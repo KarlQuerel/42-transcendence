@@ -7,7 +7,7 @@ import { getAuthHeaders } from '../user/signin.js';
 
 
 /***********************************************\
-*                   RENDERING                   *
+*				   RENDERING				   *
 \***********************************************/
 
 export function renderDashboard()
@@ -155,56 +155,61 @@ const ALL_STATS = 0;
 const USER_STATS = 1;
 
 async function loadDashboardData(userData, option) {
-    try {
-        const allStats = await apiRequest('/api/dashboard/getData/', {
-            method: 'GET',
-        });
+	try {
+		const allStats = await apiRequest('/api/dashboard/getData/', {
+			method: 'GET',
+		});
 
-        if (option == ALL_STATS)
+		if (option == ALL_STATS)
 		{
 			// if (DEBUG)
 				console.log("allStats = ", allStats);
-            return allStats;
-        }
+			return allStats;
+		}
 		else if (option == USER_STATS)
 		{
-            let i = 0;
-            while (i < allStats.length) {
-                if (userData.username === allStats[i].username)
+			let i = 0;
+			while (i < allStats.length) {
+				if (userData.username === allStats[i].username)
 				{
 					// if (DEBUG)
-                    	console.log("userStats = ", allStats[i]);
-                    return allStats[i]; // Return the matching user's stats
-                }
-                i++;
-            }
+						console.log("userStats = ", allStats[i]);
+					return allStats[i]; // Return the matching user's stats
+				}
+				i++;
+			}
 			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `à la place de la dashboard si aucune partie de pong jouée)
-            console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
-        }
-    } catch (error) {
-        console.error('Error: fetch allStats', error);
-        throw error; // Re-throw the error
+			console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
+		}
+	} catch (error) {
+		console.error('Error: fetch allStats', error);
+		throw error; // Re-throw the error
 		//CHECK: if allStats is undefined : try/catch that will stop everything
-    }
+	}
 }
 
 
 export async function loadUserManagementData()
 {
-    try {
-        const userData = await apiRequest('/api/users/getUsername/', {
-            method: 'GET',
-            headers: {
+	try
+	{
+		const userData = await apiRequest('/api/users/getUsername/',
+		{
+			method: 'GET',
+			headers:
+			{
 				...getAuthHeaders(),
-            },
-        });
-        if (DEBUG)
-            console.log("userData = ", userData);
-        return userData;
-    } catch (error) {
-        console.error('Error: fetch userData', error);
-        throw error; // Re-throw the error
-    }
+			},
+		});
+		// if (DEBUG)
+		//	 console.log("userData = ", userData);
+		return userData;
+	}
+	catch (error)
+	{
+		console.error('Error: fetch userData', error);
+		throw error;
+	}
 }
 
 
