@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-----------------------------------------------------------------------------
+									HEAD:
+-> All general site settings are specified here
+-> If you have files, scripts or to LINK, it's in that zone
+------------------------------------------------------------------------------>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Our Amazing Transcendance</title>
+
+	<!-----------------VISUAL------------------->
+
+	<!--------		Bootstrap CSS		-------->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+	<!------------------------------------------>
+
+	<!--------		Our own CSS			-------->
+	<link rel="stylesheet" href="css/main.css" />
+	<!------------------------------------------>
+
+	<!--------			Fonts			-------->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+	<!------------------------------------------>
+
+	<!--------			Logo			-------->
+	<link rel="icon" href="assets/images/icon_pong_test.png" />
+	<!------------------------------------------>
+
+	<!-----------------SCRIPTS------------------>
+
+	<!--------		Bootstrap script	-------->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+		defer></script>
+	<!------------------------------------------>
+
+	<!--------		jQuery script	-------->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<!------------------------------------------>
+
+	<!--------		JS script			-------->
+	<script type="module" src="javascript/main.js" defer></script>
+
+	<!-- KARL si tu veux le mettre ailleurs vas-y: Include Chart.js library for Dashboard.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<!------------------------------------------>
+
+</head>
+
+<!-----------------------------------------------------------------------------
+									BODY:
+-> Contains all the contents that will be RENDERED on the web page
+-> This is where you will add your .js files
+------------------------------------------------------------------------------>
+
+<body class ="body-bg">
+
+	<!-- NAVIGATION BAR -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top py-2">
+		<div class="container d-flex align-items-center">
+			<!-- Burger Button -->
+			<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+				<ul class="navbar-nav d-flex flex-row justify-content-center w-100">
+					<!-- Home -->
+					<li class="nav-item">
+						<a href="/home" data-link class="nav-link">
+							<div class="btn btn-nav">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/home_button.gif" alt="Home" class="img-fluid navbar-image">
+										</div>
+									</span>
+									<span>Home</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<!-- Pong -->
+					<li class="nav-item">
+						<a href="/pong" data-link class="nav-link">
+							<div class="btn btn-nav">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/pong_button.gif" alt="Pong" class="img-fluid navbar-image">
+										</div>
+									</span>
+									<span>Pong</span>
+								</div>
+							</div>
+						</a>
+					</li>
+					<!-- Log In -->
+					<li class="nav-item">
+						<a href="/sign-in" data-link class="nav-link">
+							<div class="btn btn-nav">
+								<div class="btn-flip-side btn-flip-side--green">
+									<span>
+										<div class="navbar-gif-frame d-flex justify-content-center align-items-center">
+											<img src="assets/images/navbar/login_button.gif" alt="Log In" class="img-fluid">
+										</div>
+									</span>
+									<span>Log In               OR                     Sign Up</span>
+								</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<main id="app" class="main-content"></main>
+
+	<!-----------------------------------------------------------------------------
+									FOOTER:
+-> Contains all infos relevant to the bottom of the page
+------------------------------------------------------------------------------>
+<footer>
+	<div class="footer-content">
+		<p> 👾 &copy; 2024 Django Déchainé 👾 </p>
+		<p>
+			<a class="nav-link" href="/privacy-policy" data-link>Privacy Policy</a>
+			<a class="nav-link" href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">Contact Us</a>
+
+		</p>
+	</div>
+</footer>
+</body>
+
+</html>

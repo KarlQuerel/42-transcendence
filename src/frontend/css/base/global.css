@@ -1,0 +1,68 @@
+/***********************************************
+				GLOBAL
+***********************************************/
+
+/*	SHOWING + HIDING	*/
+.hidden
+{
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s ease;
+}
+
+.hidden-animation
+{
+	opacity: 0;
+	transition: opacity 0.5 ease;
+}
+
+.show-animation
+{
+	opacity: 1;
+	transition: opacity 0.5 ease;
+}
+
+.show
+{
+	visibility: visible;
+	opacity: 1;
+	transition: visibility 0s, opacity 0.5s ease;
+}
+
+.no-scroll
+{
+	overflow: hidden;
+}
+
+/*		COLORS		*/
+:root
+{
+	--base-green: #00ff00;
+	--base-light-green: rgba(163, 219, 163, 0.7);
+	--base-dark: #000;
+	--base-white: #fff;
+	--base-gray: #262626;
+	--base-light-blue: rgb(163, 201, 219, 0.7);
+}
+
+/*		Reset for different browsers		*/
+html, body
+{
+	margin: 0;
+	padding: 0;
+	min-width: 800px;
+	min-height: 600px;
+	width: 100%;
+	height: 100%;
+}
+
+canvas
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	/* TEST MAYBE TO UNCOMMENT */
+	/* width: 100vh; */
+	/* height: 100vh; */
+	z-index: -1;
+}

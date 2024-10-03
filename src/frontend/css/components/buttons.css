@@ -1,0 +1,78 @@
+/***********************************************
+					BUTTONS
+***********************************************/
+
+/*			Pixelated Button		*/
+.btn-home
+{
+	border: 2px solid var(--base-green);
+	background-color: var(--base-dark);
+	position: relative;
+	width: 50vh;
+	height: 15vh;
+	text-decoration: none;
+	text-align: center;
+	text-transform: uppercase;
+	color: var(--base-white);
+	transition: 0.4s;
+	border-radius: 5px;
+	font-size: 1.5rem;
+	z-index: 1;
+}
+
+.btn-home:hover
+{
+	border: 2px solid var(--base-green);
+	color: var(--base-dark);
+	background: var(--base-green) url('../../assets/images/buttons/pixel_button_green.png');
+	transition-delay: 0.4s;
+	background-size: 220px;
+	animation: animate 0.4s steps(8) forwards;
+}
+
+@keyframes animate
+{
+	0%
+	{
+		background-position-y: 0;
+	}
+	100%
+	{
+		background-position-y: -480px;
+	}
+}
+
+/*			Secondary Button		*/
+.btn-second
+{
+	outline: 0;
+	grid-gap: 8px;
+	align-items: center;
+	border: 1px solid var(--base-dark);
+	border-radius: 10px;
+	cursor: pointer;
+	display: inline-flex;
+	flex-shrink: 0;
+	font-size: 16px;
+	gap: 8px;
+	justify-content: center;
+	line-height: 1.5;
+	overflow: hidden;
+	padding: auto;
+	text-decoration: none;
+	text-overflow: ellipsis;
+	transition: all .14s ease-out;
+	white-space: nowrap;
+}
+.btn-second:hover
+{
+	box-shadow: 4px 4px 0 var(--base-dark);
+	transform: translate(-4px,-4px);
+	border: 1px solid var(--base-dark);
+	border-radius: 10px;
+	background-color: var(--base-light-blue);
+}
+.btn-second:focus-visibl
+{
+	outline-offset: 1px;
+}

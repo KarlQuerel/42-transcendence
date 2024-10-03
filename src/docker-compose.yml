@@ -1,0 +1,214 @@
+services:
+
+#  Service de monitoring
+#  Prometheus récupère les métrics dans les différents services
+  prometheus:
+    user: root
+    container_name: Prometheus
+    image: prom/prometheus
+    networks:
+      - transcendance
+    depends_on:
+      - nginx-exporter
+      - postgres-exporter
+      - nginx
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml
+      - prometheus_data:/prometheus
+
+
+# Grafana va se sert des metrics de prometheus pour 
+# faire des graphiques afin qu'ils soient plus lisible
+  grafana:
+    build:
+      context: ./grafana/
+      dockerfile: Dockerfile
+    container_name: Grafana
+    networks:
+      - transcendance
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    ports:
+      - "3000:443"
+    volumes:
+      - grafana_data:/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+
+
+# L'exporter de NGINX qui permet de recuperer des metrics de NGINX
+  nginx-exporter:
+    container_name: Nginx_Exporter
+    image: nginx/nginx-prometheus-exporter:latest
+    expose:
+      - "9113"
+    command:
+      - -nginx.scrape-uri
+      - https://nginx:443/stub_status
+    networks:
+      - transcendance
+    depends_on:
+      - nginx
+    restart: unless-stopped
+
+
+# L'exporter de PostrgreSQL qui recupere les metrics de PostrgreSQL
+  postgres-exporter:
+    user: root
+    container_name: Postgres_Exporter
+    image: quay.io/prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:pong_password@database:5432/pong_database?sslmode=disable"
+    expose:
+      - "9187"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+    restart: unless-stopped
+
+# L'exporter node-exporter qui recupere les metrics de la machine host
+  node-exporter:
+    user: root
+    container_name: Node_Exporter
+    image: prom/node-exporter:latest
+    expose:
+      - "9100"
+    networks:
+      - transcendance
+    restart: unless-stopped
+
+# Fin du systeme de monitoring
+
+
+  database:
+    user: root
+    container_name: Database
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: >
+      postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - transcendance
+    expose:
+      - "5432"
+    env_file:
+      - .env
+
+
+  nginx:
+    container_name: Nginx
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    ports:
+      - "4430:443"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+    networks:
+      - transcendance
+    depends_on:
+      - profile
+      - dashboard
+      - database
+
+
+  profile:
+    container_name: User
+    user: root
+    volumes:
+      - user:/app/
+      - ./user/user_management/api_user:/app/api_user
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    command: >
+      sh -c "
+      sleep 5 &&
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
+    expose:
+      - "8200"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+    env_file:
+      - .env
+
+
+  dashboard:
+    container_name: Dashboard
+    volumes:
+      - dashboard:/app/
+      - ./user/user_management/api_user:/app/api_user
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    command: >
+      sh -c "
+      sleep 8 &&
+      cd /app &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      gunicorn dashboard_database.wsgi:application --bind 0.0.0.0:8100"
+    expose:
+      - "8100"
+    networks:
+      - transcendance
+    depends_on:
+      - database
+      - profile
+    env_file:
+      - .env
+
+networks:
+  transcendance:
+    driver: bridge
+
+volumes:
+
+  postgres_data:
+    driver: local
+
+  prometheus_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './prometheus/'
+
+  grafana_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './grafana/'
+  user:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './user/user_management/'
+
+  dashboard:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './dashboard/dashboard/'
