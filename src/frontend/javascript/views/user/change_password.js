@@ -54,9 +54,9 @@ export default function renderChangePassword()
     // Create input fields with labels
 	const fields =
 	[
-		{ label: 'Old password:', type: 'password', id: 'old_password', placeholder: 'Enter old password' },
-		{ label: 'New password:', type: 'password', id: 'new_password', placeholder: 'Enter new password' },
-		{ label: 'New password confirmation:', type: 'password', id: 'new_password_confirmation', placeholder: 'Enter new password confirmation' }
+		{ label: 'Current password:', type: 'password', id: 'current_password', placeholder: 'Enter current password', autocomplete: 'current-password' },
+		{ label: 'New password:', type: 'password', id: 'new_password', placeholder: 'Enter new password', autocomplete: 'new-password' },
+		{ label: 'New password confirmation:', type: 'password', id: 'new_password_confirmation', placeholder: 'Enter new password confirmation', autocomplete: 'new-password' }
 	];
 
     fields.forEach(field =>
@@ -103,11 +103,11 @@ export async function initializeChangePassword()
         {
             event.preventDefault(); // Prevent default form submission
     
-            const oldPassword = document.getElementById('old_password').value;
+            const currentPassword = document.getElementById('current_password').value;
             const newPassword = document.getElementById('new_password').value;
             const newPasswordConfirmation = document.getElementById('new_password_confirmation').value;
     
-            // Check if the new password and new password confirmation match
+            // Check if new password and new password confirmation match
             if (newPassword !== newPasswordConfirmation)
             {
                 const errorMessageContainer = document.getElementById('error-messages');
@@ -132,14 +132,14 @@ export async function initializeChangePassword()
                     throw new Error('User not authenticated');
                 }
 
-                // Verify old password
+                // Verify current password
                 const verifyResponse = await apiRequest('/api/users/verifyPassword/',
                 {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ oldPassword }),
+                    body: JSON.stringify({ currentPassword }),
                 });
 
                 if (verifyResponse.valid)

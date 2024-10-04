@@ -40,6 +40,9 @@ from "./views/user/signup.js";
 import renderChangePassword, { initializeChangePassword }
 from "./views/user/change_password.js";
 
+// import renderUpdateProfile
+// from "./views/user/update_profile.js";
+
 /***			Footer						***/
 import renderPrivacyPolicy
 from "./views/privacy_policy/privacy_policy.js";
@@ -103,7 +106,13 @@ const routes =
 		title: "Change Password",
 		render: renderChangePassword,
 		init: initializeChangePassword
-	}
+	},
+	// '/update-profile':
+	// {
+	// 	title: "Update Profile",
+	// 	render: renderUpdateProfile,
+	// 	init: initializeUpdateProfile
+	// }
 };
 
 /***********************************************\

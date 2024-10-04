@@ -3,6 +3,7 @@
 \***********************************************/
 import { DEBUG } from '../../main.js';
 import { apiRequest } from './signin.js';
+import { getIdentifier, checkIdentifierType} from './signup.js';
 import { initializeChangePassword } from './change_password.js';
 
 /***********************************************\
@@ -23,7 +24,6 @@ export default function renderProfile()
     const avatarElement = document.createElement('img');
     avatarElement.setAttribute('id', 'avatar');
     avatarElement.setAttribute('alt', 'User Avatar');
-    avatarElement.setAttribute('src', '/media/avatars/default.png');
     avatarElement.style.width = '150px';
     avatarElement.style.height = '150px';
 
@@ -73,17 +73,26 @@ export default function renderProfile()
     personalInfoSection.appendChild(changePasswordButton);
     personalInfoSection.appendChild(emailElement);
 
-     // Create a logout button
-     const logoutButton = document.createElement('button');
-     logoutButton.setAttribute('id', 'logout-button');
-     logoutButton.textContent = 'Log Out';
- 
-     // Append all elements to container
-     container.appendChild(profileTitle);
-     container.appendChild(personalInfoSection);
-     container.appendChild(logoutButton);
+    // Create a logout button
+    const logoutButton = document.createElement('button');
+    logoutButton.setAttribute('id', 'logout-button');
+    logoutButton.textContent = 'Log Out';
+
+    // Create an Update Profile button
+    const updateProfileButton = document.createElement('button');
+    updateProfileButton.setAttribute('id', 'update-profile-button');
+    updateProfileButton.textContent = 'Update profile';
+
+    // Append all elements to container
+    container.appendChild(profileTitle);
+    container.appendChild(personalInfoSection);
+    container.appendChild(logoutButton);
+    container.appendChild(updateProfileButton);
 
     // Fetch user data and display it
+
+    let userData_edit = null;
+
     fetchUserData()
         .then(userData =>
         {
@@ -91,6 +100,8 @@ export default function renderProfile()
                 console.log(userData);
             else
                 console.log('No user data found');
+
+            userData_edit = userData;
 
             firstNameElement.textContent = `First Name: ${userData.first_name}`;
             lastNameElement.textContent = `Last Name: ${userData.last_name}`;
@@ -104,6 +115,8 @@ export default function renderProfile()
             const passwordText = `Password: ${'*'.repeat(numAsterisks)}`;
             passwordElement.textContent = passwordText;
 
+            avatarElement.src = `data:image/png;base64,${userData.avatar}`;
+
         })
         .catch(error =>
         {
@@ -111,31 +124,71 @@ export default function renderProfile()
             container.innerHTML = '<p>Failed to load profile data.</p>';
         });
 
-        // Fetch user avatar and display it
-        fetchUserAvatar()
-        .then(avatarData =>
-        {
-            if (avatarData || DEBUG)
-                console.log(avatarData);
-            else
-                console.log('No avatar data found');
-
-            if (avatarData.avatar_url)
-                avatarElement.src = avatarData.avatar_url;
-            else
-                avatarElement.src = '/media/avatars/default.png';
-        })
-        .catch(error =>
-        {
-            console.error('Error fetching user avatar:', error);
-            avatarElement.src = '/media/avatars/default.png';
-        });
-
 
         // Event listener for change password button
         changePasswordButton.addEventListener('click', () =>
         {
             window.location.href = '/change-password';
+        });
+
+        
+
+        /********** UPDATE PROFILE **********/
+
+        // Event listener for update profile button
+        updateProfileButton.addEventListener('click', () =>
+        {
+            if (DEBUG)
+                console.log('Update profile button clicked.');
+
+            firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
+            lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
+            usernameElement.innerHTML = `<label for="username_input">Username:</label><input type="text" id="username_input" value="${userData_edit.username}">`;
+            dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
+            emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
+
+            // File input for avatar
+            if (!document.getElementById('avatar_input'))
+            {
+                // Label
+                const avatarLabel = document.createElement('label');
+                avatarLabel.setAttribute('for', 'avatar_input');
+                avatarLabel.textContent = 'Upload my avatar image:';
+                personalInfoSection.appendChild(avatarLabel);
+
+                // Button
+                const avatarInput = document.createElement('input');
+                avatarInput.setAttribute('type', 'file');
+                avatarInput.setAttribute('id', 'avatar_input');
+                personalInfoSection.appendChild(avatarInput);
+            }
+
+            if (DEBUG)
+                console.log('Avatar button created.');
+
+            // Save Button
+            if (!document.getElementById('save-profile-button'))
+            {
+                const saveButton = document.createElement('button');
+                saveButton.setAttribute('id', 'save-profile-button');
+                saveButton.textContent = 'Save';
+                personalInfoSection.appendChild(saveButton);
+
+                if (DEBUG)
+                    console.log('Save button created.');
+
+                saveButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    if (DEBUG)
+                        console.log('Entering addEventListener.');
+                    res = verifyProfileChanges();
+                    if(res == true)
+                    {
+                        const avatarFile = document.getElementById('avatar_input').files[0];
+                        saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
+                    }
+                });
+            }
         });
 
 
@@ -169,7 +222,7 @@ export default function renderProfile()
 \***********************************************/
 
 // Fetch user data from the API
-async function fetchUserData() {
+export async function fetchUserData() {
     return apiRequest('/api/users/currentlyLoggedInUser/', {
         method: 'GET',
     })
@@ -179,33 +232,174 @@ async function fetchUserData() {
 }
 
 
-// Fetch user avatar from the API
-async function fetchUserAvatar() {
-    return apiRequest('/api/users/getAvatar/', {
-        method: 'GET',
-    })
-    .catch(error => {
-        console.error('Error fetching user profile avatar:', error);
-    });
+// // Fetch game history data from the API
+// async function fetchGameHistoryData() {
+//     try {
+//         const userData = await apiRequest('/api/dashboard/getGameHistory/', {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+//         if (DEBUG) {
+//             console.log("userData = ", userData);
+//         }
+//         return userData;
+//     } catch (error) {
+//         console.error('Error: fetch userData', error);
+//         throw error; // Re-throw the error
+//     }
+// }
+
+
+async function verifyProfileChanges()
+{
+    if (DEBUG)
+        console.log('Verifying profile changes...');
+
+    const firstName = document.getElementById('first_name_input').value;
+    const lastName = document.getElementById('last_name_input').value;
+    const username = document.getElementById('username_input').value;
+    const dob = document.getElementById('dob_input').value;
+    const email = document.getElementById('email_input').value;
+    const avatarFile = document.getElementById('avatar_input').files[0];
+
+    // First name
+    let first_name = getIdentifier('first_name_input');
+    let first_name_type = checkIdentifierType(first_name, 'first_name_input');
+
+    // Last name
+    let last_name = getIdentifier('last_name_input');
+    let last_name_type = checkIdentifierType(last_name, 'last_name_input');
+
+    // Username
+    let username_id = getIdentifier('username_input');
+    let username_type = checkIdentifierType(username, 'username_input');
+
+    // Date of birth
+    let date_of_birth = getIdentifier('date_of_birth_input');
+    let date_of_birth_type = checkIdentifierType(date_of_birth, 'date_of_birth_input');
+
+    // Email
+    let email_id = getIdentifier('email_input');
+    let email_type = checkIdentifierType(email, 'email_input');
+
+    // Avatar
+    let avatar_id = getIdentifier('avatar_input');
+    let avatar_type = checkIdentifierType(avatarFile, 'avatar_input');
+
+    if (DEBUG)
+        console.log('First name:', first_name, first_name_type);
+        console.log('Last name:', last_name, last_name_type);
+        console.log('Username:', username_id, username_type);
+        console.log('Date of birth:', date_of_birth, date_of_birth_type);
+        console.log('Email:', email_id, email_type);
+        console.log('Avatar:', avatar_id, avatar_type);
+
+    if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type))
+    {
+        if (DEBUG)
+            console.log('Profile changes are invalid.');
+
+        sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type);
+        return false;
+    }
+    else
+        return true;
+        // saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
 }
 
 
-// Fetch game history data from the API
-async function fetchGameHistoryData() {
-    try {
-        const userData = await apiRequest('/api/dashboard/getGameHistory/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+
+async function saveProfileChanges(username, password, email, date_of_birth, first_name, last_name, avatarFile)
+{
+    const formData = new FormData();
+    formData.append('first_name', first_name);
+    formData.append('last_name', last_name);
+    formData.append('username', username);
+    formData.append('date_of_birth', date_of_birth);
+    formData.append('email', email);
+
+    if (avatarFile) {
+        formData.append('avatar', avatarFile);
+    }
+
+    try
+    {
+        const response = await apiRequest('/api/users/updateProfile/', {
+            method: 'PUT',
+            body: formData,
+            // headers: {
+            //     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+            // }
         });
-        if (DEBUG) {
-            console.log("userData = ", userData);
+
+        if (response.ok) {
+            console.log('Profile updated successfully.');
+            window.location.reload();
+        } else {
+            const errorData = await response.json();
+            handleProfileErrors(errorData);
         }
-        return userData;
-    } catch (error) {
-        console.error('Error: fetch userData', error);
-        throw error; // Re-throw the error
+    }
+    catch (error)
+    {
+        console.error('Error updating profile:', error);
+        alert('An error occurred while updating the profile.');
+    };
+}
+
+    // // FormData object to handle image upload and form data
+    // const formData = new FormData();
+    // formData.append('first_name', firstName);
+    // formData.append('last_name', lastName);
+    // formData.append('username', username);
+    // formData.append('date_of_birth', dob);
+    // formData.append('email', email);
+
+    // if (avatarFile)
+    //     formData.append('avatar', avatarFile);
+
+    // try
+    // {
+    //     const response = await apiRequest('/api/users/updateProfile/',
+    //     {
+    //         method: 'POST',
+    //         body: formData,  // Use FormData to include both the avatar file and form fields
+    //         headers: {
+    //             'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+    //         }
+    //     });
+
+    //     if (response.ok) 
+    //     {
+    //         // Successful profile update
+    //         console.log('Profile updated successfully.');
+    //         window.location.reload();  // Reload to reflect changes
+    //     }
+    //     else
+    //     {
+    //         // Handle error (username/email already in use, etc.)
+    //         const errorData = await response.json();
+    //         handleProfileErrors(errorData);
+    //     }
+    // }
+    // catch (error)
+    // {
+    //     console.error('Error updating profile:', error);
+    // }
+// }
+
+function handleProfileErrors(errors)
+{
+
+    if (errors.username) {
+        console.log('Username is already in use.');
+        // Display error message next to the username field
+    }
+    if (errors.email) {
+        console.log('Email is already in use.');
+        // Display error message next to the email field
     }
 }
 

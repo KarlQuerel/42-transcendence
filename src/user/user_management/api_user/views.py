@@ -5,16 +5,17 @@ from django.contrib.auth.forms import SetPasswordForm
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from api_user.models import CustomUser
+# from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
-# from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth import authenticate, login
 from rest_framework.permissions import AllowAny
+from django.shortcuts import render, redirect
 # from rest_framework.views import APIView
 from rest_framework import generics, status, permissions
+from django.core.files.storage import default_storage
 from django.http import JsonResponse
 import json
 import base64
@@ -117,30 +118,22 @@ def currentlyLoggedInUser(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		# avatar_image = user.avatar
-		# avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+		avatar_image_path = user.avatar.path
+		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
 
-		# data = {
-		# 	'first_name': user.first_name,
-		# 	'last_name': user.last_name,
-		# 	'username': user.username,
-		# 	'password': user.password,
-		# 	'date_of_birth': user.date_of_birth,
-		# 	'email': user.email,
-		# 	'avatar': avatar
-		# }
-
-		# return JsonResponse(data, status=200)
-
-		return Response({'Authentication success': True,
+		data = {
 			'first_name': user.first_name,
 			'last_name': user.last_name,
 			'username': user.username,
 			'password': user.password,
 			'date_of_birth': user.date_of_birth,
-			'email': user.email
-        })
-	
+			'email': user.email,
+			'avatar': avatar
+		}
+
+		return JsonResponse(data, status=200)
+
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
 
@@ -164,27 +157,27 @@ def getUsername(request):
 
 # Get authenticated user's avatar image
 
-@api_view(['GET'])
-@login_required
-@permission_classes([IsAuthenticated])
-def getAvatar(request):
-	try:
-		user = request.user
-		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+# @api_view(['GET'])
+# @login_required
+# @permission_classes([IsAuthenticated])
+# def getAvatar(request):
+# 	try:
+# 		user = request.user
+# 		if not user.is_authenticated:
+# 			return Response({'error': 'User not authenticated'}, status=401)
 
-		avatar = user.avatar
+# 		avatar = user.avatar
 
-		if avatar:
-			avatar_url = avatar.url
-			print(f'Avatar URL: {avatar_url}') # DEBUG
-		else:
-			avatar_url = f'{settings.MEDIA_URL}avatars/default.png'
+# 		if avatar:
+# 			avatar_url = avatar.url
+# 			print(f'Avatar URL: {avatar_url}') # DEBUG
+# 		else:
+# 			avatar_url = f'{settings.MEDIA_URL}avatars/default.png'
 		
-		return JsonResponse({'avatar_url': avatar_url})
+# 		return JsonResponse({'avatar_url': avatar_url})
 	
-	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
 
 
 
@@ -241,12 +234,12 @@ def checkAuthentication(request):
 @permission_classes([IsAuthenticated])
 def verifyPassword(request):
     user = request.user
-    old_password = request.data.get('oldPassword')
+    current_password = request.data.get('currentPassword')
 
-    if not old_password:
-        return Response({'error': 'Old password is required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not current_password:
+        return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user.check_password(old_password):
+    if user.check_password(current_password):
         return Response({'valid': True, 'currentPassword': user.password}, status=status.HTTP_200_OK)
     else:
         return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
@@ -284,40 +277,63 @@ def hashAndChangePassword(request):
 @login_required
 @csrf_protect
 @api_view(['PUT'])
-def updateProfileInfo(request):
-	try:
-		user = request.user
-		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+def updateProfile(request):
 
-		new_first_name = request.data.get('first_name')
-		new_last_name = request.data.get('last_name')
-		new_username = request.data.get('username')
-		new_email = request.data.get('email')
-		new_date_of_birth = request.data.get('date_of_birth')
+	logger.debug(f"Request data: {request.data}") # DEBUG
 
-		# Check username and email uniqueness
-		if new_username and new_username != user.username:
-			if CustomUser.objects.filter(username=new_username).exists():
-				return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+	form = CustomUserRegistrationForm(request.POST, request.FILES, instance=request.user)
 
-		if new_email and new_email != user.email:
-			if CustomUser.objects.filter(email=new_email).exists():
-				return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+	if form.is_valid():
+		user = form.save(commit=False)
 
-		if new_first_name:
-			user.first_name = new_first_name
-		if new_last_name:
-			user.last_name = new_last_name
-		if new_username:
-			user.username = new_username
-		if new_email:
-			user.email = new_email
-		if new_date_of_birth:
-			user.date_of_birth = new_date_of_birth
-
+		if 'password' in form.cleaned_data and form.cleaned_data['password']:
+			user.set_password(form.cleaned_data['password'])
+		
 		user.save()
-		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)
 
-	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
+	
+	else:
+		logger.debug(f"Form errors: {form.errors}") # DEBUG
+
+		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# def updateProfileInfo(request):
+# 	try:
+# 		user = request.user
+# 		if not user.is_authenticated:
+# 			return Response({'error': 'User not authenticated'}, status=401)
+
+# 		new_first_name = request.data.get('first_name')
+# 		new_last_name = request.data.get('last_name')
+# 		new_username = request.data.get('username')
+# 		new_email = request.data.get('email')
+# 		new_date_of_birth = request.data.get('date_of_birth')
+
+# 		# Check username and email uniqueness
+# 		if new_username and new_username != user.username:
+# 			if CustomUser.objects.filter(username=new_username).exists():
+# 				return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+# 		if new_email and new_email != user.email:
+# 			if CustomUser.objects.filter(email=new_email).exists():
+# 				return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+# 		if new_first_name:
+# 			user.first_name = new_first_name
+# 		if new_last_name:
+# 			user.last_name = new_last_name
+# 		if new_username:
+# 			user.username = new_username
+# 		if new_email:
+# 			user.email = new_email
+# 		if new_date_of_birth:
+# 			user.date_of_birth = new_date_of_birth
+
+# 		user.save()
+# 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
