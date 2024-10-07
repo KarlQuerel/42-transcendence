@@ -170,6 +170,9 @@ export function keyDownHandler(e)
 	if (GameState.isGameModeSelected == false)
 		return ;
 
+	if (GameState.game_done == true)
+		return ;
+
 	keysPressed[e.key] = true;
 	
 	if (e.key === "p" || e.key === "Escape")

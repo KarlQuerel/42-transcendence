@@ -4,8 +4,12 @@
 import { DEBUG }
 from '../../main.js';
 
-import { GameState }
+import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, 
+Results, AI_name }
 from './gameVariables.js';
+
+import { keyDownHandler, keyUpHandler }
+from './gameDynamics.js';
 
 /***********************************************\
 -					POST-GAME					-
@@ -13,17 +17,16 @@ from './gameVariables.js';
 /***			Filling Results				***/
 export function fillingResults(username)
 {
-	// HERE voir avec Caro les variables necessaires
 	Results.username = username.username;
 	Results.identified = "yes";
 	Results.score = 10;
 	if (GameState.AI_present === true)
 	{
-		Results.opponent_username = "AI";
+		Results.opponent_username = AI_name;
 	}
 	else if (GameState.AI_present === false)
 	{
-		Results.opponent_username = player2.name; //FIX ME
+		Results.opponent_username = player2.name;
 	}
 	Results.opponent_score = player2.score;
 	Results.tournament_date = getDate();
@@ -58,7 +61,6 @@ export function cleanUpPong()
 	document.removeEventListener("keyup", keyUpHandler);
 
 	// Stopping Game Loop
-	// cancelAnimationFrame(gameLoop);
 	cancelAnimationFrame(GameState.animationFrameId);
 
 	// Removing Game Elements
@@ -76,11 +78,9 @@ export function cleanUpPong()
 	GameState.isCountdownActive = false;
 	document.querySelectorAll('.countdown').forEach(el => el.remove());
 
-	const	tournamentForm = document.getElementById('tournament-form');
+	const	tournamentForm = document.getElementById('input-form');
 	if (tournamentForm)
 	{
 		tournamentForm.remove();
 	}
-
-	// document.body.classList.remove('no-scroll');
 }

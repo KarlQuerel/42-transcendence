@@ -4,6 +4,7 @@
 
 let	animationFrameId = null;
 
+export let	AI_name = "🤖 Ponginator3000 🤖";
 export const	keysPressed = {};
 
 /***			Game State			***/
@@ -63,7 +64,8 @@ export const player1 =
 	shadowColor: 'rgba(0, 255, 255, 0.8)',
 	shadowBlur: 20,
 	dy: 0,
-	score: 0
+	score: 0,
+	name : ""
 };
 
 export const player2 =
@@ -91,18 +93,7 @@ export const BallConf =
 	dy: 5
 };
 
-//HERE
 /***			Results				***/
-// export class	Results
-// {
-// 	username = undefined;
-// 	identified = undefined;
-// 	score = undefined;
-// 	opponent_username = undefined;
-// 	opponent_score = undefined;
-// 	tournament_date = undefined;
-// }
-
 export const	Results =
 {
 	username : undefined,

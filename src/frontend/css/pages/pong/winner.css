@@ -18,16 +18,18 @@
 	transform: translate(-50%, -50%);
 	z-index: 10;
 	display: none;
+	flex-direction: column;
+	align-items: center;
 }
 
 #winning-message.show
 {
-	display: block;
+	display: flex;
 }
 
 .win-gif
 {
-	transform: translate(-50%, -50%);
-	width: 20vh;
+	width: 15vh;
 	height: auto;
+	margin-top: 1vh;
 }

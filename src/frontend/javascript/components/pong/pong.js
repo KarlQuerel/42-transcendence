@@ -4,8 +4,12 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, 
+Results, AI_name }
 from './gameVariables.js';
+
+import { prepareTwoPlayers, displayPlayer2Form }
+from './twoPlayers.js'
 
 import { startTournament, displayTournamentForm, startTournamentGame,
 initializeTournamentMode}
@@ -16,7 +20,7 @@ createTournamentButton, createHowToPlayButton, createHowToPlayCard, createCardGi
 createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer }
 from './createElements.js'
 
-import { drawPaddle, drawBall, drawScore, drawWinMessage, drawPauseMenu, hidePauseMenu }
+import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu }
 from './drawing.js'
 
 import { movePaddles, moveBall, checkBallPaddleCollision, keyDownHandler, keyUpHandler }
@@ -28,8 +32,14 @@ from './ai.js';
 import { loadUserManagementData }
 from '../../views/dashboard/dashboard.js';
 
+import { startCountdown, checkCountdown }
+from './preGame.js';
+
 import { fillingResults }
 from './postGame.js';
+
+import { prepareSinglePlayer }
+from './onePlayer.js';
 
 /***********************************************\
 -				RENDERING						-
@@ -100,8 +110,8 @@ function setupMenuButtons()
 		return;
 	}
 
-	singleplayerButton.addEventListener('click', () => prepareGame(menuOverlay, true));
-	twoplayerButton.addEventListener('click', () => prepareGame(menuOverlay, false));
+	singleplayerButton.addEventListener('click', () => prepareSinglePlayer(menuOverlay));
+	twoplayerButton.addEventListener('click', () => prepareTwoPlayers(menuOverlay));
 	tournamentButton.addEventListener('click', () => startTournament(menuOverlay));
 
 	if (!rematchButton)
@@ -147,46 +157,37 @@ function enforceMinimumWindowSize()
 	}
 }
 
-/***			Starting Game				***/
+
 function prepareGame(menuOverlay, isSinglePlayer)
 {
-
-	if (GameState.isCountdownActive)
+	// Fetch the logged-in user's name
+	loadUserManagementData().then(username =>
 	{
-		clearInterval(GameState.countdownInterval);
-		document.querySelectorAll('.countdown').forEach(el => el.remove());
-	}
+		player1.name = username.username;
 
-	GameState.AI_present = isSinglePlayer;
-	menuOverlay.classList.add('hidden');
-
-	const	countdownDisplay = document.createElement('div');
-	countdownDisplay.className = 'countdown';
-	document.body.appendChild(countdownDisplay);
-
-	let countdown = 3;
-	countdownDisplay.textContent = countdown;
-
-	GameState.isCountdownActive = true;
-	GameState.countdownInterval = setInterval(() =>
-	{
-		countdown--;
-		if (countdown > 0)
+		
+		if (isSinglePlayer === false)
 		{
-			countdownDisplay.textContent = countdown;
-		}
-		else
-		{
-			countdownDisplay.textContent = 'GO!';
-			clearInterval(GameState.countdownInterval);
-			setTimeout(() =>
+			AskPlayer2Name();
+			displayPlayer2Form().then(name =>
 			{
-				document.body.removeChild(countdownDisplay);
-				GameState.isCountdownActive = false;
-				startGame();
-			}, 1000);
+				player2.name = name;
+				checkCountdown();
+			});
 		}
-	}, 1000);
+		else if (isSinglePlayer === true)
+		{
+			player2.name = "our badass AI";
+			checkCountdown();
+		}
+
+		GameState.AI_present = isSinglePlayer;
+		menuOverlay.classList.add('hidden');
+
+	}).catch(error =>
+	{
+		console.error('Failed to load user management data:', error);
+	});
 }
 
 export function startGame()
@@ -296,6 +297,11 @@ export async function gameLoop()
 {
 	if (GameState.game_paused == true)
 	{
+		if (GameState.animationFrameId)
+		{
+			cancelAnimationFrame(GameState.animationFrameId);
+		}
+
 		drawPauseMenu();
 		GameState.animationFrameId = requestAnimationFrame(gameLoop);
 		return;
@@ -336,28 +342,21 @@ export async function gameLoop()
 	drawPaddle(player2);
 	drawBall();
 	drawScore();
+	drawUsernames(player1.name, player2.name);
 	
 	// wait promise to be resolved from username object
 	const	username = await loadUserManagementData();
 
 	if (player1.score === 2)
 	{
-		drawWinMessage(username.username);
+		drawWinMessage(player1.name);
 		fillingResults(username);
 		GameState.game_done = true;
 	}
 	else if (player2.score === 2)
 	{
-		if (GameState.AI_present == true)
-		{
-			drawWinMessage('AI');
-			fillingResults(username);
-		}
-		else if (GameState.AI_present == false)
-		{
-			drawWinMessage('player 2'); // FIX ME get second player
-			fillingResults(username);
-		}
+		drawWinMessage(player2.name);
+		fillingResults(username);
 		GameState.game_done = true;
 	}
 

@@ -28,12 +28,12 @@ export async function displayTournamentForm()
 {
 	// Create the form container
 	const	tournamentForm = document.createElement('div');
-	tournamentForm.id = 'tournament-form';
-	tournamentForm.className = 'tournament-form';
+	tournamentForm.id = 'input-form';
+	tournamentForm.className = 'input-form';
 
 	// Create the title
 	const	formTitle = document.createElement('h3');
-	formTitle.textContent = 'Enter Player Names';
+	formTitle.textContent = 'Enter All Players\'s Names';
 	tournamentForm.appendChild(formTitle);
 
 	// Create form inputs
@@ -107,7 +107,7 @@ export function startTournamentGame(tournamentForm)
 	}
 
 	console.log('Tournament starting with players:', playerNames);
-	tournamentForm.remove(); // Remove the form after submission
+	tournamentForm.remove();
 
 	// Start the tournament game logic here
 	initializeTournamentMode(playerNames);
@@ -122,7 +122,6 @@ export function initializeTournamentMode(playerNames)
 	displayMatchups(matchups);
 
 	startGame();
-	// StartGame();
 }
 
 function createMatchups(playerNames)
@@ -131,7 +130,8 @@ function createMatchups(playerNames)
 	const shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
 
 	// Pair the players into matchups
-	const matchups = [
+	const matchups =
+	[
 		[shuffledPlayers[0], shuffledPlayers[1]], // Match 1
 		[shuffledPlayers[2], shuffledPlayers[3]]  // Match 2
 	];

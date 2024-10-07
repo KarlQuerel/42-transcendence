@@ -72,42 +72,27 @@ export function drawScore()
 	GraphConf.ctx.shadowColor = "transparent";
 }
 
-/***			Drawing Winning Message		***/
-// export function drawWinMessage(winner)
-// {
-// 	const	messageElement = document.getElementById('winning-message');
-// 	const	rematchButton = document.getElementById('rematch-button');
+/***		Drawing Usernames				***/
+export function drawUsernames(player1Username, player2Username)
+{
+	GraphConf.ctx.font = "15px 'Press Start 2P', cursive";
+	GraphConf.ctx.textAlign = "center";
+	GraphConf.ctx.textBaseline = "middle";
 
-// 	if (!messageElement)
-// 	{
-// 		console.error('Winning message element not found!');
-// 		return ;
-// 	}
+	GraphConf.ctx.fillStyle = "var(----base-green)";
+	GraphConf.ctx.shadowColor = "rgba(0, 255, 0, 0.8)";
+	GraphConf.ctx.shadowBlur = 10;
 
-// 	// Clearing previous message and GIF
-// 	// messageElement.innerHTML = '';
+	const	upperPlayer1 = player1Username.toUpperCase();
+	const	upperPlayer2 = player2Username.toUpperCase();
 
-// 	const	winText = document.createElement('span');
-// 	winText.textContent = winner + "Wins!";
+	GraphConf.ctx.fillText(upperPlayer1, GraphConf.canvas.width / 4, 100);
+	GraphConf.ctx.fillText(upperPlayer2, (GraphConf.canvas.width * 3) / 4, 100);
 
-	// const	gifElement = document.createElement('img');
-	// gifElement.src = '../../../assets/images/pong/win.gif';
-	// gifElement.alt = 'Winner GIF';
-	// gifElement.classList.add('win-gif');
-	// messageElement.appendChild(gifElement);
+	GraphConf.ctx.shadowColor = "transparent";
+}
 
-// 	messageElement.classList.add('show');
-
-// 	if (!rematchButton)
-// 	{
-// 		console.error('Rematch button element not found!');
-// 		return ;
-// 	}
-// 	rematchButton.classList.remove('hidden');
-// 	rematchButton.classList.add('show');
-// }
-
-// FIXME FINISH IT
+/***		Drawing Winning Message			***/
 export function drawWinMessage(winner)
 {
 	const	messageElement = document.getElementById('winning-message');
@@ -118,20 +103,29 @@ export function drawWinMessage(winner)
 		console.error('Winning message element not found!');
 		return ;
 	}
-	messageElement.textContent = winner + " Wins!";
+
+	const	upperWinner = winner.toUpperCase();
+
+	// Update winning message
+	messageElement.textContent = upperWinner + " WINS!"; //FIX ME - add a line break
 	messageElement.classList.add('show');
 
+	// Create the GIF element
 	const	gifElement = document.createElement('img');
 	gifElement.src = '../../../assets/images/pong/win.gif';
 	gifElement.alt = 'Winner GIF';
 	gifElement.classList.add('win-gif');
+
+	// Append GIF below the message
 	messageElement.appendChild(gifElement);
 
 	if (!rematchButton)
 	{
 		console.error('Rematch button element not found!');
-		return ;
+		return;
 	}
+		
+	// Show the rematch button
 	rematchButton.classList.remove('hidden');
 	rematchButton.classList.add('show');
 }
