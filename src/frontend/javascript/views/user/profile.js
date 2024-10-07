@@ -2,7 +2,7 @@
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG } from '../../main.js';
-import { apiRequest } from './signin.js';
+import { apiRequest, getCookie } from './signin.js';
 import { getIdentifier, checkIdentifierType} from './signup.js';
 import { initializeChangePassword } from './change_password.js';
 
@@ -138,64 +138,74 @@ export default function renderProfile()
         // Event listener for update profile button
         updateProfileButton.addEventListener('click', () =>
         {
-            if (DEBUG)
-                console.log('Update profile button clicked.');
-
-            firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
-            lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
-            usernameElement.innerHTML = `<label for="username_input">Username:</label><input type="text" id="username_input" value="${userData_edit.username}">`;
-            dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
-            emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
-
-            // File input for avatar
-            if (!document.getElementById('avatar_input'))
-            {
-                // Label
-                const avatarLabel = document.createElement('label');
-                avatarLabel.setAttribute('for', 'avatar_input');
-                avatarLabel.textContent = 'Upload my avatar image:';
-                personalInfoSection.appendChild(avatarLabel);
-
-                // Button
-                const avatarInput = document.createElement('input');
-                avatarInput.setAttribute('type', 'file');
-                avatarInput.setAttribute('id', 'avatar_input');
-                personalInfoSection.appendChild(avatarInput);
-            }
-
-            if (DEBUG)
-                console.log('Avatar button created.');
-
-            // Save Button
-            if (!document.getElementById('save-profile-button'))
-            {
-                const saveButton = document.createElement('button');
-                saveButton.setAttribute('id', 'save-profile-button');
-                saveButton.textContent = 'Save';
-                personalInfoSection.appendChild(saveButton);
-
-                if (DEBUG)
-                    console.log('Save button created.');
-
-                saveButton.addEventListener('click', (event) => {
-                    event.preventDefault();
-                    if (DEBUG)
-                        console.log('Entering addEventListener.');
-                    res = verifyProfileChanges();
-                    if(res == true)
-                    {
-                        const avatarFile = document.getElementById('avatar_input').files[0];
-                        saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
-                    }
-                });
-            }
+            profileEditMode(userData_edit, personalInfoSection);
         });
+
+        // updateProfileButton.addEventListener('click', () =>
+        // {
+        //     if (DEBUG)
+        //         console.log('Update profile button clicked.');
+
+        //     firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
+        //     lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
+        //     usernameElement.innerHTML = `<label for="username_input">Username:</label><input type="text" id="username_input" value="${userData_edit.username}">`;
+        //     dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
+        //     emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
+
+        //     // File input for avatar
+        //     if (!document.getElementById('avatar_input'))
+        //     {
+        //         // Label
+        //         const avatarLabel = document.createElement('label');
+        //         avatarLabel.setAttribute('for', 'avatar_input');
+        //         avatarLabel.textContent = 'Upload my avatar image:';
+        //         personalInfoSection.appendChild(avatarLabel);
+
+        //         // Button
+        //         const avatarInput = document.createElement('input');
+        //         avatarInput.setAttribute('type', 'file');
+        //         avatarInput.setAttribute('id', 'avatar_input');
+        //         personalInfoSection.appendChild(avatarInput);
+        //     }
+
+        //     if (DEBUG)
+        //         console.log('Avatar button created.');
+
+        //     // Save Button
+        //     if (!document.getElementById('save-profile-button'))
+        //     {
+        //         const saveButton = document.createElement('button');
+        //         saveButton.setAttribute('id', 'save-profile-button');
+        //         saveButton.textContent = 'Save';
+        //         personalInfoSection.appendChild(saveButton);
+
+        //         if (DEBUG)
+        //             console.log('Save button created.');
+
+        //         saveButton.addEventListener('click', (event) => {
+        //             event.preventDefault();
+        //             if (DEBUG)
+        //                 console.log('Entering addEventListener.');
+        //             res = verifyProfileChanges();
+        //             if(res == true)
+        //             {
+        //                 const avatarFile = document.getElementById('avatar_input').files[0];
+        //                 saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
+        //             }
+        //         });
+        //     }
+        // });
 
 
         /***************** FRIENDS *****************/
         
-        
-        
+        // bouton pour aller sur la page friends
+        const friendsButton = document.createElement('button');
+        friendsButton.setAttribute('id', 'friends-button');
+        friendsButton.textContent = 'Friends';
+        container.appendChild(friendsButton);
+
+
         /************** MATCH HISTORY **************/
         
         // 1v1 games, dates, and relevant details, accessible to logged-in users.
@@ -252,73 +262,202 @@ export async function fetchUserData() {
 // }
 
 
+/***********************************************\
+*           PROFILE EDIT MODE FUNCTIONS         *
+\***********************************************/
+
+async function profileEditMode(userData_edit, personalInfoSection)
+{
+    if (DEBUG)
+        console.log('Entering profile edit mode...');
+
+    // Profile elements
+    const firstNameElement = document.getElementById('first_name');
+    const lastNameElement = document.getElementById('last_name');
+    const usernameElement = document.getElementById('username');
+    const dobElement = document.getElementById('date_of_birth');
+    const emailElement = document.getElementById('email');
+
+    if (DEBUG)
+        console.log('Entering profile edit mode 2...');
+
+    // Fields displayed un edit-mode
+    firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
+    lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
+    usernameElement.innerHTML = `<label for="username_input">Username:</label><input type="text" id="username_input" value="${userData_edit.username}">`;
+    dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
+    emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
+
+    // File input for avatar
+    if (!document.getElementById('avatar_input'))
+    {
+        const avatarLabel = document.createElement('label');
+        avatarLabel.setAttribute('for', 'avatar_input');
+        avatarLabel.textContent = 'Upload my avatar image:';
+        personalInfoSection.appendChild(avatarLabel);
+
+        const avatarInput = document.createElement('input');
+        avatarInput.setAttribute('type', 'file');
+        avatarInput.setAttribute('id', 'avatar_input');
+        personalInfoSection.appendChild(avatarInput);
+    }
+
+    // Save Button
+    if (!document.getElementById('save-profile-button'))
+    {
+        const saveButton = document.createElement('button');
+        saveButton.setAttribute('id', 'save-profile-button');
+        saveButton.textContent = 'Save';
+        personalInfoSection.appendChild(saveButton);
+
+        saveButton.addEventListener('click', (event) =>
+        {
+            event.preventDefault();
+            const isValid = verifyProfileChanges();
+
+            if (isValid)
+            {
+                const avatarFile = document.getElementById('avatar_input').files[0];
+                saveProfileChanges(userData_edit, avatarFile);
+            }
+        });
+    }
+}
+
+
 async function verifyProfileChanges()
 {
     if (DEBUG)
         console.log('Verifying profile changes...');
 
-    const firstName = document.getElementById('first_name_input').value;
-    const lastName = document.getElementById('last_name_input').value;
-    const username = document.getElementById('username_input').value;
-    const dob = document.getElementById('dob_input').value;
-    const email = document.getElementById('email_input').value;
+    // Fetch the values from the input fields
+    const firstName = getIdentifier('first_name_input');
+    const lastName = getIdentifier('last_name_input');
+    const username = getIdentifier('username_input');
+    const dob = getIdentifier('dob_input');
+    const password = getIdentifier('password_input');
+    const email = getIdentifier('email_input');
     const avatarFile = document.getElementById('avatar_input').files[0];
 
-    // First name
-    let first_name = getIdentifier('first_name_input');
-    let first_name_type = checkIdentifierType(first_name, 'first_name_input');
+    if (DEBUG)
+    {
+        console.log('First name:', firstName);
+        console.log('Last name:', lastName);
+        console.log('Username:', username);
+        console.log('Date of birth:', dob);
+        console.log('Password', password);
+        console.log('Email:', email);
+        console.log('Avatar:', avatarFile);
+    }
 
-    // Last name
-    let last_name = getIdentifier('last_name_input');
-    let last_name_type = checkIdentifierType(last_name, 'last_name_input');
-
-    // Username
-    let username_id = getIdentifier('username_input');
-    let username_type = checkIdentifierType(username, 'username_input');
-
-    // Date of birth
-    let date_of_birth = getIdentifier('date_of_birth_input');
-    let date_of_birth_type = checkIdentifierType(date_of_birth, 'date_of_birth_input');
-
-    // Email
-    let email_id = getIdentifier('email_input');
-    let email_type = checkIdentifierType(email, 'email_input');
-
-    // Avatar
-    let avatar_id = getIdentifier('avatar_input');
-    let avatar_type = checkIdentifierType(avatarFile, 'avatar_input');
+    // Check the types based on your validation logic
+    const first_name_type = checkIdentifierType(firstName, 'first_name');
+    const last_name_type = checkIdentifierType(lastName, 'last_name');
+    const username_type = checkIdentifierType(username, 'username');
+    const date_of_birth_type = checkIdentifierType(dob, 'date_of_birth');
+    const password_type = checkIdentifierType(password, 'password');
+    const email_type = checkIdentifierType(email, 'email');
+    const avatar_type = checkIdentifierType(avatarFile, 'avatar');
 
     if (DEBUG)
-        console.log('First name:', first_name, first_name_type);
-        console.log('Last name:', last_name, last_name_type);
-        console.log('Username:', username_id, username_type);
-        console.log('Date of birth:', date_of_birth, date_of_birth_type);
-        console.log('Email:', email_id, email_type);
-        console.log('Avatar:', avatar_id, avatar_type);
+    {
+        console.log('First name:', first_name_type);
+        console.log('Last name:', last_name_type);
+        console.log('Username:', username_type);
+        console.log('Date of birth:', date_of_birth_type);
+        console.log('Password:', password_type);
+        console.log('Email:', email_type);
+        console.log('Avatar:', avatar_type);
+    }
 
-    if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type))
+    // Check if all values are valid
+    const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type);
+
+    if (!allValid)
     {
         if (DEBUG)
             console.log('Profile changes are invalid.');
 
+        // Send error messages to the frontend
         sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type);
         return false;
     }
     else
+    {
+        if (DEBUG)
+            console.log('Profile changes are valid.');
         return true;
-        // saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
+    }
 }
 
 
+// async function verifyProfileChanges()
+// {
+//     if (DEBUG)
+//         console.log('Verifying profile changes...');
 
-async function saveProfileChanges(username, password, email, date_of_birth, first_name, last_name, avatarFile)
+//     const firstName = document.getElementById('first_name_input').value;
+//     const lastName = document.getElementById('last_name_input').value;
+//     const username = document.getElementById('username_input').value;
+//     const dob = document.getElementById('dob_input').value;
+//     const email = document.getElementById('email_input').value;
+//     const avatarFile = document.getElementById('avatar_input').files[0];
+
+//     // First name
+//     let first_name = getIdentifier('first_name_input');
+//     let first_name_type = checkIdentifierType(first_name, 'first_name_input');
+
+//     // Last name
+//     let last_name = getIdentifier('last_name_input');
+//     let last_name_type = checkIdentifierType(last_name, 'last_name_input');
+
+//     // Username
+//     let username_id = getIdentifier('username_input');
+//     let username_type = checkIdentifierType(username, 'username_input');
+
+//     // Date of birth
+//     let date_of_birth = getIdentifier('date_of_birth_input');
+//     let date_of_birth_type = checkIdentifierType(date_of_birth, 'date_of_birth_input');
+
+//     // Email
+//     let email_id = getIdentifier('email_input');
+//     let email_type = checkIdentifierType(email, 'email_input');
+
+//     // Avatar
+//     let avatar_id = getIdentifier('avatar_input');
+//     let avatar_type = checkIdentifierType(avatarFile, 'avatar_input');
+
+//     if (DEBUG)
+//         console.log('First name:', first_name, first_name_type);
+//         console.log('Last name:', last_name, last_name_type);
+//         console.log('Username:', username_id, username_type);
+//         console.log('Date of birth:', date_of_birth, date_of_birth_type);
+//         console.log('Email:', email_id, email_type);
+//         console.log('Avatar:', avatar_id, avatar_type);
+
+//     if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type))
+//     {
+//         if (DEBUG)
+//             console.log('Profile changes are invalid.');
+
+//         sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type);
+//         return false;
+//     }
+//     else
+//         return true;
+//         // saveProfileChanges(username_id, password, email_id, date_of_birth, first_name, last_name, avatar_id);
+// }
+
+
+
+async function saveProfileChanges(userData_edit, avatarFile)
 {
     const formData = new FormData();
-    formData.append('first_name', first_name);
-    formData.append('last_name', last_name);
-    formData.append('username', username);
-    formData.append('date_of_birth', date_of_birth);
-    formData.append('email', email);
+    formData.append('first_name', userData_edit.firstName);
+    formData.append('last_name', userData_edit.lastName);
+    formData.append('username', userData_edit.username);
+    formData.append('date_of_birth', userData_edit.dob);
+    formData.append('email', userData_edit.email);
 
     if (avatarFile) {
         formData.append('avatar', avatarFile);
@@ -329,16 +468,22 @@ async function saveProfileChanges(username, password, email, date_of_birth, firs
         const response = await apiRequest('/api/users/updateProfile/', {
             method: 'PUT',
             body: formData,
-            // headers: {
-            //     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-            // }
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: formData
         });
 
-        if (response.ok) {
+        if (response.ok)
+        {
+            const data = await response.json();
             console.log('Profile updated successfully.');
-            window.location.reload();
-        } else {
+            // window.location.reload();
+        }
+        else
+        {
             const errorData = await response.json();
+            console.error('Error updating profile:', errorData);
             handleProfileErrors(errorData);
         }
     }

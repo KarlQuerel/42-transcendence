@@ -2,6 +2,7 @@
 -			IMPORTING GLOBAL VARIABLES			-
 \***********************************************/
 import { DEBUG } from '../../main.js';
+import { getCookie } from './signin.js';
 
 
 /***********************************************\
@@ -127,7 +128,7 @@ export function initializeSignUp()
             let email = getIdentifier('email');
             let email_type = checkIdentifierType(email, 'email');
 
-			avatar_type = None;
+			let avatar_type = null;
 
 			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type) || password !== password_confirmation)
 			{
@@ -144,26 +145,6 @@ export function initializeSignUp()
 		console.error('Form not found.');
 }
 
-
-/***********************************************\
-*                 UTIL FUNCTIONS                *
-\***********************************************/
-
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 
 
 /***********************************************\
