@@ -4,7 +4,6 @@
 
 let	animationFrameId = null;
 
-export let	AI_name = "🤖 Ponginator3000 🤖";
 export const	keysPressed = {};
 
 /***			Game State			***/
@@ -53,6 +52,14 @@ export const PaddleConf =
 	offset: 20
 };
 
+/***			Game Config			***/
+export const GameConf =
+{
+	AI_name : "🤖 Ponginator3000 🤖",
+	maxScore : 2
+};
+
+
 /***			Player Paddles			***/
 export const player1 =
 {
@@ -97,7 +104,7 @@ export const BallConf =
 export const	Results =
 {
 	username : undefined,
-	identified : undefined,
+	identified : false,
 	score : undefined,
 	opponent_username : undefined,
 	opponent_score : undefined,

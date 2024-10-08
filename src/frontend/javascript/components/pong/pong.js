@@ -4,14 +4,14 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, 
-Results, AI_name }
+import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
+Results }
 from './gameVariables.js';
 
 import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
-import { startTournament, displayTournamentForm, startTournamentGame,
+import { prepareTournament, displayTournamentForm, startTournamentGame,
 initializeTournamentMode}
 from './tournament.js'
 
@@ -112,7 +112,7 @@ function setupMenuButtons()
 
 	singleplayerButton.addEventListener('click', () => prepareSinglePlayer(menuOverlay));
 	twoplayerButton.addEventListener('click', () => prepareTwoPlayers(menuOverlay));
-	tournamentButton.addEventListener('click', () => startTournament(menuOverlay));
+	tournamentButton.addEventListener('click', () => prepareTournament(menuOverlay));
 
 	if (!rematchButton)
 	{
@@ -157,39 +157,6 @@ function enforceMinimumWindowSize()
 	}
 }
 
-
-function prepareGame(menuOverlay, isSinglePlayer)
-{
-	// Fetch the logged-in user's name
-	loadUserManagementData().then(username =>
-	{
-		player1.name = username.username;
-
-		
-		if (isSinglePlayer === false)
-		{
-			AskPlayer2Name();
-			displayPlayer2Form().then(name =>
-			{
-				player2.name = name;
-				checkCountdown();
-			});
-		}
-		else if (isSinglePlayer === true)
-		{
-			player2.name = "our badass AI";
-			checkCountdown();
-		}
-
-		GameState.AI_present = isSinglePlayer;
-		menuOverlay.classList.add('hidden');
-
-	}).catch(error =>
-	{
-		console.error('Failed to load user management data:', error);
-	});
-}
-
 export function startGame()
 {
 	if (GraphConf.canvas)
@@ -212,8 +179,6 @@ export function startGame()
 /***********************************************\
  -					AI							-
  \***********************************************/
- //TODO KARL - refactor this fucking long file
-
 
 /* imports the function that returns the AI paddle's movement */
 
@@ -343,20 +308,17 @@ export async function gameLoop()
 	drawBall();
 	drawScore();
 	drawUsernames(player1.name, player2.name);
-	
-	// wait promise to be resolved from username object
-	const	username = await loadUserManagementData();
 
-	if (player1.score === 2)
+	if (player1.score === GameConf.maxScore)
 	{
 		drawWinMessage(player1.name);
-		fillingResults(username);
+		fillingResults(1);
 		GameState.game_done = true;
 	}
-	else if (player2.score === 2)
+	else if (player2.score === GameConf.maxScore)
 	{
 		drawWinMessage(player2.name);
-		fillingResults(username);
+		fillingResults(2);
 		GameState.game_done = true;
 	}
 

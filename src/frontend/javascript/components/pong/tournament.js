@@ -4,7 +4,8 @@
 import { DEBUG }
 from '../../main.js';
 
-import { GameState }
+import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
+Results }
 from './gameVariables.js';
 
 import { loadUserManagementData }
@@ -13,11 +14,17 @@ from '../../views/dashboard/dashboard.js';
 import { startGame }
 from './pong.js'
 
+import { isNameValid }
+from './utils.js';
+
+import { checkCountdown }
+from './preGame.js';
+
 
 /***********************************************\
 -					TOURNAMENT					-
 \***********************************************/
-export function startTournament(menuOverlay)
+export function prepareTournament(menuOverlay)
 {
 	GameState.AI_present = false;
 	menuOverlay.classList.add('hidden');
@@ -38,7 +45,7 @@ export async function displayTournamentForm()
 
 	// Create form inputs
 	const	players = ['Player 1 (You)', 'Player 2', 'Player 3', 'Player 4'];
-	for (const [index, label] of players.entries())
+	for (const	[index, label] of players.entries())
 	{
 		const	inputGroup = document.createElement('div');
 		inputGroup.className = 'input-group-lg mb-3';
@@ -95,21 +102,25 @@ export function startTournamentGame(tournamentForm)
 	const	playerInputs = tournamentForm.querySelectorAll('input');
 	const	playerNames = [];
 
-	playerInputs.forEach(input =>
+	for (const	input of playerInputs)
 	{
-		playerNames.push(input.value.trim());
-	});
+		let	playerName = input.value.trim();
 
-	if (playerNames.some(name => name === ''))
-	{
-		alert('Please fill in all player names');
-		return;
+		if (isNameValid(playerName) === false)
+			return;
+
+		if (playerNames.includes(playerName))
+		{
+			alert('❌ Player names must be unique ❌');
+			return ;
+		}
+
+		playerNames.push(playerName);
 	}
 
 	console.log('Tournament starting with players:', playerNames);
 	tournamentForm.remove();
 
-	// Start the tournament game logic here
 	initializeTournamentMode(playerNames);
 }
 
@@ -120,38 +131,54 @@ export function initializeTournamentMode(playerNames)
 
 	const	matchups = createMatchups(playerNames);
 	displayMatchups(matchups);
-
-	startGame();
 }
 
 function createMatchups(playerNames)
 {
-	// Shuffle the array to randomize the order
-	const shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
+	const	shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
 
-	// Pair the players into matchups
-	const matchups =
+	const	matchups =
 	[
-		[shuffledPlayers[0], shuffledPlayers[1]], // Match 1
-		[shuffledPlayers[2], shuffledPlayers[3]]  // Match 2
+		[shuffledPlayers[0], shuffledPlayers[1]],
+		[shuffledPlayers[2], shuffledPlayers[3]]
 	];
 	return matchups;
 }
 
-// TODO KARL FINISH THIS
+// TODO KARL - show usernames while in tournaments
 function displayMatchups(matchups)
 {
-	const matchupsContainer = document.createElement('div');
-	matchupsContainer.className = 'matchups-container';
+	const	matchupsContainer = document.createElement('div');
+	matchupsContainer.className = 'matchups-container container-sm';
 
 	matchups.forEach((pair, index) =>
 	{
-		const matchup = document.createElement('div');
+		const	matchup = document.createElement('div');
 		matchup.className = 'matchup';
-		matchup.textContent = `Match ${index + 1}: ${pair[0]} vs ${pair[1]}`;
+		matchup.textContent = `Match #${index + 1} = ⚔️ ${pair[0]} VS ${pair[1]} ⚔️`;
 		matchupsContainer.appendChild(matchup);
 	});
 
-	// Append matchups container to the body or a specific section of your UI
 	document.body.appendChild(matchupsContainer);
+
+	fillTournamentPlayers(matchups[0]);
+
+	setTimeout(() =>
+	{
+		document.body.removeChild(matchupsContainer);
+		checkCountdown();
+	}, 5000);
+}
+
+//TODO KARL FINISH LOGIC HERE
+function fillTournamentPlayers(pair)
+{
+	player1.name = pair[0];
+	player2.name = pair[1];
+
+	if (DEBUG)
+	{
+		console.log(`Player 1: ${player1.name}`);
+		console.log(`Player 2: ${player2.name}`);
+	}
 }

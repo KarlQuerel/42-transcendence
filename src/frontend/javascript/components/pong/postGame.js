@@ -4,31 +4,48 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, 
-Results, AI_name }
+import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
+Results }
 from './gameVariables.js';
 
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
+import { loadUserManagementData }
+from '../../views/dashboard/dashboard.js';
+
 /***********************************************\
 -					POST-GAME					-
 \***********************************************/
 /***			Filling Results				***/
-export function fillingResults(username)
+export async function fillingResults(winner)
 {
+	const	username = await loadUserManagementData();
+
 	Results.username = username.username;
-	Results.identified = "yes";
-	Results.score = 10;
+	Results.identified = "yes"; // HERE - voir avec caro la logique avec un opponent
+
+	if (winner === 1)
+	{
+		Results.score = GameConf.maxScore;
+		Results.opponent_score = player2.score;
+	}
+	else if (winner === 2)
+	{
+		Results.score = player1.score;
+		Results.opponent_score = GameConf.maxScore;
+	}
+
 	if (GameState.AI_present === true)
 	{
-		Results.opponent_username = AI_name;
+		Results.identified = false;
+		Results.opponent_username = GameConf.AI_name;
 	}
 	else if (GameState.AI_present === false)
 	{
 		Results.opponent_username = player2.name;
 	}
-	Results.opponent_score = player2.score;
+
 	Results.tournament_date = getDate();
 
 	if (DEBUG)

@@ -7,7 +7,7 @@ from '../../main.js';
 import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
-import { startTournament, displayTournamentForm, startTournamentGame,
+import { displayTournamentForm, startTournamentGame,
 initializeTournamentMode}
 from './tournament.js'
 
@@ -36,6 +36,12 @@ from './pong.js';
 
 import { getFirstPlayerName }
 from './onePlayer.js';
+
+import { checkCountdown }
+from './preGame.js';
+
+import { isNameValid }
+from './utils.js';
 
 /***********************************************\
 -				TWO PLAYERS						-
@@ -99,31 +105,9 @@ export function displayPlayer2Form()
 
 		player2.name = player2Name;
 		player2Form.remove();
-		startGame();
+		checkCountdown();
 	});
 
 	player2Form.appendChild(submitButton);
 	document.body.appendChild(player2Form);
-}
-
-export function isNameValid(playerName)
-{
-	if (playerName.length > 12)
-	{
-		alert('Please enter a name under 12 characters');
-		return false;
-	}
-
-	if (playerName === '')
-	{
-		alert('Please enter a valid name for Player 2.');
-		return false;
-	}
-
-	if (playerName === player1.name)
-	{
-		alert('I know you love yourself but you can\'t play against yourself');
-		return false;
-	}
-	return true;
 }

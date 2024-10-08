@@ -1,12 +1,6 @@
 /************************************************
 					TOURNAMENT
 ***********************************************/
-
-/* TODOKARL HERE FINISH IT */
-/************************************************
-				TOURNAMENT
-***********************************************/
-
 /* Tournament Form */
 .input-form
 {
@@ -21,7 +15,7 @@
 	height: auto;
 	z-index: 1000;
 	text-align: center;
-	background: linear-gradient(135deg, var(--base-light-blue), var(--base-light-green), var(--base-dark)); /* Shades of black and green */
+	background: linear-gradient(135deg, var(--base-light-blue), var(--base-light-green), var(--base-dark));
 	background-size: 300% 300%;
 	animation: moveBackground 3s ease infinite;
 }
@@ -91,27 +85,26 @@
 	align-items: center;
 }
 
-/* HERE - FINISH IT */
+/* TODO FINISH FRONT END HERE */
 /* Matchups Container */
 .matchups-container
 {
-	margin: 20px;
-	padding: 10px;
-	background-color: rgba(255, 255, 255, 0.8);
+	background: linear-gradient(135deg, var(--base-light-blue), var(--base-light-green), var(--base-dark));
+	background-size: 300% 300%;
+	animation: moveBackground 3s ease infinite;
 	border: 1px solid var(--base-green);
-	border-radius: 5px;
-	position: absolute;
+	border-radius: 15px;
+	position: fixed;
 	z-index: 10000;
-	top: 50%;
-	bottom: 50%;
+	top: 40%;
+	left: 0%;
+	width: auto;
+	height: auto;
+	padding: 3vh;
 }
 
 .matchup
 {
-	font-size: 1.2em;
-	padding: 5px;
-	margin: 5px 0;
-	text-align: center;
-	top: 50%;
-	bottom: 50%;
+	font-size: 1.8em;
+	text-align: left;
 }

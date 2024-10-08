@@ -136,7 +136,7 @@ function login(username, password)
 	})
 	.catch(error => {
 		console.error('Error:', error);
-		alert('Login failed: ' + error.message);
+		alert('❌ Login failed: ' + error.message);
 	});
 }
 

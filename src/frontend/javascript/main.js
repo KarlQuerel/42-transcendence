@@ -160,7 +160,7 @@ function router()
 	// Check user authentication
 	if (path === '/pong' && isSignedIn == false)
 	{
-		alert("You must be logged in to access the Pong game.");
+		alert("❌ You must be logged in to access the Pong game ❌");
 		window.location.href = '/sign-in';
 		return ;
 	}

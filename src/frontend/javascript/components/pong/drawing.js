@@ -107,7 +107,7 @@ export function drawWinMessage(winner)
 	const	upperWinner = winner.toUpperCase();
 
 	// Update winning message
-	messageElement.textContent = upperWinner + " WINS!"; //FIX ME - add a line break
+	messageElement.innerHTML = upperWinner + "<br>WINS!";
 	messageElement.classList.add('show');
 
 	// Create the GIF element

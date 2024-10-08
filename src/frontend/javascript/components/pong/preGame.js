@@ -5,13 +5,13 @@ import { DEBUG }
 from '../../main.js';
 
 import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, 
-Results, AI_name }
+Results }
 from './gameVariables.js';
 
 import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
-import { startTournament, displayTournamentForm, startTournamentGame,
+import { displayTournamentForm, startTournamentGame,
 initializeTournamentMode}
 from './tournament.js'
 

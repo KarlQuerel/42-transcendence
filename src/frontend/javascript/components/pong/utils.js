@@ -4,12 +4,8 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
-Results }
+import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
-
-import { prepareTwoPlayers, displayPlayer2Form }
-from './twoPlayers.js'
 
 import { displayTournamentForm, startTournamentGame,
 initializeTournamentMode}
@@ -32,33 +28,43 @@ from './ai.js';
 import { loadUserManagementData }
 from '../../views/dashboard/dashboard.js';
 
-import { startCountdown, checkCountdown }
-from './preGame.js';
-
 import { fillingResults }
 from './postGame.js';
 
-/***********************************************\
--				ONE PLAYER						-
-\***********************************************/
-export function prepareSinglePlayer(menuOverlay)
-{
-	getFirstPlayerName();
-	player2.name = GameConf.AI_name;
-	GameState.AI_present = true;
-	menuOverlay.classList.add('hidden');
-	checkCountdown();
-}
+import { startGame }
+from './pong.js';
 
-export function getFirstPlayerName()
+import { getFirstPlayerName }
+from './onePlayer.js';
+
+import { checkCountdown }
+from './preGame.js';
+
+/***********************************************\
+-					UTILS						-
+\***********************************************/
+export function isNameValid(playerName)
 {
-	loadUserManagementData()
-	.then(username =>
+	if (playerName.length > 12)
 	{
-		player1.name = username.username;
-	})
-	.catch(error =>
+		alert('❌ Please enter a name under 12 characters ❌');
+		return false;
+	}
+	
+	if (playerName === '')
 	{
-		console.error('Failed to load user management data:', error);
-	});
+		alert('❌ Please enter a name ❌');
+		return false;
+	}
+
+	console.log('playerName', playerName);
+
+	if (playerName === player1.name)
+	{
+		alert('❌ I know you love yourself but you can\'t play against yourself ❌');
+		return false;
+	}
+
+
+	return true;
 }
