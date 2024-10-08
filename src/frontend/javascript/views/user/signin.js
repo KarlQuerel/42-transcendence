@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState, getSignedInState } from '../../main.js';
+import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
 
 /***********************************************\
 *					RENDERING					*
@@ -35,6 +35,7 @@ export default function renderSignIn()
 	loginButton.setAttribute('type', 'submit');
 	loginButton.textContent = 'Log In';
 	loginButton.classList.add('form-input');
+	loginButton.id = 'loginButton'; //CARO: ajouté pour githubactions
 
 	// Create sign up button
 	const signUpButton = document.createElement('button');
@@ -129,10 +130,12 @@ function login(username, password)
 	{
 		if (DEBUG)
 			console.log('Token refreshed:', newAccessToken);
-		
+		if (GITHUBACTIONS)
+			console.log('Login successful'); //CARO: ajouté pour githubactions
 		setSignedInState(true);
 		window.location.href = '/profile';
-		console.log('Success:', username, 'is now logged in');
+		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
+
 	})
 	.catch(error => {
 		console.error('Error:', error);

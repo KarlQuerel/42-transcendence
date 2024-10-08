@@ -2,6 +2,7 @@
 -				GLOBAL VARIABLES				-
 \***********************************************/
 export	const	DEBUG = true;
+export	const	GITHUBACTIONS = false;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
