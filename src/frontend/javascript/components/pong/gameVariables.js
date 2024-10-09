@@ -31,7 +31,10 @@ export const	GameState =
 	isCountdownActive: false,
 
 	// Interval between Countdowns
-	countdownInterval: null
+	countdownInterval: null,
+
+	// Are event listeners set up?
+	areEventsListenersSetup : false
 }
 
 /***			Graphics Config			***/
@@ -56,7 +59,9 @@ export const PaddleConf =
 export const GameConf =
 {
 	AI_name : "🤖 Ponginator3000 🤖",
-	maxScore : 2
+	maxScore : 1,
+	matchupIndex : 0,
+	allMatchups : []
 };
 
 

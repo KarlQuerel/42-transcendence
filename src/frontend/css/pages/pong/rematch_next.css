@@ -1,0 +1,21 @@
+/***********************************************
+				REMATCH_NEXT
+***********************************************/
+
+/*		REMATCH_NEXT BUTTON		*/
+#rematch-button
+{
+	width: 20vh;
+	height: auto;
+	top : 10%;
+	right : 2%;
+	border-radius: 15px;
+	z-index: 100000;
+	padding: 2vh;
+	position: absolute;
+	border: 2px solid var(--base-green);
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

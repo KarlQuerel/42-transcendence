@@ -124,9 +124,14 @@ export function drawWinMessage(winner)
 		console.error('Rematch button element not found!');
 		return;
 	}
-		
-	// Show the rematch button
-	rematchButton.classList.remove('hidden');
+
+	if (GameState.isTournament === true)
+		rematchButton.textContent = 'Next Match'
+	else
+	{
+		rematchButton.textContent = 'Rematch'
+	}
+	rematchButton.classList.remove('hidden-sudden');
 	rematchButton.classList.add('show');
 }
 

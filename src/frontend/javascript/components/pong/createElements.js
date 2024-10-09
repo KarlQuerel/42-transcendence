@@ -107,10 +107,10 @@ export function createTournamentButton()
 export function createHowToPlayButton()
 {
 	const	button = document.createElement('button');
-	button.id = 'how-to-play-button';
 	button.className = 'btn btn-home btn-howtoplay';
 	button.textContent = 'How to Play';
-	button.addEventListener('click', () => {
+	button.addEventListener('click', () =>
+	{
 		const	card = document.getElementById('how-to-play-card');
 		if (card)
 		{
@@ -206,6 +206,7 @@ export function createWinningMessage()
 export function createRematchButton()
 {
 	const	rematchButton = document.createElement('button');
+	rematchButton.className = 'btn btn-home';
 	rematchButton.id = 'rematch-button';
 	rematchButton.textContent = 'Rematch';
 	return rematchButton;

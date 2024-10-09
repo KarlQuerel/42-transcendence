@@ -129,6 +129,8 @@ export function initializeTournamentMode(playerNames)
 	if (DEBUG)
 		console.log('Initializing tournament mode with players:', playerNames);
 
+	GameState.isTournament = true;
+
 	const	matchups = createMatchups(playerNames);
 	displayMatchups(matchups);
 }
@@ -145,7 +147,6 @@ function createMatchups(playerNames)
 	return matchups;
 }
 
-// TODO KARL - show usernames while in tournaments
 function displayMatchups(matchups)
 {
 	const	matchupsContainer = document.createElement('div');
@@ -161,7 +162,7 @@ function displayMatchups(matchups)
 
 	document.body.appendChild(matchupsContainer);
 
-	fillTournamentPlayers(matchups[0]);
+	fillFirstMatchPlayers(matchups[0]);
 
 	setTimeout(() =>
 	{
@@ -170,8 +171,19 @@ function displayMatchups(matchups)
 	}, 5000);
 }
 
-//TODO KARL FINISH LOGIC HERE
-function fillTournamentPlayers(pair)
+function fillFirstMatchPlayers(pair)
+{
+	player1.name = pair[0];
+	player2.name = pair[1];
+
+	if (DEBUG)
+	{
+		console.log(`Player 1: ${player1.name}`);
+		console.log(`Player 2: ${player2.name}`);
+	}
+}
+
+export function fillSecondMatchPlayers(pair)
 {
 	player1.name = pair[0];
 	player2.name = pair[1];

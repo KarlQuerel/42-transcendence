@@ -167,10 +167,10 @@ function resetPaddles()
 \***********************************************/
 export function keyDownHandler(e)
 {
-	if (GameState.isGameModeSelected == false)
+	if (GameState.isGameModeSelected === false)
 		return ;
 
-	if (GameState.game_done == true)
+	if (GameState.game_done === true)
 		return ;
 
 	keysPressed[e.key] = true;

@@ -23,7 +23,7 @@ export async function fillingResults(winner)
 	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE - voir avec caro la logique avec un opponent
+	Results.identified = "yes"; // HERE
 
 	if (winner === 1)
 	{

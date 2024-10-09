@@ -120,15 +120,25 @@ function setupMenuButtons()
 	}
 	else
 	{
-		rematchButton.addEventListener('click', resetGame);
+		rematchButton.classList.add('hidden-sudden');
+		// HERE TEST
+		if (GameState.isTournament === true)
+			rematchButton.addEventListener('click', lastRound());
+		else
+			rematchButton.addEventListener('click', resetGame);
 	}
 }
 
+
 function setupEventListeners()
 {
-	window.addEventListener('resize', handleResize);
-	document.addEventListener("keydown", keyDownHandler);
-	document.addEventListener("keyup", keyUpHandler);
+	if (GameState.areEventsListenersSetup === false)
+	{
+		window.addEventListener('resize', handleResize);
+		document.addEventListener("keydown", keyDownHandler);
+		document.addEventListener("keyup", keyUpHandler);
+	}
+	GameState.areEventsListenersSetup = true;
 }
 
 function setupCanvasDimensions()
@@ -343,10 +353,15 @@ function resetGame()
 	const	rematchButton = document.getElementById('rematch-button');
 
 	messageElement.classList.remove('show');
-	rematchButton.classList.add('hidden');
+	rematchButton.classList.add('hidden-sudden');
 
 	// Restart the game
 	GameState.game_done = false;
-	GameState.isGameModeSelected = false;
+	GameState.isGameModeSelected = true;
+
+	if (DEBUG)
+		console.log('GameState', GameState);
+
+	setupEventListeners();
 	requestAnimationFrame(gameLoop);
 }
