@@ -61,7 +61,8 @@ export const GameConf =
 	AI_name : "🤖 Ponginator3000 🤖",
 	maxScore : 1,
 	matchupIndex : 0,
-	allMatchups : []
+	allMatchups : [],
+	winners : []
 };
 
 

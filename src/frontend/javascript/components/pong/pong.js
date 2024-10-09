@@ -12,7 +12,7 @@ import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
 import { prepareTournament, displayTournamentForm, startTournamentGame,
-initializeTournamentMode}
+initializeTournamentMode, handleNextTournamentGame}
 from './tournament.js'
 
 import { createContainer, createVideo, createOverlay, createMenuButton,
@@ -121,14 +121,19 @@ function setupMenuButtons()
 	else
 	{
 		rematchButton.classList.add('hidden-sudden');
-		// HERE TEST
-		if (GameState.isTournament === true)
-			rematchButton.addEventListener('click', lastRound());
-		else
-			rematchButton.addEventListener('click', resetGame);
+		rematchButton.addEventListener('click', () =>
+		{
+			if (GameState.isTournament === true)
+			{
+				handleNextTournamentGame();
+			}
+			else
+			{
+				resetGame();
+			}
+		});
 	}
 }
-
 
 function setupEventListeners()
 {
@@ -339,7 +344,7 @@ export async function gameLoop()
 }
 
 /***			Resetting Game				***/
-function resetGame()
+export function resetGame()
 {
 	// Reset game state
 	player1.score = 0;

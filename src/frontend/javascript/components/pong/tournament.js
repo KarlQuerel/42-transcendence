@@ -11,7 +11,7 @@ from './gameVariables.js';
 import { loadUserManagementData }
 from '../../views/dashboard/dashboard.js';
 
-import { startGame }
+import { startGame, resetGame }
 from './pong.js'
 
 import { isNameValid }
@@ -132,6 +132,7 @@ export function initializeTournamentMode(playerNames)
 	GameState.isTournament = true;
 
 	const	matchups = createMatchups(playerNames);
+	GameConf.allMatchups = matchups;
 	displayMatchups(matchups);
 }
 
@@ -144,6 +145,7 @@ function createMatchups(playerNames)
 		[shuffledPlayers[0], shuffledPlayers[1]],
 		[shuffledPlayers[2], shuffledPlayers[3]]
 	];
+	console.log("Matchups created:", matchups);
 	return matchups;
 }
 
@@ -162,7 +164,7 @@ function displayMatchups(matchups)
 
 	document.body.appendChild(matchupsContainer);
 
-	fillFirstMatchPlayers(matchups[0]);
+	fillMatchPlayers(matchups[0]);
 
 	setTimeout(() =>
 	{
@@ -171,26 +173,59 @@ function displayMatchups(matchups)
 	}, 5000);
 }
 
-function fillFirstMatchPlayers(pair)
+export function fillMatchPlayers(matchupIndex)
 {
-	player1.name = pair[0];
-	player2.name = pair[1];
-
-	if (DEBUG)
+	// Check if matchupIndex is valid
+	if (GameConf.allMatchups && GameConf.allMatchups[matchupIndex])
 	{
-		console.log(`Player 1: ${player1.name}`);
-		console.log(`Player 2: ${player2.name}`);
+		const matchup = GameConf.allMatchups[matchupIndex];
+
+		// Assuming matchup is an array of players
+		player1.name = matchup[0]; // First player
+		player2.name = matchup[1]; // Second player
+
+		// Debugging to ensure names are set
+		console.log('Match Players:', player1.name, player2.name);
+		
+		// Ensure to call drawUsernames to draw the usernames after setting them
+		drawUsernames(player1.name, player2.name);
+	}
+	else
+	{
+		console.error('Invalid matchup index or match data missing');
 	}
 }
 
-export function fillSecondMatchPlayers(pair)
-{
-	player1.name = pair[0];
-	player2.name = pair[1];
 
-	if (DEBUG)
+export function processMatch(winner) {
+	GameConf.winners.push(winner);
+	GameConf.matchupIndex++;
+
+	if (GameConf.matchupIndex < GameConf.allMatchups.length) {
+		// Fill next players
+		fillMatchPlayers(GameConf.matchupIndex);
+	} else {
+		// Final match handling can be added here
+		console.log("Final match - Tournament complete!");
+		// You might want to handle final match results or state here
+	}
+}
+
+
+export function handleNextTournamentGame()
+{
+	GameConf.matchupIndex++;  // Move to the next match
+
+	if (GameConf.matchupIndex < GameConf.allMatchups.length)
 	{
-		console.log(`Player 1: ${player1.name}`);
-		console.log(`Player 2: ${player2.name}`);
+		// Prepare the next match
+		fillMatchPlayers(GameConf.matchupIndex); // Setup the next players
+		resetGame();  // Reset game state
+	}
+	else
+	{
+		console.log("Tournament finished!");
+		// Show some "Tournament Finished" message or handle end of tournament logic
+		// showTournamentResults();
 	}
 }

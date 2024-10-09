@@ -75,6 +75,12 @@ export function drawScore()
 /***		Drawing Usernames				***/
 export function drawUsernames(player1Username, player2Username)
 {
+	if (!player1Username || !player2Username)
+	{
+		console.error('Player names are not set!');
+		return;
+	}
+	
 	GraphConf.ctx.font = "15px 'Press Start 2P', cursive";
 	GraphConf.ctx.textAlign = "center";
 	GraphConf.ctx.textBaseline = "middle";
