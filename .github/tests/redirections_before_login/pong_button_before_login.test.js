@@ -30,5 +30,5 @@ test('Pong Button before login should navigate to the pong page', async ({ brows
   await page.click('#pong_button');
 
   // Verify navigation
-  await expect(page).toHaveURL(/pong/); //CHECK: does giff appear in /pong or /home page?
+  await expect(page).toHaveURL(/sign-in/);
 });
