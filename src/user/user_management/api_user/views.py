@@ -5,7 +5,7 @@ from django.contrib.auth.forms import SetPasswordForm
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-# from api_user.models import CustomUser
+from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
@@ -21,7 +21,7 @@ import json
 import base64
 import logging
 from django.conf import settings
-from .serializers import UsernameSerializer #TEST CARO
+from .serializers import UsernameSerializer, CustomUserSerializer #TEST CARO
 
 
 #########################################
@@ -36,10 +36,10 @@ logger = logging.getLogger(__name__)
 def addUser(request):
 	try:
 		data = json.loads(request.body)
-		logger.debug(f"Received data: {data}") # DEBUG
+		print(f"Received data: {data}") # DEBUG
 	except json.JSONDecodeError:
 		return JsonResponse({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
-	
+
 	form = CustomUserRegistrationForm(data)
 
 	if form.is_valid():
@@ -49,7 +49,7 @@ def addUser(request):
 		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
 
 	else:
-		logger.debug(f"Form errors: {form.errors}") # DEBUG
+		print(f"Form errors: {form.errors}") # DEBUG
 		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -63,9 +63,6 @@ def addUser(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def signInUser(request):
-
-	print(f'Coming into SignInUser') # DEBUG
-
 	try:
 		data = json.loads(request.body)
 
@@ -74,19 +71,7 @@ def signInUser(request):
 		username = data.get('username')
 		password = data.get('password')
 
-		# # Verify CSRF token # DEBUG
-		# csrf_token = request.META.get('HTTP_X_CSRFTOKEN', '')
-		# print(f'CSRF Token: {csrf_token}')
-		# if not csrf_token:
-		# 	return Response({'error': 'Missing CSRF token'}, status=402)
-
-		print(f'username: {username}, password: {password}') # DEBUG
-
 		user = authenticate(request, username=username, password=password)
-
-		print(f'username: {username}, password: {password}') # DEBUG
-
-		# print(f'Authenticated user: {user}') # DEBUG
 
 		if user is not None:
 			login(request, user)
@@ -145,6 +130,7 @@ def currentlyLoggedInUser(request):
 
 @api_view(['GET'])
 @login_required
+@permission_classes([IsAuthenticated])
 def getUsername(request):
     if request.user.is_authenticated:
         serializer = UsernameSerializer(request.user)
@@ -154,6 +140,41 @@ def getUsername(request):
 
 
 #########################################
+
+
+# Get avatars and usernames of all users
+
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+def getAllUserAvatars(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		try:
+			users = CustomUser.objects.all()
+			avatars = []
+		
+			for user in users:
+				avatar_image_path = user.avatar.path
+				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+				avatars.append({'username': user.username, 'avatar': avatar})
+
+			return JsonResponse(avatars, safe=False, status=200)
+
+		except Exception as e:
+			return Response({'error': str(e)}, status=500)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+#########################################
+
 
 # Get authenticated user's avatar image
 
@@ -278,26 +299,23 @@ def hashAndChangePassword(request):
 @csrf_protect
 @api_view(['PUT'])
 def updateProfile(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
 
-	logger.debug(f"Request data: {request.data}") # DEBUG
-
-	form = CustomUserRegistrationForm(request.POST, request.FILES, instance=request.user)
-
-	if form.is_valid():
-		user = form.save(commit=False)
-
-		if 'password' in form.cleaned_data and form.cleaned_data['password']:
-			user.set_password(form.cleaned_data['password'])
-		
+		user.email = request.data.get('email')
+		user.date_of_birth = request.data.get('date_of_birth')
+		user.first_name = request.data.get('first_name')
+		user.last_name = request.data.get('last_name')
+		user.avatar = request.data.get('avatar')
 		user.save()
 
-		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
-	
-	else:
-		logger.debug(f"Form errors: {form.errors}") # DEBUG
+		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
-		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
-
+	except Exception as e:
+		logger.exception("Exception occurred while updating profile")  # DEBUG
+		return Response({'error': str(e)}, status=500)
 
 
 # def updateProfileInfo(request):

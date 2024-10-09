@@ -15,7 +15,7 @@ urlpatterns = [
     path('verifyPassword/', views.verifyPassword, name='verify-password'),
     path('hashAndChangePassword/', views.hashAndChangePassword, name='hash-and-change-password'),
     path('updateProfile/', views.updateProfile, name='update-profile'),
-    # path('getAvatar/', views.getAvatar, name='get-avatar'),
+    path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
 ]
 
 if settings.DEBUG:

@@ -158,22 +158,25 @@ export function getIdentifier(str)
 
 export function checkIdentifierType(identifier, str)
 {
-    if (str == 'first_name' && isValidFirstName(identifier) == true)
+    if ((str == 'first_name' || str == 'first_name_input') && isValidFirstName(identifier) == true)
 		return 'first_name';
-    if (str == 'last_name' && isValidLastName(identifier) == true)
+    if ((str == 'last_name' || str == 'last_name_input') && isValidLastName(identifier) == true)
 		return 'last_name';
-    if (str == 'date_of_birth' && isValidDateOfBirth(identifier) == true)
+    if ((str == 'date_of_birth' || str == 'date_of_birth_input') && isValidDateOfBirth(identifier) == true)
         return 'date_of_birth';
-	if (str == 'username' && isValidUsername(identifier) == true)
+	if ((str == 'username' || str == 'username_input') && isValidUsername(identifier) == true)
 		return 'username';
     if (str == 'password' && isValidPassword(identifier) == true)
 		return 'password';
-    if (str == 'email' && isValidEmail(identifier) == true)
+    if ((str == 'email' || str == 'email_input') && isValidEmail(identifier) == true)
         return 'email';
     if (str == 'password_confirmation' && identifier != '')
 		return 'password';
-	if (str == 'avatar' && identifier != '')
+	if (str == 'avatar' || str == 'avatar_input')
 	{
+		if (identifier == '')
+			return 'avatar';
+
 		const avatarFile = document.getElementById('avatar').files[0];
 		if (avatarFile)
 		{
@@ -255,14 +258,14 @@ function isValidEmail(email) {
 	return true;
 }
 
-function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
+export function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
 {
 	if (first_name_type == 'error' || last_name_type == 'error' || username_type == 'error' || date_of_birth_type == 'error' || password_type == 'error' || email_type == 'error' || avatar_type == 'error')
 		return false;
 	return true;
 }
 
-function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
+export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
 {
 	const errorMessages = {
         first_name: 'Error: bad first name. First name must be less than 30 characters and can only contain letters.',
