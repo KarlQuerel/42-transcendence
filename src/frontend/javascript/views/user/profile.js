@@ -344,7 +344,6 @@ async function verifyProfileChanges()
 
 async function saveProfileChanges(userData_edit, avatarFile, personalInfoSection)
 {
-
     if (DEBUG)
         console.log('Saving profile changes...');
 
@@ -401,17 +400,19 @@ async function saveProfileChanges(userData_edit, avatarFile, personalInfoSection
             })
         });
 
+        // if (response.ok)
+        // {
+        //     console.log('Profile updated successfully.');
+        //     window.location.reload();
+        // }
+        // else
+        // {
+        //     console.log('Profile updated successfully.');
+        // }
+
         if (!response.ok)
         {
-            console.error('Error updating profile:', response);
-            let errorMessage;
-
-            if (response.status === 400)
-                errorMessage = 'Validation error. Please check your input.';
-            else
-                errorMessage = 'An unexpected error occurred. Please try again later.';
-            
-            alert(errorMessage);
+            console.error('Error updating profile');
         }
         else
         {

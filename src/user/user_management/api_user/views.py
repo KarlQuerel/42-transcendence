@@ -99,13 +99,18 @@ def signInUser(request):
 @permission_classes([IsAuthenticated])
 def currentlyLoggedInUser(request):
 	try:
+		print("yolo") # DEBUG
 		user = request.user
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		avatar_image_path = user.avatar.path
+
+		avatar_image_path = user.avatar.path # C'EST CA LE PROBLEME
+		print("teuch") # DEBUG
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+
+		print("bite") # DEBUG
 
 		data = {
 			'first_name': user.first_name,
@@ -116,6 +121,8 @@ def currentlyLoggedInUser(request):
 			'email': user.email,
 			'avatar': avatar
 		}
+
+		print("karl") # DEBUG
 
 		return JsonResponse(data, status=200)
 
@@ -314,44 +321,4 @@ def updateProfile(request):
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		logger.exception("Exception occurred while updating profile")  # DEBUG
 		return Response({'error': str(e)}, status=500)
-
-
-# def updateProfileInfo(request):
-# 	try:
-# 		user = request.user
-# 		if not user.is_authenticated:
-# 			return Response({'error': 'User not authenticated'}, status=401)
-
-# 		new_first_name = request.data.get('first_name')
-# 		new_last_name = request.data.get('last_name')
-# 		new_username = request.data.get('username')
-# 		new_email = request.data.get('email')
-# 		new_date_of_birth = request.data.get('date_of_birth')
-
-# 		# Check username and email uniqueness
-# 		if new_username and new_username != user.username:
-# 			if CustomUser.objects.filter(username=new_username).exists():
-# 				return Response({'error': 'Username already exists'}, status=status.HTTP_400_BAD_REQUEST)
-
-# 		if new_email and new_email != user.email:
-# 			if CustomUser.objects.filter(email=new_email).exists():
-# 				return Response({'error': 'Email already exists'}, status=status.HTTP_400_BAD_REQUEST)
-
-# 		if new_first_name:
-# 			user.first_name = new_first_name
-# 		if new_last_name:
-# 			user.last_name = new_last_name
-# 		if new_username:
-# 			user.username = new_username
-# 		if new_email:
-# 			user.email = new_email
-# 		if new_date_of_birth:
-# 			user.date_of_birth = new_date_of_birth
-
-# 		user.save()
-# 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)
-
-# 	except Exception as e:
-# 		return Response({'error': str(e)}, status=500)
