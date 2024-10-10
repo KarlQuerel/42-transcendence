@@ -158,14 +158,21 @@ function router()
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
+	
+	// HERE
 	// Check user authentication
 	if (path === '/pong' && isSignedIn == false)
 	{
-		alert("❌ You must be logged in to access the Pong game ❌");
+		// Pong
+		if (path === '/pong')
+			alert("❌ You must be logged in to access the Pong game ❌");
+		// Dashboard
+		else if (path === '/dashboard')
+			alert("❌ You must be logged in to access your dashboard ❌");
 		window.location.href = '/sign-in';
 		return ;
 	}
-	
+
 	if (route)
 	{
 		document.title = route.title;
