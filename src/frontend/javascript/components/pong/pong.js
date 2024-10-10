@@ -41,6 +41,9 @@ from './postGame.js';
 import { prepareSinglePlayer }
 from './onePlayer.js';
 
+import { sendResultsToBackend }
+from './sendResultsToBackend.js';
+
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
@@ -274,6 +277,9 @@ export async function gameLoop()
 
 	if (GameState.game_done == true)
 	{
+		// console.log('About to call sendResultsToBackend...');
+		// sendResultsToBackend();
+		// console.log('Called sendResultsToBackend');
 		return ;
 	}
 	
@@ -313,12 +319,18 @@ export async function gameLoop()
 	{
 		drawWinMessage(player1.name);
 		fillingResults(1);
+		if (DEBUG)
+			console.log('Results object:', Results); //TEST
+		sendResultsToBackend();
 		GameState.game_done = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
 		drawWinMessage(player2.name);
 		fillingResults(2);
+		if (DEBUG)
+			console.log('Results object:', Results); //TEST
+		sendResultsToBackend();
 		GameState.game_done = true;
 	}
 
