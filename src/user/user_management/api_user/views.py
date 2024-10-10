@@ -99,18 +99,13 @@ def signInUser(request):
 @permission_classes([IsAuthenticated])
 def currentlyLoggedInUser(request):
 	try:
-		print("yolo") # DEBUG
 		user = request.user
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-
 		avatar_image_path = user.avatar.path # C'EST CA LE PROBLEME
-		print("teuch") # DEBUG
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-
-		print("bite") # DEBUG
 
 		data = {
 			'first_name': user.first_name,
@@ -121,8 +116,6 @@ def currentlyLoggedInUser(request):
 			'email': user.email,
 			'avatar': avatar
 		}
-
-		print("karl") # DEBUG
 
 		return JsonResponse(data, status=200)
 
@@ -315,7 +308,30 @@ def updateProfile(request):
 		user.date_of_birth = request.data.get('date_of_birth')
 		user.first_name = request.data.get('first_name')
 		user.last_name = request.data.get('last_name')
-		user.avatar = request.data.get('avatar')
+
+		# print('Before if avatar...') # DEBUG
+		# print('Avatar: ', request.data.get('avatar')) # DEBUG >>> Image en string base64
+
+		if (request.data.get('avatar')):
+			print('Inside if avatar...') # DEBUG
+			avatar_file = request.data.get('avatar')
+
+			avatar_path = f'avatars/{user.username}'
+			print(f'Avatar_path: {avatar_path}') # DEBUG
+
+			path = default_storage.save(avatar_path, ContentFile(avatar_file.read())) # PROBLEME ICI
+			print(f'Avatar Path: {path}') # DEBUG
+			user.avatar = path
+		else:
+			user.avatar = 'avatars/default.png'
+
+		print(f'Updated user data...') # DEBUG
+		print(f'Email: {user.email}') # DEBUG
+		print(f'Date of birth: {user.date_of_birth}') # DEBUG
+		print(f'First name: {user.first_name}') # DEBUG
+		print(f'Last name: {user.last_name}') # DEBUG
+		print(f'Avatar: {user.avatar}') # DEBUG
+
 		user.save()
 
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	

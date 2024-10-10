@@ -400,16 +400,6 @@ async function saveProfileChanges(userData_edit, avatarFile, personalInfoSection
             })
         });
 
-        // if (response.ok)
-        // {
-        //     console.log('Profile updated successfully.');
-        //     window.location.reload();
-        // }
-        // else
-        // {
-        //     console.log('Profile updated successfully.');
-        // }
-
         if (!response.ok)
         {
             console.error('Error updating profile');
