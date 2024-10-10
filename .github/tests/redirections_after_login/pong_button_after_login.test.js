@@ -7,13 +7,35 @@ test('Pong Button after login should navigate to the pong page', async ({ browse
 
   const page = await context.newPage();
 
-  // Log when navigation starts
-  console.log('Navigating to https://localhost:4430');
-  
-  await page.goto('https://localhost:4430', { timeout: 60000 });
+    //LOGIN
+	await page.goto('https://localhost:4430/sign-in', { timeout: 60000 });
 
-  // Log the current page URL
-  console.log('Current URL:', await page.url());
+	// Enter email and password
+	await page.fill('#email', 'carolina');
+	await page.fill('#password', 'pass123');
+
+	// Click the login button
+	await page.click('#loginButton');
+
+	// Wait for some time to let the console log appear
+	await page.waitForTimeout(1000);
+
+	// Listen for console log
+	page.on('console', msg => {
+		if (msg.type() === 'log' && msg.text() === 'Successfully logged in') {
+			console.log('Success message found in console log');
+		}
+	});
+
+	//Check if redirected to profile page once logged in
+	expect(page.url()).toBe('https://localhost:4430/profile');
+
+
+	console.log("Logged in");
+
+  //PONG BUTTON
+
+  await page.goto('https://localhost:4430', { timeout: 60000 });
 
   // Log page content before waiting for the selector
   // const content = await page.content();

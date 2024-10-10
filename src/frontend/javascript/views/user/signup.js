@@ -67,6 +67,7 @@ export default function renderSignUp()
 	submitButton.setAttribute('type', 'submit');
 	submitButton.textContent = 'Submit';
 	submitButton.classList.add('form-input');
+	submitButton.id = 'submit-button'; //CARO pour githubactions
 	form.appendChild(submitButton);
 
 	// Append the form to the container
