@@ -15,7 +15,7 @@ from rest_framework import generics, status, permissions
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.core.mail import send_mail
-import pyotp, time
+import pyotp, time, os
 import json
 import logging
 from .serializers import UsernameSerializer #TEST CARO
@@ -100,7 +100,7 @@ def send_2fa_totp(user):
 	send_mail(
 		f'Verification code for {user.username} on transcendance.fr',
 		f'Please enter this one-time code to log into your account: {code}',
-		'traans.een.daance@gmail.com',
+		str(os.getenv('EMAIL_HOST_USER')),
 		['traans.een.daance@gmail.com'],
 		fail_silently=False,
 	)
