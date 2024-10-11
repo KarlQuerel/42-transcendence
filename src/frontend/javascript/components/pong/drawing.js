@@ -132,7 +132,12 @@ export function drawWinMessage(winner)
 	}
 
 	if (GameState.isTournament === true)
-		rematchButton.textContent = 'Next Match'
+	{
+		if (GameState.isFinalMatch === false)
+			rematchButton.textContent = 'Next Match'
+		else if (GameState.isFinalMatch === true)
+			rematchButton.textContent = 'Final Match'
+	}
 	else
 	{
 		rematchButton.textContent = 'Rematch'

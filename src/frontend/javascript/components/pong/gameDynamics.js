@@ -59,28 +59,22 @@ export function moveBall()
 	BallConf.x += BallConf.dx;
 	BallConf.y += BallConf.dy;
 
-	if (BallConf.y + BallConf.radius > GraphConf.canvas.height || BallConf.y - BallConf.radius < 0)
-	{
+	// Bounce the ball off the top and bottom walls
+	if (BallConf.y + BallConf.radius > GraphConf.canvas.height || BallConf.y - BallConf.radius < 0) {
 		BallConf.dy *= -1;
 	}
 
-	if (
-		(BallConf.x - BallConf.radius < player1.x + player1.width && BallConf.y > player1.y && BallConf.y < player1.y + player1.height) ||
-		(BallConf.x + BallConf.radius > player2.x && BallConf.y > player2.y && BallConf.y < player2.y + player2.height)
-	)
-	{
-		BallConf.dx *= -1;
-	}
-
+	// Check for scoring conditions
 	if (BallConf.x - BallConf.radius < 0)
 	{
 		player2.score++;
-		resetAll();
+		console.log('GOAL');
+		resetRound();
 	}
 	else if (BallConf.x + BallConf.radius > GraphConf.canvas.width)
 	{
 		player1.score++;
-		resetAll();
+		resetRound();
 	}
 }
 
@@ -90,9 +84,9 @@ export function checkBallPaddleCollision()
 	// Check collision with Player 1's paddle
 	if (BallConf.x - BallConf.radius < player1.x + player1.width && BallConf.x + BallConf.radius > player1.x && BallConf.y + BallConf.radius > player1.y && BallConf.y - BallConf.radius < player1.y + player1.height)
 	{
-		let collidePointP1 = (BallConf.y - (player1.y + player1.height / 2));
+		let	collidePointP1 = (BallConf.y - (player1.y + player1.height / 2));
 		collidePointP1 = collidePointP1 / (player1.height / 2);
-		let angleRadP1 = collidePointP1 * Math.PI / 4;
+		let	angleRadP1 = collidePointP1 * Math.PI / 4;
 		BallConf.dx = BallConf.speed * Math.cos(angleRadP1);
 		BallConf.dy = BallConf.speed * Math.sin(angleRadP1);
 		if (BallConf.dx < 0)
@@ -103,9 +97,9 @@ export function checkBallPaddleCollision()
 	// Check collision with Player 2's paddle
 	if (BallConf.x - BallConf.radius < player2.x + player2.width && BallConf.x + BallConf.radius > player2.x && BallConf.y + BallConf.radius > player2.y && BallConf.y - BallConf.radius < player2.y + player2.height)
 	{
-		let collidePointP2 = (BallConf.y - (player2.y + player2.height / 2));
+		let	collidePointP2 = (BallConf.y - (player2.y + player2.height / 2));
 		collidePointP2 = collidePointP2 / (player2.height / 2);
-		let angleRadP2 = collidePointP2 * Math.PI / 4;
+		let	angleRadP2 = collidePointP2 * Math.PI / 4;
 		BallConf.dx = BallConf.speed * Math.cos(angleRadP2);
 		BallConf.dy = BallConf.speed * Math.sin(angleRadP2);
 		if (BallConf.dx > 0)
@@ -119,40 +113,33 @@ export function checkBallPaddleCollision()
 \***********************************************/
 
 /***				Resetting All			***/
-function resetAll()
+function resetRound(lastScorer)
 {
-	resetBall();
+	resetBall(lastScorer);
 	resetPaddles();
 }
 
 /***				Resetting Ball			***/
-function resetBall()
+function resetBall(lastScorer)
 {
 	BallConf.x = GraphConf.canvas.width / 2;
 	BallConf.y = GraphConf.canvas.height / 2;
-		
-	// Reset the ball speed to the initial speed
+
 	BallConf.speed = 5;
 
-	// Reverse the horizontal direction of the ball based on its current direction
-	if (BallConf.dx > 0)
+	// Randomize the initial launch angle between -45 to 45 degrees
+	let	randomAngle = (Math.random() * (5 * Math.PI / 6)) - (5 * Math.PI / 12);
+
+	// Determine the horizontal direction based on the previous direction
+	let	directionX = 1;
+	if (lastScorer === 'player1')
 	{
-		BallConf.dx = -BallConf.speed;
-	}
-	else
-	{
-		BallConf.dx = BallConf.speed;
+		directionX = -1;
 	}
 
-	// Reset the vertical direction based on its current direction
-	if (BallConf.dy > 0)
-	{
-		BallConf.dy = BallConf.speed;
-	}
-	else
-	{
-		BallConf.dy = -BallConf.speed;
-	}
+	// Set ball velocity based on randomized angle and direction
+	BallConf.dx = BallConf.speed * Math.cos(randomAngle) * directionX;
+	BallConf.dy = BallConf.speed * Math.sin(randomAngle);
 }
 
 /***			Resetting Paddles			***/

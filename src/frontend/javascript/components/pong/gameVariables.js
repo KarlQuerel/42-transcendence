@@ -27,6 +27,9 @@ export const	GameState =
 	// Is it a Tournament?
 	isTournament :false,
 
+	// Is it the final match?
+	isFinalMatch :false,
+
 	// Is countdown active?
 	isCountdownActive: false,
 
@@ -59,7 +62,7 @@ export const PaddleConf =
 export const GameConf =
 {
 	AI_name : "🤖 Ponginator3000 🤖",
-	maxScore : 1,
+	maxScore : 10,
 	matchupIndex : 0,
 	allMatchups : [],
 	winners : []

@@ -65,6 +65,5 @@ export function isNameValid(playerName)
 		return false;
 	}
 
-
 	return true;
 }

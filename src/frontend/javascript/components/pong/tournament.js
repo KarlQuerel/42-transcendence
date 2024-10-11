@@ -20,6 +20,9 @@ from './utils.js';
 import { checkCountdown }
 from './preGame.js';
 
+import { drawUsernames }
+from './drawing.js';
+
 
 /***********************************************\
 -					TOURNAMENT					-
@@ -58,6 +61,12 @@ export async function displayTournamentForm()
 		playerInput.type = 'text';
 		playerInput.className = 'form-control';
 
+		// Add an input event listener to enforce lowercase input
+		playerInput.addEventListener('input', () =>
+		{
+			playerInput.value = playerInput.value.toLowerCase();
+		});
+
 		if (index === 0)
 		{
 			// Lock first input with signed-in username
@@ -66,7 +75,7 @@ export async function displayTournamentForm()
 				const	username = await loadUserManagementData();
 				if (DEBUG)
 					console.log("Username:", username);
-				playerInput.value = username.username;
+				playerInput.value = username.username.toLowerCase();
 				playerInput.disabled = true;
 			}
 			catch (error)
@@ -99,6 +108,8 @@ export async function displayTournamentForm()
 
 export function startTournamentGame(tournamentForm)
 {
+	if (DEBUG)
+		console.log('Starting tournament game...');
 	const	playerInputs = tournamentForm.querySelectorAll('input');
 	const	playerNames = [];
 
@@ -130,15 +141,27 @@ export function initializeTournamentMode(playerNames)
 		console.log('Initializing tournament mode with players:', playerNames);
 
 	GameState.isTournament = true;
+	GameConf.winners = [];
 
 	const	matchups = createMatchups(playerNames);
+	if (!matchups || matchups.length === 0)
+	{
+		console.error('No matchups were created');
+		return;
+	}
 	GameConf.allMatchups = matchups;
+	GameConf.matchupIndex = 0;
+
+	if (DEBUG)
+		console.log("All matchups initialized:", GameConf.allMatchups);
 	displayMatchups(matchups);
 }
 
 function createMatchups(playerNames)
 {
 	const	shuffledPlayers = playerNames.sort(() => Math.random() - 0.5);
+	if (DEBUG)
+		console.log('Shuffled players:', shuffledPlayers);
 
 	const	matchups =
 	[
@@ -164,7 +187,7 @@ function displayMatchups(matchups)
 
 	document.body.appendChild(matchupsContainer);
 
-	fillMatchPlayers(matchups[0]);
+	fillMatchPlayers(0);
 
 	setTimeout(() =>
 	{
@@ -175,57 +198,117 @@ function displayMatchups(matchups)
 
 export function fillMatchPlayers(matchupIndex)
 {
-	// Check if matchupIndex is valid
-	if (GameConf.allMatchups && GameConf.allMatchups[matchupIndex])
+	if (DEBUG)
+		console.log('Attempting to fill players for matchup index:', matchupIndex);
+	
+	if (GameConf.allMatchups[matchupIndex])
 	{
-		const matchup = GameConf.allMatchups[matchupIndex];
+		const	matchup = GameConf.allMatchups[matchupIndex];
+		if (DEBUG)
+			console.log('Filling match players for:', matchup);
 
-		// Assuming matchup is an array of players
-		player1.name = matchup[0]; // First player
-		player2.name = matchup[1]; // Second player
+		player1.name = matchup[0];
+		player2.name = matchup[1];
 
-		// Debugging to ensure names are set
-		console.log('Match Players:', player1.name, player2.name);
-		
-		// Ensure to call drawUsernames to draw the usernames after setting them
+		if (DEBUG)
+			console.log('Match Players:', player1.name, player2.name);
+
 		drawUsernames(player1.name, player2.name);
 	}
 	else
 	{
 		console.error('Invalid matchup index or match data missing');
+		if (DEBUG)
+		{
+			console.log('GameConf.allMatchups:', GameConf.allMatchups);
+			console.log('GameConf.matchupIndex:', matchupIndex);
+		}
 	}
 }
 
-
-export function processMatch(winner) {
+export function processMatch(winner)
+{
 	GameConf.winners.push(winner);
 	GameConf.matchupIndex++;
 
-	if (GameConf.matchupIndex < GameConf.allMatchups.length) {
-		// Fill next players
+	if (DEBUG)
+	{
+		// Debugging information
+		console.log('Current winners:', GameConf.winners);
+		console.log('Matchup index:', GameConf.matchupIndex);
+	}
+
+	// Check if we have reached the number of matches in the first round
+	if (GameConf.matchupIndex < GameConf.allMatchups.length)
+	{
+		// Fill next players for the next match
 		fillMatchPlayers(GameConf.matchupIndex);
-	} else {
-		// Final match handling can be added here
-		console.log("Final match - Tournament complete!");
-		// You might want to handle final match results or state here
+	}
+	else if (GameConf.winners.length === 2)
+	{
+		// After both matches, set up the final match with the two winners
+		GameState.isFinalMatch = true;
+		console.log('Setting up final match');
+		setupFinalMatch();
+	}
+	else
+	{
+		console.error("Unexpected state: more than 2 winners or no matches left.");
 	}
 }
 
+function setupFinalMatch()
+{
+	if (GameConf.winners.length === 2)
+	{
+		const	finalMatchup = GameConf.winners; // The two winners from the first round
+		console.log("Setting up final match between:", finalMatchup);
+		
+		// Fill players for the final match
+		player1.name = finalMatchup[0]; // Winner of first match
+		player2.name = finalMatchup[1]; // Winner of second match
+
+		drawUsernames(player1.name, player2.name); // Draw usernames for the final match
+
+		console.log("GameState after setting final match:", GameState)
+
+		// Start the final match
+		startFinalMatch();
+	}
+}
+
+function startFinalMatch()
+{
+	console.log("Starting final match between:", player1.name, "and", player2.name);
+	// Start the game logic for the final match
+	startGame(); // Ensure this function handles starting the game for the final match
+}
 
 export function handleNextTournamentGame()
 {
-	GameConf.matchupIndex++;  // Move to the next match
+	// HERE countdown between games
+	// checkCountdown();
+	
+	// Prevent moving to the next match if we are in the final match
+	if (GameConf.matchupIndex === "final")
+	{
+		console.log("Final match is already in progress.");
+		return;
+	}
+
+	// Move to the next match
+	GameConf.matchupIndex++;
 
 	if (GameConf.matchupIndex < GameConf.allMatchups.length)
 	{
 		// Prepare the next match
 		fillMatchPlayers(GameConf.matchupIndex); // Setup the next players
-		resetGame();  // Reset game state
+		resetGame(); // Reset game state
 	}
 	else
 	{
-		console.log("Tournament finished!");
-		// Show some "Tournament Finished" message or handle end of tournament logic
-		// showTournamentResults();
+		// If we reach here, it means the tournament has ended
+		console.log("Tournament finished, starting final match!");
+		setupFinalMatch(); // Ensure the final match starts
 	}
 }

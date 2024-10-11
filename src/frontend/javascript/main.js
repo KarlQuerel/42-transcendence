@@ -107,21 +107,9 @@ function normalizePath(path)
 	return path;
 }
 
-
-
 /***			Authentication				***/
-//HERE - Check if authentication is working properly (see router function)
 let	accessToken = localStorage.getItem('access_token');
-let	isSignedIn;
-
-if (accessToken)
-{
-	isSignedIn = true;
-}
-else
-{
-	isSignedIn = false;
-}
+let	isSignedIn = Boolean(accessToken);
 
 export function setSignedInState(state)
 {
@@ -140,7 +128,7 @@ function router()
 
 	//	Assigning default path if none
 	if (!path)
-			path = '/home';
+		path = '/home';
 
 	const previousRoute = routes[currentPath]
 	const route = routes[path] || routes['/404'];
@@ -158,26 +146,24 @@ function router()
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
-	
-	// HERE
-	// Check user authentication
-	if (path === '/pong' && isSignedIn == false)
+	const restrictedPaths =
 	{
-		// Pong
-		if (path === '/pong')
-			alert("❌ You must be logged in to access the Pong game ❌");
-		// Dashboard
-		else if (path === '/dashboard')
-			alert("❌ You must be logged in to access your dashboard ❌");
+		'/pong': "❌ You must be logged in to access the Pong game ❌",
+		'/dashboard': "❌ You must be logged in to access your dashboard ❌"
+	};
+	
+	// Check if the user is trying to access a restricted route
+	if (isSignedIn == false && restrictedPaths[path])
+	{
+		alert(restrictedPaths[path]);
 		window.location.href = '/sign-in';
-		return ;
+		return;
 	}
 
 	if (route)
 	{
 		document.title = route.title;
 		const renderedContent = route.render();
-
 		const	appElement = document.getElementById('app');
 		if (typeof renderedContent === 'string')
 			appElement.innerHTML = renderedContent;
@@ -187,17 +173,17 @@ function router()
 			appElement.appendChild(renderedContent);
 		}
 
-			// Initialize or destroy particles based on the route
-			if (path !== '/pong')
-			{
-				initParticles();
-			}
-			else
-			{
-				destroyParticles();
-				if (DEBUG)
-					console.log('Particles effect disabled on /pong route');
-			}
+		// Initialize or destroy particles based on the route
+		if (path !== '/pong')
+		{
+			initParticles();
+		}
+		else
+		{
+			destroyParticles();
+			if (DEBUG)
+				console.log('Particles effect disabled on /pong route');
+		}
 
 		if (route.init)
 		{

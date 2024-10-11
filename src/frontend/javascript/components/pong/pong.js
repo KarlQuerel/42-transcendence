@@ -125,7 +125,11 @@ function setupMenuButtons()
 		{
 			if (GameState.isTournament === true)
 			{
-				handleNextTournamentGame();
+				if (GameState.isFinalMatch === false)
+					handleNextTournamentGame();
+				else
+					console.log('handling final match here');
+					//handleFinalMatch();
 			}
 			else
 			{
@@ -184,8 +188,13 @@ export function startGame()
 	player1.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
 	player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
 	player2.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
+	
 	BallConf.x = GraphConf.canvas.width / 2;
 	BallConf.y = GraphConf.canvas.height / 2;
+
+	const	angle = Math.random() * Math.PI * 2;
+	BallConf.dx = BallConf.speed * Math.cos(angle);
+	BallConf.dy = BallConf.speed * Math.sin(angle);
 
 	GameState.game_done = false;
 	gameLoop();
@@ -347,18 +356,9 @@ export async function gameLoop()
 export function resetGame()
 {
 	// Reset game state
-	player1.score = 0;
-	player2.score = 0;
-	BallConf.speed = 5;
-	BallConf.dx = 5;
-	BallConf.dy = 5;
-
-	// Hide the winning message and rematch button
-	const	messageElement = document.getElementById('winning-message');
-	const	rematchButton = document.getElementById('rematch-button');
-
-	messageElement.classList.remove('show');
-	rematchButton.classList.add('hidden-sudden');
+	resetScores();
+	resetBall();
+	hideWinningMessage();
 
 	// Restart the game
 	GameState.game_done = false;
@@ -369,4 +369,27 @@ export function resetGame()
 
 	setupEventListeners();
 	requestAnimationFrame(gameLoop);
+}
+
+function resetScores()
+{
+	player1.score = 0;
+	player2.score = 0;
+}
+
+function resetBall()
+{
+	BallConf.speed = 5;
+	// Randomly set the ball's direction
+	const	angle = Math.random() * Math.PI * 2;
+	BallConf.dx = BallConf.speed * Math.cos(angle);
+	BallConf.dy = BallConf.speed * Math.sin(angle);
+}
+
+function hideWinningMessage()
+{
+	const	messageElement = document.getElementById('winning-message');
+	const	rematchButton = document.getElementById('rematch-button');
+	messageElement.classList.remove('show');
+	rematchButton.classList.add('hidden-sudden');
 }
