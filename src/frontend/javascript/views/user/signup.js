@@ -130,11 +130,11 @@ export function initializeSignUp()
 
 			let avatar_type = null;
 
-			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type) || password !== password_confirmation)
+			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) || password !== password_confirmation)
 			{
 				if (password !== password_confirmation)
 					console.log('Error: Password and password confirmation do not match.');
-				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type);
+				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 				return ;
 			}
 			else
@@ -172,25 +172,6 @@ export function checkIdentifierType(identifier, str)
         return 'email';
     if (str == 'password_confirmation' && identifier != '')
 		return 'password';
-	if (str == 'avatar' || str == 'avatar_input')
-	{
-		if (identifier == '')
-			return 'avatar';
-
-		const avatarFile = document.getElementById('avatar').files[0];
-		if (avatarFile)
-		{
-			const fileType = avatarFile.type;
-			const fileSize = avatarFile.size;
-			const maxFileSize = 1 * 1024 * 1024; // 1 MB in bytes
-
-			if (fileSize > maxFileSize)
-				return 'error';
-			if (fileType != 'image/png' && fileType != 'image/jpeg' && fileType != 'image/jpg')
-				return 'error';
-			return 'avatar';
-		}
-	}
 	return 'error';
 }
 
@@ -258,14 +239,16 @@ function isValidEmail(email) {
 	return true;
 }
 
-export function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
+
+export function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
 {
-	if (first_name_type == 'error' || last_name_type == 'error' || username_type == 'error' || date_of_birth_type == 'error' || password_type == 'error' || email_type == 'error' || avatar_type == 'error')
+	if (first_name_type == 'error' || last_name_type == 'error' || username_type == 'error' || date_of_birth_type == 'error' || password_type == 'error' || email_type == 'error')
 		return false;
 	return true;
 }
 
-export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, avatar_type)
+
+export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
 {
 	const errorMessages = {
         first_name: 'Error: bad first name. First name must be less than 30 characters and can only contain letters.',
@@ -301,9 +284,11 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
     });
 }
 
+
 /***********************************************\
 *                 MAIN FUNCTION                 *
 \***********************************************/
+
 
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
