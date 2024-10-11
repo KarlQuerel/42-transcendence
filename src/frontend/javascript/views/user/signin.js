@@ -115,6 +115,7 @@ function login(username, password)
         if (data.is2fa == true)
         {
             localStorage.setItem('totp', data.totp);
+            localStorage.setItem('username', data.username);
             window.location.href = '/2fa_verification';
             return Promise.reject('Redirection to 2FA verification');
         }

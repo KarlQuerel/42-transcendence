@@ -10,6 +10,10 @@ import { refreshToken, apiRequest } from './signin.js';
 
 export default function render2fa()
 {
+    if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
+    {
+        window.location.href = '/profile';        
+    }
     const form = render_form();
     document.body.appendChild(form);
 
@@ -28,12 +32,11 @@ export default function render2fa()
         })
 		.then(response => response.json())
 		.then(data => {
-			if (data.access)
+            if (data.access)
 			{
 				// Store tokens in local storage
 				localStorage.setItem('access_token', data.access);
 				localStorage.setItem('refresh_token', data.refresh);
-                localStorage.setItem('username', data.username);
 
 				return refreshToken();
 			}

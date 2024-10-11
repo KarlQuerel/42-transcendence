@@ -74,13 +74,13 @@ def signInUser(request):
 					totp = send_2fa_totp(user)
 					request.session['pre_2fa_user_id'] = user.id
 
-					return JsonResponse({'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
+					return JsonResponse({'username': user.username, 'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
 				else:
 					login(request, user)
 					refresh = RefreshToken.for_user(user)
 					access_token = str(refresh.access_token)
 					refresh_token = str(refresh)
-					return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=200)
+					return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
 			else:
 				return JsonResponse({'error': 'Invalid username or password'}, status=400)
 		
@@ -108,7 +108,6 @@ def send_2fa_totp(user):
 	return code
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
 def verify_2fa_code(request):
 	code = request.data.get('code')
 	user_id = request.session.get('pre_2fa_user_id')
@@ -123,7 +122,7 @@ def verify_2fa_code(request):
 			access_token = str(refresh.access_token)
 			refresh_token = str(refresh)
 
-			return JsonResponse({'username': user.username, 'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
+			return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'error': 'Invalid 2fa code'}, status=status.HTTP_400_BAD_REQUEST)
 	else:

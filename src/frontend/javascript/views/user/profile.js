@@ -131,6 +131,10 @@ export default function renderProfile()
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            if (localStorage.getItem('username'))
+            {
+                localStorage.removeItem('username');
+            }
             window.location.href = '/sign-in';
         });
 

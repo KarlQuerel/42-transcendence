@@ -101,7 +101,7 @@ const routes =
 	},
 	'/2fa_verification':
 	{
-		title: "Sign In",
+		title: "2FA Verification",
 		render: render2fa
 	}
 };
