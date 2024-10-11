@@ -18,7 +18,13 @@ export default function renderProfile()
     const profileTitle = document.createElement('h1');
     profileTitle.textContent = 'My Profile';
 
-
+//TO-DO Karl t'es beau, corrige moi ca et je leche l'oreille:
+// quand je suis log avec un utilisateur et que 
+// je suis sur son profile puis que je me delog, 
+// lorsque je clique sur le bouton page precedente
+// je reviens sur la page profile et je peux voir
+// les infos de l'utilisateur tout juste deconnecte,
+// pour ne plus le voir il faut que je fasse un refresh
 
     /********** PERSONAL INFORMATION **********/
 

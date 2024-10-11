@@ -28,6 +28,9 @@ import { initParticles, destroyParticles }
 from "./components/particles/particles.js"
 
 /***			User						***/
+import render2fa
+from "./views/user/2fa.js";
+
 import renderSignIn
 from "./views/user/signin.js";
 
@@ -95,6 +98,11 @@ const routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
+	},
+	'/2fa_verification':
+	{
+		title: "Sign In",
+		render: render2fa
 	}
 };
 

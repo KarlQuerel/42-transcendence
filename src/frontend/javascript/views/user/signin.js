@@ -112,7 +112,13 @@ function login(username, password)
 	})
 	.then(response => response.json())
 	.then(data => {
-		if (data.access)
+        if (data.is2fa == true)
+        {
+            localStorage.setItem('totp', data.totp);
+            window.location.href = '/2fa_verification';
+            return Promise.reject('Redirection to 2FA verification');
+        }
+        else if (data.access)
 		{
 			// Store tokens in local storage
 			localStorage.setItem('access_token', data.access);
@@ -121,7 +127,7 @@ function login(username, password)
 			return refreshToken();
 		}
 		else
-            throw new Error('Login failed: No access token received');
+            throw new Error('No access token received');
     })
     .then(newAccessToken =>
     {
@@ -132,11 +138,13 @@ function login(username, password)
         console.log('Success:', username, 'is now logged in');
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Login failed: ' + error.message);
+        if (error !== 'Redirection to 2FA verification')
+        {
+            console.error('Error:', error);
+            alert('Login failed: ' + error.message);
+        }
     });
 }
-
 
 
 /***********************************************\
@@ -158,7 +166,7 @@ export function getAuthHeaders() {
 
 
 // Send a request to the server to refresh the access token
-async function refreshToken() {
+export async function refreshToken() {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken) {
         throw new Error('No refresh token found');

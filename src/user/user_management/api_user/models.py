@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save
 from django.core.files import File
 from django.conf import settings
-import os
+import pyotp
 
 
 class CustomUser(AbstractUser):
@@ -12,6 +12,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(blank=False, null=False, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
+    is2fa = models.BooleanField(default=True)
+    totp_secret = models.CharField(blank=True, null=True)
     # Override AbstractUser existing fields
     groups = None
     user_permissions = None
