@@ -38,6 +38,12 @@ ALLOWED_HOSTS = [
 ]
 
 
+# Trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:4430',
+]
+
+
 # Application definition
 
 INSTALLED_APPS = [

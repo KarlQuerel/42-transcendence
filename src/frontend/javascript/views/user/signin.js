@@ -207,7 +207,7 @@ export async function apiRequest(url, options = {}) {
         };
 
         let response = await fetch(url, options);
-        
+
         // If the token has expired, refresh it and retry the request
         if (response.status === 401) {
             if (DEBUG)
@@ -218,6 +218,7 @@ export async function apiRequest(url, options = {}) {
         }
 
         if (!response.ok) {
+            const errorData = await response.json();
             throw new Error('Request failed');
         }
 

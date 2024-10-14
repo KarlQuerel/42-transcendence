@@ -239,7 +239,6 @@ def changePassword(request):
 #For checking if a user is connected
 
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def checkAuthentication(request):
 	user = request.user
@@ -298,9 +297,10 @@ def hashAndChangePassword(request):
 ##################################################
 
 
-@login_required
-@csrf_protect
 @api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
 def updateProfile(request):
 	try:
 		user = request.user
@@ -321,12 +321,11 @@ def updateProfile(request):
 
 		user.save()
 
-		print(f'User data saved (updateProfile())...') # DEBUG
-
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		print(f'Error from updateProfile(): {str(e)}') # DEBUG
+		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
