@@ -432,6 +432,7 @@ function badge(allStats, userStats)
 	// Determine ranking position
 	allStats.sort((a, b) => 
 	{
+		//HERE: ----> on a plus nb of victories et defeats!!
 		// First, compare by nb_of_victories (descending order)
 		if (b.nb_of_victories !== a.nb_of_victories)
 			return b.nb_of_victories - a.nb_of_victories;

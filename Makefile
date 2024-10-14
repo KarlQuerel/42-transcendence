@@ -50,16 +50,23 @@ erase_dashboard:
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
 	docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
 
-check_dashboard_db:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
+check_allGameHistory:
+# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
 
-check_user_db:
+check_userGamehistory:
+	@read -p "Enter username: " username; \
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT base_gamehistory.* FROM base_gamehistory JOIN api_user_customuser ON base_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
+	
+check_allUsers:
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
 fill_db: fill_user fill_dashboard
 
 erase_db: erase_dashboard erase_user
 
+makemigrations_dashboard:
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container fill_dashboard fill_user erase_fill_user erase_fill_dashboard check_dashboard_db check_user_db fill_db erase_db
+
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container fill_dashboard fill_user erase_fill_user erase_fill_dashboard check_allGameHistory check_currentGameHistory check_allUsers fill_db erase_db makemigrations_dashboard
