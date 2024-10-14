@@ -49,7 +49,7 @@ export async function fillingResults(winner)
 	Results.tournament_date = getDate();
 
 	if (DEBUG)
-		console.log('Results instance:', Results);
+		console.log('Filled Results object:', Results); //HERE: works well
 }
 
 /***			Get date					***/
