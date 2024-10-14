@@ -4,7 +4,7 @@ RED = \033[0;31m
 NC = \033[0m
 
 #######		RULES		#######
-all :
+all : fill_db
 	cd src && docker-compose up -d --build
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 

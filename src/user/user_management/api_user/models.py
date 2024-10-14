@@ -12,7 +12,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(blank=False, null=False, unique=True)
     date_of_birth = models.DateField(blank=True, null=True)
     friends = models.ManyToManyField("CustomUser", blank=True)
-    is2fa = models.BooleanField(default=True)
+    is2fa = models.BooleanField(default=False)
     totp_secret = models.CharField(blank=True, null=True)
     # Override AbstractUser existing fields
     groups = None

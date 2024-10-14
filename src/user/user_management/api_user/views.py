@@ -80,7 +80,7 @@ def signInUser(request):
 					refresh = RefreshToken.for_user(user)
 					access_token = str(refresh.access_token)
 					refresh_token = str(refresh)
-					return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
+					return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 			else:
 				return JsonResponse({'error': 'Invalid username or password'}, status=400)
 		
