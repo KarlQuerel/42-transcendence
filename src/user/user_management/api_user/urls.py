@@ -9,4 +9,7 @@ urlpatterns = [
 	path('friends/', include('friends.urls')),
     path('getUsername/', views.getUsername, name='get-username'),
     path('users-list/', views.usersList, name='users-list'),
+    path('verify-2fa-code/', views.verify_2fa_code, name='verifiy_2fa_code'),
+    path('resend-2fa-code/', views.resend_2fa_code, name='resend_2fa_code'),
+    path('loggout-user/', views.loggout_user, name='loggout_user'),
 ]

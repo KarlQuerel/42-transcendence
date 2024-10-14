@@ -100,6 +100,17 @@ async function createUserCard(other_user)
 		friendText.textContent = 'You are already friends!';
 		actionSection.appendChild(friendText);
 
+		const online_status = document.createElement('p');
+		if (other_user.online_status == true)
+		{
+			online_status.textContent = 'Online status: online'; //HERE KARL mettre "online" en vert et "offline" en rouge
+		}
+		else
+		{
+			online_status.textContent = 'Online status: offline'; //HERE KARL mettre "online" en vert et "offline" en rouge
+		}
+		actionSection.appendChild(online_status);
+
 		const removeButton = document.createElement('button');
 		removeButton.textContent = 'Remove friend';
 		removeButton.onclick = () => removeFriend(other_user.id);
