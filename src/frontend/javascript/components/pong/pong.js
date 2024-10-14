@@ -318,7 +318,7 @@ export async function gameLoop()
 	if (player1.score === GameConf.maxScore)
 	{
 		drawWinMessage(player1.name);
-		fillingResults(1);
+		await fillingResults(1); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
 			console.log('Results object:', Results); //TEST
 		sendResultsToBackend();
@@ -327,7 +327,7 @@ export async function gameLoop()
 	else if (player2.score === GameConf.maxScore)
 	{
 		drawWinMessage(player2.name);
-		fillingResults(2);
+		await fillingResults(2); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
 			console.log('Results object:', Results); //TEST
 		sendResultsToBackend();

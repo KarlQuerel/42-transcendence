@@ -49,7 +49,7 @@ export async function fillingResults(winner)
 	Results.tournament_date = getDate();
 
 	if (DEBUG)
-		console.log('Filled Results object:', Results); //HERE: works well
+		console.log('Filled Results object:', Results);
 }
 
 /***			Get date					***/
@@ -61,6 +61,7 @@ function getDate()
 	const year = current_date.getFullYear();
 	
 	const formattedDate = `${day}/${month}/${year}`;
+	// const formattedDate = `${year}-${month}-${day}`; //CARO: sinon ça ne colle pas avec les dates reconnues dans django
 
 	console.log('Formatted Date:', formattedDate);
 
