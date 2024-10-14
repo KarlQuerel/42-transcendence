@@ -168,7 +168,6 @@ function createMatchups(playerNames)
 		[shuffledPlayers[0], shuffledPlayers[1]],
 		[shuffledPlayers[2], shuffledPlayers[3]]
 	];
-	console.log("Matchups created:", matchups);
 	return matchups;
 }
 
@@ -226,55 +225,24 @@ export function fillMatchPlayers(matchupIndex)
 	}
 }
 
-export function processMatch(winner)
+export function setupFinalMatch()
 {
-	GameConf.winners.push(winner);
-	GameConf.matchupIndex++;
-
-	if (DEBUG)
-	{
-		// Debugging information
-		console.log('Current winners:', GameConf.winners);
-		console.log('Matchup index:', GameConf.matchupIndex);
-	}
-
-	// Check if we have reached the number of matches in the first round
-	if (GameConf.matchupIndex < GameConf.allMatchups.length)
-	{
-		// Fill next players for the next match
-		fillMatchPlayers(GameConf.matchupIndex);
-	}
-	else if (GameConf.winners.length === 2)
-	{
-		// After both matches, set up the final match with the two winners
-		GameState.isFinalMatch = true;
-		console.log('Setting up final match');
-		setupFinalMatch();
-	}
-	else
-	{
-		console.error("Unexpected state: more than 2 winners or no matches left.");
-	}
-}
-
-function setupFinalMatch()
-{
-	if (GameConf.winners.length === 2)
-	{
-		const	finalMatchup = GameConf.winners; // The two winners from the first round
+	GameConf.isFinalMatch = true;
+	
+	const	finalMatchup = GameConf.winners; // The two winners from the first round
 		console.log("Setting up final match between:", finalMatchup);
 		
 		// Fill players for the final match
 		player1.name = finalMatchup[0]; // Winner of first match
 		player2.name = finalMatchup[1]; // Winner of second match
 
+		resetGame();
 		drawUsernames(player1.name, player2.name); // Draw usernames for the final match
 
 		console.log("GameState after setting final match:", GameState)
 
 		// Start the final match
 		startFinalMatch();
-	}
 }
 
 function startFinalMatch()
@@ -284,31 +252,48 @@ function startFinalMatch()
 	startGame(); // Ensure this function handles starting the game for the final match
 }
 
-export function handleNextTournamentGame()
+export function tournamentNextMatch()
 {
-	// HERE countdown between games
-	// checkCountdown();
-	
+	// Log game state for debugging
+	// console.log('GameState', GameState);
+	// console.log('GameConf', GameConf);
+	// console.log('matchup length', GameConf.allMatchups.length);
+	// console.log('winner length', GameConf.winners.length);
+
+	// Increment the matchup index
+	// GameConf.matchupIndex++;
+
+		// Debugging information
+	// console.log('Current winners:', GameConf.winners);
+	console.log('Matchup index:', GameConf.matchupIndex);
+	console.log('Matchup index:', GameConf.allMatchups.length);
+	// Check if we've reached the final match
+	// if (GameConf.matchupIndex >= 1) {
+	// 	if (GameConf.winners.length === 2) {
+	// 		// Set up the final match with the two winners
+	// 		GameState.isFinalMatch = true;
+	// 		console.log('Setting up final match');
+	// 		setupFinalMatch();
+	// 		return
+	// 	}
+	// }
+
 	// Prevent moving to the next match if we are in the final match
-	if (GameConf.matchupIndex === "final")
+	if (GameState.isFinalMatch === true)
 	{
 		console.log("Final match is already in progress.");
 		return;
 	}
 
-	// Move to the next match
-	GameConf.matchupIndex++;
-
-	if (GameConf.matchupIndex < GameConf.allMatchups.length)
-	{
+	// Move to the next match if we haven't reached the final match
+	if (GameConf.matchupIndex < GameConf.allMatchups.length) {
 		// Prepare the next match
 		fillMatchPlayers(GameConf.matchupIndex); // Setup the next players
-		resetGame(); // Reset game state
+		resetGame(); // Reset game state for the next match
 	}
 	else
 	{
-		// If we reach here, it means the tournament has ended
-		console.log("Tournament finished, starting final match!");
-		setupFinalMatch(); // Ensure the final match starts
+		console.error("Unexpected state: more than 2 winners or no matches left.");
 	}
 }
+

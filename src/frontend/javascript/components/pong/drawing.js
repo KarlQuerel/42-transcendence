@@ -4,7 +4,8 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
+Results }
 from './gameVariables.js';
 
 /***********************************************\
@@ -99,7 +100,7 @@ export function drawUsernames(player1Username, player2Username)
 }
 
 /***		Drawing Winning Message			***/
-export function drawWinMessage(winner)
+export function drawWinMessage(winnerName)
 {
 	const	messageElement = document.getElementById('winning-message');
 	const	rematchButton = document.getElementById('rematch-button');
@@ -110,7 +111,7 @@ export function drawWinMessage(winner)
 		return ;
 	}
 
-	const	upperWinner = winner.toUpperCase();
+	const	upperWinner = winnerName.toUpperCase();
 
 	// Update winning message
 	messageElement.innerHTML = upperWinner + "<br>WINS!";

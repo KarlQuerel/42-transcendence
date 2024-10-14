@@ -62,8 +62,6 @@ function getDate()
 	
 	const formattedDate = `${day}/${month}/${year}`;
 
-	console.log('Formatted Date:', formattedDate);
-
 	return formattedDate;
 }
 

@@ -12,7 +12,7 @@ import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
 import { prepareTournament, displayTournamentForm, startTournamentGame,
-initializeTournamentMode, handleNextTournamentGame}
+initializeTournamentMode, tournamentNextMatch}
 from './tournament.js'
 
 import { createContainer, createVideo, createOverlay, createMenuButton,
@@ -126,10 +126,10 @@ function setupMenuButtons()
 			if (GameState.isTournament === true)
 			{
 				if (GameState.isFinalMatch === false)
-					handleNextTournamentGame();
+					tournamentNextMatch();
 				else
-					console.log('handling final match here');
-					//handleFinalMatch();
+					setupFinalMatch();
+
 			}
 			else
 			{
@@ -138,6 +138,9 @@ function setupMenuButtons()
 		});
 	}
 }
+
+// HERE
+
 
 function setupEventListeners()
 {
@@ -192,12 +195,31 @@ export function startGame()
 	BallConf.x = GraphConf.canvas.width / 2;
 	BallConf.y = GraphConf.canvas.height / 2;
 
-	const	angle = Math.random() * Math.PI * 2;
-	BallConf.dx = BallConf.speed * Math.cos(angle);
-	BallConf.dy = BallConf.speed * Math.sin(angle);
+	randomizeBall();
 
 	GameState.game_done = false;
 	gameLoop();
+}
+
+function randomizeBall()
+{
+	const	MIN_ANGLE = Math.PI / 6;
+	const	MAX_ANGLE = Math.PI / 3;
+	
+	let	direction;
+	if (Math.random() < 0.5)
+	{
+		direction = -1;
+	}
+	else
+	{
+		direction = 1;
+	}
+
+	const	angle = MIN_ANGLE + Math.random() * (MAX_ANGLE - MIN_ANGLE);
+
+	BallConf.dx = BallConf.speed * Math.cos(angle) * direction;
+	BallConf.dy = BallConf.speed * Math.sin(angle);
 }
 
 /***********************************************\
@@ -206,7 +228,7 @@ export function startGame()
 
 /* imports the function that returns the AI paddle's movement */
 
-let data = new GameData();
+let	data = new GameData();
 
 function updateGameData()
 {
@@ -277,9 +299,9 @@ function moveAiPaddle()
 -				GAME STATUS						-
 \***********************************************/
 
-let startTime;
-let elapsedSeconds;
-let current_sec;
+let	startTime;
+let	elapsedSeconds;
+let	current_sec;
 
 /***			Main Loop					***/
 export async function gameLoop()
@@ -333,22 +355,57 @@ export async function gameLoop()
 	drawScore();
 	drawUsernames(player1.name, player2.name);
 
+	// HERE
 	if (player1.score === GameConf.maxScore)
 	{
 		drawWinMessage(player1.name);
 		fillingResults(1);
+		checkTournamentWinner(player1.name);
 		GameState.game_done = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
 		drawWinMessage(player2.name);
 		fillingResults(2);
+		checkTournamentWinner(player1.name);
 		GameState.game_done = true;
 	}
 
 	if (GameState.game_done == false)
 	{
 		GameState.animationFrameId = requestAnimationFrame(gameLoop);
+	}
+}
+
+//HERE
+import { setupFinalMatch }
+from './tournament.js'
+function checkTournamentWinner(winnerName)
+{
+	if (GameState.isTournament === true)
+	{
+		if (GameState.isFinalMatch == true)
+		{
+			GameState.isTournamentDone = true;
+			// show tournament results
+			return ;
+		}
+		GameConf.matchupIndex++;
+		GameConf.winners.push(winnerName);
+		console.log(' tournament winner', GameConf.winners);
+		console.log(' Gameconf', GameConf);
+
+		if (GameConf.matchupIndex === 1)
+		{
+			if (GameConf.winners.length === 2)
+			{
+				// Set up the final match with the two winners
+				GameState.isFinalMatch = true;
+				console.log('Setting up final match');
+				// setupFinalMatch();
+				return
+			}
+		}
 	}
 }
 

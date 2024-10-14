@@ -68,13 +68,12 @@ export function moveBall()
 	if (BallConf.x - BallConf.radius < 0)
 	{
 		player2.score++;
-		console.log('GOAL');
-		resetRound();
+		resetRound('player2');
 	}
 	else if (BallConf.x + BallConf.radius > GraphConf.canvas.width)
 	{
 		player1.score++;
-		resetRound();
+		resetRound('player1');
 	}
 }
 

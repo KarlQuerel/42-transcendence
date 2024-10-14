@@ -57,8 +57,6 @@ export function isNameValid(playerName)
 		return false;
 	}
 
-	console.log('playerName', playerName);
-
 	if (playerName === player1.name)
 	{
 		alert('❌ I know you love yourself but you can\'t play against yourself ❌');
