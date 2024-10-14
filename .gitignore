@@ -4,4 +4,4 @@ env/
 src/.env
 .DS_Store
 src/prometheus/data
-methode_2fa.md
+node_modules

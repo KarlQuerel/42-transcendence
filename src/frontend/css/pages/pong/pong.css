@@ -17,6 +17,7 @@
 	cursor: pointer;
 	visibility: visible;
 	opacity: 100%;
+	z-index: 100000;
 }
 
 #rematch-button:hover

@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.views.decorators.cache import never_cache
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
@@ -107,6 +108,7 @@ def send_2fa_totp(user):
 
 	return code
 
+# @never_cache
 @api_view(['POST'])
 def verify_2fa_code(request):
 	code = request.data.get('code')

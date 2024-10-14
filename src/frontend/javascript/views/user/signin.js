@@ -1,10 +1,10 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 export default function renderSignIn()
 {
@@ -17,6 +17,7 @@ export default function renderSignIn()
 	emailInput.setAttribute('type', 'text');
 	emailInput.setAttribute('id', 'email');
 	emailInput.setAttribute('name', 'email');
+	emailInput.setAttribute('autocomplete', 'username'); // Karl
 	emailInput.setAttribute('placeholder', 'Email or Username');
 	emailInput.classList.add('form-input');
 
@@ -25,6 +26,7 @@ export default function renderSignIn()
 	passwordInput.setAttribute('type', 'password');
 	passwordInput.setAttribute('id', 'password');
 	passwordInput.setAttribute('name', 'password');
+	passwordInput.setAttribute('autocomplete', 'current-password'); // Karl
 	passwordInput.setAttribute('placeholder', 'Password');
 	passwordInput.classList.add('form-input');
 
@@ -33,6 +35,7 @@ export default function renderSignIn()
 	loginButton.setAttribute('type', 'submit');
 	loginButton.textContent = 'Log In';
 	loginButton.classList.add('form-input');
+	loginButton.id = 'loginButton'; //CARO: ajouté pour githubactions
 
 	// Create sign up button
 	const signUpButton = document.createElement('button');
@@ -62,11 +65,11 @@ export default function renderSignIn()
 		const password = passwordInput.value;
 
 
-        if (DEBUG)
-            console.log('About to sign in with:', username, password);
+		if (DEBUG)
+			console.log('About to sign in with:', username, password);
 
-        login(username, password);
-    });
+		login(username, password);
+	});
 
 
 	return form;
@@ -74,29 +77,29 @@ export default function renderSignIn()
 
 
 /***********************************************\
-*                 UTIL FUNCTIONS                *
+*			 UTIL FUNCTIONS				*
 \***********************************************/
 
 
 function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+	var cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		var cookies = document.cookie.split(';');
+		for (var i = 0; i < cookies.length; i++) {
+			var cookie = cookies[i].trim();
+			// Does this cookie string begin with the name we want?
+			if (cookie.substring(0, name.length + 1) === (name + '=')) {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
 }
 
 
 /***********************************************\
-*                 MAIN FUNCTION                 *
+*			 MAIN FUNCTION	 *
 \***********************************************/
 
 
@@ -106,7 +109,7 @@ function login(username, password)
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'),
+			'X-CSRFToken': getCookie('csrftoken'),
 		},
 		body: JSON.stringify({ username, password }),
 	})
@@ -128,70 +131,73 @@ function login(username, password)
 			return refreshToken();
 		}
 		else
-            throw new Error('No access token received');
-    })
-    .then(newAccessToken =>
-    {
-        if (DEBUG)
-            console.log('Token refreshed:', newAccessToken);
-        
-        window.location.href = '/profile';
-        console.log('Success:', username, 'is now logged in');
-    })
-    .catch(error => {
+			throw new Error('No access token received');
+	})
+	.then(newAccessToken =>
+	{
+		if (DEBUG)
+			console.log('Token refreshed:', newAccessToken);
+		if (GITHUBACTIONS)
+			console.log('Login successful'); //CARO: ajouté pour githubactions
+		setSignedInState(true);
+		window.location.href = '/profile';
+		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
+
+	})
+	.catch(error => {
         if (error !== 'Redirection to 2FA verification')
         {
-            console.error('Error:', error);
-            alert('Login failed: ' + error.message);
+    		console.error('Error:', error);
+    		alert('❌ Login failed: ' + error.message);
         }
-    });
+	});
 }
 
 
 /***********************************************\
-*                 API FUNCTIONS                 *
+*					API FUNCTIONS				*
 \***********************************************/
 
 
 // Get the access token from local storage and return it as a header object
 export function getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        throw new Error('No access token found');
-    }
-    return {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-    };
+	const token = localStorage.getItem('access_token');
+	if (!token) {
+		throw new Error('No access token found');
+	}
+	return {
+		'Authorization': 'Bearer ' + token,
+		'Content-Type': 'application/json',
+	};
 }
 
 
 // Send a request to the server to refresh the access token
 export async function refreshToken() {
-    const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken) {
-        throw new Error('No refresh token found');
-    }
+	const refreshToken = localStorage.getItem('refresh_token');
+	if (!refreshToken) {
+		throw new Error('No refresh token found');
+	}
 
-    try {
-        const response = await fetch('/api/token/refresh/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ refresh: refreshToken }),
-        });
+	try {
+		const response = await fetch('/api/token/refresh/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ refresh: refreshToken }),
+		});
 
-        const data = await response.json();
-        if (!data.access) {
-            throw new Error('Failed to refresh token');
-        }
-        localStorage.setItem('access_token', data.access);
-        return data.access;
-    } catch (error) {
-        console.error('Token refresh failed:', error);
-        throw error;
-    }
+		const data = await response.json();
+		if (!data.access) {
+			throw new Error('Failed to refresh token');
+		}
+		localStorage.setItem('access_token', data.access);
+		return data.access;
+	} catch (error) {
+		console.error('Token refresh failed:', error);
+		throw error;
+	}
 }
 
 
@@ -199,33 +205,33 @@ export async function refreshToken() {
 // Function to be called at every request
 
 export async function apiRequest(url, options = {}) {
-    try {
-        // Attach the access token to the request headers
-        options.headers = {
-            ...options.headers,
-            ...getAuthHeaders(),
-        };
+	try {
+		// Attach the access token to the request headers
+		options.headers = {
+			...options.headers,
+			...getAuthHeaders(),
+		};
 
-        let response = await fetch(url, options);
-        
-        // If the token has expired, refresh it and retry the request
-        if (response.status === 401) {
-            if (DEBUG)
-                console.log('Token expired, refreshing...');
-            const newAccessToken = await refreshToken();
-            options.headers['Authorization'] = 'Bearer ' + newAccessToken;
-            response = await fetch(url, options);
-        }
+		let response = await fetch(url, options);
+		
+		// If the token has expired, refresh it and retry the request
+		if (response.status === 401) {
+			if (DEBUG)
+				console.log('Token expired, refreshing...');
+			const newAccessToken = await refreshToken();
+			options.headers['Authorization'] = 'Bearer ' + newAccessToken;
+			response = await fetch(url, options);
+		}
 
-        if (!response.ok) {
-            throw new Error('Request failed');
-        }
+		if (!response.ok) {
+			throw new Error('Request failed');
+		}
 
-        return response.json();
-    } catch (error) {
-        console.error('API request error:', error);
-        throw error;
-    }
+		return response.json();
+	} catch (error) {
+		console.error('API request error:', error);
+		throw error;
+	}
 }
 
 
@@ -236,24 +242,24 @@ export async function apiRequest(url, options = {}) {
 // OLD CODE
 // async function refreshToken()
 // {
-//     const refreshToken = localStorage.getItem('refresh_token');
-//     if (!refreshToken)
-//         throw new Error('No refresh token found');
+//   const refreshToken = localStorage.getItem('refresh_token');
+//   if (!refreshToken)
+//	 throw new Error('No refresh token found');
 
-//     return fetch('/api/token/refresh/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh: refreshToken }),
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.access) {
-//             localStorage.setItem('access_token', data.access);
-//             return data.access;
-//         }
-//         else
-//             throw new Error('Failed to refresh token');
-//     });
+//   return fetch('/api/token/refresh/', {
+//	 method: 'POST',
+//	 headers: {
+//	   'Content-Type': 'application/json',
+//	 },
+//	 body: JSON.stringify({ refresh: refreshToken }),
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//	 if (data.access) {
+//	   localStorage.setItem('access_token', data.access);
+//	   return data.access;
+//	 }
+//	 else
+//	   throw new Error('Failed to refresh token');
+//   });
 // }

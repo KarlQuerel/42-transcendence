@@ -3,7 +3,7 @@
 ***********************************************/
 #winning-message
 {
-	background-color: black;
+	background-color: transparent;
 	border: 3px solid var(----base-green);
 	color: var(----base-green);
 	font-family: 'Press Start 2P', cursive;
@@ -18,9 +18,18 @@
 	transform: translate(-50%, -50%);
 	z-index: 10;
 	display: none;
+	flex-direction: column;
+	align-items: center;
 }
 
 #winning-message.show
 {
-	display: block;
+	display: flex;
+}
+
+.win-gif
+{
+	width: 15vh;
+	height: auto;
+	margin-top: 1vh;
 }

@@ -49,6 +49,7 @@ export default function render2fa()
 				console.log('Token refreshed:', newAccessToken);
 			
 			window.location.href = '/profile';
+            window.history.replaceState({}, document.title, "/profile");
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
 		})
 		.catch(error => {

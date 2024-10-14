@@ -1,7 +1,7 @@
 /***********************************************\
--		   IMPORTING VARIABLES/FUNCTIONS		-
+-					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG, setSignedInState } from '../../main.js';
 import { apiRequest } from './signin.js';
 
 /***********************************************\
@@ -131,6 +131,7 @@ export default function renderProfile()
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            setSignedInState(false);
             if (localStorage.getItem('username'))
             {
                 localStorage.removeItem('username');
