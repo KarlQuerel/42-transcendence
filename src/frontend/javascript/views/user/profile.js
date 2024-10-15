@@ -245,7 +245,7 @@ async function profileEditMode(userData_edit, personalInfoSection)
     saveButton.textContent = 'Save changes';
     personalInfoSection.appendChild(saveButton);
 
-    saveButton.addEventListener('click', (event) =>
+    saveButton.addEventListener('click', async (event) =>
     {
         event.preventDefault();
 
@@ -270,9 +270,9 @@ async function profileEditMode(userData_edit, personalInfoSection)
         if (isValidData)
         {
             if (avatarFile && verifyAvatarFile(avatarFile))
-                saveNewAvatar(avatarFile);
+                await saveNewAvatar(avatarFile);
 
-            saveProfileChanges(userData_edit);
+            await saveProfileChanges(userData_edit);
 
             window.location.reload();
         }
@@ -386,7 +386,6 @@ async function saveProfileChanges(userData_edit)
     if (DEBUG)
         console.log('Saving profile changes...');
 
-
     if (DEBUG)
     {
         console.log('First Name:', userData_edit.first_name);
@@ -397,26 +396,48 @@ async function saveProfileChanges(userData_edit)
 
     try
     {
+        const startTime = Date.now(); // Start time
+        console.log('START TIME:', startTime); // DEBUG
+
+        console.log('BEFORE FETCH APIREQUEST'); // DEBUG
         const response = await apiRequest('/api/users/updateProfile/', {
             method: 'PUT',
-            headers: {
+            headers: {  
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 email: userData_edit.email,
                 date_of_birth: userData_edit.dob,
                 first_name: userData_edit.first_name,
                 last_name: userData_edit.last_name,
-            })
+            }),
+            // timeout: 60000 // 60 seconds
         });
+
+        console.log('AFTER FETCH APIREQUEST'); // DEBUG
+
+        const endTime = Date.now(); // End time
+        console.log('END TIME:', endTime); // DEBUG
+        const duration = endTime - startTime; // Duration in milliseconds
+        console.log(`Request duration: ${duration} ms`); // DEBUG
+    
+        if (DEBUG)
+        {
+            console.log('Response status:', response.status);
+            console.log('Response status text:', response.statusText);
+
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
 
         console.log('Profile updated successfully.');
 
     }
     catch (error)
     {
-        console.error('Error updating profile:', error);
+        console.error('Error updating profile:', error.message);
         alert('An error occurred while updating the profile.');
     }
 }

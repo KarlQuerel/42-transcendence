@@ -58,19 +58,18 @@ export default function renderSignIn()
     });
 
 	// Add event listener to the Log In button to handle login
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', (event) =>
+    {
         event.preventDefault(); // Prevent the default form submission
 
         const username = emailInput.value;
         const password = passwordInput.value;
-
 
         if (DEBUG)
             console.log('About to sign in with:', username, password);
 
         login(username, password);
     });
-
 
 	return form;
 }
@@ -81,7 +80,8 @@ export default function renderSignIn()
 \***********************************************/
 
 
-export function getCookie(name) {
+export function getCookie(name)
+{
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
@@ -108,7 +108,8 @@ function login(username, password)
     if (DEBUG)
         console.log('Entering login function');
 
-	fetch('/api/users/signInUser/', {
+	fetch('/api/users/signInUser/',
+    {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -140,7 +141,8 @@ function login(username, password)
         console.log('Success:', username, 'is now logged in');
         window.location.href = '/profile';
     })
-    .catch(error => {
+    .catch(error =>
+    {
         console.error('Error:', error);
         alert('Login failed: ' + error.message);
     });
@@ -154,11 +156,12 @@ function login(username, password)
 
 
 // Get the access token from local storage and return it as a header object
-export function getAuthHeaders() {
+export function getAuthHeaders()
+{
     const token = localStorage.getItem('access_token');
-    if (!token) {
+    if (!token)
         throw new Error('No access token found');
-    }
+
     return {
         'Authorization': 'Bearer ' + token,
         'Content-Type': 'application/json',
@@ -167,14 +170,16 @@ export function getAuthHeaders() {
 
 
 // Send a request to the server to refresh the access token
-async function refreshToken() {
+async function refreshToken()
+{
     const refreshToken = localStorage.getItem('refresh_token');
-    if (!refreshToken) {
+    if (!refreshToken)
         throw new Error('No refresh token found');
-    }
 
-    try {
-        const response = await fetch('/api/token/refresh/', {
+    try
+    {
+        const response = await fetch('/api/token/refresh/',
+        {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -183,12 +188,14 @@ async function refreshToken() {
         });
 
         const data = await response.json();
-        if (!data.access) {
+        if (!data.access)
             throw new Error('Failed to refresh token');
-        }
+
         localStorage.setItem('access_token', data.access);
         return data.access;
-    } catch (error) {
+    }
+    catch (error)
+    {
         console.error('Token refresh failed:', error);
         throw error;
     }
@@ -198,10 +205,13 @@ async function refreshToken() {
 // Send a request to the server to refresh the access token
 // Function to be called at every request
 
-export async function apiRequest(url, options = {}) {
-    try {
+export async function apiRequest(url, options = {})
+{
+    try
+    {
         // Attach the access token to the request headers
-        options.headers = {
+        options.headers =
+        {
             ...options.headers,
             ...getAuthHeaders(),
         };
@@ -209,7 +219,8 @@ export async function apiRequest(url, options = {}) {
         let response = await fetch(url, options);
 
         // If the token has expired, refresh it and retry the request
-        if (response.status === 401) {
+        if (response.status === 401)
+        {
             if (DEBUG)
                 console.log('Token expired, refreshing...');
             const newAccessToken = await refreshToken();
@@ -217,13 +228,17 @@ export async function apiRequest(url, options = {}) {
             response = await fetch(url, options);
         }
 
-        if (!response.ok) {
+        if (!response.ok)
+        {
             const errorData = await response.json();
-            throw new Error('Request failed');
+            console.error('Server error:', errorData); // Log server-side error details
+            throw new Error(errorData.error || 'Request failed');
         }
 
         return response.json();
-    } catch (error) {
+    }
+    catch (error)
+    {
         console.error('API request error:', error);
         throw error;
     }
