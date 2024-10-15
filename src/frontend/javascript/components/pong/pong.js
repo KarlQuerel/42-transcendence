@@ -12,7 +12,7 @@ import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
 import { prepareTournament, displayTournamentForm, startTournamentGame,
-initializeTournamentMode, tournamentNextMatch}
+initializeTournamentMode, tournamentNextMatch, setupFinalMatch }
 from './tournament.js'
 
 import { createContainer, createVideo, createOverlay, createMenuButton,
@@ -20,7 +20,8 @@ createTournamentButton, createHowToPlayButton, createHowToPlayCard, createCardGi
 createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer }
 from './createElements.js'
 
-import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu }
+import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu,
+updateRematchButtonText }
 from './drawing.js'
 
 import { movePaddles, moveBall, checkBallPaddleCollision, keyDownHandler, keyUpHandler }
@@ -129,7 +130,6 @@ function setupMenuButtons()
 					tournamentNextMatch();
 				else
 					setupFinalMatch();
-
 			}
 			else
 			{
@@ -138,8 +138,6 @@ function setupMenuButtons()
 		});
 	}
 }
-
-// HERE
 
 
 function setupEventListeners()
@@ -158,7 +156,7 @@ function setupCanvasDimensions()
 	const	setCanvasDimensions = () =>
 	{
 		const	viewportHeight = window.innerHeight;
-		GraphConf.canvas.width = viewportHeight * 0.8; // FIXME for later = zooming problem
+		GraphConf.canvas.width = viewportHeight * 0.8;
 		GraphConf.canvas.height = viewportHeight * 0.6;
 	};
 
@@ -196,6 +194,11 @@ export function startGame()
 	BallConf.y = GraphConf.canvas.height / 2;
 
 	randomizeBall();
+
+	window.addEventListener('resize', () =>
+	{
+		player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
+	});
 
 	GameState.game_done = false;
 	gameLoop();
@@ -355,19 +358,18 @@ export async function gameLoop()
 	drawScore();
 	drawUsernames(player1.name, player2.name);
 
-	// HERE
 	if (player1.score === GameConf.maxScore)
 	{
+		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
 		fillingResults(1);
-		checkTournamentWinner(player1.name);
 		GameState.game_done = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
+		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
 		fillingResults(2);
-		checkTournamentWinner(player1.name);
 		GameState.game_done = true;
 	}
 
@@ -378,8 +380,6 @@ export async function gameLoop()
 }
 
 //HERE
-import { setupFinalMatch }
-from './tournament.js'
 function checkTournamentWinner(winnerName)
 {
 	if (GameState.isTournament === true)
@@ -387,34 +387,95 @@ function checkTournamentWinner(winnerName)
 		if (GameState.isFinalMatch == true)
 		{
 			GameState.isTournamentDone = true;
-			// show tournament results
+			GameConf.winners.push(winnerName);
+			GameConf.tournamentWinner = winnerName;
+			console.log(' tournament winner', GameConf.tournamentWinner);
+			
+			hideWinningMessage();
+			showTournamentResults();
+
+			// HERE show tournaments results
 			return ;
 		}
 		GameConf.matchupIndex++;
 		GameConf.winners.push(winnerName);
-		console.log(' tournament winner', GameConf.winners);
-		console.log(' Gameconf', GameConf);
-
-		if (GameConf.matchupIndex === 1)
+		console.log('GameConf.winners.length: ', GameConf.winners.length);
+		
+		if (GameConf.matchupIndex === 2)
 		{
 			if (GameConf.winners.length === 2)
 			{
-				// Set up the final match with the two winners
 				GameState.isFinalMatch = true;
 				console.log('Setting up final match');
-				// setupFinalMatch();
-				return
+				console.log(' GameConf', GameConf);
+				console.log(' GameState', GameState);
+				updateRematchButtonText();
+				return;
 			}
 		}
 	}
 }
+
+function showTournamentResults()
+{
+	const	resultsContainer = document.createElement('div');
+	resultsContainer.className = 'matchups-container';
+
+	// Create and display the tournament winner
+	const	winnerElement = document.createElement('h2');
+	winnerElement.className = 'tournament-winner';
+	winnerElement.textContent = `🏆 ${GameConf.tournamentWinner.toUpperCase()} IS THE TOURNAMENT WINNER! 🏆`;
+	resultsContainer.appendChild(winnerElement);
+
+	// Create and display the match results
+	const	resultsList = document.createElement('ul');
+	resultsList.className = 'results-list';
+
+	GameConf.winners.forEach((winner, index) => {
+		const	resultItem = document.createElement('li');
+		resultItem.textContent = `Match ${index + 1}: ${winner.toUpperCase()} won`;
+		resultsList.appendChild(resultItem);
+	});
+
+	resultsContainer.appendChild(resultsList);
+
+	// Append the results container to the DOM
+	document.body.appendChild(resultsContainer);
+
+	// Optionally, add a button to reset the tournament or go back to the main menu
+	const	resetButton = document.createElement('button');
+	resetButton.className = 'reset-tournament-btn';
+	resetButton.textContent = 'Restart Tournament';
+	resetButton.onclick = () =>
+	{
+		// Logic to restart the tournament or reset the game
+		document.body.removeChild(resultsContainer);
+		resetTournament();
+	};
+	resultsContainer.appendChild(resetButton);
+}
+
+function resetTournament()
+{
+	// Reset tournament-related variables
+	GameState.isTournament = false;
+	GameState.isFinalMatch = false;
+	GameState.isTournamentDone = false;
+	GameConf.winners = [];
+	GameConf.matchupIndex = 0;
+
+	// Reset scores and prepare for a new game
+	resetScores();
+	resetGame();
+}
+
 
 /***			Resetting Game				***/
 export function resetGame()
 {
 	// Reset game state
 	resetScores();
-	resetBall();
+	randomizeBall();
 	hideWinningMessage();
 
 	// Restart the game
@@ -434,14 +495,6 @@ function resetScores()
 	player2.score = 0;
 }
 
-function resetBall()
-{
-	BallConf.speed = 5;
-	// Randomly set the ball's direction
-	const	angle = Math.random() * Math.PI * 2;
-	BallConf.dx = BallConf.speed * Math.cos(angle);
-	BallConf.dy = BallConf.speed * Math.sin(angle);
-}
 
 function hideWinningMessage()
 {

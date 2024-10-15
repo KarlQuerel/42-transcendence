@@ -42,6 +42,7 @@ from './preGame.js';
 
 import { isNameValid }
 from './utils.js';
+import { apiRequest } from '../../views/user/signin.js';
 
 /***********************************************\
 -				TWO PLAYERS						-
@@ -58,24 +59,24 @@ export function prepareTwoPlayers(menuOverlay)
 export function displayPlayer2Form()
 {
 	getFirstPlayerName();
-	const player2Form = document.createElement('div');
+	const	player2Form = document.createElement('div');
 	player2Form.id = 'input-form';
 	player2Form.className = 'input-form';
 
 	// Create the title
-	const formTitle = document.createElement('h3');
+	const	formTitle = document.createElement('h3');
 	formTitle.textContent = 'Enter Player 2\'s Name';
 	player2Form.appendChild(formTitle);
 	
 	// Create input field
-	const inputGroup = document.createElement('div');
+	const	inputGroup = document.createElement('div');
 	inputGroup.className = 'input-group-lg mb-3';
 
-	const inputLabel = document.createElement('span');
+	const	inputLabel = document.createElement('span');
 	inputLabel.className = 'input-group-text';
 	inputLabel.textContent = 'Player 2';
 
-	const playerInput = document.createElement('input');
+	const	playerInput = document.createElement('input');
 	playerInput.type = 'text';
 	playerInput.className = 'form-control';
 	playerInput.placeholder = 'Enter Player 2\'s Name';
@@ -90,24 +91,53 @@ export function displayPlayer2Form()
 	player2Form.appendChild(inputGroup);
 
 	// Add a submit button
-	const submitButton = document.createElement('button');
+	const	submitButton = document.createElement('button');
 	submitButton.className = 'btn menu-button start-tournament-btn';
 	submitButton.textContent = 'START MATCH';
-	submitButton.addEventListener('click', () =>
+	submitButton.addEventListener('click', async() =>
 	{
-		const player2Name = playerInput.value.trim();
+		const	player2Name = playerInput.value.trim();
 
 		if (isNameValid(player2Name) == false)
-			return ;
+			return;
 
-		// TODO with Jess
-		// check if username already exists in the databe to prompt for a password (alert or modal, to see)
+		const	userEXists = await doesUserExist(player2Name);
 
+		if (userEXists === true)
+		{
+			prompt('User already exists, please enter a password.');
+		}
 		player2.name = player2Name;
 		player2Form.remove();
 		checkCountdown();
 	});
 
+	playerInput.addEventListener('keydown', (event) =>
+	{
+		if (event.key === 'Enter')
+		{
+			submitButton.click();
+		}
+	});
+		
 	player2Form.appendChild(submitButton);
 	document.body.appendChild(player2Form);
+}
+
+async function doesUserExist(playerName)
+{
+	try
+	{
+		const data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		{
+			method: 'GET',
+		});
+
+		return data.user_exists;
+	}
+	catch (error)
+	{
+		console.error('API request error:', error);
+		return false;
+	}
 }

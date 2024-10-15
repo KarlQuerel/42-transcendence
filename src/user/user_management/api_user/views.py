@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-# from api_user.models import CustomUser
+from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 # from .serializers import CustomUserRegistrationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -107,10 +107,18 @@ def currentlyLoggedInUser(request):
 		return Response({'error': str(e)}, status=500)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doesUserExist(request, username):
+	try:
+		user = CustomUser.objects.get(username=username)
+
+		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
+
 #########################################
 
-
-#TEST CARO
 @api_view(['GET'])
 @login_required
 def getUsername(request):

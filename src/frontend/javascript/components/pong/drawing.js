@@ -132,19 +132,37 @@ export function drawWinMessage(winnerName)
 		return;
 	}
 
+	updateRematchButtonText();
+
+	rematchButton.classList.remove('hidden-sudden');
+	rematchButton.classList.add('show');
+}
+
+export function updateRematchButtonText()
+{
+	const rematchButton = document.getElementById('rematch-button');
+	if (!rematchButton)
+	{
+		console.error('Rematch button element not found!');
+		return;
+	}
+
 	if (GameState.isTournament === true)
 	{
 		if (GameState.isFinalMatch === false)
-			rematchButton.textContent = 'Next Match'
-		else if (GameState.isFinalMatch === true)
-			rematchButton.textContent = 'Final Match'
+		{
+			rematchButton.textContent = 'Next Match';
+		}
+		else if
+		(GameState.isFinalMatch === true)
+		{
+			rematchButton.textContent = 'Final Match';
+		}
 	}
 	else
 	{
-		rematchButton.textContent = 'Rematch'
+		rematchButton.textContent = 'Rematch';
 	}
-	rematchButton.classList.remove('hidden-sudden');
-	rematchButton.classList.add('show');
 }
 
 /***			Drawing Pause Menu			***/

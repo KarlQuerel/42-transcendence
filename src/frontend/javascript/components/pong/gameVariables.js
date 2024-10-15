@@ -30,7 +30,7 @@ export const	GameState =
 	// Is it the final match?
 	isFinalMatch :false,
 
-	// Is Tournament Done?
+	// Is Tournament done?
 	isTournamentDone :false,
 
 	// Is countdown active?
@@ -68,7 +68,8 @@ export const GameConf =
 	maxScore : 1,
 	matchupIndex : 0,
 	allMatchups : [],
-	winners : []
+	winners : [],
+	tournamentWinner : null
 };
 
 
