@@ -305,29 +305,19 @@ def hashAndChangePassword(request):
 def updateProfile(request):
 	try:
 		user = request.user
-
-		print(f'Updating user data (updateProfile)...') # DEBUG
-
-		start_time = time.time() # Start time
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
 
 		user.email = request.data.get('email')
 		user.date_of_birth = request.data.get('date_of_birth')
 		user.first_name = request.data.get('first_name')
 		user.last_name = request.data.get('last_name')
 
-		print(f'Received data: email={user.email}, date_of_birth={user.date_of_birth}, first_name={user.first_name}, last_name={user.last_name}') # DEBUG
-
 		user.save()
-
-		end_time = time.time() # End time
-		duration = end_time - start_time # Duration in seconds
-
-		print(f'Profile updated successfully in {duration} seconds.') # DEBUG
 
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		print(f'Error from updateProfile: {str(e)}') # DEBUG
 		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
@@ -341,7 +331,7 @@ def updateAvatar(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		print(f'Updating user avatar (updateAvatar())...') # DEBUG
+		print(f'Updating user avatar (updateAvatar)...') # DEBUG
 
 		avatar_data = request.body
 		username = user.username
@@ -358,6 +348,7 @@ def updateAvatar(request):
 		return Response({'success': 'Avatar updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
+		print(f'Error: {str(e)}') # DEBUG
 		return Response({'error': str(e)}, status=500)
 
 

@@ -28,6 +28,16 @@ export default function renderProfile()
 
     container.appendChild(avatarElement);
 
+    // Form element
+    const avatarForm = document.createElement('form');
+    avatarForm.setAttribute('id', 'avatar_form');
+
+    // Error message container
+    const errorMessageContainer = document.createElement('div');
+    errorMessageContainer.setAttribute('id', 'error-messages-avatar');
+    errorMessageContainer.classList.add('error-messages-avatar');
+    avatarForm.appendChild(errorMessageContainer);
+
 
     /********** PERSONAL INFORMATION **********/
 
@@ -212,73 +222,73 @@ async function fetchGameHistoryData() {
 
 async function profileEditMode(userData_edit, personalInfoSection)
 {
-    // Profile elements
-    const firstNameElement = document.getElementById('first_name');
-    const lastNameElement = document.getElementById('last_name');
-    const usernameElement = document.getElementById('username');
-    const dobElement = document.getElementById('date_of_birth');
-    const emailElement = document.getElementById('email');
-
-    // Fields displayed un edit-mode
-    firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
-    lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
-    usernameElement.textContent = `Username: ${userData_edit.username}`;
-    dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
-    emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
-
-
-    // File input for avatar
-    const avatarLabel = document.createElement('label');
-    avatarLabel.setAttribute('for', 'avatar_input');
-    avatarLabel.textContent = 'Upload avatar image (jpeg, jpg or png):';
-    personalInfoSection.appendChild(avatarLabel);
-
-    const avatarInput = document.createElement('input');
-    avatarInput.setAttribute('type', 'file');
-    avatarInput.setAttribute('id', 'avatar_input');
-    avatarLabel.appendChild(avatarInput);
-
-
-    // Save Button
-    const saveButton = document.createElement('button');
-    saveButton.setAttribute('id', 'save-profile-button');
-    saveButton.textContent = 'Save changes';
-    personalInfoSection.appendChild(saveButton);
-
-    saveButton.addEventListener('click', async (event) =>
-    {
-        event.preventDefault();
-
-        // Save new input data in userData_edit
-        const updatedFirstName = document.getElementById('first_name_input').value;
-        const updatedLastName = document.getElementById('last_name_input').value;
-        const updatedDob = document.getElementById('dob_input').value;
-        const updatedEmail = document.getElementById('email_input').value;
-
-        userData_edit.first_name = updatedFirstName;
-        userData_edit.last_name = updatedLastName;
-        userData_edit.dob = updatedDob;
-        userData_edit.email = updatedEmail;
-
-        const avatarFile = document.getElementById('avatar_input').files[0];
-
-        const isValidData = verifyProfileChanges();
-
-        if (DEBUG)
-            console.log('Updated values are valid:', isValidData);
-
-        if (isValidData)
+        // Profile elements
+        const firstNameElement = document.getElementById('first_name');
+        const lastNameElement = document.getElementById('last_name');
+        const usernameElement = document.getElementById('username');
+        const dobElement = document.getElementById('date_of_birth');
+        const emailElement = document.getElementById('email');
+    
+        // Fields displayed un edit-mode
+        firstNameElement.innerHTML = `<label for="first_name_input">First Name:</label><input type="text" id="first_name_input" value="${userData_edit.first_name}">`;
+        lastNameElement.innerHTML = `<label for="last_name_input">Last Name:</label><input type="text" id="last_name_input" value="${userData_edit.last_name}">`;
+        usernameElement.textContent = `Username: ${userData_edit.username}`;
+        dobElement.innerHTML = `<label for="dob_input">Date of Birth:</label><input type="date" id="dob_input" value="${userData_edit.date_of_birth}">`;
+        emailElement.innerHTML = `<label for="email_input">Email:</label><input type="email" id="email_input" value="${userData_edit.email}">`;
+    
+    
+        // File input for avatar
+        const avatarLabel = document.createElement('label');
+        avatarLabel.setAttribute('for', 'avatar_input');
+        avatarLabel.textContent = 'Upload avatar image (jpeg, jpg or png):';
+        personalInfoSection.appendChild(avatarLabel);
+    
+        const avatarInput = document.createElement('input');
+        avatarInput.setAttribute('type', 'file');
+        avatarInput.setAttribute('id', 'avatar_input');
+        avatarLabel.appendChild(avatarInput);
+    
+    
+        // Save Button
+        const saveButton = document.createElement('button');
+        saveButton.setAttribute('id', 'save-profile-button');
+        saveButton.textContent = 'Save changes';
+        personalInfoSection.appendChild(saveButton);
+    
+        saveButton.addEventListener('click', async (event) =>
         {
-            if (avatarFile && verifyAvatarFile(avatarFile))
-                await saveNewAvatar(avatarFile);
-
-            await saveProfileChanges(userData_edit);
-
-            window.location.reload();
-        }
-    });
-
+            event.preventDefault();
+    
+            // Save new input data in userData_edit
+            const updatedFirstName = document.getElementById('first_name_input').value;
+            const updatedLastName = document.getElementById('last_name_input').value;
+            const updatedDob = document.getElementById('dob_input').value;
+            const updatedEmail = document.getElementById('email_input').value;
+    
+            userData_edit.first_name = updatedFirstName;
+            userData_edit.last_name = updatedLastName;
+            userData_edit.dob = updatedDob;
+            userData_edit.email = updatedEmail;
+    
+            const avatarFile = document.getElementById('avatar_input').files[0];
+    
+            const isValidData = verifyProfileChanges();
+    
+            if (DEBUG)
+                console.log('Updated values are valid:', isValidData);
+    
+            if (isValidData)
+            {
+                if (avatarFile && verifyAvatarFile(avatarFile))
+                    await saveNewAvatar(avatarFile);
+    
+                await saveProfileChanges(userData_edit);
+    
+                window.location.reload();
+            }
+        });
 }
+
 
 
 async function verifyProfileChanges()
@@ -340,43 +350,46 @@ async function verifyProfileChanges()
 
 async function verifyAvatarFile(avatarFile)
 {
-    const avatarForm = document.getElementById('avatar_form');
+    let result = true;
+
     const avatarSubmitButton = document.getElementById('avatar_submit_button');
     const avatarLabel = document.getElementById('avatar_label');
 
     // Remove existing error messages
-    const existingErrors = avatarForm.querySelectorAll('.error-message');
-    existingErrors.forEach(error => error.remove());
+    const formGroup = document.getElementById('avatar_form');
+        const existingError = formGroup.querySelector('.error-messages-avatar');
+        if (existingError)
+            existingError.remove();
 
     // Check if the file is not empty
     if (!avatarFile || !avatarFile.size || avatarFile.name === '') {
         const errorMessage = document.createElement('p');
-        errorMessage.className = 'error-message';
+        errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'Select a file';
         avatarLabel.insertBefore(errorMessage, avatarSubmitButton);
-        return false;
+        result = false;
     }
 
     // Check if the file type is jpeg, jpg, or png
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if (!validTypes.includes(avatarFile.type)) {
         const errorMessage = document.createElement('p');
-        errorMessage.className = 'error-message';
+        errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'File type not supported (only jpeg, jpg, png)';
         avatarForm.insertBefore(errorMessage, avatarSubmitButton);
-        return false;
+        result = false;
     }
 
     // Check if the file size is no more than 1 MB
     if (avatarFile.size > 1000000) { // 1 MB max
         const errorMessage = document.createElement('p');
-        errorMessage.className = 'error-message';
+        errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'File too large (max 1 MB)';
         avatarForm.insertBefore(errorMessage, avatarSubmitButton);
-        return false;
+        result = false;
     }
 
-    return true;
+    return result;
 }
 
 
@@ -384,22 +397,14 @@ async function verifyAvatarFile(avatarFile)
 async function saveProfileChanges(userData_edit)
 {
     if (DEBUG)
-        console.log('Saving profile changes...');
-
-    if (DEBUG)
     {
-        console.log('First Name:', userData_edit.first_name);
-        console.log('Last Name:', userData_edit.last_name);
-        console.log('Date of Birth:', userData_edit.dob);
-        console.log('Email:', userData_edit.email);
+        console.log('Saving profile changes...');
+        console.log('Userdata =', userData_edit);
     }
 
     try
     {
-        const startTime = Date.now(); // Start time
-        console.log('START TIME:', startTime); // DEBUG
 
-        console.log('BEFORE FETCH APIREQUEST'); // DEBUG
         const response = await apiRequest('/api/users/updateProfile/', {
             method: 'PUT',
             headers: {  
@@ -412,26 +417,10 @@ async function saveProfileChanges(userData_edit)
                 first_name: userData_edit.first_name,
                 last_name: userData_edit.last_name,
             }),
-            // timeout: 60000 // 60 seconds
         });
 
-        console.log('AFTER FETCH APIREQUEST'); // DEBUG
-
-        const endTime = Date.now(); // End time
-        console.log('END TIME:', endTime); // DEBUG
-        const duration = endTime - startTime; // Duration in milliseconds
-        console.log(`Request duration: ${duration} ms`); // DEBUG
+        // console.log('Response JSON:', response); // DEBUG
     
-        if (DEBUG)
-        {
-            console.log('Response status:', response.status);
-            console.log('Response status text:', response.statusText);
-
-            if (!response.ok)
-                throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-
         console.log('Profile updated successfully.');
 
     }
@@ -457,25 +446,15 @@ async function saveNewAvatar(avatarFile)
                 body: avatarFile,
             });
     
-            if (!response.ok)
-            {
-                console.error('Error updating avatar');
-                return false;
-            }
-            else
-            {
-                console.log('Avatar updated successfully.');
-                return true;
-            }
+            console.log('Avatar updated successfully.');
+
         }
         catch (error)
         {
             console.error('Error updating avatar:', error);
             alert('An error occurred while updating the avatar.');
-            return false;
         }
     }
-    return false;
 }
 
 

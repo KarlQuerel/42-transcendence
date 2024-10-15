@@ -5,6 +5,7 @@ from api_user.models import CustomUser
 #			ADD MANUALLY ENTERED USERS		#
 #********************************************
 
+# TODO - change password before push
 class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
 		predefined_data = [

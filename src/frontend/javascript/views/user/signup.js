@@ -268,14 +268,15 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
         { type: email_type, id: 'email', message: errorMessages.email },
     ];
 
-    fields.forEach(field => {
+    fields.forEach(field =>
+	{
         const formGroup = document.getElementById(field.id).parentElement;
         const existingError = formGroup.querySelector('.error-message');
-        if (existingError) {
+        if (existingError)
             existingError.remove();
-        }
 
-        if (field.type === 'error') {
+        if (field.type === 'error')
+		{
             const error = document.createElement('p');
             error.textContent = field.message;
             error.classList.add('error-message');
