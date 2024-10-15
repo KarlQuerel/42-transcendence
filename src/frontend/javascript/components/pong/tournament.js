@@ -8,8 +8,8 @@ import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2,
 Results }
 from './gameVariables.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+import { loadUsername }
+from './utils.js';
 
 import { startGame }
 from './pong.js'
@@ -63,7 +63,7 @@ export async function displayTournamentForm()
 			// Lock first input with signed-in username
 			try
 			{
-				const	username = await loadUserManagementData();
+				const	username = await loadUsername();
 				if (DEBUG)
 					console.log("Username:", username);
 				playerInput.value = username.username;

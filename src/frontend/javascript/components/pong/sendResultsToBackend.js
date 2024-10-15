@@ -4,6 +4,7 @@
 import { DEBUG } from '../../main.js';
 import { Results } from './gameVariables.js';
 import { getAuthHeaders } from '../../views/user/signin.js';
+import { loadUsername } from './utils.js';
 
 /*
 Accross all pong game javascript files, variables and functions that need to 
@@ -18,11 +19,8 @@ addStats view, informing Django of the game’s result so it can update the data
 export async function sendResultsToBackend() {
 	try {
 		// Log all fields to verify their values before the request
+		if (DEBUG)
 		console.log("Results object:", Results);
-		console.log("opponentUsername:", Results.opponent_username);
-		console.log("opponentScore:", Results.opponent_score);
-		console.log("myScore:", Results.score);
-		console.log("tournament_date:", Results.tournament_date);
 
 		// Check if any required field is missing or undefined
 		if (!Results.opponent_username) {
@@ -38,17 +36,22 @@ export async function sendResultsToBackend() {
 			throw new Error("Missing tournament_date");
 		}
 
+		let connectedUser = await loadUsername();
+		let myUsernameStr = connectedUser.username;
+		console.log("myUsernameStr:", myUsernameStr);
+
 		const response = await fetch('/api/dashboard/addStats/', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				...getAuthHeaders() // Ensure authentication headers are properly included
+				...getAuthHeaders()
 			},
 			body: JSON.stringify({
+				myUsername: myUsernameStr,
 				opponentUsername: Results.opponent_username,
 				opponentScore: Results.opponent_score,
 				myScore: Results.score,
-				date: Results.tournament_date // Correct format YYYY-MM-DD
+				date: Results.tournament_date
 			})
 		});
 
@@ -64,3 +67,4 @@ export async function sendResultsToBackend() {
 		console.error('Error sending results to backend:', error.message);
 	}
 }
+

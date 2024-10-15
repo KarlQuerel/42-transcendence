@@ -1,4 +1,4 @@
-/***********************************************\
+/* **********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG, GITHUBACTIONS } from '../../main.js';
@@ -140,93 +140,57 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const userData = await loadUserManagementData();
-	const allStats = await loadDashboardData(userData, ALL_STATS); //FIX: gameHistory is filled correctly only for Carolina, not the rest of the users
-	const userStats = await loadDashboardData(userData, USER_STATS);
+	const gameHistory = await loadUserGameHistory();
+	const allAvatars = await loadAvatars(); //IMPORTANT: TESTER QUAND JESS AURA PUSH SES AVATARS
 
-	setupEventListeners(allStats, userStats); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	setupEventListeners(gameHistory, allAvatars); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
 
 /***********************************************\
 -					FETCHING DATA				-
 \***********************************************/
 
-const ALL_STATS = 0;
-const USER_STATS = 1;
-
-async function loadDashboardData(userData, option) {
-	try {
-		const allStats = await apiRequest('/api/dashboard/getData/', {
-			method: 'GET',
-		});
-
-		if (option == ALL_STATS)
-		{
-			if (allStats.length > 0)
-			{
-				if (DEBUG)
-					console.log("allStats = ", allStats);
-				if (GITHUBACTIONS)
-					console.log("Successfully fetched dashboard data");
-				return allStats;
-			}
-			else
-				throw new Error("Failed to fetch dashboard data");
-		}
-		else if (option == USER_STATS)
-		{
-/* 			let i = 0;
-			while (i < allStats.length)
-			{
-				if (userData.username === allStats[i].username)
-				{
-					if (DEBUG)
-						console.log("userStats = ", allStats[i]);
-					if (GITHUBACTIONS)
-						console.log("Successfully fetched user stats");
-					return allStats[i]; // Return the matching user's stats
-				}
-				i++;
-			} */
-			const userStats = allStats.find(stats => stats.username === userData.username);
-			if (userStats)
-			{
-				if (DEBUG)
-					console.log("userStats = ", userStats);
-				if (GITHUBACTIONS)
-					console.log("Successfully fetched user stats");
-				return userStats; 
-			}
-			else
-				throw new Error("The connected user's username does not match any username in the dashboard database");
-			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `à la place de la dashboard si aucune partie de pong jouée)
-			// console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
-		}
-	} catch (error) {
-		console.error('Error: fetch allStats', error);
-		throw error; // Re-throw the error
-		//CHECK: if allStats is undefined : try/catch that will stop everything
-	}
-}
-
-
-export async function loadUserManagementData()
-{
-	try {
-		const userData = await apiRequest('/api/users/getUsername/', {
+async function loadUserGameHistory() {
+	try
+	{
+		const gameHistory = await apiRequest('/api/dashboard/getGameHistory/', {
 			method: 'GET',
 			headers: {
 				...getAuthHeaders(),
 			},
 		});
+
 		if (DEBUG)
-			console.log("userData = ", userData);
-		if (GITHUBACTIONS)
-			console.log("Successfully fetched user info");
-		return userData;
-	} catch (error) {
-		console.error('Error: fetch userData', error);
-		throw error; // Re-throw the error
+			console.log("gameHistory= ", gameHistory);
+		if (GITHUBACTIONS) //TODO: modifier githubActions file
+			console.log("Successfully fetched connected user's game history");
+		return gameHistory;
+	}
+	catch (error)
+	{
+		console.error("Error fetching connected user's game history");
+		throw error; //CHECK: check it stops everything or re-throw it
+	}
+}
+
+async function loadAvatars() {
+	try
+	{
+		const gameHistory = await apiRequest('/api/user/getAllUserAvatars/', {
+			method: 'GET',
+			headers: {
+				...getAuthHeaders(),
+			},
+		});
+
+		if (GITHUBACTIONS) //TODO: modifier githubActions file
+			console.log("Successfully fetched all avatars");
+		return gameHistory;
+	}
+	catch (error)
+	{
+		console.error("Error fetching users' avatars");
+		throw error; //CHECK: check it stops everything or re-throw it
 	}
 }
 
@@ -235,7 +199,7 @@ export async function loadUserManagementData()
 -				EVENT LISTENERS					-
 \***********************************************/
 
-function setupEventListeners(allStats, userStats)
+function setupEventListeners(gameHistory, allAvatars)
 {
 	const chartIcon = document.getElementById('chart_icon');
 	const friendsIcon = document.getElementById('friends_icon');
@@ -245,7 +209,7 @@ function setupEventListeners(allStats, userStats)
 	{
 		chartIcon.addEventListener('click', function() {
 			$('#chartModal').modal('show');
-			chartDoughnutData(userStats);
+			chartDoughnutData(gameHistory);
 		});
 	}
 	else
@@ -254,7 +218,7 @@ function setupEventListeners(allStats, userStats)
 	if (friendsIcon)
 	{
 		friendsIcon.addEventListener('click', function() {
-			avatars(allStats, userStats);
+			avatars(gameHistory, allAvatars); //TODO: add usersList
 			$('#avatarModal').modal('show'); //pour afficher la fenetre
 		});
 	}
@@ -265,7 +229,7 @@ function setupEventListeners(allStats, userStats)
 	{
 		tropheeIcon.addEventListener('click', function() {
 			// $('#badgeModal').modal('show');
-			badge(allStats, userStats);
+			badge(gameHistory, allAvatars); //TODO : get all stats ou faire que en fonction des gens avec qui il a déjà joué?
 		});
 	}
 	else
@@ -276,8 +240,12 @@ function setupEventListeners(allStats, userStats)
 \***********************************************/
 let doughnutChart; // Declare a variable to store the Chart instance
 
-function chartDoughnutData(userStats)
+function chartDoughnutData(gameHistory)
 {
+	// Count the number of victories and defeats in gameHistory
+	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
+	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
+
 	const chartCanvas = document.getElementById('chartCanvas'); // Get the correct canvas element
 
 	if (!chartCanvas) {
@@ -301,7 +269,7 @@ function chartDoughnutData(userStats)
 			labels: ['Wins', 'Losses'],
 			datasets: [{
 				label: 'Games',
-				data: [userStats.nb_of_victories, userStats.nb_of_defeats],
+				data: [nb_of_victories, nb_of_defeats],
 				backgroundColor: ['#36a2eb', '#ff6384'],
 				hoverBackgroundColor: ['#36a2eb', '#ff6384']
 			}]
@@ -324,18 +292,21 @@ function chartDoughnutData(userStats)
 -				FRIENDS ICON					-
 \***********************************************/
 
-function avatars(allStats, userStats) //TODO: ask jess where are the avatars so I can fetch them
+function avatars(gameHistory, allAvatars) //TODO: check avatars work once jess will have pushed
 {
 	const opponentsList = []; // Ensure only one avatar per user
 	const avatarContainer = document.querySelector('.avatar-container');
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
-	userStats.games_history.forEach(game => { //HERE: forEach not appliable
+	gameHistory.forEach(game => { //HERE: forEach not appliable
 		if (!opponentsList.includes(game.opponentUsername)) //if NOT already in list
 			opponentsList.push(game.opponentUsername);
 	})
 
-	allStats.forEach(user => {
+	//TODO: check si dans le modèle il y a bien deux variables: 
+	//avatar et username. Si ça a un autre nom type avatar_url ou quoi 
+	//il faut le changer ci-dessous
+	allAvatars.forEach(user => {
 		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
 		{
 			const avatarBox = document.createElement('div');
@@ -345,8 +316,8 @@ function avatars(allStats, userStats) //TODO: ask jess where are the avatars so 
 			avatarBox.dataset.username = user.username;
 
 			const avatarImg = document.createElement('img');
-			avatarImg.src = user.avatar_url;
-			avatarImg.alt = `Avatar of ${user.username}`; //TODO: faire en sorte que le username apparaisse juste en passant la souris sur l'avatar?
+			avatarImg.src = user.avatar;
+			avatarImg.alt = `${user.username}`; //TODO: faire en sorte que le username apparaisse juste en passant la souris sur l'avatar?
 			avatarImg.className = 'avatar-icon';
 
 			avatarBox.appendChild(avatarImg);
@@ -354,14 +325,14 @@ function avatars(allStats, userStats) //TODO: ask jess where are the avatars so 
 
 			//TODO: METTRE CET EVENT LISTNENER AVEC LE RESTE EN HAUT?
 			avatarBox.addEventListener('click', () => {
-				displayGameHistory(userStats.username, user.username, userStats); //affiche le tableau d'historique de jeu pour l'avatar clique
+				displayGameHistory(gameHistory.username, user.username, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar clique
 				$('#tableModal').modal('show'); //TEST
 			})
 		}
 	});
 }
 
-function displayGameHistory(connectedUser, chosenOpponent, userStats)
+function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
 {
 	//creation du tableau et ajout des headers avec les params + date
 
@@ -380,15 +351,15 @@ function displayGameHistory(connectedUser, chosenOpponent, userStats)
 	username2Header.textContent = chosenOpponent; // Opponent user's username
 	tableHeaderRow.appendChild(username2Header);
 
-	addGameHistory(connectedUser, chosenOpponent, userStats);
+	addGameHistory(connectedUser, chosenOpponent, gameHistory);
 }
 
-function addGameHistory(connectedUser, chosenOpponent, userStats)
+function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 {
 	const tableBody = document.getElementById('tableBody');
 	tableBody.innerHTML = ''; // Clear existing rows
 
-	userStats.games_history.forEach(game => {
+	gameHistory.games_history.forEach(game => {
 		if (game.opponentUsername === chosenOpponent) 
 		{
 			// Add date row
@@ -423,8 +394,35 @@ function addGameHistory(connectedUser, chosenOpponent, userStats)
 -				TROPHEE ICON					-
 \***********************************************/
 
-function badge(allStats, userStats)
+function retrieveAllUserStats(allUsers) //IMPORTANT : tester qd jess aura push ses avatars
 {
+	const allStats = [];
+
+	allUsers.forEach(user => {
+		const stats = {
+			username: user.username,
+			nb_of_victories: 0,
+			nb_of_defeats: 0,
+			ranking_position: 0
+		};
+
+		user.games_history.forEach(game => {
+			if (game.myScore > game.opponentScore)
+				stats.nb_of_victories++;
+			else
+				stats.nb_of_defeats++;
+		});
+
+		allStats.push(stats);
+	});
+
+	return allStats;
+}
+
+function badge(gameHistory, allUsers)
+{
+	const allStats = retrieveAllUserStats(allUsers);
+
 	let badge_img = '';
 	let message = '';
 	let ranking_position = 0;
@@ -432,7 +430,6 @@ function badge(allStats, userStats)
 	// Determine ranking position
 	allStats.sort((a, b) => 
 	{
-		//HERE: ----> on a plus nb of victories et defeats!!
 		// First, compare by nb_of_victories (descending order)
 		if (b.nb_of_victories !== a.nb_of_victories)
 			return b.nb_of_victories - a.nb_of_victories;
@@ -449,7 +446,7 @@ function badge(allStats, userStats)
 	// Get the ranking position of the connected user
 	allStats.forEach(user =>
 	{
-		if (user.username === userStats.username)
+		if (user.username === gameHistory.username)
 			ranking_position = user.ranking_position;
 	});
 

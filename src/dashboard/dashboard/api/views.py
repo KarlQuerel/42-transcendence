@@ -26,6 +26,7 @@ def addStats(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
+		myUsername = user.username
 		opponentUsername = request.data.get('opponentUsername')
 		opponentScore = request.data.get('opponentScore')
 		myScore = request.data.get('myScore')
@@ -36,28 +37,13 @@ def addStats(request):
 
 		# Add game history instance
 		GameHistory.objects.create(
-			user=user,
+			myUsername=myUsername,
 			opponentUsername=opponentUsername,
 			opponentScore=opponentScore,
-			myScore=myScore
+			myScore=myScore,
 			date=date
 		)
 
 		return Response({"message": "Game history instance added successfully"})
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
-	
-# # Returns the connected user's username
-# @api_view(['GET'])
-# @login_required
-# def getData(request):
-# 	try:
-# 		user = request.user
-# 		if not user.is_authenticated:
-# 			return Response({'error': 'User not authenticated'}, status=401)
-# 		items = Stats.objects.all()
-# 		serializer = statsSerializer(items, many=True)
-# 		return Response(serializer.data)
-# 	except Exception as e:
-# 		return Response({'error': str(e)}, status=500)

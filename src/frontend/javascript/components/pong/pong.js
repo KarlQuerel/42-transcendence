@@ -29,9 +29,6 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
-
 import { startCountdown, checkCountdown }
 from './preGame.js';
 
@@ -320,8 +317,8 @@ export async function gameLoop()
 		drawWinMessage(player1.name);
 		await fillingResults(1); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
-			console.log('Results object:', Results); //TEST
-		sendResultsToBackend();
+			console.log('Results object:', Results);
+		await sendResultsToBackend();
 		GameState.game_done = true;
 	}
 	else if (player2.score === GameConf.maxScore)
@@ -329,8 +326,8 @@ export async function gameLoop()
 		drawWinMessage(player2.name);
 		await fillingResults(2); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
-			console.log('Results object:', Results); //TEST
-		sendResultsToBackend();
+			console.log('Results object:', Results);
+		await sendResultsToBackend();
 		GameState.game_done = true;
 	}
 

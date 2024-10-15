@@ -25,9 +25,6 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
-
 import { fillingResults }
 from './postGame.js';
 
@@ -67,4 +64,24 @@ export function isNameValid(playerName)
 
 
 	return true;
+}
+
+export async function loadUsername() //CARO
+{
+	try {
+		const username = await apiRequest('/api/users/getUsername/', {
+			method: 'GET',
+			// headers: {
+			// 	...getAuthHeaders(),
+			// },
+		});
+		if (DEBUG)
+			console.log("username = ", username);
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched connected user's username");
+		return username;
+	} catch (error) {
+		console.error('Error: fetching username', error);
+		throw error; // Re-throw the error
+	}
 }

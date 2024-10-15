@@ -3,7 +3,7 @@ GREEN = \033[0;32m
 RED = \033[0;31m
 NC = \033[0m
 
-#######		RULES		#######
+#######		GENERAL RULES		#######
 all :
 	cd src && docker-compose up -d --build
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
@@ -17,6 +17,8 @@ fclean : clean
 	@echo "$(GREEN)\n🛁✨ All containers test, networks, volumes and images have been removed ✨🛁\n$(NC)"
 
 re : fclean all
+
+#######		DOCKER CONTAINERS		#######
 
 logs:
 	cd src && docker-compose logs -f
@@ -33,40 +35,36 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
-# DJANGO
 
-fill_dashboard: #populate database
+#######		DJANGO		#######
+
+# Apply changes to database
+
+makemigrations_dashboard:
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
+
+# Populate database with pre-defined users and games
+
+fill_db:
+	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
-fill_user:
-	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+# Check database
 
-erase_user:
-# docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"
-# docker exec -it User bash -c "python manage.py flush --no-input"
-
-erase_dashboard:
-# docker exec -it Dashboard bash -c "python manage.py clear_db"
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
-	docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
+check_allUsers:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
 check_allGameHistory:
-# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
 
 check_userGamehistory:
 	@read -p "Enter username: " username; \
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT base_gamehistory.* FROM base_gamehistory JOIN api_user_customuser ON base_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
-	
-check_allUsers:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
-fill_db: fill_user fill_dashboard
+# Clear database
 
-erase_db: erase_dashboard erase_user
-
-makemigrations_dashboard:
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
+clear_db:
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_db"
 
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container fill_dashboard fill_user erase_fill_user erase_fill_dashboard check_allGameHistory check_currentGameHistory check_allUsers fill_db erase_db makemigrations_dashboard
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard

@@ -29,8 +29,8 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+import { loadUsername }
+from './utils.js';
 
 import { startCountdown, checkCountdown }
 from './preGame.js';
@@ -52,7 +52,7 @@ export function prepareSinglePlayer(menuOverlay)
 
 export function getFirstPlayerName()
 {
-	loadUserManagementData()
+	loadUsername()
 	.then(username =>
 	{
 		player1.name = username.username;

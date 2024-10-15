@@ -11,8 +11,8 @@ from './gameVariables.js';
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+import { loadUsername }
+from './utils.js';
 
 /***********************************************\
 -					POST-GAME					-
@@ -20,7 +20,7 @@ from '../../views/dashboard/dashboard.js';
 /***			Filling Results				***/
 export async function fillingResults(winner)
 {
-	const	username = await loadUserManagementData();
+	const	username = await loadUsername();
 
 	Results.username = username.username;
 	Results.identified = "yes"; // HERE - voir avec caro la logique avec un opponent
@@ -60,8 +60,8 @@ function getDate()
 	const month = String(current_date.getMonth() + 1).padStart(2, '0');
 	const year = current_date.getFullYear();
 	
-	const formattedDate = `${day}/${month}/${year}`;
-	// const formattedDate = `${year}-${month}-${day}`; //CARO: sinon ça ne colle pas avec les dates reconnues dans django
+	// const formattedDate = `${day}/${month}/${year}`;
+	const formattedDate = `${year}-${month}-${day}`; //CARO: sinon ça ne colle pas avec les dates reconnues dans django
 
 	console.log('Formatted Date:', formattedDate);
 
