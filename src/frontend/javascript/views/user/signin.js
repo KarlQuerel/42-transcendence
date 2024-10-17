@@ -247,8 +247,6 @@ export async function apiRequest(url, options = {})
 
 
 
-
-
 // OLD CODE
 // async function refreshToken()
 // {

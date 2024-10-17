@@ -20,7 +20,7 @@ from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import JsonResponse
 import json
-import time
+import os
 import base64
 import logging
 from django.conf import settings
@@ -322,9 +322,10 @@ def updateProfile(request):
 
 
 
-@login_required
-@csrf_protect
 @api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
 def updateAvatar(request):
 	try:
 		user = request.user
@@ -333,14 +334,31 @@ def updateAvatar(request):
 
 		print(f'Updating user avatar (updateAvatar)...') # DEBUG
 
-		avatar_data = request.body
+		data = request.data.get('avatar_input')
+		if not data:
+			return Response({'error': 'No avatar data provided'}, status=400)
+		
+		try:
+			avatar_data = base64.b64decode(data)
+		except Exception as e:
+			return Response({'error de decode64': f'Invalid image data: {str(e)}'}, status=405)
+
 		username = user.username
+		avatar_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
+		avatar_path = os.path.join(avatar_dir, f'{username}.jpg')
 
-		with open(f'avatars/{username}.jpg', 'wb') as f:
-			f.write(avatar_data)
+		print(f'Username: {username}') # DEBUG
+		print(f'Avatar path: {avatar_path}') # DEBUG
 
-		user.avatar = f'avatars/{username}.jpg'
-		print(f'Avatar path: {user.avatar.path}') # DEBUG
+		try:
+			with open(avatar_path, 'wb') as f:
+				f.write(avatar_data)
+		except Exception as e:
+			print(f'Error de open: {str(e)}')
+			return Response({'error de open': str(e)}, status=500)
+
+		user.avatar = avatar_path
+		print(f'Avatar path: {user.avatar}') # DEBUG
 
 		user.save()
 		print(f'Avatar updated (updateAvatar())...') # DEBUG
@@ -350,6 +368,34 @@ def updateAvatar(request):
 	except Exception as e:
 		print(f'Error: {str(e)}') # DEBUG
 		return Response({'error': str(e)}, status=500)
+
+
+
+
+# def updateAvatar(request):
+#     if request.method == 'PUT':
+#         try:
+#             token_user = request.headers.get('Authorization').split(' ')[1]
+#             try:
+#                 payload = jwt.decode(token_user, 'secret', algorithms=['HS256'])
+#             except jwt.ExpiredSignatureError:
+#                 return JsonResponse({'error': 'Token expired'}, status=307)
+#             username = payload['username']
+#             user = User_site.objects.get(username=username)
+#             data = request.body
+#             # avatar = base64.b64encode(data).decode('utf-8')
+#             #save file in media directory
+#             with open(f'media/{username}.jpg', 'wb') as f:
+#                 f.write(data)
+#             user.avatar = f'media/{username}.jpg'
+#             user.save()
+#             return JsonResponse({'message': 'Avatar updated successfully'}, status=200)
+#         except User_site.DoesNotExist:
+#             return JsonResponse({'error': 'User not found'}, status=404)
+#         except json.JSONDecodeError:
+#             return JsonResponse({'error': 'Invalid JSON'}, status=400)
+#     else:
+#         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 #######################################################

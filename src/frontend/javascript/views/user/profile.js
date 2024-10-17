@@ -1,3 +1,16 @@
+/* TO DO KARL
+
+    - Modifier le bouton Signin/Signup dans la navbar pour qu'il affiche "Profile" à la place (et ca redirige vers profile of course)
+
+    - Il y a plusieurs boutons sur cette page. Il y a juste une particularité qui est que le bouton "Update profile".
+        const updateProfileButton = document.createElement('button');
+        updateProfileButton.setAttribute('id', 'update-profile-button');
+        updateProfileButton.textContent = 'Update profile';
+    Ce bouton ne doit pas apparaitre si l'utilisateur est en mode édition de son profil.
+    En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
+*/
+
+
 /***********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
@@ -254,6 +267,7 @@ async function profileEditMode(userData_edit, personalInfoSection)
         saveButton.setAttribute('id', 'save-profile-button');
         saveButton.textContent = 'Save changes';
         personalInfoSection.appendChild(saveButton);
+        avatarLabel.appendChild(saveButton);
     
         saveButton.addEventListener('click', async (event) =>
         {
@@ -279,12 +293,12 @@ async function profileEditMode(userData_edit, personalInfoSection)
     
             if (isValidData)
             {
-                if (avatarFile && verifyAvatarFile(avatarFile))
+                if (avatarFile && (verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput) == true))
                     await saveNewAvatar(avatarFile);
     
                 await saveProfileChanges(userData_edit);
     
-                window.location.reload();
+                // window.location.reload();
             }
         });
 }
@@ -348,44 +362,66 @@ async function verifyProfileChanges()
     }
 }
 
-async function verifyAvatarFile(avatarFile)
+async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput)
 {
+    if (DEBUG)
+        console.log('Verifying avatar file...');
+
     let result = true;
 
-    const avatarSubmitButton = document.getElementById('avatar_submit_button');
-    const avatarLabel = document.getElementById('avatar_label');
+    if (!saveButton || !avatarLabel)
+    {
+        console.error('Save button or avatar label not found.');
+        return false;
+    }
+
+    if (!avatarLabel.contains(saveButton))
+    {
+        console.error('Save button is not a child of avatar label.');
+        return false;
+    }
+
+    if (!avatarInput)
+    {
+        console.error('Avatar input not found.');
+        return false;
+    }
+
+    const avatarForm = avatarInput.parentElement;
 
     // Remove existing error messages
-    const formGroup = document.getElementById('avatar_form');
-        const existingError = formGroup.querySelector('.error-messages-avatar');
-        if (existingError)
-            existingError.remove();
+    const existingError = avatarForm.querySelector('.error-messages-avatar');
+    if (existingError)
+        existingError.remove();
 
     // Check if the file is not empty
-    if (!avatarFile || !avatarFile.size || avatarFile.name === '') {
+    if (!avatarFile || !avatarFile.size || avatarFile.name === '')
+    {
         const errorMessage = document.createElement('p');
         errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'Select a file';
-        avatarLabel.insertBefore(errorMessage, avatarSubmitButton);
+        avatarLabel.insertBefore(errorMessage, saveButton);
         result = false;
     }
 
     // Check if the file type is jpeg, jpg, or png
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    if (!validTypes.includes(avatarFile.type)) {
+    if (!validTypes.includes(avatarFile.type))
+    {
         const errorMessage = document.createElement('p');
         errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'File type not supported (only jpeg, jpg, png)';
-        avatarForm.insertBefore(errorMessage, avatarSubmitButton);
+        avatarLabel.insertBefore(errorMessage, saveButton);
         result = false;
     }
 
     // Check if the file size is no more than 1 MB
-    if (avatarFile.size > 1000000) { // 1 MB max
+    if (avatarFile.size > 1000000)
+    {
         const errorMessage = document.createElement('p');
         errorMessage.className = 'error-messages-avatar';
         errorMessage.textContent = 'File too large (max 1 MB)';
-        avatarForm.insertBefore(errorMessage, avatarSubmitButton);
+        avatarLabel.insertBefore(errorMessage, saveButton);
         result = false;
     }
 
@@ -405,7 +441,8 @@ async function saveProfileChanges(userData_edit)
     try
     {
 
-        const response = await apiRequest('/api/users/updateProfile/', {
+        const response = await apiRequest('/api/users/updateProfile/',
+        {
             method: 'PUT',
             headers: {  
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -434,20 +471,37 @@ async function saveProfileChanges(userData_edit)
 
 async function saveNewAvatar(avatarFile)
 {
+    if (DEBUG)
+        console.log('Saving new avatar...');
+
     if (avatarFile)
     {
         try
         {
-            const response = await apiRequest('/api/users/updateAvatar/', {
-                method: 'PUT',
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: avatarFile,
-            });
+            const reader = new FileReader();
+            reader.onloadend = async () => {
+                const base64data = reader.result.split(',')[1]; // Get base64 data without the prefix
+                const response = await apiRequest('/api/users/updateAvatar/',
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ avatar_input: base64data }),
+                });
+
+            if (DEBUG)
+            {
+                console.log('Response:', response); // Log the entire response object
+                console.log('Response status:', response.status);
+                console.log('Response status text:', response.statusText);
+            }
     
             console.log('Avatar updated successfully.');
-
+            };
+            reader.readAsDataURL(avatarFile); // Read the file as a data URL
         }
         catch (error)
         {
