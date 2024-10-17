@@ -105,11 +105,14 @@ export function displayPlayer2Form()
 
 		if (userEXists === true)
 		{
-			prompt('User already exists, please enter a password.');
+			askPassword(player2Name);
 		}
-		player2.name = player2Name;
-		player2Form.remove();
-		checkCountdown();
+		else
+		{
+			player2.name = player2Name;
+			player2Form.remove();
+			checkCountdown();
+		}
 	});
 
 	playerInput.addEventListener('keydown', (event) =>
@@ -140,4 +143,62 @@ async function doesUserExist(playerName)
 		console.error('API request error:', error);
 		return false;
 	}
+}
+
+//HERE TO DO KARL
+// Function to show password modal
+function askPassword(playerName)
+{
+	// Create modal elements
+	const modal = document.createElement('div');
+	modal.className = 'modal';
+	modal.style.display = 'block'; // Show modal
+
+	const modalContent = document.createElement('div');
+	modalContent.className = 'modal-content';
+		
+	const modalTitle = document.createElement('h4');
+	modalTitle.textContent = `Enter Password for ${playerName}`;
+
+	const passwordInput = document.createElement('input');
+	passwordInput.type = 'password'; // Masked input
+	passwordInput.placeholder = 'Enter your password';
+	passwordInput.className = 'form-control';
+
+	const modalButton = document.createElement('button');
+	modalButton.className = 'btn btn-primary';
+	modalButton.textContent = 'Submit';
+	modalButton.addEventListener('click', () => {
+		const password = passwordInput.value.trim();
+		// Handle password validation here, e.g.:
+		validatePassword(playerName, password);
+		modal.remove(); // Close modal after submitting
+	});
+
+	modalContent.appendChild(modalTitle);
+	modalContent.appendChild(passwordInput);
+	modalContent.appendChild(modalButton);
+	modal.appendChild(modalContent);
+	document.body.appendChild(modal);
+}
+
+// Example password validation function
+async function validatePassword(username, password)
+{
+	const isValid = await checkPassword(username, password);
+	if (isValid)
+	{
+		console.log('Password is valid. Proceed to game.');
+		// Proceed with the game logic here
+	}
+	else
+	{
+		alert('Invalid password. Please try again.');
+	}
+}
+
+// Example function to check password (you need to implement this)
+async function checkPassword(username, password) {
+	// Replace this with your logic to check password against the database
+	return true; // or false based on validation
 }

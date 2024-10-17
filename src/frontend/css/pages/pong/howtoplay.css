@@ -8,7 +8,7 @@
 	height: auto;
 	padding: 0.5vh;
 	top: auto;
-	left: 2%;
+	left: 8%;
 	top: 10%;
 	border-radius: 15px;
 	border: 2px solid var(--base-green);
@@ -19,7 +19,7 @@
 	position: absolute;
 	padding: 10px;
 	top: 22%;
-	left: 0%;
+	left: 2%;
 	width: 50vh;
 	z-index: 10000;
 	background-color: rgba(105, 105, 105, 0.437);

@@ -65,3 +65,13 @@ export function isNameValid(playerName)
 
 	return true;
 }
+
+export function checkElement(element, elementName)
+{
+	if (!element)
+	{
+		console.error(`${elementName} element not found!`);
+		return false;
+	}
+	return true;
+}

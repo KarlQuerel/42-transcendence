@@ -99,7 +99,7 @@ export const player2 =
 	shadowBlur: 20,
 	dy: 0,
 	score: 0,
-	name: "Jean Pierre"
+	name: ""
 };
 
 /***			Ball Config			***/

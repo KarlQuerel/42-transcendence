@@ -17,7 +17,8 @@ from './tournament.js'
 
 import { createContainer, createVideo, createOverlay, createMenuButton,
 createTournamentButton, createHowToPlayButton, createHowToPlayCard, createCardGif,
-createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer }
+createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer, 
+createBackToMenuButton}
 from './createElements.js'
 
 import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu,
@@ -41,6 +42,7 @@ from './postGame.js';
 
 import { prepareSinglePlayer }
 from './onePlayer.js';
+import { checkElement } from './utils.js';
 
 /***********************************************\
 -				RENDERING						-
@@ -55,6 +57,7 @@ export function renderPong()
 	container.appendChild(overlay);
 	container.appendChild(createWinningMessage());
 	container.appendChild(createRematchButton());
+	container.appendChild(createBackToMenuButton());
 	container.appendChild(createCanvas());
 	container.appendChild(createPausedGifContainer());
 
@@ -68,6 +71,8 @@ export function initializePong()
 {
 	if (DEBUG)
 		console.log('Initializing Pong...');
+
+	resetNames();
 
 	requestAnimationFrame(() =>
 	{
@@ -83,62 +88,63 @@ function setupCanvas()
 	document.body.classList.add('no-scroll');
 	GraphConf.canvas = document.getElementById("pongCanvas");
 
-	if (GraphConf.canvas)
-	{
-		GraphConf.ctx = GraphConf.canvas.getContext("2d");
-		if (!GraphConf.ctx)
-		{
-			console.error("Context could not be retrieved!");
-		}
-	}
-	else
-	{
-		console.error("Canvas element not found!");
-	}
+	if (checkElement(GraphConf.canvas, 'Canvas') === false)
+		return;
+
+	GraphConf.ctx = GraphConf.canvas.getContext("2d");
+
+	if (checkElement(GraphConf.ctx, 'Canvas context') === false)
+		return;
 }
 
 function setupMenuButtons()
 {
-	const	singleplayerButton = document.getElementById('singleplayer-button');
-	const	twoplayerButton = document.getElementById('twoplayer-button');
-	const	tournamentButton = document.getElementById('tournament-button');
-	const	rematchButton = document.getElementById('rematch-button');
-	const	menuOverlay = document.getElementById('menu-overlay');
-
-	if (!singleplayerButton || !twoplayerButton || !tournamentButton)
+	const buttons =
 	{
-		console.error('Menu buttons not found!');
+		singleplayerButton: document.getElementById('singleplayer-button'),
+		twoplayerButton: document.getElementById('twoplayer-button'),
+		tournamentButton: document.getElementById('tournament-button'),
+		rematchButton: document.getElementById('rematch-button'),
+		backtomenuButton: document.getElementById('back-to-menu-button'),
+		menuOverlay: document.getElementById('menu-overlay'),
+	};
+
+	const	missingButtons = Object.entries(buttons)
+		.filter(([_, button]) => !button)
+		.map(([name]) => name);
+
+	if (missingButtons.length > 0)
+	{
+		console.error('Missing menu buttons:', missingButtons.join(', '));
 		return;
 	}
 
-	singleplayerButton.addEventListener('click', () => prepareSinglePlayer(menuOverlay));
-	twoplayerButton.addEventListener('click', () => prepareTwoPlayers(menuOverlay));
-	tournamentButton.addEventListener('click', () => prepareTournament(menuOverlay));
+	buttons.rematchButton.classList.add('hidden-sudden');
+	buttons.backtomenuButton.classList.add('hidden-sudden');
 
-	if (!rematchButton)
+	buttons.singleplayerButton.addEventListener('click', () => prepareSinglePlayer(buttons.menuOverlay));
+	buttons.twoplayerButton.addEventListener('click', () => prepareTwoPlayers(buttons.menuOverlay));
+	buttons.tournamentButton.addEventListener('click', () => prepareTournament(buttons.menuOverlay));
+
+	buttons.rematchButton.addEventListener('click', () =>
 	{
-		console.error('Rematch button not found!');
-	}
-	else
-	{
-		rematchButton.classList.add('hidden-sudden');
-		rematchButton.addEventListener('click', () =>
+		if (GameState.isTournament === true)
 		{
-			if (GameState.isTournament === true)
+			if (GameState.isFinalMatch === false)
 			{
-				if (GameState.isFinalMatch === false)
-					tournamentNextMatch();
-				else
-					setupFinalMatch();
+				tournamentNextMatch();
 			}
 			else
 			{
-				resetGame();
+				setupFinalMatch();
 			}
-		});
-	}
+		}
+		else
+		{
+			resetGame();
+		}
+	});
 }
-
 
 function setupEventListeners()
 {
@@ -208,6 +214,8 @@ function randomizeBall()
 {
 	const	MIN_ANGLE = Math.PI / 6;
 	const	MAX_ANGLE = Math.PI / 3;
+
+	BallConf.speed = 5;
 	
 	let	direction;
 	if (Math.random() < 0.5)
@@ -321,13 +329,13 @@ export async function gameLoop()
 		return;
 	}
 
+	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
+
 	if (GameState.game_done == true)
 	{
 		return ;
 	}
 	
-	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
-
 //---------------------------------- AI ----------------------------------
 	if (GameState.AI_present == true)
 	{
@@ -379,7 +387,6 @@ export async function gameLoop()
 	}
 }
 
-//HERE
 function checkTournamentWinner(winnerName)
 {
 	if (GameState.isTournament === true)
@@ -393,8 +400,6 @@ function checkTournamentWinner(winnerName)
 			
 			hideWinningMessage();
 			showTournamentResults();
-
-			// HERE show tournaments results
 			return ;
 		}
 		GameConf.matchupIndex++;
@@ -427,32 +432,11 @@ function showTournamentResults()
 	winnerElement.textContent = `🏆 ${GameConf.tournamentWinner.toUpperCase()} IS THE TOURNAMENT WINNER! 🏆`;
 	resultsContainer.appendChild(winnerElement);
 
-	// Create and display the match results
-	const	resultsList = document.createElement('ul');
-	resultsList.className = 'results-list';
-
-	GameConf.winners.forEach((winner, index) => {
-		const	resultItem = document.createElement('li');
-		resultItem.textContent = `Match ${index + 1}: ${winner.toUpperCase()} won`;
-		resultsList.appendChild(resultItem);
-	});
-
-	resultsContainer.appendChild(resultsList);
-
 	// Append the results container to the DOM
 	document.body.appendChild(resultsContainer);
 
-	// Optionally, add a button to reset the tournament or go back to the main menu
-	const	resetButton = document.createElement('button');
-	resetButton.className = 'reset-tournament-btn';
-	resetButton.textContent = 'Restart Tournament';
-	resetButton.onclick = () =>
-	{
-		// Logic to restart the tournament or reset the game
-		document.body.removeChild(resultsContainer);
-		resetTournament();
-	};
-	resultsContainer.appendChild(resetButton);
+	const	backButton = createBackToMenuButton();
+	resultsContainer.appendChild(backButton);
 }
 
 function resetTournament()
@@ -469,6 +453,10 @@ function resetTournament()
 	resetGame();
 }
 
+function resetNames()
+{
+	player2.name = "";
+}
 
 /***			Resetting Game				***/
 export function resetGame()

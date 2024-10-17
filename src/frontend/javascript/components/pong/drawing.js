@@ -8,11 +8,17 @@ import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2,
 Results }
 from './gameVariables.js';
 
+import { checkElement }
+from './utils.js';
+
 /***********************************************\
 -					DRAWING						-
 \***********************************************/
 export function drawPaddle(paddle)
 {
+	if (GameState.done === true)
+		return;
+	
 	GraphConf.ctx.fillStyle = paddle.color;
 	GraphConf.ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)';
 	GraphConf.ctx.shadowBlur = paddle.shadowBlur || 100;
@@ -104,12 +110,16 @@ export function drawWinMessage(winnerName)
 {
 	const	messageElement = document.getElementById('winning-message');
 	const	rematchButton = document.getElementById('rematch-button');
+	const	backtomenuButton = document.getElementById('back-to-menu-button');
 
-	if (!messageElement)
-	{
-		console.error('Winning message element not found!');
-		return ;
-	}
+	if (checkElement(messageElement, 'Winning message') === false)
+		return;
+
+	if (checkElement(rematchButton, 'Rematch button') === false)
+		return;
+
+	if (checkElement(backtomenuButton, 'Back to menu button') === false)
+		return;
 
 	const	upperWinner = winnerName.toUpperCase();
 
@@ -126,26 +136,18 @@ export function drawWinMessage(winnerName)
 	// Append GIF below the message
 	messageElement.appendChild(gifElement);
 
-	if (!rematchButton)
-	{
-		console.error('Rematch button element not found!');
-		return;
-	}
-
 	updateRematchButtonText();
 
 	rematchButton.classList.remove('hidden-sudden');
-	rematchButton.classList.add('show');
+	backtomenuButton.classList.remove('hidden-sudden');
 }
 
 export function updateRematchButtonText()
 {
 	const rematchButton = document.getElementById('rematch-button');
-	if (!rematchButton)
-	{
-		console.error('Rematch button element not found!');
+
+	if (checkElement(rematchButton, 'Rematch button') === false)
 		return;
-	}
 
 	if (GameState.isTournament === true)
 	{
