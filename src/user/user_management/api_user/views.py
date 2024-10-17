@@ -337,7 +337,7 @@ def updateAvatar(request):
 		data = request.data.get('avatar_input')
 		if not data:
 			return Response({'error': 'No avatar data provided'}, status=400)
-		
+
 		try:
 			avatar_data = base64.b64decode(data)
 		except Exception as e:
@@ -345,7 +345,7 @@ def updateAvatar(request):
 
 		username = user.username
 		avatar_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
-		avatar_path = os.path.join(avatar_dir, f'{username}.jpg')
+		avatar_path = os.path.join(avatar_dir, f'{username}.png')
 
 		print(f'Username: {username}') # DEBUG
 		print(f'Avatar path: {avatar_path}') # DEBUG
