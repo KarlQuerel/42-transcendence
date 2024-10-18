@@ -6,8 +6,8 @@ NC = \033[0m
 #######		RULES		#######
 all :
 	@cd src && docker-compose up -d --build
-	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 	@make fill_db
+	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
 	@cd src && docker-compose down
