@@ -4,4 +4,4 @@ env/
 src/.env
 .DS_Store
 src/prometheus/data
-node_modules
+node_modules./src /prometheus/data/

@@ -40,7 +40,7 @@ fill_dashboard: #populate database
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
 fill_user:
-	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+	docker exec -it User bash -c "python manage.py makemigrations --merge && python manage.py migrate && python manage.py populate_user_db"
 
 erase_user:
 # docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"

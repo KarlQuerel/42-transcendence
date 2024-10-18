@@ -14,9 +14,7 @@ class CustomUser(AbstractUser):
     friends = models.ManyToManyField("CustomUser", blank=True)
     is2fa = models.BooleanField(default=False)
     totp_secret = models.CharField(blank=True, null=True)
-    # Override AbstractUser existing fields
-    groups = None
-    user_permissions = None
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, default='avatars/default.png')
     # pour lier avec dashboard
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -24,27 +22,10 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.username
 
-    # groups = models.ManyToManyField(
-    #     'auth.Group',
-    #     related_name='customuser_set',
-    #     blank=True,
-    #     help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-    #     verbose_name='groups'
-    # )
-    # user_permissions = models.ManyToManyField(
-    #     'auth.Permission',
-    #     related_name='customuser_set',
-    #     blank=True,
-    #     help_text='Specific permissions for this user.',
-    #     verbose_name='user permissions'
-    # )
-
-
 
 # @receiver(pre_save, sender=CustomUser)
-# def set_default_avatar(sender, instance, **kwargs):
-# 	if not instance.avatar:
-# 		default_avatar_path = os.path.join(settings.API_DIR, 'static', 'avatars', 'default.png')
+# def setDefaultAvatar(sender, instance, **kwargs):
+# 	if not instance.avatar and not instance.pk:
+# 		default_avatar_path = os.path.join(settings.MEDIA_ROOT, 'avatars', 'default.png')
 # 		with open(default_avatar_path, 'rb') as f:
-# 			default_avatar = File(f)
-# 			var = instance.avatar.save('default.png', default_avatar, save=False)
+# 			instance.avatar.save('default.png', File(f), save=False)
