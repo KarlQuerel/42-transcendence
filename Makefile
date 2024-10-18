@@ -7,6 +7,7 @@ NC = \033[0m
 all :
 	cd src && docker-compose up -d --build
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
+	make fill_db
 
 clean :
 	cd src && docker-compose down
@@ -39,7 +40,7 @@ fill_dashboard: #populate database
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
 fill_user:
-	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+	docker exec -it User bash -c "python manage.py makemigrations --merge && python manage.py migrate && python manage.py populate_user_db"
 
 erase_user:
 # docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"

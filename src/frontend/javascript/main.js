@@ -32,6 +32,9 @@ import { initParticles, destroyParticles }
 from "./components/particles/particles.js"
 
 /***			User						***/
+import render2fa
+from "./views/user/2fa.js";
+
 import renderSignIn
 from "./views/user/signin.js";
 
@@ -40,6 +43,14 @@ from "./views/user/profile.js";
 
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
+
+import renderChangePassword, { initializeChangePassword }
+from "./views/user/change_password.js";
+
+
+/***			Footer						***/
+import renderPrivacyPolicy
+from "./views/privacy_policy/privacy_policy.js";
 
 /***********************************************\
 -				DEFINING ROUTES					-
@@ -89,7 +100,18 @@ const routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
-	}
+	},
+	'/2fa_verification':
+	{
+		title: "2FA Verification",
+		render: render2fa
+	},
+	'/change-password':
+	{
+		title: "Change Password",
+		render: renderChangePassword,
+		init: initializeChangePassword
+	},
 };
 
 /***********************************************\
