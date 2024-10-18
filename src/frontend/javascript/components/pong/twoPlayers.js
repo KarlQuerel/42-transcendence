@@ -57,7 +57,6 @@ export function prepareTwoPlayers(menuOverlay)
 	displayPlayer2Form();
 }
 
-// Function to display a form for Player 2's name
 export function displayPlayer2Form()
 {
 	getFirstPlayerName();
@@ -65,12 +64,10 @@ export function displayPlayer2Form()
 	player2Form.id = 'input-form';
 	player2Form.className = 'input-form';
 
-	// Create the title
 	const	formTitle = document.createElement('h3');
 	formTitle.textContent = 'Enter Player 2\'s Name';
 	player2Form.appendChild(formTitle);
 	
-	// Create input field
 	const	inputGroup = document.createElement('div');
 	inputGroup.className = 'input-group-lg mb-3';
 
@@ -92,7 +89,6 @@ export function displayPlayer2Form()
 	inputGroup.appendChild(playerInput);
 	player2Form.appendChild(inputGroup);
 
-	// Add a submit button
 	const	submitButton = document.createElement('button');
 	submitButton.className = 'btn menu-button start-tournament-btn';
 	submitButton.textContent = 'START MATCH';
@@ -107,7 +103,7 @@ export function displayPlayer2Form()
 
 		if (userEXists === true)
 		{
-			askPassword(player2Name);
+			askPassword(player2Name, player2Form);
 		}
 		else
 		{
@@ -133,7 +129,7 @@ async function doesUserExist(playerName)
 {
 	try
 	{
-		const data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
 		{
 			method: 'GET',
 		});
@@ -147,51 +143,76 @@ async function doesUserExist(playerName)
 	}
 }
 
-//HERE TO DO KARL
-// Function to show password modal
-function askPassword(playerName)
-{
-	// Create modal elements
+// TODO - KARL FINISH THIS
+function askPassword(playerName, player2Form) {
 	const modal = document.createElement('div');
-	modal.className = 'modal';
-	modal.style.display = 'block'; // Show modal
+	modal.className = 'modal-password';
 
 	const modalContent = document.createElement('div');
-	modalContent.className = 'modal-content';
-		
+	modalContent.className = 'modal-password-content';
+
 	const modalTitle = document.createElement('h4');
 	modalTitle.textContent = `Enter Password for ${playerName}`;
 
 	const passwordInput = document.createElement('input');
-	passwordInput.type = 'password'; // Masked input
+	passwordInput.type = 'password';
 	passwordInput.placeholder = 'Enter your password';
-	passwordInput.className = 'form-control';
+	passwordInput.className = 'input-group-text';
 
 	const modalButton = document.createElement('button');
-	modalButton.className = 'btn btn-primary';
+	modalButton.className = 'btn menu-button start-tournament-btn';
 	modalButton.textContent = 'Submit';
 	modalButton.addEventListener('click', () => {
 		const password = passwordInput.value.trim();
-		// Handle password validation here, e.g.:
-		validatePassword(playerName, password);
-		modal.remove(); // Close modal after submitting
+		validatePassword(playerName, password, modal, player2Form);
+	});
+
+	// Create the close button
+	const closeButton = document.createElement('button');
+	closeButton.className = 'btn btn-secondary close-modal-button';
+	closeButton.textContent = 'Close';
+	closeButton.addEventListener('click', () => {
+		modal.remove(); // Remove the modal
+		// Re-enable the player 2 form
+		const playerInput = player2Form.querySelector('input');
+		const submitButton = player2Form.querySelector('button');
+		playerInput.disabled = false; // Re-enable input
+		submitButton.disabled = false; // Re-enable submit button
 	});
 
 	modalContent.appendChild(modalTitle);
 	modalContent.appendChild(passwordInput);
 	modalContent.appendChild(modalButton);
+	modalContent.appendChild(closeButton); // Add the close button to modal
 	modal.appendChild(modalContent);
 	document.body.appendChild(modal);
+
+	// Disable the player 2 form
+	const playerInput = player2Form.querySelector('input');
+	const submitButton = player2Form.querySelector('button');
+	playerInput.disabled = true; // Disable input
+	submitButton.disabled = true; // Disable submit button
+
+	// Optional: Allow closing the modal by clicking outside (to improve UX)
+	modal.addEventListener('click', (event) => {
+		if (event.target === modal) {
+			modal.remove();
+			playerInput.disabled = false; // Re-enable if modal is closed
+			submitButton.disabled = false; // Re-enable if modal is closed
+		}
+	});
 }
 
+
 // Example password validation function
-async function validatePassword(username, password)
+async function validatePassword(username, password, modal, player2Form)
 {
-	const isValid = await checkPassword(username, password);
-	if (isValid)
+	const	isValid = await checkPassword(username, password);
+	if (isValid === true)
 	{
 		console.log('Password is valid. Proceed to game.');
-		// Proceed with the game logic here
+		modal.remove();
+		player2Form.remove();
 		player2.name = username;
 		checkCountdown();
 	}
@@ -201,26 +222,26 @@ async function validatePassword(username, password)
 	}
 }
 
-// Example function to check password (you need to implement this)
 async function checkPassword(username, password)
 {
-    try
-    {
-        const response = await fetch('/api/users/checkUserPassword/',
+	try
+	{
+		const	response = await fetch('/api/users/checkUserPassword/',
 		{
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password })
-        });
+			method: 'POST',
+			headers:
+			{
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ username, password })
+		});
 
-        const data = await response.json();  // Parse the JSON response
-        return data.valid;  // Return true if valid, false if invalid
-    }
-    catch (error)
-    {
-        console.error('Error checking password:', error);
-        return false;
-    }
+		const	data = await response.json();
+		return data.valid;
+	}
+	catch (error)
+	{
+		console.error('Error checking password:', error);
+		return false;
+	}
 }
