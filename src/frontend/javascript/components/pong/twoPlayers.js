@@ -42,7 +42,9 @@ from './preGame.js';
 
 import { isNameValid }
 from './utils.js';
-import { apiRequest } from '../../views/user/signin.js';
+
+import { apiRequest }
+from '../../views/user/signin.js';
 
 /***********************************************\
 -				TWO PLAYERS						-
@@ -190,6 +192,8 @@ async function validatePassword(username, password)
 	{
 		console.log('Password is valid. Proceed to game.');
 		// Proceed with the game logic here
+		player2.name = username;
+		checkCountdown();
 	}
 	else
 	{
@@ -198,7 +202,25 @@ async function validatePassword(username, password)
 }
 
 // Example function to check password (you need to implement this)
-async function checkPassword(username, password) {
-	// Replace this with your logic to check password against the database
-	return true; // or false based on validation
+async function checkPassword(username, password)
+{
+    try
+    {
+        const response = await fetch('/api/users/checkUserPassword/',
+		{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();  // Parse the JSON response
+        return data.valid;  // Return true if valid, false if invalid
+    }
+    catch (error)
+    {
+        console.error('Error checking password:', error);
+        return false;
+    }
 }
