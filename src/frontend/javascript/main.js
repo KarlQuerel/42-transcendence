@@ -2,6 +2,7 @@
 -				GLOBAL VARIABLES				-
 \***********************************************/
 export	const	DEBUG = true;
+export	const	GITHUBACTIONS = false;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
@@ -11,15 +12,18 @@ export	const	DEBUG = true;
 import renderError404
 from "./views/error_404/error_404.js";
 
-/***			    Nav Bar					 ***/
+/***			Nav Bar						***/
 import renderHome
 from "./views/home/home.js";
 
-import renderPong, { cleanUpPong, initializePong }
+/***			Pong						***/
+import { renderPong, initializePong }
 from "./components/pong/pong.js";
 
+import { cleanUpPong }
+from "./components/pong/postGame.js";
 
-/***			TO DETERMINE				***/
+/***			Dashboard					***/
 import { renderDashboard, initializeDashboard }
 from "./views/dashboard/dashboard.js";
 
@@ -28,6 +32,9 @@ import { initParticles, destroyParticles }
 from "./components/particles/particles.js"
 
 /***			User						***/
+import render2fa
+from "./views/user/2fa.js";
+
 import renderSignIn
 from "./views/user/signin.js";
 
@@ -40,8 +47,6 @@ from "./views/user/signup.js";
 import renderChangePassword, { initializeChangePassword }
 from "./views/user/change_password.js";
 
-// import renderUpdateProfile
-// from "./views/user/update_profile.js";
 
 /***			Footer						***/
 import renderPrivacyPolicy
@@ -61,11 +66,6 @@ const routes =
 	{
 		title: "Home",
 		render: renderHome
-	},
-	'/privacy-policy':
-	{
-		title: "Privacy Policy",
-		render: renderPrivacyPolicy
 	},
 	'/dashboard':
 	{
@@ -101,18 +101,17 @@ const routes =
 		title: "Sign In",
 		render: renderSignIn
 	},
+	'/2fa_verification':
+	{
+		title: "2FA Verification",
+		render: render2fa
+	},
 	'/change-password':
 	{
 		title: "Change Password",
 		render: renderChangePassword,
 		init: initializeChangePassword
 	},
-	// '/update-profile':
-	// {
-	// 	title: "Update Profile",
-	// 	render: renderUpdateProfile,
-	// 	init: initializeUpdateProfile
-	// }
 };
 
 /***********************************************\
@@ -131,9 +130,30 @@ function normalizePath(path)
 }
 
 
-// TO DO KARL HERE : replace this variable with the actual token mechanism
-// check (next todo karl)
-export let	isSignedIn = true; //CARO: pour pouvoir faire des tests
+
+/***			Authentication				***/
+//HERE - Check if authentication is working properly (see router function)
+let	accessToken = localStorage.getItem('access_token');
+let	isSignedIn;
+
+if (accessToken)
+{
+	isSignedIn = true;
+}
+else
+{
+	isSignedIn = false;
+}
+
+export function setSignedInState(state)
+{
+	isSignedIn = state;
+}
+
+export function getSignedInState()
+{
+	return isSignedIn;
+}
 
 /***			Router Function				***/
 function router()
@@ -157,10 +177,13 @@ function router()
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
 
-	// TODO KARL change this logic when user is implemented
+	if (DEBUG)
+		console.log('isSignedIn = ', isSignedIn);
+
+	// Check user authentication
 	if (path === '/pong' && isSignedIn == false)
 	{
-		alert("You must be logged in to access the Pong game.");
+		alert("❌ You must be logged in to access the Pong game ❌");
 		window.location.href = '/sign-in';
 		return ;
 	}

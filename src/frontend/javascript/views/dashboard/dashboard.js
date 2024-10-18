@@ -1,7 +1,7 @@
 /***********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG, GITHUBACTIONS } from '../../main.js';
 import { apiRequest } from '../user/signin.js';
 import { getAuthHeaders } from '../user/signin.js';
 
@@ -18,13 +18,13 @@ export function renderDashboard()
 
 <!-- Main clickable icons -->
 
-			<div id="chart_icon">
+			<div id="chart_icon" class="dashboard-icon">
 				<img src="../../../assets/images/dashboard/chart.gif">
 			</div>
-			<div id="friends_icon">
+			<div id="friends_icon" class="dashboard-icon">
 				<img src="../../../assets/images/dashboard/friends.gif">
 			</div>
-			<div id="trophee_icon">
+			<div id="trophee_icon" class="dashboard-icon">
 				<img src="../../../assets/images/dashboard/trophee.gif">
 			</div>
 
@@ -108,7 +108,7 @@ export function renderDashboard()
 
 			<div id="badgeModal" class="modal">
 				<div class="modal-body">
-					<img class="badge-icon" src="" alt="Badge">
+					<img id="badge" class="badge-icon" src="" alt="Badge">
 					<p class="badge-message"></p>
 				</div>
 			</div>
@@ -155,56 +155,79 @@ const ALL_STATS = 0;
 const USER_STATS = 1;
 
 async function loadDashboardData(userData, option) {
-    try {
-        const allStats = await apiRequest('/api/dashboard/getData/', {
-            method: 'GET',
-        });
+	try {
+		const allStats = await apiRequest('/api/dashboard/getData/', {
+			method: 'GET',
+		});
 
-        if (option == ALL_STATS)
+		if (option == ALL_STATS)
 		{
-			// if (DEBUG)
-				console.log("allStats = ", allStats);
-            return allStats;
-        }
+			if (allStats.length > 0)
+			{
+				if (DEBUG)
+					console.log("allStats = ", allStats);
+				if (GITHUBACTIONS)
+					console.log("Successfully fetched dashboard data");
+				return allStats;
+			}
+			else
+				throw new Error("Failed to fetch dashboard data");
+		}
 		else if (option == USER_STATS)
 		{
-            let i = 0;
-            while (i < allStats.length) {
-                if (userData.username === allStats[i].username)
+/* 			let i = 0;
+			while (i < allStats.length)
+			{
+				if (userData.username === allStats[i].username)
 				{
-					// if (DEBUG)
-                    	console.log("userStats = ", allStats[i]);
-                    return allStats[i]; // Return the matching user's stats
-                }
-                i++;
-            }
+					if (DEBUG)
+						console.log("userStats = ", allStats[i]);
+					if (GITHUBACTIONS)
+						console.log("Successfully fetched user stats");
+					return allStats[i]; // Return the matching user's stats
+				}
+				i++;
+			} */
+			const userStats = allStats.find(stats => stats.username === userData.username);
+			if (userStats)
+			{
+				if (DEBUG)
+					console.log("userStats = ", userStats);
+				if (GITHUBACTIONS)
+					console.log("Successfully fetched user stats");
+				return userStats; 
+			}
+			else
+				throw new Error("The connected user's username does not match any username in the dashboard database");
 			//TODO: return error if we arrive here (UPDATE: karl mettra un giff `à la place de la dashboard si aucune partie de pong jouée)
-            console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
-        }
-    } catch (error) {
-        console.error('Error: fetch allStats', error);
-        throw error; // Re-throw the error
+			// console.log("The connected user's username does not match any username in the dashboard database"); //FIX: voir avec KARL: qd on vient de se créer un compte on arrive ici, donc afficher un message "your dashboard is still empty" OU (mieux) ne pas avoir accès au dashboard avant d'avoir joué au moins une partie de pong
+		}
+	} catch (error) {
+		console.error('Error: fetch allStats', error);
+		throw error; // Re-throw the error
 		//CHECK: if allStats is undefined : try/catch that will stop everything
-    }
+	}
 }
 
 
-async function loadUserManagementData()
+export async function loadUserManagementData()
 {
-    try {
-        const userData = await apiRequest('/api/users/getUsername/', {
-            method: 'GET',
-            headers: {
+	try {
+		const userData = await apiRequest('/api/users/getUsername/', {
+			method: 'GET',
+			headers: {
 				...getAuthHeaders(),
-            },
-        });
-        if (DEBUG)
-            console.log("userData = ", userData);
-        return userData;
-    } catch (error) {
-        console.error('Error: fetch userData', error);
-        throw error; // Re-throw the error
-    }
+			},
+		});
+		if (DEBUG)
+			console.log("userData = ", userData);
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched user info");
+		return userData;
+	} catch (error) {
+		console.error('Error: fetch userData', error);
+		throw error; // Re-throw the error
+	}
 }
 
 

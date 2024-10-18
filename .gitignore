@@ -1,5 +1,7 @@
 __pycache__/
 *.pyc
 env/
+src/.env
 .DS_Store
-./src /prometheus/data/
+src/prometheus/data
+node_modules./src /prometheus/data/

@@ -1,10 +1,10 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
+import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 export default function renderSignIn()
 {
@@ -17,24 +17,25 @@ export default function renderSignIn()
     emailInput.setAttribute('type', 'text');
     emailInput.setAttribute('id', 'email');
     emailInput.setAttribute('name', 'email');
+	emailInput.setAttribute('autocomplete', 'username');
     emailInput.setAttribute('placeholder', 'Username');
     emailInput.classList.add('form-input');
-    emailInput.setAttribute('autocomplete', 'username');
 
 	// Create password input
 	const passwordInput = document.createElement('input');
-    passwordInput.setAttribute('type', 'password');
-    passwordInput.setAttribute('id', 'password');
-    passwordInput.setAttribute('name', 'password');
-    passwordInput.setAttribute('placeholder', 'Password');
-    passwordInput.classList.add('form-input');
-    passwordInput.setAttribute('autocomplete', 'current-password');
+	passwordInput.setAttribute('type', 'password');
+	passwordInput.setAttribute('id', 'password');
+	passwordInput.setAttribute('name', 'password');
+	passwordInput.setAttribute('autocomplete', 'current-password');
+	passwordInput.setAttribute('placeholder', 'Password');
+	passwordInput.classList.add('form-input');
 
 	// Create log in button
 	const loginButton = document.createElement('button');
-    loginButton.setAttribute('type', 'submit');
-    loginButton.textContent = 'Log In';
-    loginButton.classList.add('form-input');
+	loginButton.setAttribute('type', 'submit');
+	loginButton.textContent = 'Log In';
+	loginButton.classList.add('form-input');
+	loginButton.id = 'loginButton'; //CARO: ajouté pour githubactions
 
 	// Create sign up button
     const signUpButton = document.createElement('button');
@@ -65,18 +66,18 @@ export default function renderSignIn()
         const username = emailInput.value;
         const password = passwordInput.value;
 
-        if (DEBUG)
-            console.log('About to sign in with:', username, password);
+		if (DEBUG)
+			console.log('About to sign in with:', username, password);
 
-        login(username, password);
-    });
+		login(username, password);
+	});
 
 	return form;
 }
 
 
 /***********************************************\
-*                 UTIL FUNCTIONS                *
+*			 UTIL FUNCTIONS				*
 \***********************************************/
 
 
@@ -99,7 +100,7 @@ export function getCookie(name)
 
 
 /***********************************************\
-*                 MAIN FUNCTION                 *
+*			 MAIN FUNCTION	 *
 \***********************************************/
 
 
@@ -113,13 +114,20 @@ function login(username, password)
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'),
+			'X-CSRFToken': getCookie('csrftoken'),
 		},
 		body: JSON.stringify({ username, password }),
 	})
 	.then(response => response.json())
 	.then(data => {
-		if (data.access)
+        if (data.is2fa == true)
+        {
+            localStorage.setItem('totp', data.totp);
+            localStorage.setItem('username', data.username);
+            window.location.href = '/2fa_verification';
+            return Promise.reject('Redirection to 2FA verification');
+        }
+        else if (data.access)
 		{
             if (DEBUG)
                 console.log('Data obtained. Generating tokens');
@@ -131,27 +139,31 @@ function login(username, password)
 			return refreshToken();
 		}
 		else
-            throw new Error('Login failed: No access token received');
-    })
-    .then(newAccessToken =>
-    {
-        if (DEBUG)
-            console.log('Token refreshed:', newAccessToken);
+			throw new Error('Login failed: No access token received');
+	})
+	.then(newAccessToken =>
+	{
+		if (DEBUG)
+			console.log('Token refreshed:', newAccessToken);
+		if (GITHUBACTIONS)
+			console.log('Login successful'); //CARO: ajouté pour githubactions
+		setSignedInState(true);
+		window.location.href = '/profile';
+		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
 
-        console.log('Success:', username, 'is now logged in');
-        window.location.href = '/profile';
-    })
-    .catch(error =>
-    {
-        console.error('Error:', error);
-        alert('Login failed: ' + error.message);
-    });
+	})
+	.catch(error => {
+        if (error !== 'Redirection to 2FA verification')
+        {
+    		console.error('Error:', error);
+    		alert('❌ Login failed: ' + error.message);
+        }
+	});
 }
 
 
-
 /***********************************************\
-*                 API FUNCTIONS                 *
+*					API FUNCTIONS				*
 \***********************************************/
 
 
@@ -170,7 +182,7 @@ export function getAuthHeaders()
 
 
 // Send a request to the server to refresh the access token
-async function refreshToken()
+export async function refreshToken()
 {
     const refreshToken = localStorage.getItem('refresh_token');
     if (!refreshToken)
@@ -250,24 +262,24 @@ export async function apiRequest(url, options = {})
 // OLD CODE
 // async function refreshToken()
 // {
-//     const refreshToken = localStorage.getItem('refresh_token');
-//     if (!refreshToken)
-//         throw new Error('No refresh token found');
+//   const refreshToken = localStorage.getItem('refresh_token');
+//   if (!refreshToken)
+//	 throw new Error('No refresh token found');
 
-//     return fetch('/api/token/refresh/', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ refresh: refreshToken }),
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.access) {
-//             localStorage.setItem('access_token', data.access);
-//             return data.access;
-//         }
-//         else
-//             throw new Error('Failed to refresh token');
-//     });
+//   return fetch('/api/token/refresh/', {
+//	 method: 'POST',
+//	 headers: {
+//	   'Content-Type': 'application/json',
+//	 },
+//	 body: JSON.stringify({ refresh: refreshToken }),
+//   })
+//   .then(response => response.json())
+//   .then(data => {
+//	 if (data.access) {
+//	   localStorage.setItem('access_token', data.access);
+//	   return data.access;
+//	 }
+//	 else
+//	   throw new Error('Failed to refresh token');
+//   });
 // }

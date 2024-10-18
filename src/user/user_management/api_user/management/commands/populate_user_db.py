@@ -45,14 +45,15 @@ class Command(BaseCommand):
 
 		# Iterate over predefined data and create entries in the database
 		for user_data in predefined_data:
-			user = CustomUser.objects.create_user(
-				username=user_data['username'],
-				password=user_data['password'],
-				email=user_data['email'],
-				date_of_birth=user_data['date_of_birth'],
-				first_name=user_data['first_name'],
-				last_name=user_data['last_name'],
-			)
+			if not CustomUser.objects.filter(username=user_data['username']).exists(): #to avoid adding twice the same user with fill_db
+				user = CustomUser.objects.create_user(
+					username=user_data['username'],
+					password=user_data['password'],
+					email=user_data['email'],
+					date_of_birth=user_data['date_of_birth'],
+					first_name=user_data['first_name'],
+					last_name=user_data['last_name'],
+				)
 
 # TEST CARO pour fix make fill : permet aussi d'éviter les erreurs si on "make fill" deux fois de suite"
 # 		Create entries in the database if the user doesn't exist yet
@@ -72,3 +73,4 @@ class Command(BaseCommand):
 
 
 		self.stdout.write(self.style.SUCCESS('Successfully populated the user database'))
+

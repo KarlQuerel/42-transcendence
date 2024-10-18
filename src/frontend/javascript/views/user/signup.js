@@ -1,12 +1,12 @@
 /***********************************************\
--			IMPORTING GLOBAL VARIABLES			-
+-					IMPORTS						-
 \***********************************************/
 import { DEBUG } from '../../main.js';
 import { getCookie } from './signin.js';
 
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 
 export default function renderSignUp()
@@ -74,6 +74,7 @@ export default function renderSignUp()
 	submitButton.setAttribute('type', 'submit');
 	submitButton.textContent = 'Submit';
 	submitButton.classList.add('form-input');
+	submitButton.id = 'submit-button'; //CARO pour githubactions
 	form.appendChild(submitButton);
 
 	// Append the form to the container
@@ -100,33 +101,33 @@ export function initializeSignUp()
 		{
 			event.preventDefault(); // Prevent default form submission
 
-            // First name
-            let first_name = getIdentifier('first_name');
-            let first_name_type = checkIdentifierType(first_name, 'first_name');
+			// First name
+			let first_name = getIdentifier('first_name');
+			let first_name_type = checkIdentifierType(first_name, 'first_name');
 
-            // Last name
-            let last_name = getIdentifier('last_name');
-            let last_name_type = checkIdentifierType(last_name, 'last_name');
+			// Last name
+			let last_name = getIdentifier('last_name');
+			let last_name_type = checkIdentifierType(last_name, 'last_name');
 
-            // Username
-            let username = getIdentifier('username');
-            let username_type = checkIdentifierType(username, 'username');
+			// Username
+			let username = getIdentifier('username');
+			let username_type = checkIdentifierType(username, 'username');
 
-            // Date of birth
-            let date_of_birth = getIdentifier('date_of_birth');
-            let date_of_birth_type = checkIdentifierType(date_of_birth, 'date_of_birth');
+			// Date of birth
+			let date_of_birth = getIdentifier('date_of_birth');
+			let date_of_birth_type = checkIdentifierType(date_of_birth, 'date_of_birth');
 
-            // Password
-            let password = getIdentifier('password');
-            let password_type = checkIdentifierType(password, 'password');
+			// Password
+			let password = getIdentifier('password');
+			let password_type = checkIdentifierType(password, 'password');
 
             // Password confirmation
             let password_confirmation = getIdentifier('password_confirmation');
             // let password_confirmation_type = checkIdentifierType(password_confirmation, 'password_confirmation');
 
-            // Email
-            let email = getIdentifier('email');
-            let email_type = checkIdentifierType(email, 'email');
+			// Email
+			let email = getIdentifier('email');
+			let email_type = checkIdentifierType(email, 'email');
 
 			let avatar_type = null;
 
@@ -148,7 +149,7 @@ export function initializeSignUp()
 
 
 /***********************************************\
-*            VALUE CHECKING FUNCTIONS           *
+*			VALUE CHECKING FUNCTIONS		   *
 \***********************************************/
 
 export function getIdentifier(str)
@@ -166,7 +167,7 @@ export function checkIdentifierType(identifier, str)
         return 'date_of_birth';
 	if ((str == 'username' || str == 'username_input') && isValidUsername(identifier) == true)
 		return 'username';
-    if (str == 'password' && isValidPassword(identifier) == true)
+	if (str == 'password' && isValidPassword(identifier) == true)
 		return 'password';
     if ((str == 'email' || str == 'email_input') && isValidEmail(identifier) == true)
         return 'email';
@@ -177,33 +178,33 @@ export function checkIdentifierType(identifier, str)
 
 function isValidFirstName(first_name)
 {
-    const acceptedCharacters = /^[\p{L}\p{Nl}]+$/u;
+	const acceptedCharacters = /^[\p{L}\p{Nl}]+$/u;
 
-    if (first_name.length > 30)
-        return false;
-    else if (acceptedCharacters.test(first_name) == false)
-        return false;
-    return true;
+	if (first_name.length > 30)
+		return false;
+	else if (acceptedCharacters.test(first_name) == false)
+		return false;
+	return true;
 }
 
 function isValidLastName(last_name)
 {
-    const acceptedCharacters = /^[\p{L}\p{Nl}\s\-]+$/u;
+	const acceptedCharacters = /^[\p{L}\p{Nl}\s\-]+$/u;
 
-    if (last_name.length > 30)
-        return false;
-    else if (acceptedCharacters.test(last_name) == false)
-        return false;
-    return true;
+	if (last_name.length > 30)
+		return false;
+	else if (acceptedCharacters.test(last_name) == false)
+		return false;
+	return true;
 }
 
 function isValidDateOfBirth(date_of_birth)
 {
-    const acceptedCharacters = /^\d{4}-\d{2}-\d{2}$/;
+	const acceptedCharacters = /^\d{4}-\d{2}-\d{2}$/;
 
-    if (acceptedCharacters.test(date_of_birth) == false)
-        return false;
-    return true;
+	if (acceptedCharacters.test(date_of_birth) == false)
+		return false;
+	return true;
 }
 
 function isValidUsername(username)
@@ -219,16 +220,16 @@ function isValidUsername(username)
 
 function isValidPassword(password)
 {
-    const minLength = 6;
+	const minLength = 6;
 
-    if (password.length < minLength)
-        return false;
-    return true;
+	if (password.length < minLength)
+		return false;
+	return true;
 }
 
 function isValidEmail(email) {
 	const acceptedCharacters = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const [localPart, domainPart] = email.split('@');
+	const [localPart, domainPart] = email.split('@');
 
 	if (acceptedCharacters.test(email) == false)
 		return false;
@@ -256,17 +257,17 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
         date_of_birth: 'Error: bad date of birth.',
         username: 'Error: bad username. Username has to be less than 13 characters and can only contain letters, numbers, underscores, and hyphens.',
         password: 'Error: bad password. Password has to be at least 6 characters long.',
-        email: 'Error: bad email.',
+        email: 'Error: bad email.'
     };
 
-    const fields = [
-        { type: first_name_type, id: 'first_name', message: errorMessages.first_name },
-        { type: last_name_type, id: 'last_name', message: errorMessages.last_name },
-        { type: date_of_birth_type, id: 'date_of_birth', message: errorMessages.date_of_birth },
-        { type: username_type, id: 'username', message: errorMessages.username },
-        { type: password_type, id: 'password', message: errorMessages.password },
-        { type: email_type, id: 'email', message: errorMessages.email },
-    ];
+	const fields = [
+		{ type: first_name_type, id: 'first_name', message: errorMessages.first_name },
+		{ type: last_name_type, id: 'last_name', message: errorMessages.last_name },
+		{ type: date_of_birth_type, id: 'date_of_birth', message: errorMessages.date_of_birth },
+		{ type: username_type, id: 'username', message: errorMessages.username },
+		{ type: password_type, id: 'password', message: errorMessages.password },
+		{ type: email_type, id: 'email', message: errorMessages.email }
+	];
 
     fields.forEach(field =>
 	{
@@ -287,7 +288,7 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 
 
 /***********************************************\
-*                 MAIN FUNCTION                 *
+*				 MAIN FUNCTION				 *
 \***********************************************/
 
 
