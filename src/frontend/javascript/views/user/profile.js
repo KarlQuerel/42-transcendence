@@ -332,15 +332,6 @@ async function verifyProfileChanges()
     const password_type = 'password';
     const email_type = checkIdentifierType(email, 'email_input');
 
-    // if (DEBUG)
-    // {
-    //     console.log('verifyProfileChanges() type results:');
-    //     console.log('First name type:', first_name_type);
-    //     console.log('Last name type:', last_name_type);
-    //     console.log('Date of birth type:', date_of_birth_type);
-    //     console.log('Email type:', email_type);
-    // }
-
     const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 
     if (!allValid)

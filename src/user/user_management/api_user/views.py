@@ -98,56 +98,6 @@ def signInUser(request):
 		return Response({'error': 'Internal Server Error'}, status=500)
 
 
-def send_2fa_totp(user):
-	if not user.totp_secret:
-		user.totp_secret = pyotp.random_base32()
-		user.save()
-	totp = pyotp.TOTP(user.totp_secret)
-	code = totp.now()
-
-	send_mail(
-		f'Verification code for {user.username} on transcendance.fr',
-		f'Please enter this one-time code to log into your account: {code}',
-		str(os.getenv('EMAIL_HOST_USER')),
-		['traans.een.daance@gmail.com'],
-		fail_silently=False,
-	)
-
-	return code
-
-# @never_cache
-@api_view(['POST'])
-def verify_2fa_code(request):
-	code = request.data.get('code')
-	user_id = request.session.get('pre_2fa_user_id')
-	
-	if user_id:
-		user = CustomUser.objects.get(id=user_id)
-		totp = pyotp.TOTP(user.totp_secret)
-		print('totp: ', totp.now())
-		if totp.verify(code):
-			login(request, user)
-			refresh = RefreshToken.for_user(request.user)
-			access_token = str(refresh.access_token)
-			refresh_token = str(refresh)
-
-			return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
-		else:
-			return JsonResponse({'error': 'Invalid 2fa code'}, status=status.HTTP_400_BAD_REQUEST)
-	else:
-			return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
-
-@api_view(['POST'])
-def resend_2fa_code(request):
-	user_id = request.session.get('pre_2fa_user_id')
-	if user_id:
-		user = CustomUser.objects.get(id=user_id)
-		send_2fa_totp(user)
-		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
-	else:
-		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
-
-
 #########################################
 
 
@@ -232,9 +182,6 @@ def getAllUserAvatars(request):
 
 
 
-#########################################
-
-
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -288,13 +235,16 @@ def checkAuthentication(request):
 @permission_classes([IsAuthenticated])
 def verifyPassword(request):
     user = request.user
-    current_password = request.data.get('currentPassword')
+    current_password = request.data.get('current_password')
+
+    print(f'User: {user}') # DEBUG
+    print(f'Current password: {current_password}') # DEBUG
 
     if not current_password:
         return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
 
     if user.check_password(current_password):
-        return Response({'valid': True, 'currentPassword': user.password}, status=status.HTTP_200_OK)
+        return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
     else:
         return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -324,6 +274,7 @@ def hashAndChangePassword(request):
 		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	
 
+
 ##################################################
 ##           CHANGE PROFILE INFO VIEWS          ##
 ##################################################
@@ -351,6 +302,8 @@ def updateProfile(request):
 	except Exception as e:
 		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+#########################################
 
 
 @api_view(['PUT'])
@@ -401,4 +354,69 @@ def updateAvatar(request):
 		return Response({'error': str(e)}, status=500)
 
 
-#######################################################
+
+
+##################################################
+##          		 2FA VIEWS   		        ##
+##################################################
+
+
+def send_2fa_totp(user):
+	if not user.totp_secret:
+		user.totp_secret = pyotp.random_base32()
+		user.save()
+	totp = pyotp.TOTP(user.totp_secret)
+	code = totp.now()
+
+	send_mail(
+		f'Verification code for {user.username} on transcendance.fr',
+		f'Please enter this one-time code to log into your account: {code}',
+		str(os.getenv('EMAIL_HOST_USER')),
+		['traans.een.daance@gmail.com'],
+		fail_silently=False,
+	)
+
+	return code
+
+
+#########################################
+
+
+# @never_cache
+@api_view(['POST'])
+def verify_2fa_code(request):
+	code = request.data.get('code')
+	user_id = request.session.get('pre_2fa_user_id')
+	
+	if user_id:
+		user = CustomUser.objects.get(id=user_id)
+		totp = pyotp.TOTP(user.totp_secret)
+		print('totp: ', totp.now())
+		if totp.verify(code):
+			login(request, user)
+			refresh = RefreshToken.for_user(request.user)
+			access_token = str(refresh.access_token)
+			refresh_token = str(refresh)
+
+			return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
+		else:
+			return JsonResponse({'error': 'Invalid 2fa code'}, status=status.HTTP_400_BAD_REQUEST)
+	else:
+			return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+#########################################
+
+
+@api_view(['POST'])
+def resend_2fa_code(request):
+	user_id = request.session.get('pre_2fa_user_id')
+	if user_id:
+		user = CustomUser.objects.get(id=user_id)
+		send_2fa_totp(user)
+		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
+	else:
+		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+#########################################

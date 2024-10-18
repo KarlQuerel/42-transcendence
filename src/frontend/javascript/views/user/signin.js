@@ -139,7 +139,7 @@ function login(username, password)
 			return refreshToken();
 		}
 		else
-			throw new Error('Login failed: No access token received');
+			throw new Error('Username or password incorrect');
 	})
 	.then(newAccessToken =>
 	{
