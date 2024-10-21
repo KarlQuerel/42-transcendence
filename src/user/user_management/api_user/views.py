@@ -425,9 +425,9 @@ def anonymizeUserData(request):
     try:
         user = request.user
 
-        newUsername = f'user_{get_random_string(7)}'
-        user.username = newUsername
-        user.email = f'anonymized_{newUsername}@example.com'
+        usernameSuffix = get_random_string(6)
+        user.username = f'user_{usernameSuffix}'
+        user.email = f'anonymized_{usernameSuffix}@example.com'
         user.first_name = 'Anonymous'
         user.last_name = 'User'
         user.date_of_birth = None

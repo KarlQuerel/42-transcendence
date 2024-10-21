@@ -17,6 +17,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
+
 import { DEBUG, setSignedInState }
 from '../../main.js';
 
@@ -546,22 +547,10 @@ async function anonymizeUserData()
             },
         });
 
-        if (DEBUG)
-        {
-            console.log('Response:', response); // Log the entire response object
-            console.log('Response status:', response.status);
-            console.log('Response status text:', response.statusText);
-        }
+        const newUsername = response;
+        alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
+        window.location.href = '/profile';
 
-        if (response.success)
-        {
-            const newUsername = response;
-            console.log ('New username:', newUsername); // DEBUG
-            alert('Your data has been anonymized successfully.\nYour new username is: ${newUsername}\nPlease use this username for future logins.');
-            window.location.href = '/profile';
-        }
-        else
-            throw new Error(response.error || 'Anonymization failed.');
     }
     catch (error)
     {
