@@ -9,7 +9,7 @@ import { getCookie } from './signin.js';
 *					RENDERING					*
 \***********************************************/
 
-export default function renderSignUp()
+export function renderSignUp()
 {
 	// Main container for the sign-up form
 	const container = document.createElement('div');

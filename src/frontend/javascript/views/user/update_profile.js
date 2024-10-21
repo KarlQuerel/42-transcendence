@@ -8,7 +8,7 @@ import { apiRequest } from './signin.js';
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderUpdateProfile()
+export function renderUpdateProfile()
 {
     // CMain container for the update-profile form
 	const container = document.createElement('div');

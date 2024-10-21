@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = false;
+export	const	DEBUG = true;
 export	const	GITHUBACTIONS = false;
 
 /***********************************************\
@@ -9,11 +9,15 @@ export	const	GITHUBACTIONS = false;
 \***********************************************/
 
 /***			  Page Not Found		 	 ***/
-import renderError404
+import { renderPageNotFound }
 from "./views/error_404/error_404.js";
 
 /***			Nav Bar						***/
-import renderHome
+import { renderNavbar }
+from "./views/navbar/navbar.js";
+
+/***			Home						***/
+import { renderHome }
 from "./views/home/home.js";
 
 /***			Pong						***/
@@ -32,25 +36,23 @@ import { initParticles, destroyParticles }
 from "./components/particles/particles.js"
 
 /***			User						***/
-import render2fa
+import { render2fa }
 from "./views/user/2fa.js";
 
-import renderSignIn
+import { renderSignIn }
 from "./views/user/signin.js";
 
-import renderProfile
+import { renderProfile }
 from "./views/user/profile.js";
 
-import renderSignUp, { initializeSignUp }
+import { renderSignUp, initializeSignUp }
 from "./views/user/signup.js";
 
-import renderChangePassword, { initializeChangePassword }
+import { renderChangePassword, initializeChangePassword }
 from "./views/user/change_password.js";
 
 
 /***			Footer						***/
-import renderPrivacyPolicy
-from "./views/privacy_policy/privacy_policy.js";
 
 /***********************************************\
 -				DEFINING ROUTES					-
@@ -88,7 +90,7 @@ const routes =
 	'/404':
 	{
 		title: "Page Not Found",
-		render: renderError404
+		render: renderPageNotFound,
 	},
 	'/sign-up':
 	{
@@ -120,6 +122,14 @@ const routes =
 
 //	Initializing currentPath to an empty string
 let	currentPath = '';
+
+/***			Navbar						***/
+function render()
+{
+	const navbar = renderNavbar();
+	document.body.insertAdjacentElement('afterbegin', navbar);
+}
+
 
 /***			Normalizing Paths			***/
 function normalizePath(path)
@@ -171,7 +181,8 @@ function router()
 	const restrictedPaths =
 	{
 		'/pong': "❌ You must be logged in to access the Pong game ❌",
-		'/dashboard': "❌ You must be logged in to access your dashboard ❌"
+		'/dashboard': "❌ You must be logged in to access your dashboard ❌",
+		'/profile': "❌ You must be logged in to access your profile ❌"
 	};
 	
 	// Check if the user is trying to access a restricted route
@@ -220,7 +231,7 @@ function router()
 	else
 	{
 		document.title = "Page not Found";
-		document.getElementById('app').innerHTML = renderError404();
+		document.getElementById('app').innerHTML = renderPageNotFound();
 	}
 
 	//	Updating currentPath to the new path

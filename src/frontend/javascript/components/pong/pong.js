@@ -488,6 +488,8 @@ function hideWinningMessage()
 {
 	const	messageElement = document.getElementById('winning-message');
 	const	rematchButton = document.getElementById('rematch-button');
+	const	backToMenuButton = document.getElementById('back-to-menu-button');
 	messageElement.classList.remove('show');
 	rematchButton.classList.add('hidden-sudden');
+	backToMenuButton.classList.add('hidden-sudden');
 }

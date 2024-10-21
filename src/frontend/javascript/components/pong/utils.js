@@ -40,6 +40,9 @@ from './onePlayer.js';
 import { checkCountdown }
 from './preGame.js';
 
+import { apiRequest }
+from '../../views/user/signin.js';
+
 /***********************************************\
 -					UTILS						-
 \***********************************************/
@@ -74,4 +77,46 @@ export function checkElement(element, elementName)
 		return false;
 	}
 	return true;
+}
+
+export async function doesUserExist(playerName)
+{
+	try
+	{
+		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		{
+			method: 'GET',
+		});
+
+		return data.user_exists;
+	}
+	catch (error)
+	{
+		console.error('API request error:', error);
+		return false;
+	}
+}
+
+export async function checkPassword(username, password)
+{
+	try
+	{
+		const	response = await fetch('/api/users/checkUserPassword/',
+		{
+			method: 'POST',
+			headers:
+			{
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ username, password })
+		});
+
+		const	data = await response.json();
+		return data.valid;
+	}
+	catch (error)
+	{
+		console.error('Error checking password:', error);
+		return false;
+	}
 }

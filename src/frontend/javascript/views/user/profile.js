@@ -22,7 +22,7 @@ import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFront
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderProfile()
+export function renderProfile()
 {
     // Create a container for the profile information
     const container = document.createElement('div');

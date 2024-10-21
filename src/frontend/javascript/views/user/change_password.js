@@ -9,7 +9,7 @@ import { apiRequest, getCookie } from './signin.js';
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderChangePassword()
+export function renderChangePassword()
 {
     // Create the main container for the sign-up form
 	const container = document.createElement('div');

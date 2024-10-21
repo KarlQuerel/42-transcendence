@@ -3,7 +3,7 @@
 \***********************************************/
 import { DEBUG } from '../../main.js';
 
-export default function renderNotFoundPage()
+export function renderPageNotFound()
 {
 	return `
 	<div class="not-found-container">

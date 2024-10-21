@@ -20,7 +20,7 @@ from './utils.js'
 /***********************************************\
 -					RENDERING					-
 \***********************************************/
-export default function renderHome()
+export function renderHome()
 {
 	const	container = createHomeContainer();
 	createParticlesContainer();

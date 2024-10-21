@@ -8,7 +8,7 @@ import { refreshToken, apiRequest } from './signin.js';
 *                   RENDERING                   *
 \***********************************************/
 
-export default function render2fa()
+export function render2fa()
 {
     if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
     {

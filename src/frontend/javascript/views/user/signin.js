@@ -6,7 +6,7 @@ import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
-export default function renderSignIn()
+export function renderSignIn()
 {
 	// Create the form element
 	const form = document.createElement('form');
