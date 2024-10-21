@@ -19,6 +19,7 @@ urlpatterns = [
     path('updateProfile/', views.updateProfile, name='update-profile'),
     path('updateAvatar/', views.updateAvatar, name='update-avatar'),
     path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
+    path('anonymizeUserData/', views.anonymizeUserData, name='anonymize-user-data'),
 ]
 
 if settings.DEBUG:

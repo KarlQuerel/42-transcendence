@@ -8,15 +8,24 @@
         updateProfileButton.textContent = 'Update profile';
     Ce bouton ne doit pas apparaitre si l'utilisateur est en mode édition de son profil.
     En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
+
+    - Logout button, Anonymize button & Delete account button doivent être alignés à droite de la page (à droite ou ailleurs, juste il faut les mettre un peu a part quoi)
+
 */
 
 
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState } from '../../main.js';
-import { apiRequest, getCookie } from './signin.js';
-import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend } from './signup.js';
+import { DEBUG, setSignedInState }
+from '../../main.js';
+
+import { apiRequest, getCookie }
+from './signin.js';
+
+import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
+from './signup.js';
+
 
 /***********************************************\
 *                   RENDERING                   *
@@ -172,6 +181,7 @@ export default function renderProfile()
         });
 
 
+
         /***************** FRIENDS *****************/
         
         // bouton pour aller sur la page friends
@@ -181,11 +191,26 @@ export default function renderProfile()
         container.appendChild(friendsButton);
 
 
-        /************** MATCH HISTORY **************/
-        
-        // 1v1 games, dates, and relevant details, accessible to logged-in users.
-        
 
+        /************** ANONYMIZE DATA **************/
+        
+        // bouton pour anonymiser les données
+        const anonymizeButton = document.createElement('button');
+        anonymizeButton.setAttribute('id', 'anonymize-button');
+        anonymizeButton.textContent = 'Anonymize Data';
+
+        container.appendChild(anonymizeButton);
+
+        // Event listener for anonymize button
+        anonymizeButton.addEventListener('click', async () =>
+        {
+            const userConfirmation = confirm('Are you sure you want to anonymize your data?\nThis action cannot be undone.');
+            if (userConfirmation)
+                anonymizeUserData();
+            else
+                console.log('Anonymization cancelled.');
+        });
+        
 
 
         /***************** LOG OUT *****************/
@@ -201,6 +226,7 @@ export default function renderProfile()
             }
             window.location.href = '/sign-in';
         });
+
 
     return container;
 }
@@ -497,5 +523,49 @@ async function saveNewAvatar(avatarFile)
             console.error('Error updating avatar:', error);
             alert('An error occurred while updating the avatar.');
         }
+    }
+}
+
+
+/***********************************************\
+*                 GDPR FUNCTIONS                *
+\***********************************************/
+
+async function anonymizeUserData()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/anonymizeUserData/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (DEBUG)
+        {
+            console.log('Response:', response); // Log the entire response object
+            console.log('Response status:', response.status);
+            console.log('Response status text:', response.statusText);
+        }
+
+        if (response.success)
+        {
+            const newUsername = response;
+            console.log ('New username:', newUsername); // DEBUG
+            alert('Your data has been anonymized successfully.\nYour new username is: ${newUsername}\nPlease use this username for future logins.');
+            window.location.href = '/profile';
+        }
+        else
+            throw new Error(response.error || 'Anonymization failed.');
+    }
+    catch (error)
+    {
+        console.error('Anonymization error:', error);
+        alert('Failed to anonymize data: ' + error.message);
     }
 }

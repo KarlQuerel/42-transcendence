@@ -1,30 +1,22 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.views.decorators.cache import never_cache
-from rest_framework.response import Response
-from django.contrib.auth.forms import SetPasswordForm
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from api_user.models import CustomUser
-from .forms import CustomUserRegistrationForm
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from api_user.models import CustomUser
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth import authenticate, login
-from rest_framework.permissions import AllowAny
-from django.shortcuts import render, redirect
-# from rest_framework.views import APIView
-from rest_framework import generics, status, permissions
+from django.contrib.auth.forms import SetPasswordForm
 from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
-import pyotp, os, json, base64, logging
+from django.http import JsonResponse
 from django.conf import settings
 from .serializers import UsernameSerializer  #TEST CARO
+from .forms import CustomUserRegistrationForm
+import pyotp, os, json, base64, logging
 
 
 #########################################
@@ -417,6 +409,36 @@ def resend_2fa_code(request):
 		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
 	else:
 		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+##################################################
+##           		GDPR VIEWS      		    ##
+##################################################
+
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def anonymizeUserData(request):
+    try:
+        user = request.user
+
+        newUsername = f'user_{get_random_string(7)}'
+        user.username = newUsername
+        user.email = f'anonymized_{newUsername}@example.com'
+        user.first_name = 'Anonymous'
+        user.last_name = 'User'
+        user.date_of_birth = None
+        user.avatar = 'avatars/default.png'
+
+        user.save()
+
+        return JsonResponse({'username': user.username}, status=200)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 
 
 #########################################

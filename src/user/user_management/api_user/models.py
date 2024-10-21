@@ -21,11 +21,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-
-
-# @receiver(pre_save, sender=CustomUser)
-# def setDefaultAvatar(sender, instance, **kwargs):
-# 	if not instance.avatar and not instance.pk:
-# 		default_avatar_path = os.path.join(settings.MEDIA_ROOT, 'avatars', 'default.png')
-# 		with open(default_avatar_path, 'rb') as f:
-# 			instance.avatar.save('default.png', File(f), save=False)
