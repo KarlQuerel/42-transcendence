@@ -141,17 +141,45 @@ def currentlyLoggedInUser(request):
 @login_required
 @permission_classes([IsAuthenticated])
 def getUsername(request):
-    if request.user.is_authenticated:
-        serializer = UsernameSerializer(request.user)
-        return Response(serializer.data)
-    else:
-        return Response({'error': 'User not authenticated'}, status=401)
+	if request.user.is_authenticated:
+		serializer = UsernameSerializer(request.user)
+		return Response(serializer.data)
+	else:
+		return Response({'error': 'User not authenticated'}, status=401)
 
 
 #########################################
 
 
 # Get avatars and usernames of all users
+
+# @api_view(['GET'])
+# @login_required
+# @permission_classes([IsAuthenticated])
+# def getAllUserAvatars(request):
+# 	try:
+# 		user = request.user
+# 		if not user.is_authenticated:
+# 			return Response({'error': 'User not authenticated'}, status=401)
+
+# 		try:
+# 			users = CustomUser.objects.all()
+# 			avatars = []
+		
+# 			for user in users:
+# 				avatar_image_path = user.avatar.path
+# 				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+# 					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+# 				avatars.append({'username': user.username, 'avatar': avatar})
+
+# 			return JsonResponse(avatars, safe=False, status=200)
+
+# 		except Exception as e:
+# 			return Response({'error': str(e)}, status=500)
+
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
+
 
 @api_view(['GET'])
 @login_required
@@ -234,19 +262,19 @@ def checkAuthentication(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def verifyPassword(request):
-    user = request.user
-    current_password = request.data.get('current_password')
+	user = request.user
+	current_password = request.data.get('current_password')
 
-    print(f'User: {user}') # DEBUG
-    print(f'Current password: {current_password}') # DEBUG
+	print(f'User: {user}') # DEBUG
+	print(f'Current password: {current_password}') # DEBUG
 
-    if not current_password:
-        return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
+	if not current_password:
+		return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user.check_password(current_password):
-        return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
-    else:
-        return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
+	if user.check_password(current_password):
+		return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
+	else:
+		return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
 
 
 #########################################

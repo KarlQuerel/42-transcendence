@@ -173,24 +173,58 @@ async function loadUserGameHistory() {
 	}
 }
 
+// async function loadAvatars() {
+// 	try
+// 	{
+// 		const allAvatars = await apiRequest('/api/user/getAllUserAvatars/', {
+// 			method: 'GET',
+// 			headers: {
+// 				...getAuthHeaders(),
+// 			},
+// 		});
+
+// 		if (GITHUBACTIONS) //TODO: modifier githubActions file
+// 			console.log("Successfully fetched all avatars");
+// 		return allAvatars;
+// 	}
+// 	catch (error)
+// 	{
+// 		console.error("Error fetching users' avatars");
+// 		throw error; //CHECK: check it stops everything or re-throw it
+// 	}
+// }
+
 async function loadAvatars() {
-	try
-	{
-		const gameHistory = await apiRequest('/api/user/getAllUserAvatars/', {
+	try {
+		const response = await apiRequest('/api/user/getAllUserAvatars/', {
 			method: 'GET',
 			headers: {
 				...getAuthHeaders(),
 			},
 		});
 
-		if (GITHUBACTIONS) //TODO: modifier githubActions file
+		// Check if the response is OK
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+		}
+
+		// Attempt to parse the response as JSON
+		const allAvatars = await response.json();
+
+		if (GITHUBACTIONS) {
 			console.log("Successfully fetched all avatars");
-		return gameHistory;
-	}
-	catch (error)
-	{
-		console.error("Error fetching users' avatars");
-		throw error; //CHECK: check it stops everything or re-throw it
+		}
+		return allAvatars;
+	} catch (error) {
+		console.error("Error fetching users' avatars:", error);
+
+		// Log the response text for debugging
+		if (error.response) {
+			const errorText = await error.response.text();
+			console.error("Response text:", errorText);
+		}
+
+		throw error; // Re-throw the error after logging
 	}
 }
 

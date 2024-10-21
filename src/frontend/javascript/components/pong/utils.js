@@ -4,6 +4,9 @@
 import { DEBUG }
 from '../../main.js';
 
+import { GITHUBACTIONS }
+from '../../main.js';
+
 import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
@@ -36,6 +39,8 @@ from './onePlayer.js';
 
 import { checkCountdown }
 from './preGame.js';
+
+import { apiRequest } from '../../views/user/signin.js';
 
 /***********************************************\
 -					UTILS						-
