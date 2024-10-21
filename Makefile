@@ -5,11 +5,12 @@ NC = \033[0m
 
 #######		GENERAL RULES		#######
 all :
-	cd src && docker-compose up -d --build
+	@cd src && docker-compose up -d --build
+	@make fill_db
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
-	cd src && docker-compose down
+	@cd src && docker-compose down
 
 fclean : clean
 	cd src && docker system prune -af

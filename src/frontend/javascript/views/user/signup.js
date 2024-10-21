@@ -2,6 +2,7 @@
 -					IMPORTS						-
 \***********************************************/
 import { DEBUG } from '../../main.js';
+import { getCookie } from './signin.js';
 
 
 /***********************************************\
@@ -10,35 +11,35 @@ import { DEBUG } from '../../main.js';
 
 export default function renderSignUp()
 {
-	// Create the main container for the sign-up form
+	// Main container for the sign-up form
 	const container = document.createElement('div');
 
-	// Create the heading
+	// Heading
 	const heading = document.createElement('h1');
 	heading.textContent = 'Sign Up';
 	heading.classList.add('form-input')
 	container.appendChild(heading);
 
-	// Create the form element
+	// Form element
 	const form = document.createElement('form');
 	form.setAttribute('id', 'signupForm');
 
-	// Create an error message container
-	const errorMessageContainer = document.createElement('div');
-	errorMessageContainer.setAttribute('id', 'error-messages');
-	errorMessageContainer.classList.add('error-messages');
-	form.appendChild(errorMessageContainer);
+	// Error message container
+    const errorMessageContainer = document.createElement('div');
+    errorMessageContainer.setAttribute('id', 'error-messages');
+    errorMessageContainer.classList.add('error-messages');
+    form.appendChild(errorMessageContainer);
 
-	// Create input fields with labels
+	// Input fields with labels
 	const fields =
 	[
 		{ label: 'First Name:', type: 'text', id: 'first_name', placeholder: 'Enter first name' },
 		{ label: 'Last Name:', type: 'text', id: 'last_name', placeholder: 'Enter last name' },
-		{ label: 'Username:', type: 'text', id: 'username', placeholder: 'Enter username' },
+		{ label: 'Username:', type: 'text', id: 'username', placeholder: 'Enter username', autocomplete: 'username' },
 		{ label: 'Date of Birth:', type: 'date', id: 'date_of_birth', placeholder: '' },
-		{ label: 'Password:', type: 'password', id: 'password', placeholder: 'Enter password' },
-		{ label: 'Password Confirmation:', type: 'password', id: 'password_confirmation', placeholder: 'Enter password confirmation' },
-		{ label: 'Email:', type: 'text', id: 'email', placeholder: 'Enter email' }
+		{ label: 'Password:', type: 'password', id: 'password', placeholder: 'Enter password', autocomplete: 'new-password' },
+		{ label: 'Password Confirmation:', type: 'password', id: 'password_confirmation', placeholder: 'Enter password confirmation', autocomplete: 'new-password' },
+		{ label: 'Email:', type: 'text', id: 'email', placeholder: 'Enter email', autocomplete: 'email' }
 	];
 
 	fields.forEach(field =>
@@ -57,6 +58,12 @@ export default function renderSignUp()
 		input.setAttribute('id', field.id);
 		input.setAttribute('placeholder', field.placeholder);
 		input.classList.add('form-input');
+
+		if (field.autocomplete)
+			input.setAttribute('autocomplete', field.autocomplete);
+		if (field.accept)
+			input.setAttribute('accept', field.accept);
+
 		formGroup.appendChild(input);
 
 		form.appendChild(formGroup);
@@ -85,7 +92,8 @@ export default function renderSignUp()
 }
 
 
-export function initializeSignUp() {
+export function initializeSignUp()
+{
 	const	form = document.getElementById('signupForm');
 	if (form)
 	{
@@ -113,19 +121,21 @@ export function initializeSignUp() {
 			let password = getIdentifier('password');
 			let password_type = checkIdentifierType(password, 'password');
 
-			// Password confirmation
-			let password_confirmation = getIdentifier('password_confirmation');
-			let password_confirmation_type = checkIdentifierType(password_confirmation, 'password_confirmation');
+            // Password confirmation
+            let password_confirmation = getIdentifier('password_confirmation');
+            // let password_confirmation_type = checkIdentifierType(password_confirmation, 'password_confirmation');
 
 			// Email
 			let email = getIdentifier('email');
 			let email_type = checkIdentifierType(email, 'email');
 
+			let avatar_type = null;
+
 			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) || password !== password_confirmation)
 			{
 				if (password !== password_confirmation)
 					console.log('Error: Password and password confirmation do not match.');
-				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type);
+				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 				return ;
 			}
 			else
@@ -137,51 +147,31 @@ export function initializeSignUp() {
 }
 
 
-/***********************************************\
-*				 UTIL FUNCTIONS				*
-\***********************************************/
-
-function getCookie(name) {
-	var cookieValue = null;
-	if (document.cookie && document.cookie !== '') {
-		var cookies = document.cookie.split(';');
-		for (var i = 0; i < cookies.length; i++) {
-			var cookie = cookies[i].trim();
-			// Does this cookie string begin with the name we want?
-			if (cookie.substring(0, name.length + 1) === (name + '=')) {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			}
-		}
-	}
-	return cookieValue;
-}
-
 
 /***********************************************\
 *			VALUE CHECKING FUNCTIONS		   *
 \***********************************************/
 
-function getIdentifier(str)
+export function getIdentifier(str)
 {
 	return document.getElementById(str).value;
 }
 
-function checkIdentifierType(identifier, str)
+export function checkIdentifierType(identifier, str)
 {
-	if (str == 'first_name' && isValidFirstName(identifier) == true)
+    if ((str == 'first_name' || str == 'first_name_input') && isValidFirstName(identifier) == true)
 		return 'first_name';
-	if (str == 'last_name' && isValidLastName(identifier) == true)
+    if ((str == 'last_name' || str == 'last_name_input') && isValidLastName(identifier) == true)
 		return 'last_name';
-	if (str == 'date_of_birth' && isValidDateOfBirth(identifier) == true)
-		return 'date_of_birth';
-	if (str == 'username' && isValidUsername(identifier) == true)
+    if ((str == 'date_of_birth' || str == 'date_of_birth_input') && isValidDateOfBirth(identifier) == true)
+        return 'date_of_birth';
+	if ((str == 'username' || str == 'username_input') && isValidUsername(identifier) == true)
 		return 'username';
 	if (str == 'password' && isValidPassword(identifier) == true)
 		return 'password';
-	if (str == 'email' && isValidEmail(identifier) == true)
-		return 'email';
-	if (str == 'password_confirmation' && identifier != '')
+    if ((str == 'email' || str == 'email_input') && isValidEmail(identifier) == true)
+        return 'email';
+    if (str == 'password_confirmation' && identifier != '')
 		return 'password';
 	return 'error';
 }
@@ -250,23 +240,25 @@ function isValidEmail(email) {
 	return true;
 }
 
-function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
+
+export function allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
 {
 	if (first_name_type == 'error' || last_name_type == 'error' || username_type == 'error' || date_of_birth_type == 'error' || password_type == 'error' || email_type == 'error')
 		return false;
 	return true;
 }
 
-function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_confirmation_type, password_type, email_type)
+
+export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
 {
 	const errorMessages = {
-		first_name: 'Error: bad first name. First name must be less than 30 characters and can only contain letters.',
-		last_name: 'Error: bad last name. Last name must be less than 30 characters and can only contain letters, spaces, and hyphens.',
-		date_of_birth: 'Error: bad date of birth.',
-		username: 'Error: bad username. Username has to be less than 13 characters and can only contain letters, numbers, underscores, and hyphens.',
-		password: 'Error: bad password. Password has to be at least 6 characters long.',
-		email: 'Error: bad email.'
-	};
+        first_name: 'Error: bad first name. First name must be less than 30 characters and can only contain letters.',
+        last_name: 'Error: bad last name. Last name must be less than 30 characters and can only contain letters, spaces, and hyphens.',
+        date_of_birth: 'Error: bad date of birth.',
+        username: 'Error: bad username. Username has to be less than 13 characters and can only contain letters, numbers, underscores, and hyphens.',
+        password: 'Error: bad password. Password has to be at least 6 characters long.',
+        email: 'Error: bad email.'
+    };
 
 	const fields = [
 		{ type: first_name_type, id: 'first_name', message: errorMessages.first_name },
@@ -277,28 +269,28 @@ function sendErrorToFrontend(first_name_type, last_name_type, username_type, dat
 		{ type: email_type, id: 'email', message: errorMessages.email }
 	];
 
-	fields.forEach(field => {
-		const formGroup = document.getElementById(field.id).parentElement;
-		const existingError = formGroup.querySelector('.error-message');
-		if (existingError) {
-			existingError.remove();
-		}
+    fields.forEach(field =>
+	{
+        const formGroup = document.getElementById(field.id).parentElement;
+        const existingError = formGroup.querySelector('.error-message');
+        if (existingError)
+            existingError.remove();
 
-		if (field.type === 'error') {
-			const error = document.createElement('p');
-			error.textContent = field.message;
-			error.classList.add('error-message');
-			formGroup.appendChild(error);
-		}
-	});
+        if (field.type === 'error')
+		{
+            const error = document.createElement('p');
+            error.textContent = field.message;
+            error.classList.add('error-message');
+            formGroup.appendChild(error);
+        }
+    });
 }
+
 
 /***********************************************\
 *				 MAIN FUNCTION				 *
 \***********************************************/
 
-// password1: password,
-// password2: password,
 
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
@@ -307,6 +299,7 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
+			'X-CSRFToken': getCookie('csrftoken'),
 		},
 		body: JSON.stringify({
 			username,
