@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
+import { DEBUG, navigateTo }
 from '../../main.js';
 
 import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
@@ -11,10 +11,10 @@ from './gameVariables.js';
 import { loadUserManagementData }
 from '../../views/dashboard/dashboard.js';
 
-import { startGame, resetGame }
+import { startGame, resetGame, clearAll }
 from './pong.js'
 
-import { isNameValid, doesUserExist, checkPassword }
+import { isNameValid, doesUserExist, checkPassword, enableKeyBlocking }
 from './utils.js';
 
 import { checkCountdown }
@@ -29,92 +29,122 @@ from './drawing.js';
 \***********************************************/
 export function prepareTournament(menuOverlay)
 {
-	GameState.AI_present = false;
+	GameState.isAiPresent = false;
 	menuOverlay.classList.add('hidden');
 	displayTournamentForm();
 }
 
-// Function to create a dismissible password modal
-async function showPasswordModal(playerName, tournamentForm) {
-    return new Promise((resolve) => {
-        const modal = document.createElement('div');
-        modal.className = 'modal'; // Ensure you have styles for .modal
+async function showPasswordModal(playerName, tournamentForm)
+{
+	return new Promise((resolve) =>
+	{
+		const	modal = document.createElement('div');
+		modal.className = 'input-form';
 
-        const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content'; // Ensure styles for modal content
+		const	modalContent = document.createElement('div');
+		modalContent.className = 'input-content';
 
-        const title = document.createElement('h4');
-        title.textContent = `Enter password for ${playerName}`;
+		const	title = document.createElement('h3');
+		title.innerHTML = `👋🏽👋🏽👋🏽<br><br>Hello ${playerName}!<br>
+		<br>It seems you already have an account<br><br>Please enter your password<br>`;
 
-        const form = document.createElement('form'); // Create a form element
-        const passwordInput = document.createElement('input');
-        passwordInput.type = 'password';
-        passwordInput.placeholder = 'Password';
-        passwordInput.required = true; // Mark the input as required
+		const	form = document.createElement('form');
+		const	passwordInput = document.createElement('input');
+		passwordInput.type = 'password';
+		passwordInput.className = 'form-control';
+		passwordInput.placeholder = 'Enter your password';
+		passwordInput.required = true;
 
-        const confirmButton = document.createElement('button');
-        confirmButton.type = 'submit'; // Set type to 'submit'
-        confirmButton.textContent = 'Confirm';
-        
-        // Handle form submission
-        form.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent default form submission
-            const enteredPassword = passwordInput.value;
-            console.log("Entered password:", enteredPassword);
-            resolve(enteredPassword);
-            document.body.removeChild(modal);
-            tournamentForm.style.display = 'block'; // Restore the tournament form
-        });
+		// Listen for Enter key on the password input
+		passwordInput.addEventListener('keydown', (e) =>
+		{
+			if (e.key === 'Enter')
+			{
+				confirmButton.click();
+			}
+		});
 
-        const cancelButton = document.createElement('button');
-        cancelButton.type = 'button'; // Set type to 'button' to prevent form submission
-        cancelButton.textContent = 'Cancel';
-        cancelButton.addEventListener('click', () => {
-            resolve(null); // Resolve with null if canceled
-            document.body.removeChild(modal);
-            tournamentForm.style.display = 'block'; // Restore the tournament form
-        });
+		const	confirmButton = document.createElement('button');
+		confirmButton.type = 'submit';
+		confirmButton.textContent = 'Confirm';
+		confirmButton.className = 'btn menu-button start-tournament-btn';
 
-        // Append elements to the form
-        form.appendChild(passwordInput);
-        form.appendChild(confirmButton);
-        form.appendChild(cancelButton);
+		// Handle form submission
+		form.addEventListener('submit', async (e) =>
+		{
+			e.preventDefault();
+			confirmButton.disabled = true;
+			const	enteredPassword = passwordInput.value;
+			const	isValidPassword = await validatePasswordTournament(playerName, enteredPassword);
+			if (isValidPassword)
+			{
+				resolve(enteredPassword);
+				document.body.removeChild(modal);
+				tournamentForm.style.display = 'block';
+			}
+			else
+			{
+				alert('❌ Wrong password, please try again ❌')
+				passwordInput.value = '';
+				confirmButton.disabled = false;
+			}
+		});
 
-        modalContent.appendChild(title);
-        modalContent.appendChild(form); // Append form to modal content
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-    });
+		const	backButton = document.createElement('button');
+		backButton.type = 'button';
+		backButton.textContent = 'Back';
+		backButton.className = 'btn menu-button start-tournament-btn';
+
+		backButton.addEventListener('click', () =>
+		{
+			resolve(null);
+			document.body.removeChild(modal);
+			tournamentForm.style.display = 'block';
+		});
+
+		// Append elements to the form
+		form.appendChild(passwordInput);
+		form.appendChild(confirmButton);
+		form.appendChild(backButton);
+
+		modalContent.appendChild(title);
+		modalContent.appendChild(form);
+		modal.appendChild(modalContent);
+		document.body.appendChild(modal);
+	});
 }
 
-// Main tournament form function
-export async function displayTournamentForm() {
-    // Create the form container
-    const tournamentForm = document.createElement('div');
-    tournamentForm.id = 'input-form';
-    tournamentForm.className = 'input-form';
 
-    // Create the title
-    const formTitle = document.createElement('h3');
-    formTitle.textContent = 'Enter All Players\' Names';
-    tournamentForm.appendChild(formTitle);
+export async function displayTournamentForm()
+{
+	// Create the form container
+	const	tournamentForm = document.createElement('div');
+	tournamentForm.id = 'input-form';
+	tournamentForm.className = 'input-form';
 
-    const players = ['Player 1 (You)', 'Player 2', 'Player 3', 'Player 4'];
-    let currentPlayerIndex = 0; // Track the current player input
-    const playerNames = []; // Array to store player names
+	// Create the title
+	const	formTitle = document.createElement('h3');
+	formTitle.textContent = 'Enter All Players\' Names';
+	tournamentForm.appendChild(formTitle);
 
-    // Create a function to create input for the current player
-    const createPlayerInput = async () => {
-        // Clear previous input elements
-        tournamentForm.innerHTML = '';
-        tournamentForm.appendChild(formTitle); // Add title back
-    
-		if (currentPlayerIndex >= players.length) {
+	const	players = ['Player 1 (You)', 'Player 2', 'Player 3', 'Player 4'];
+	let currentPlayerIndex = 0;
+	const	playerNames = [];
+
+	// Create a function to create input for the current player
+	const	createPlayerInput = async () =>
+	{
+		// Clear previous input elements
+		tournamentForm.innerHTML = '';
+		tournamentForm.appendChild(formTitle); // Add title back
+		
+		if (currentPlayerIndex >= players.length)
+		{
 			// Change title once all players have entered their names
 			formTitle.innerHTML = "All players have entered their names.<br><br>Ready to start the tournament?";
 		
 			// Add a submit button
-			const submitButton = document.createElement('button');
+			const	submitButton = document.createElement('button');
 			submitButton.className = 'btn menu-button start-tournament-btn';
 			submitButton.textContent = 'Yes, let\'s do this!';
 			
@@ -131,151 +161,203 @@ export async function displayTournamentForm() {
 			return;
 		}
 
-        const label = players[currentPlayerIndex];
-        const inputGroup = document.createElement('div');
-        inputGroup.className = 'input-group-lg mb-3';
-    
-        const inputLabel = document.createElement('span');
-        inputLabel.className = 'input-group-text';
-        inputLabel.textContent = label;
-    
-        const playerInput = document.createElement('input');
-        playerInput.type = 'text';
-        playerInput.className = 'form-control';
-    
-        // Add an input event listener to enforce lowercase input
-        playerInput.addEventListener('input', () => {
-            playerInput.value = playerInput.value.toLowerCase();
-        });
-    
-        // Lock first input with signed-in username (existing logic)
-        if (currentPlayerIndex === 0) {
-            try {
-                const username = await loadUserManagementData();
-                if (DEBUG) console.log("Username:", username);
-                playerInput.value = username.username.toLowerCase();
-                playerInput.disabled = true; // Disable input for Player 1
-                playerNames[currentPlayerIndex] = playerInput.value; // Store Player 1's name
-                currentPlayerIndex++; // Move to next player
-                createPlayerInput(); // Call function to create the next input
-                return; // Exit the function to prevent further processing
-            } catch (error) {
-                console.error('Failed to load username:', error);
-            }
-        } else {
-            playerInput.placeholder = `Enter ${label}`;
-        }
-    
-        inputGroup.appendChild(inputLabel);
-        inputGroup.appendChild(playerInput);
-        tournamentForm.appendChild(inputGroup);
-    
-        // Create the Next button
-        const nextButton = document.createElement('button');
-        nextButton.className = 'btn btn-primary';
-        nextButton.textContent = 'Next';
-    
-        // Add event listener for the Next button
-        nextButton.addEventListener('click', async () => {
-            const playerName = playerInput.value.trim();
-            
-            console.log(`Input player name: ${playerName}`); // Debugging line
-            
-            if (isNameValid(playerName)) {
-                const userExists = await doesUserExist(playerName);
-                console.log(`Does user exist (${playerName}):`, userExists); // Debugging line
-            
-                if (userExists) {
-                    console.log('I AM HERE'); // Debugging line
+		const	label = players[currentPlayerIndex];
+		const	inputGroup = document.createElement('div');
+		inputGroup.className = 'input-group-lg mb-3';
+		
+		const	inputLabel = document.createElement('span');
+		inputLabel.className = 'input-group-text';
+		inputLabel.textContent = label;
+		
+		const	playerInput = document.createElement('input');
+		playerInput.type = 'text';
+		playerInput.className = 'form-control';
 
-                    tournamentForm.style.display = 'none'; // Hide the tournament form
-                    try {
-                        const password = await showPasswordModal(playerName, tournamentForm);
-                        console.log(`Password entered for ${playerName}: ${password ? 'provided' : 'not provided'}`); // Debugging line
-                        
-                        if (password) {
-                            const isValidPassword = await validatePasswordTournament(playerName, password);
-                            if (isValidPassword) {
-                                playerNames[currentPlayerIndex] = playerName;
-                                currentPlayerIndex++;
-                                console.log("EXISTING player name with valid password:", playerName);
-                                createPlayerInput(); // Proceed to the next player input
-                            } else {
-                                console.error(`Invalid password for ${playerName}`); // Debugging line
-                            }
-                        } else {
-                            alert('❌ Password cannot be empty ❌');
-                        }
-                    } catch (error) {
-                        console.error("Error in password modal:", error);
-                    }
-                } else {
-                    playerNames[currentPlayerIndex] = playerName;
-                    currentPlayerIndex++;
-                    console.log("NON EXISTING player name:", playerName);
-                    createPlayerInput(); // Proceed to the next player input
-                }
-            } else {
-                alert('❌ Please enter a valid name ❌');
-            }
-        });
+		// Listen for Enter key on the player input
+		playerInput.addEventListener('keydown', (e) =>
+		{
+			if (e.key === 'Enter')
+			{
+				nextButton.click();
+			}
+		});
+		
+		// Add an input event listener to enforce lowercase input
+		playerInput.addEventListener('input', () => {
+			playerInput.value = playerInput.value.toLowerCase();
+		});
+		
+		// Lock first input with signed-in username (existing logic)
+		if (currentPlayerIndex === 0) {
+			try {
+				const	username = await loadUserManagementData();
+				if (DEBUG) console.log("Username:", username);
+				playerInput.value = username.username.toLowerCase();
+				playerInput.disabled = true; // Disable input for Player 1
+				playerNames[currentPlayerIndex] = playerInput.value; // Store Player 1's name
+				currentPlayerIndex++; // Move to next player
+				createPlayerInput(); // Call function to create the next input
+				return; // Exit the function to prevent further processing
+			} catch (error) {
+				console.error('Failed to load username:', error);
+			}
+		} else {
+			playerInput.placeholder = `Enter ${label}`;
+		}
+		
+		inputGroup.appendChild(inputLabel);
+		inputGroup.appendChild(playerInput);
+		tournamentForm.appendChild(inputGroup);
+		
+		// Create the Next button
+		const	nextButton = document.createElement('button');
+		nextButton.className = 'btn menu-button start-tournament-btn';
+		nextButton.textContent = 'Next';
+		
+		// Add event listener for the Next button
+		nextButton.addEventListener('click', async () =>
+		{
+			const	playerName = playerInput.value.trim();
+			
+			
+			if (isNameValid(playerName) == true)
+			{
+				const	userExists = await doesUserExist(playerName);
+			
+				if (userExists)
+				{
 
-        // Append the Next button to the form
-        tournamentForm.appendChild(nextButton);
-    };
+					tournamentForm.style.display = 'none';
+					try {
+						const	password = await showPasswordModal(playerName, tournamentForm);
+						if (password)
+						{
+							const	isValidPassword = await validatePasswordTournament(playerName, password);
+							if (isValidPassword == true)
+							{
+								playerNames[currentPlayerIndex] = playerName;
+								currentPlayerIndex++;
+								createPlayerInput();
+							}
+							else
+							{
+								alert('❌ Wrong Password ❌');
+							}
+						}
+					}
+					catch (error)
+					{
+						console.error("Error in password modal:", error);
+					}
+				}
+				else
+				{
+					playerNames[currentPlayerIndex] = playerName;
+					currentPlayerIndex++;
+					createPlayerInput();
+				}
+			}
+			// else
+			// {
+			// 	// alert('❌ Please enter a valid name ❌');
+			// 	// setTimeout(function()
+			// 	// {
+			// 		window.location.href = '/pong';
+			// 	// }, 3000);
+			// }
+		});
 
-    // Start with the first player input
-    createPlayerInput();
+		// Append the Next button to the form
+		tournamentForm.appendChild(nextButton);
+	};
 
-    document.body.appendChild(tournamentForm);
+	// Start with the first player input
+	createPlayerInput();
+
+	document.body.appendChild(tournamentForm);
 }
+
 
 
 // Password validation function
-async function validatePasswordTournament(username, password) {
-    const isValid = await checkPassword(username, password);
-    if (isValid === true) {
-        console.log('Password is valid. Proceed to game.');
-        return true;
-    } else {
-        return false;
-    }
+async function validatePasswordTournament(username, password)
+{
+	const	isValid = await checkPassword(username, password);
+	if (isValid === true)
+	{
+		console.log('Password is valid. Proceed to game.');
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
+// export function startTournamentGame(playerNames)
+// {
+// 	if (DEBUG)
+// 		console.log('Starting tournament game...');
 
+// 	// Check that playerNames is an array
+// 	if (!Array.isArray(playerNames))
+// 	{
+// 		console.error('Invalid playerNames passed. Expected an array.');
+// 		return;
+// 	}
 
-export function startTournamentGame(playerNames) {
-    if (DEBUG) console.log('Starting tournament game...');
+// 	// Validate player names
+// 	for (const	playerName of playerNames)
+// 	{
+// 		if (isNameValid(playerName) == false)
+// 		{
+// 			alert('❌ Please enter a valid name ❌');
+// 			return;
+// 		}
 
-    // Check that playerNames is an array
-    if (!Array.isArray(playerNames)) {
-        console.error('Invalid playerNames passed. Expected an array.');
-        return;
-    }
+// 		if (playerNames.filter(name => name === playerName).length > 1)
+// 		{
+// 			alert('❌ Player names must be unique ❌');
+// 			return;
+// 		}
+// 	}
 
-    // Validate player names
-    for (const playerName of playerNames) {
-        if (!isNameValid(playerName)) {
-            alert('❌ Please enter a valid name ❌');
-            return;
-        }
+// 	if (DEBUG)
+// 		console.log('Tournament starting with players:', playerNames);
+// 	initializeTournamentMode(playerNames);
+// }
 
-        if (playerNames.filter(name => name === playerName).length > 1) {
-            alert('❌ Player names must be unique ❌');
-            return;
-        }
-    }
+export function startTournamentGame(playerNames)
+{
+	if (DEBUG)
+		console.log('Starting tournament game...');
 
-    console.log('Tournament starting with players:', playerNames);
+	if (!Array.isArray(playerNames))
+	{
+		console.error('Invalid playerNames passed. Expected an array.');
+		return;
+	}
 
-    // Optionally remove the tournament form if needed (optional based on your design)
-    // tournamentForm.remove();
+	// Validate player names for uniqueness only
+	const	nameSet = new Set();
+	for (const	playerName of playerNames)
+	{
+		if (nameSet.has(playerName))
+		{
+			const	TEST = "- ❌ Player names must be unique ❌\n- Press OK to be redirected to the menu";
+			alert(TEST);
+			{
+				navigateTo('/pong');
+			}
+			return;
+		}
+		nameSet.add(playerName);
+	}
 
-    // Initialize the tournament mode with the collected player names
-    initializeTournamentMode(playerNames);
+	if (DEBUG)
+		console.log('Tournament starting with players:', playerNames);
+	initializeTournamentMode(playerNames);
 }
-
-
 
 export function initializeTournamentMode(playerNames)
 {
@@ -339,7 +421,8 @@ function displayMatchups(matchups)
 
 	fillMatchPlayers(0);
 
-	setTimeout(() => {
+	setTimeout(() =>
+	{
 		document.body.removeChild(matchupsContainer);
 		checkCountdown();
 	}, 5000);
@@ -385,21 +468,14 @@ export function setupFinalMatch()
 	player1.name = finalMatchup[0];
 	player2.name = finalMatchup[1];
 
+	console.log("Starting final match between:", player1.name, "and", player2.name);
+	console.log("Ball speed =", BallConf.speed);
 	resetGame();
 	drawUsernames(player1.name, player2.name);
 
 	console.log("GameState after setting final match:", GameState)
 
 	updateRematchButtonText();
-
-	startFinalMatch();
-}
-
-function startFinalMatch()
-{
-	console.log("Starting final match between:", player1.name, "and", player2.name);
-	console.log("Ball speed =", BallConf.speed);
-	startGame();
 }
 
 export function tournamentNextMatch()

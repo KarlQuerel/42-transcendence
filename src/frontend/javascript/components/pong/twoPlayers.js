@@ -52,7 +52,7 @@ from '../../views/user/signin.js';
 
 export function prepareTwoPlayers(menuOverlay)
 {
-	GameState.AI_present = false;
+	GameState.isAiPresent = false;
 	menuOverlay.classList.add('hidden');
 	displayPlayer2Form();
 }
@@ -204,6 +204,13 @@ async function validatePasswordTwoPlayers(username, password, modal, player2Form
 	{
 		alert('Invalid password. Please try again.');
 	}
+
+	const	passwordInput = modal.querySelector('input[type="password"]');
+	if (passwordInput)
+	{
+		passwordInput.value = '';
+	}
 }
+
 
 

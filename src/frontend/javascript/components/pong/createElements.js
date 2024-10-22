@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
+import { DEBUG, navigateTo }
 from '../../main.js';
 
 /***********************************************\
@@ -237,7 +237,7 @@ export function createBackToMenuButton()
 
 	backButton.onclick = () =>
 	{
-		window.location.href = '/pong';
+		navigateTo('/pong');
 	};
 	
 	return backButton;

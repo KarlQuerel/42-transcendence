@@ -4,7 +4,7 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { BallConf, GameState, GraphConf, GameConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
 import { displayTournamentForm, startTournamentGame,
@@ -46,6 +46,17 @@ from '../../views/user/signin.js';
 /***********************************************\
 -					UTILS						-
 \***********************************************/
+export function checkElement(element, elementName)
+{
+	if (!element)
+	{
+		console.error(`${elementName} element not found!`);
+		return false;
+	}
+	return true;
+}
+
+/***			User & Password Management			***/
 export function isNameValid(playerName)
 {
 	if (playerName.length > 12)
@@ -66,16 +77,6 @@ export function isNameValid(playerName)
 		return false;
 	}
 
-	return true;
-}
-
-export function checkElement(element, elementName)
-{
-	if (!element)
-	{
-		console.error(`${elementName} element not found!`);
-		return false;
-	}
 	return true;
 }
 
@@ -119,4 +120,44 @@ export async function checkPassword(username, password)
 		console.error('Error checking password:', error);
 		return false;
 	}
+}
+
+/***			Graphics					***/
+export function showCanvas()
+{
+	const canvas = document.getElementById('pongCanvas');
+	if (canvas)
+	{
+		canvas.style.display = 'block';
+	}
+}
+
+export function hideCanvas()
+{
+	const canvas = document.getElementById('pongCanvas');
+	if (canvas)
+	{
+		canvas.style.display = 'none';
+	}
+}
+
+/***			Keys Handling					***/
+export function blockKeys(event)
+{
+	const blockedKeys = ['p', 'Escape', 'ArrowUp', 'ArrowDown', 'w', 's'];
+
+	if (GameConf.keysBlocked === true && blockedKeys.includes(event.key))
+	{
+		event.preventDefault();
+	}
+}
+
+export function enableKeyBlocking()
+{
+	GameConf.keysBlocked = true;
+}
+
+export function disableKeyBlocking()
+{
+	GameConf.keysBlocked = false;
 }

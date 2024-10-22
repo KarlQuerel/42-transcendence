@@ -8,6 +8,9 @@ import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2,
 Results }
 from './gameVariables.js';
 
+import { showTournamentResults }
+from './pong.js';
+
 import { checkElement }
 from './utils.js';
 
@@ -114,14 +117,24 @@ export function drawWinMessage(winnerName)
 
 	if (checkElement(messageElement, 'Winning message') === false)
 		return;
-
+	
 	if (checkElement(rematchButton, 'Rematch button') === false)
 		return;
-
+	
 	if (checkElement(backtomenuButton, 'Back to menu button') === false)
 		return;
-
+	
 	const	upperWinner = winnerName.toUpperCase();
+	if (GameState.isTournamentDone == true)
+	{
+		rematchButton.classList.add('hidden-sudden');
+		showTournamentResults();
+		return;
+	}
+	else
+	{
+		rematchButton.classList.remove('hidden-sudden');
+	}
 
 	// Update winning message
 	messageElement.innerHTML = upperWinner + "<br>WINS!";
@@ -138,8 +151,10 @@ export function drawWinMessage(winnerName)
 
 	updateRematchButtonText();
 
-	rematchButton.classList.remove('hidden-sudden');
-	backtomenuButton.classList.remove('hidden-sudden');
+	if (GameState.isTournament == false)
+	{
+		backtomenuButton.classList.remove('hidden-sudden');
+	}
 }
 
 export function updateRematchButtonText()
@@ -151,12 +166,16 @@ export function updateRematchButtonText()
 
 	if (GameState.isTournament === true)
 	{
+		if (GameState.isFinalMatch === true && GameState.isGameDone === true)
+		{
+			rematchButton.classList.add('hidden-sudden');
+		}
+		
 		if (GameState.isFinalMatch === false)
 		{
 			rematchButton.textContent = 'Next Match';
 		}
-		else if
-		(GameState.isFinalMatch === true)
+		else if (GameState.isFinalMatch === true)
 		{
 			rematchButton.textContent = 'Final Match';
 		}

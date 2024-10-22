@@ -175,6 +175,12 @@ function router()
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
 
+	// Add this section to call cleanup for /pong on first load
+	if (path === '/pong' && previousRoute !== route)
+	{
+		cleanUpPong();
+	}
+
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
@@ -239,7 +245,7 @@ function router()
 }
 
 /***		Navigation Function				***/
-function navigateTo(path)
+export function navigateTo(path)
 {
 	history.pushState(null, "", path);
 	router();

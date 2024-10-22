@@ -42,7 +42,9 @@ from './postGame.js';
 
 import { prepareSinglePlayer }
 from './onePlayer.js';
-import { checkElement } from './utils.js';
+
+import { checkElement, disableKeyBlocking, enableKeyBlocking, hideCanvas }
+from './utils.js';
 
 /***********************************************\
 -				RENDERING						-
@@ -73,6 +75,9 @@ export function initializePong()
 		console.log('Initializing Pong...');
 
 	resetNames();
+	clearAll();
+
+	enableKeyBlocking();
 
 	requestAnimationFrame(() =>
 	{
@@ -206,7 +211,7 @@ export function startGame()
 		player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
 	});
 
-	GameState.game_done = false;
+	GameState.isGameDone = false;
 	gameLoop();
 }
 
@@ -314,10 +319,15 @@ let	startTime;
 let	elapsedSeconds;
 let	current_sec;
 
+export function clearCanvas()
+{
+	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
+}
+
 /***			Main Loop					***/
 export async function gameLoop()
 {
-	if (GameState.game_paused == true)
+	if (GameState.isGamePaused == true)
 	{
 		if (GameState.animationFrameId)
 		{
@@ -329,15 +339,15 @@ export async function gameLoop()
 		return;
 	}
 
-	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
+	clearCanvas();
 
-	if (GameState.game_done == true)
+	if (GameState.isGameDone == true)
 	{
 		return ;
 	}
 	
 //---------------------------------- AI ----------------------------------
-	if (GameState.AI_present == true)
+	if (GameState.isAiPresent == true)
 	{
 		// updates the game data for the AI file immediately before starting the time interval
 		if (data.ball_horizontal == undefined)
@@ -371,17 +381,17 @@ export async function gameLoop()
 		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
 		fillingResults(1);
-		GameState.game_done = true;
+		GameState.isGameDone = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
 		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
 		fillingResults(2);
-		GameState.game_done = true;
+		GameState.isGameDone = true;
 	}
 
-	if (GameState.game_done == false)
+	if (GameState.isGameDone == false)
 	{
 		GameState.animationFrameId = requestAnimationFrame(gameLoop);
 	}
@@ -421,22 +431,26 @@ function checkTournamentWinner(winnerName)
 	}
 }
 
-function showTournamentResults()
+export function showTournamentResults()
 {
+	hideCanvas();
+	const	messageElement = document.getElementById('winning-message');
+	messageElement.classList.remove('show');
+
+	const	backToMenuButton = document.getElementById('back-to-menu-button');
+	backToMenuButton.classList.remove('hidden-sudden');
+
 	const	resultsContainer = document.createElement('div');
 	resultsContainer.className = 'matchups-container';
 
 	// Create and display the tournament winner
 	const	winnerElement = document.createElement('h2');
 	winnerElement.className = 'tournament-winner';
-	winnerElement.textContent = `🏆 ${GameConf.tournamentWinner.toUpperCase()} IS THE TOURNAMENT WINNER! 🏆`;
+	winnerElement.innerHTML = `🏆🏆🏆<br><br>${GameConf.tournamentWinner.toUpperCase()} IS THE TOURNAMENT WINNER!<br><br>🏆🏆🏆`;
 	resultsContainer.appendChild(winnerElement);
 
 	// Append the results container to the DOM
 	document.body.appendChild(resultsContainer);
-
-	const	backButton = createBackToMenuButton();
-	resultsContainer.appendChild(backButton);
 }
 
 function resetTournament()
@@ -461,20 +475,24 @@ function resetNames()
 /***			Resetting Game				***/
 export function resetGame()
 {
-	// Reset game state
+	clearAll();
+	checkCountdown();
+}
+
+export function clearAll()
+{
 	resetScores();
 	randomizeBall();
 	hideWinningMessage();
-
+	
 	// Restart the game
-	GameState.game_done = false;
+	GameState.isGameDone = false;
 	GameState.isGameModeSelected = true;
-
+	
 	if (DEBUG)
 		console.log('GameState', GameState);
-
+	
 	setupEventListeners();
-	requestAnimationFrame(gameLoop);
 }
 
 function resetScores()

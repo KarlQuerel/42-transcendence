@@ -38,6 +38,9 @@ from './postGame.js';
 import { startGame }
 from './pong.js';
 
+import { showCanvas, hideCanvas, disableKeyBlocking }
+from './utils.js';
+
 /***********************************************\
 -					COUTDOWN					-
 \***********************************************/
@@ -48,6 +51,8 @@ export function checkCountdown()
 		clearInterval(GameState.countdownInterval);
 		document.querySelectorAll('.countdown').forEach(el => el.remove());
 	}
+
+	hideCanvas();
 	startCountdown();
 }
 
@@ -77,6 +82,8 @@ export function startCountdown()
 			{
 				document.body.removeChild(countdownDisplay);
 				GameState.isCountdownActive = false;
+				showCanvas();
+				disableKeyBlocking();
 				startGame();
 			}, 1000);
 		}

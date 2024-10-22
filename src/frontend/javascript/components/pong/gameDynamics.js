@@ -4,7 +4,7 @@
 import { DEBUG }
 from '../../main.js';
 
-import { keysPressed, BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { keysPressed, BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results, GameConf }
 from './gameVariables.js';
 
 import { drawPauseMenu, hidePauseMenu }
@@ -153,18 +153,21 @@ function resetPaddles()
 \***********************************************/
 export function keyDownHandler(e)
 {
+	if (GameConf.keysBlocked == true)
+		return ;
+
 	if (GameState.isGameModeSelected === false)
 		return ;
 
-	if (GameState.game_done === true)
+	if (GameState.isGameDone === true)
 		return ;
 
 	keysPressed[e.key] = true;
 	
 	if (e.key === "p" || e.key === "Escape")
 	{
-		GameState.game_paused = !GameState.game_paused;
-		if (GameState.game_paused == true)
+		GameState.isGamePaused = !GameState.isGamePaused;
+		if (GameState.isGamePaused == true)
 		{
 			cancelAnimationFrame(GameState.animationFrameId);
 			drawPauseMenu();

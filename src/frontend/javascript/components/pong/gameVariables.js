@@ -2,21 +2,20 @@
 -					IMPORTS						-
 \***********************************************/
 
-let	animationFrameId = null;
-
-export const	keysPressed = {};
+let		animationFrameId = null;
+export	const keysPressed = {};
 
 /***			Game State			***/
 export const	GameState =
 {
 	// Check AI state
-	AI_present: false,
+	isAiPresent: false,
 	
 	// Is game done?
-	game_done: false,
+	isGameDone: false,
 	
 	// Is game paused?
-	game_paused: false,
+	isGamePaused: false,
 
 	// For gameloop
 	animationFrameId,
@@ -69,7 +68,8 @@ export const GameConf =
 	matchupIndex : 0,
 	allMatchups : [],
 	winners : [],
-	tournamentWinner : null
+	tournamentWinner : null,
+	keysBlocked : false
 };
 
 

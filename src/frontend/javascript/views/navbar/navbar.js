@@ -45,12 +45,11 @@ function createNavbar()
 		{ href: '/pong', imgSrc: 'assets/images/navbar/pong_button.gif', text: 'Pong' },
 	];
 
-	// Add the Dashboard and Profile links only if the user is signed in
+	// Add Profile links only if the user is signed in
 	if (getSignedInState() === true)
 	{
 		navItems.push
 		(
-			{ href: '/dashboard', imgSrc: 'assets/images/navbar/dashboard_button.gif', text: 'Dashboard' },
 			{ href: '/profile', imgSrc: 'assets/images/navbar/profile_button.gif', text: 'My Profile' }
 		);
 	}
