@@ -453,9 +453,26 @@ def	usersList(request):
 			}
 			for user in users
 		]
-		return Response(users_data)
+		return JsonResponse(users_data, safe=False, status=status.HTTP_200_OK)
+	except:
+		return JsonResponse({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getFriendAvatar(request, user_id):
+	try:
+		print('user id: ', user_id)
+		user = CustomUser.objects.get(id=user_id)
+		print('user: ', user)
+		avatar_image_path = user.avatar.path
+		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+		data = {
+			'avatar': avatar
+		}
+		return JsonResponse(data, status=status.HTTP_200_OK)
 	except Exception as e:
-		return Response({'error': str(e)}, status=510)
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 def get_friendship_status(user1, user2):
 	for friend in user1.friends.all():

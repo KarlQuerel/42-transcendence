@@ -14,7 +14,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState } from '../../main.js';
+import { DEBUG } from '../../main.js';
 import { apiRequest, getCookie } from './signin.js';
 import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend } from './signup.js';
 

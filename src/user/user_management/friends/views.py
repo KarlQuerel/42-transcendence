@@ -7,11 +7,33 @@ from .serializers import FriendRequestSerializer
 
 class SendFriendRequestView(APIView):
 	def post(self, request):
+		if requestAlreadySent(request) == True:
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)	
 		serializer = FriendRequestSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save(sender=request.user)
 			return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def requestAlreadySent(request):
+	try:
+		other_user = CustomUser.objects.get(id=request.data.get('receiver'))
+		friend_request = FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='pending')
+		return True
+	except FriendRequest.DoesNotExist:
+		try:
+			friend_request = FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='accepted')
+			return True
+		except FriendRequest.DoesNotExist:
+			try:
+				friend_request = FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='pending')
+				return True
+			except FriendRequest.DoesNotExist:
+				try:
+					friend_request = FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='accepted')
+					return True
+				except FriendRequest.DoesNotExist:
+					return False
 
 class AcceptFriendRequestView(APIView):
 	def post(self, request, request_id):
