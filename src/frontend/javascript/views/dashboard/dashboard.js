@@ -150,7 +150,8 @@ a promise that is still pending when we pass statsData into evenlisteners and th
 -					FETCHING DATA				-
 \***********************************************/
 
-async function loadUserGameHistory() {
+async function loadUserGameHistory()
+{
 	try
 	{
 		const gameHistory = await apiRequest('/api/dashboard/getGameHistory/', {
@@ -173,7 +174,8 @@ async function loadUserGameHistory() {
 	}
 }
 
-// async function loadAvatars() {
+// async function loadAvatars()
+// {
 // 	try
 // 	{
 // 		const allAvatars = await apiRequest('/api/user/getAllUserAvatars/', {
@@ -194,6 +196,27 @@ async function loadUserGameHistory() {
 // 	}
 // }
 
+
+export async function loadUserManagementData()
+{
+	try {
+		const userData = await apiRequest('/api/users/getUsername/', {
+			method: 'GET',
+			headers: {
+				...getAuthHeaders(),
+			},
+		});
+		if (DEBUG)
+			console.log("userData = ", userData);
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched user info");
+		return userData;
+	} catch (error) {
+		console.error('Error: fetch userData', error);
+		throw error; // Re-throw the error
+	}
+}
+
 async function loadAvatars() {
 	try {
 		const response = await apiRequest('/api/user/getAllUserAvatars/', {
@@ -203,9 +226,22 @@ async function loadAvatars() {
 			},
 		});
 
+		console.log('JE PASSE PAR ICI');
+		console.log("Response headers:", response.headers);
+		console.log("Response status:", response.status);
+		console.log("Response text:", await response.text());
+
 		// Check if the response is OK
-		if (!response.ok) {
-			throw new Error(`HTTP error! status: ${response.status}`);
+		// if (!response.ok) {
+		// 	throw new Error(`HTTP error! status: ${response.status}`);
+		// }
+		console.error("CARO: ", response.status, response.statusText);
+
+		// Check if the response is JSON
+		const contentType = response.headers.get('Content-Type');
+		if (!contentType || !contentType.includes('application/json')) {
+			
+			throw new Error('Received non-JSON response');
 		}
 
 		// Attempt to parse the response as JSON

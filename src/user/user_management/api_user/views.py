@@ -187,19 +187,25 @@ def getUsername(request):
 def getAllUserAvatars(request):
 	try:
 		user = request.user
+		# print(f'User: {user}') # DEBUG
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
+			print(f'User: {user}') # DEBUG
 			users = CustomUser.objects.all()
+			print(f'Users: {users}') # DEBUG
 			avatars = []
-		
+
 			for user in users:
 				avatar_image_path = user.avatar.path
+				print(f'   Avatar image path: {avatar_image_path}') # DEBUG
+				print(f'   User: {user.username}') # DEBUG
 				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
 				avatars.append({'username': user.username, 'avatar': avatar})
 
+			print(f'Avatars: {avatars}') # DEBUG
 			return JsonResponse(avatars, safe=False, status=200)
 
 		except Exception as e:
