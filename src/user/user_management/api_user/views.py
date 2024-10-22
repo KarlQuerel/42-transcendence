@@ -112,7 +112,7 @@ def currentlyLoggedInUser(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		avatar_image_path = user.avatar.path # C'EST CA LE PROBLEME
+		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
 
@@ -182,9 +182,10 @@ def getUsername(request):
 
 
 @api_view(['GET'])
-@login_required
+# @login_required
 @permission_classes([IsAuthenticated])
 def getAllUserAvatars(request):
+	print(f"Authorization header: {request.headers.get('Authorization')}")  # Debugging
 	try:
 		user = request.user
 		# print(f'User: {user}') # DEBUG
@@ -209,9 +210,11 @@ def getAllUserAvatars(request):
 			return JsonResponse(avatars, safe=False, status=200)
 
 		except Exception as e:
+			print(f'Unexpected error: {str(e)}') # DEBUG
 			return Response({'error': str(e)}, status=500)
 
 	except Exception as e:
+		print(f'Unexpected error: {str(e)}') # DEBUG
 		return Response({'error': str(e)}, status=500)
 
 
@@ -243,7 +246,7 @@ def changePassword(request):
 	
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 
 #########################################

@@ -5,7 +5,6 @@ import { DEBUG, GITHUBACTIONS } from '../../main.js';
 import { apiRequest } from '../user/signin.js';
 import { getAuthHeaders } from '../user/signin.js';
 
-
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
@@ -197,65 +196,51 @@ async function loadUserGameHistory()
 // }
 
 
-export async function loadUserManagementData()
-{
-	try {
-		const userData = await apiRequest('/api/users/getUsername/', {
-			method: 'GET',
-			headers: {
-				...getAuthHeaders(),
-			},
-		});
-		if (DEBUG)
-			console.log("userData = ", userData);
-		if (GITHUBACTIONS)
-			console.log("Successfully fetched user info");
-		return userData;
-	} catch (error) {
-		console.error('Error: fetch userData', error);
-		throw error; // Re-throw the error
-	}
-}
+// export async function loadUserManagementData()
+// {
+// 	try {
+// 		const userData = await apiRequest('/api/users/getUsername/', {
+// 			method: 'GET',
+// 			headers: {
+// 				...getAuthHeaders(),
+// 			},
+// 		});
+// 		if (DEBUG)
+// 			console.log("userData = ", userData);
+// 		if (GITHUBACTIONS)
+// 			console.log("Successfully fetched user info");
+// 		return userData;
+// 	} catch (error) {
+// 		console.error('Error: fetch userData', error);
+// 		throw error; // Re-throw the error
+// 	}
+// }
+
 
 async function loadAvatars() {
-	try {
-		const response = await apiRequest('/api/user/getAllUserAvatars/', {
+	try
+	{
+		const response = await apiRequest('/api/users/getAllUserAvatars/', {
 			method: 'GET',
 			headers: {
-				...getAuthHeaders(),
+				'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				'Content-Type': 'application/json',
 			},
 		});
 
-		console.log('JE PASSE PAR ICI');
-		console.log("Response headers:", response.headers);
-		console.log("Response status:", response.status);
-		console.log("Response text:", await response.text());
-
-		// Check if the response is OK
-		// if (!response.ok) {
-		// 	throw new Error(`HTTP error! status: ${response.status}`);
-		// }
-		console.error("CARO: ", response.status, response.statusText);
-
-		// Check if the response is JSON
-		const contentType = response.headers.get('Content-Type');
-		if (!contentType || !contentType.includes('application/json')) {
-			
-			throw new Error('Received non-JSON response');
-		}
-
-		// Attempt to parse the response as JSON
-		const allAvatars = await response.json();
-
-		if (GITHUBACTIONS) {
+		if (GITHUBACTIONS)
 			console.log("Successfully fetched all avatars");
-		}
-		return allAvatars;
-	} catch (error) {
+
+		return response;
+
+	}
+	catch (error)
+	{
 		console.error("Error fetching users' avatars:", error);
 
 		// Log the response text for debugging
-		if (error.response) {
+		if (error.response)
+		{
 			const errorText = await error.response.text();
 			console.error("Response text:", errorText);
 		}
@@ -263,6 +248,52 @@ async function loadAvatars() {
 		throw error; // Re-throw the error after logging
 	}
 }
+
+// async function loadAvatars() {
+// 	try {
+// 		const response = await apiRequest('/api/users/getAllUserAvatars/', {
+// 			method: 'GET',
+// 			headers: {
+// 				'Authorization': `Bearer ${localStorage.getItem('token')}`,
+// 				'Content-Type': 'application/json',
+// 			},
+// 		});
+
+// 		// Log the full response status and headers
+// 		console.log("Full response:", response);
+// 		console.log("Response status:", response.status);
+
+// 		// Check if the response is OK (status code 200-299)
+// 		if (!response.ok)
+// 		{
+// 			const errorText = await response.text(); // Read the response text
+// 			console.error("Error response text:", errorText);
+// 			throw new Error(`HTTP error! status: ${response.status}`);
+// 		}
+
+// 		// Log the raw response body as text to ensure it's what you expect
+// 		const rawText = await response.text();
+// 		console.log("Raw response body as text:", rawText);
+
+// 		// Attempt to parse the text response as JSON
+// 		let allAvatars;
+// 		try {
+// 			allAvatars = JSON.parse(rawText);
+// 			console.log("Parsed JSON response:", allAvatars);
+// 		} catch (jsonError) {
+// 			console.error("Failed to parse JSON:", jsonError);
+// 			throw new Error("Response is not valid JSON");
+// 		}
+
+// 		return allAvatars;
+// 	}
+// 	catch (error)
+// 	{
+// 		console.error("Error fetching users' avatars:", error);
+// 		throw error; // Re-throw the error after logging
+// 	}
+// }
+
 
 
 /***********************************************\
