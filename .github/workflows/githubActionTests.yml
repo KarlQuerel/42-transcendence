@@ -3,8 +3,8 @@ name: GitHub Action Tests
 on:
   push:
     branches:
-      # - '**'  # Triggers on any branch push
-      - main # when someone pushes on main branch
+      - '**'  # Triggers on any branch push
+      # - main # when someone pushes on main branch
 
 jobs:
   all_tests:

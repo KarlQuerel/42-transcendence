@@ -46,9 +46,8 @@ test('display dashboard data', async ({ page }) => {
 
 	// Set up console message listener
     const successMessages = new Set([
-        'Successfully fetched user info',
-        'Successfully fetched dashboard data',
-        'Successfully fetched user stats'
+        "Successfully fetched connected user's game history",
+        "Successfully fetched all users",
     ]);
 
     const foundMessages = new Set();

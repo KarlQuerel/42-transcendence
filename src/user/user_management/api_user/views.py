@@ -156,7 +156,7 @@ def getUsername(request):
 # @api_view(['GET'])
 # @login_required
 # @permission_classes([IsAuthenticated])
-# def getAllUserAvatars(request):
+# def getAllUsers(request):
 # 	try:
 # 		user = request.user
 # 		if not user.is_authenticated:
@@ -181,42 +181,33 @@ def getUsername(request):
 # 		return Response({'error': str(e)}, status=500)
 
 
-#NE FAIT PLUS QUE RETURN LES ID ET USERNAME DONC CHANGER NOM DE CETTE FONCTION
+# Returns all users id and username for dashboard page
 @api_view(['GET'])
-# @login_required
 @permission_classes([IsAuthenticated])
-def getAllUserAvatars(request):
-	print(f"Authorization header: {request.headers.get('Authorization')}")  # Debugging
+def getAllUsers(request):
 	try:
 		user = request.user
-		# print(f'User: {user}') # DEBUG
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
-			print(f'User: {user}') # DEBUG
+			print(f'User: {user}')
 			users = CustomUser.objects.all()
-			print(f'Users: {users}') # DEBUG
-			avatars = []
+			print(f'Users: {users}')
+			users_info = []
 
 			for user in users:
-				# avatar_image_path = user.avatar.path
-				# print(f'   Avatar image path: {avatar_image_path}') # DEBUG
-				# print(f'   User: {user.username}') # DEBUG
-				# with default_storage.open(avatar_image_path, 'rb') as avatar_image:
-				# 	avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-				# avatars.append({'username': user.username, 'avatar': avatar})
-				avatars.append({'username': user.username, 'id': user.id})
+				users_info.append({'username': user.username, 'id': user.id})
 
-			print(f'Avatars: {avatars}') # DEBUG
-			return JsonResponse(avatars, safe=False, status=200)
+			print(f'Users info: {users_info}')
+			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
-			print(f'Unexpected error: {str(e)}') # DEBUG
+			print(f'Unexpected error: {str(e)}')
 			return Response({'error': str(e)}, status=500)
 
 	except Exception as e:
-		print(f'Unexpected error: {str(e)}') # DEBUG
+		print(f'Unexpected error: {str(e)}')
 		return Response({'error': str(e)}, status=500)
  
 

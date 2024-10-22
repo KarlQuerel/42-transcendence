@@ -1,67 +1,64 @@
+import random
 from django.core.management.base import BaseCommand
 from base.models import GameHistory
 from api_user.models import CustomUser
 from datetime import datetime
 
 class Command(BaseCommand):
-	help = 'Populates the database with predefined game history data'
+	help = 'Populates the database with random game history data'
 
 	def handle(self, *args, **kwargs):
-		predefined_data = [
-					{
-				'username': 'karl',
-				'games': [
-					{'myUsername': 'karl', 'opponentUsername': 'clement', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-10'},
-					{'myUsername': 'karl', 'opponentUsername': 'jess', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'karl', 'opponentUsername': 'carolina', 'opponentScore': 10, 'myScore': 0, 'date': '2024-09-11'},
-					{'myUsername': 'karl', 'opponentUsername': 'AI', 'opponentScore': 10, 'myScore': 2, 'date': '2024-09-11'},
-				]
-			},
-			{
-				'username': 'clement',
-				'games': [
-					{'myUsername': 'clement', 'opponentUsername': 'karl', 'opponentScore': 10, 'myScore': 6, 'date': '2024-09-10'},
-					{'myUsername': 'clement', 'opponentUsername': 'jess', 'opponentScore': 7, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'clement', 'opponentUsername': 'carolina', 'opponentScore': 10, 'myScore': 7, 'date': '2024-09-11'},
-					{'myUsername': 'clement', 'opponentUsername': 'AI', 'opponentScore': 8, 'myScore': 10, 'date': '2024-09-11'},
-				]
-			},
-			{
-				'username': 'jess',
-				'games': [
-					{'myUsername': 'jess', 'opponentUsername': 'karl', 'opponentScore': 9, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'jess', 'opponentUsername': 'clement', 'opponentScore': 10, 'myScore': 3, 'date': '2024-09-11'},
-					{'myUsername': 'jess', 'opponentUsername': 'carolina', 'opponentScore': 10, 'myScore': 1, 'date': '2024-09-11'},
-					{'myUsername': 'jess', 'opponentUsername': 'AI', 'opponentScore': 10, 'myScore': 2, 'date': '2024-09-11'},
-				]
-			},
-			{
-				'username': 'carolina',
-				'games': [
-					{'myUsername': 'carolina', 'opponentUsername': 'karl', 'opponentScore': 0, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'carolina', 'opponentUsername': 'clement', 'opponentScore': 6, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'carolina', 'opponentUsername': 'jess', 'opponentScore': 3, 'myScore': 10, 'date': '2024-09-11'},
-					{'myUsername': 'carolina', 'opponentUsername': 'AI', 'opponentScore': 5, 'myScore': 10, 'date': '2024-09-11'},
-				]
-			},
-		]
+		users = CustomUser.objects.all()
+		games_per_pair = lambda: random.randint(2, 5)  # Each pair has between 2 to 5 games
+		predefined_games = []
 
-		for user_data in predefined_data:
+		# Generate games between each user pair
+		for user in users:
+			for opponent in users:
+				if user != opponent:
+					num_games = games_per_pair()
+					for _ in range(num_games):
+						myScore, opponentScore = (10, random.randint(0, 9)) if random.random() > 0.5 else (random.randint(0, 9), 10)
+						game_date = datetime.strptime(f'2024-09-{random.randint(1, 30)}', '%Y-%m-%d')
+
+						# Add game to the user
+						predefined_games.append({
+							'myUsername': user.username,
+							'opponentUsername': opponent.username,
+							'myScore': myScore,
+							'opponentScore': opponentScore,
+							'date': game_date
+						})
+
+						# Add the reverse game to the opponent
+						predefined_games.append({
+							'myUsername': opponent.username,
+							'opponentUsername': user.username,
+							'myScore': opponentScore,
+							'opponentScore': myScore,
+							'date': game_date
+						})
+
+		# Insert the games into the database
+		for game in predefined_games:
 			try:
-				user = CustomUser.objects.get(username=user_data['username'])
-				for game in user_data['games']:
-					if GameHistory.objects.filter(user=user, myUsername=game['myUsername'], opponentUsername=game['opponentUsername'], date=datetime.strptime(game['date'], '%Y-%m-%d')).exists():
-						self.stdout.write(self.style.WARNING(f'Game history for {user.username} already exists'))
-						continue
-					
+				user = CustomUser.objects.get(username=game['myUsername'])
+				if not GameHistory.objects.filter(
+						user=user,
+						myUsername=game['myUsername'],
+						opponentUsername=game['opponentUsername'],
+						date=game['date']).exists():
 					GameHistory.objects.create(
 						user=user,
 						myUsername=game['myUsername'],
 						opponentUsername=game['opponentUsername'],
-						opponentScore=game['opponentScore'],
 						myScore=game['myScore'],
-						date=datetime.strptime(game['date'], '%Y-%m-%d')
+						opponentScore=game['opponentScore'],
+						date=game['date']
 					)
-				self.stdout.write(self.style.SUCCESS(f'Successfully added game history for {user.username}'))
+					self.stdout.write(self.style.SUCCESS(f'Added game: {game["myUsername"]} vs {game["opponentUsername"]} on {game["date"]}'))
+				else:
+					self.stdout.write(self.style.WARNING(f'Game history already exists for {game["myUsername"]} vs {game["opponentUsername"]} on {game["date"]}'))
 			except CustomUser.DoesNotExist:
-				self.stdout.write(self.style.ERROR(f'User {user_data["username"]} does not exist'))
+				self.stdout.write(self.style.ERROR(f'User {game["myUsername"]} does not exist'))
+

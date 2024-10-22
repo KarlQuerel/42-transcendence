@@ -36,6 +36,8 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
+logs-user: #pour voir les print des views de User
+	docker logs User
 
 #######		DJANGO		#######
 

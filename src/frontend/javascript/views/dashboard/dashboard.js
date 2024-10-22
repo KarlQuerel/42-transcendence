@@ -140,9 +140,9 @@ export async function initializeDashboard() /*assync and wait needed otherwise w
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
 	const gameHistory = await loadUserGameHistory();
-	const allAvatars = await loadAvatars(); //IMPORTANT: TESTER QUAND JESS AURA PUSH SES AVATARS
+	const allUsers = await loadAllUsers();
 
-	setupEventListeners(gameHistory, allAvatars); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	setupEventListeners(gameHistory, allUsers); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
 }
 
 /***********************************************\
@@ -162,14 +162,14 @@ async function loadUserGameHistory()
 
 		if (DEBUG)
 			console.log("gameHistory= ", gameHistory);
-		if (GITHUBACTIONS) //TODO: modifier githubActions file
+		if (GITHUBACTIONS)
 			console.log("Successfully fetched connected user's game history");
 		return gameHistory;
 	}
 	catch (error)
 	{
 		console.error("Error fetching connected user's game history");
-		throw error; //CHECK: check it stops everything or re-throw it
+		throw error;
 	}
 }
 
@@ -177,10 +177,10 @@ async function loadUserGameHistory()
 //Cette fonction ne fait plus que chopper les usernames et les id puis faut rajouter
 //dans le même tableau les vatars un par un avec la viuew de clément pour éviter
 //l'erreur 414 (Request-URI Too Large)
-async function loadAvatars() {
+async function loadAllUsers() {
 	try
 	{
-		const response = await apiRequest('/api/users/getAllUserAvatars/', {
+		const response = await apiRequest('/api/users/getAllUsers/', {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -188,14 +188,15 @@ async function loadAvatars() {
 			},
 		});
 
-		if (DEBUG) //HERE: undefined donc j'ai pas dû correctement modifier getAllUserAvatars
-		{
-			console.log("user id= ", response.id);
-			console.log("username= ", response.username);
+		if (DEBUG) {
+			response.forEach(user => {
+				console.log("user id = ", user.id);
+				console.log("username = ", user.username);
+			});
 		}
 
-		if (GITHUBACTIONS) //TODO: modifier githubActions file
-			console.log("Successfully fetched all avatars");
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched all users");
 
 		return response;
 
@@ -210,24 +211,22 @@ async function loadAvatars() {
 			console.error("Response text:", errorText);
 		}
 
-		throw error; //CHECK: check it stops everything or re-throw it
+		throw error;
 	}
 }
 
-function getAvatar(user) //HERE
+function getAvatar(userID, avatar)
 {
-	apiRequest(`/api/users/getFriendAvatar/${user.id}`, {
+	apiRequest(`/api/users/getFriendAvatar/${userID}`, {
 		method: 'GET',
 	})
 	.then(userData =>{
-		if (userData || DEBUG)
+		if (DEBUG)
 			console.log(userData);
 		else
 			console.log('No user data found');
 
-		let avatar;
 		avatar.src = `data:image/png;base64,${userData.avatar}`;
-		return avatar.src;
 	})
 	.catch(error => {
 		console.error('Error fetching user data:', error);
@@ -240,7 +239,7 @@ function getAvatar(user) //HERE
 -				EVENT LISTENERS					-
 \***********************************************/
 
-function setupEventListeners(gameHistory, allAvatars)
+function setupEventListeners(gameHistory, allUsers)
 {
 	const chartIcon = document.getElementById('chart_icon');
 	const friendsIcon = document.getElementById('friends_icon');
@@ -259,7 +258,7 @@ function setupEventListeners(gameHistory, allAvatars)
 	if (friendsIcon)
 	{
 		friendsIcon.addEventListener('click', function() {
-			avatars(gameHistory, allAvatars); //TODO: add usersList
+			avatars(gameHistory, allUsers);
 			$('#avatarModal').modal('show'); //pour afficher la fenetre
 		});
 	}
@@ -270,7 +269,7 @@ function setupEventListeners(gameHistory, allAvatars)
 	{
 		tropheeIcon.addEventListener('click', function() {
 			// $('#badgeModal').modal('show');
-			badge(gameHistory, allAvatars); //TODO : get all stats ou faire que en fonction des gens avec qui il a déjà joué?
+			badge(gameHistory, allUsers);
 		});
 	}
 	else
@@ -279,7 +278,7 @@ function setupEventListeners(gameHistory, allAvatars)
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
-let doughnutChart; // Declare a variable to store the Chart instance
+let doughnutChart; // variable to store the Chart instance
 
 function chartDoughnutData(gameHistory)
 {
@@ -287,20 +286,20 @@ function chartDoughnutData(gameHistory)
 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
 
-	const chartCanvas = document.getElementById('chartCanvas'); // Get the correct canvas element
+	const chartCanvas = document.getElementById('chartCanvas'); // Gets the canvas element
 
 	if (!chartCanvas) {
 		console.error('Canvas element with id "chartCanvas" not found.');
 		return;
 	}
 
-	const ctx2 = chartCanvas.getContext('2d'); // Get the context of the canvas
+	const ctx2 = chartCanvas.getContext('2d'); // Gets the context of the canvas
 	if (!ctx2) {
 		console.error('Unable to get context for "chartCanvas".');
 		return;
 	}
 
-	// Destroy the existing Chart instance if it exists
+	// Destroys the existing Chart instance if it exists
 	if (doughnutChart)
 		doughnutChart.destroy();
 	
@@ -333,21 +332,18 @@ function chartDoughnutData(gameHistory)
 -				FRIENDS ICON					-
 \***********************************************/
 
-function avatars(gameHistory, allAvatars) //TODO: check avatars work once jess will have pushed
+function avatars(gameHistory, allUsers)
 {
-	const opponentsList = []; // Ensure only one avatar per user
+	const opponentsList = []; // To ensure only one avatar per user
 	const avatarContainer = document.querySelector('.avatar-container');
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
-	gameHistory.forEach(game => { //HERE: forEach not appliable
+	gameHistory.forEach(game => {
 		if (!opponentsList.includes(game.opponentUsername)) //if NOT already in list
 			opponentsList.push(game.opponentUsername);
 	})
 
-	//TODO: check si dans le modèle il y a bien deux variables: 
-	//avatar et username. Si ça a un autre nom type avatar_url ou quoi 
-	//il faut le changer ci-dessous
-	allAvatars.forEach(user => {
+	allUsers.forEach(user => {
 		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
 		{
 			const avatarBox = document.createElement('div');
@@ -357,18 +353,17 @@ function avatars(gameHistory, allAvatars) //TODO: check avatars work once jess w
 			avatarBox.dataset.username = user.username;
 
 			const avatarImg = document.createElement('img');
-			// avatarImg.src = user.avatar;
-			avatarImg.src = getAvatar(user.id) //TEST //HERE
-			avatarImg.alt = `${user.username}`; //TODO: faire en sorte que le username apparaisse juste en passant la souris sur l'avatar?
+			avatarImg.src = getAvatar(user.id, avatarImg)
+			//TODO FRONT KARL: afficher le username en passant la souris sur l'avatar SOIT en dessous de l'avatar
+			avatarImg.alt = `${user.username}`;
 			avatarImg.className = 'avatar-icon';
 
 			avatarBox.appendChild(avatarImg);
 			avatarContainer.appendChild(avatarBox);
 
-			//TODO: METTRE CET EVENT LISTNENER AVEC LE RESTE EN HAUT?
 			avatarBox.addEventListener('click', () => {
-				displayGameHistory(gameHistory.username, user.username, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar clique
-				$('#tableModal').modal('show'); //TEST
+				displayGameHistory(gameHistory.username, user.username, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar cliqué
+				$('#tableModal').modal('show');
 			})
 		}
 	});
@@ -379,7 +374,7 @@ function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
 	//creation du tableau et ajout des headers avec les params + date
 
 	const tableHeaderRow = document.getElementById('tableHeaderRow');
-	tableHeaderRow.innerHTML = ''; // Clear existing header cells
+	tableHeaderRow.innerHTML = ''; // Clears existing header cells
 
 	const dateHeader = document.createElement('th');
 	dateHeader.textContent = 'Date';
@@ -399,12 +394,12 @@ function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
 function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 {
 	const tableBody = document.getElementById('tableBody');
-	tableBody.innerHTML = ''; // Clear existing rows
+	tableBody.innerHTML = ''; // Clears existing rows
 
-	gameHistory.games_history.forEach(game => {
+	gameHistory.forEach(game => {
 		if (game.opponentUsername === chosenOpponent) 
 		{
-			// Add date row
+			// Adds date row
 			const dateRow = document.createElement('tr');
 			const dateCell = document.createElement('td');
 			dateCell.textContent = new Date(game.date).toLocaleDateString();
@@ -412,7 +407,7 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 			dateRow.appendChild(dateCell);
 			tableBody.appendChild(dateRow);
 
-			// Add score row
+			// Adds score row
 			const scoreRow = document.createElement('tr');
 
 			const username1Cell = document.createElement('td');
@@ -436,7 +431,7 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 -				TROPHEE ICON					-
 \***********************************************/
 
-function retrieveAllUserStats(allUsers) //IMPORTANT : tester qd jess aura push ses avatars
+function retrieveAllUserStats(allUsers)
 {
 	const allStats = [];
 
@@ -492,7 +487,6 @@ function badge(gameHistory, allUsers)
 			ranking_position = user.ranking_position;
 	});
 
-
 	// Determine ranking position message & badge image
 	if (ranking_position <= 10)
 	{
@@ -523,11 +517,11 @@ function badge(gameHistory, allUsers)
 		}
 	}
 
-	//sewt the modal content (= on met les infos dans l'html)
+	// Set the modal content (= on met les infos dans l'html)
 	let badgeIcon = document.querySelector('#badgeModal .modal-body .badge-icon');
 	let badgeMessage = document.querySelector('#badgeModal .modal-body .badge-message');
 
-	// on check à chaque fois qu'on trouve l'élément html avant de lui donner la valeur correspondante
+	// On check à chaque fois qu'on trouve l'élément html avant de lui donner la valeur correspondante
 	if (badgeIcon)
 		badgeIcon.src = badge_img.src; //.src is necessary for both!
 	else
