@@ -40,44 +40,16 @@ groups:
           summary: Taux d'erreurs 400 élevé pour {{ $labels.instance }}
           description: Le taux d'erreur 400 pour {{ $labels.instance }} dépasse 5%.
 
-      - alert: DjangoHighResponseTime
-        expr: avg_over_time(django_http_request_duration_seconds[10s]) > 5ms
-        for: 10s
-        labels:
-          severity: critical
-        annotations:
-          summary: Temps de reponses eleve pour {{ $labels.instance }}
-          descirption: Le temps de reponses aux requetes du serveur {{ $labels.instance }} est eleve.
-      
-      - alert: DjangoDbHighResponseTime
-        expr: avg_over_time(django_db_query_duration_seconds[10s]) > 5ms
-        for: 10s
-        labels:
-          severity: critical
-        annotations:
-          summary: Temps de reponses eleve pour la database de {{ $labels.instance }}
-          descirption: Le temps de reponses aux requetes a la database du serveur {{ $labels.instance }} est eleve.
-
-
   - name: postgres-alerts
     rules:
-      - alert: PostgreHighResponseTime
-        expr: avg_over_time(pg_stat_statements_mean_time[10s]) > 1ms
-        for: 10s
-        labels:
-          severity: critical
-        annotations:
-          summary: Temps de reponses eleve pour {{ $labels.instance }}
-          descirption: Le temps de reponses aux requetes SQL {{ $labels.instance }} est eleve.
-
       - alert: PostgreHighStorageUsage
-        expr: pg_stat_database_size{datname="pong_database"} > 0.0005 * 1024 * 1024 * 1024
+        expr: pg_database_size_bytes{datname="pong_database"} > 0.0000005 * 1024 * 1024 * 1024
         for: 10s
         labels:
           severity: critical
         annotations:
           summary: La base de données {{ $labels.datname }} est trop grande
-          description: La taille de la base de données {{ $labels.datname }} a dépassé 5 Go.
+          description: La taille de la base de données {{ $labels.datname }} a dépassé 5 Mb.
 
       - alert: PostgreSQLDown
         expr: pg_up == 0
@@ -90,36 +62,9 @@ groups:
 
   - name: nginx-alerts
     rules:
-      # - alert: NginxHigh500ErrorRate
-      #   expr: rate(nginx_http_requests_total{status="500"}[10s]) > 0.05
-      #   for: 10s
-      #   labels:
-      #     severity: critical
-      #   annotations:
-      #     summary: Taux d'erreurs 500 élevé pour {{ $labels.instance }}
-      #     description: Le taux d'erreur 500 pour {{ $labels.instance }} dépasse 5%.
-
-      # - alert: NginxHigh400ErrorRate
-      #   expr: increase(nginx_http_requests_total{status="400"}[30s]) > 5
-      #   for: 30s
-      #   labels:
-      #     severity: critical
-      #   annotations:
-      #     summary: Taux d'erreurs 400 élevé pour {{ $labels.instance }}
-      #     description: Le taux d'erreur 400 pour {{ $labels.instance }} dépasse 5%.
-
-      # - alert: NginxHigh404ErrorRate
-      #   expr: increase(nginx_http_requests_total{status="404"}[30s]) > 5
-      #   for: 30s
-      #   labels:
-      #     severity: critical
-      #   annotations:
-      #     summary: Taux d'erreurs 404 élevé pour {{ $labels.instance }}
-      #     description: Le taux d'erreur 404 pour {{ $labels.instance }} dépasse 5%.
-
       - alert: NginxHighResponseTime
-        expr: avg_over_time(nginx_http_request_duration_seconds[10s]) > 1ms
-        for: 10s
+        expr: avg_over_time(nginx_http_requests_duration_seconds[30s]) > 1ms
+        for: 30s
         labels:
           severity: critical
         annotations:
@@ -139,13 +84,13 @@ groups:
   - name: system-alerts
     rules:
       - alert: LowDiskSpaceAvaible
-        expr: node_filesystem_avail_bytes{mountpoint="/home/cbernaze"} < 700000000000 * 1024 * 1024 * 1024
+        expr: node_filesystem_avail_bytes{mountpoint="/etc/hostname"} < 30 * 1024 * 1024 * 1024
         for: 10s
         labels:
           severity: critical
         annotations:
-          summary: Peu d'espace disponible sur le disque dur
-          descirption: L'espace disponible sur le disque dur est tres bas.
+          summary: Peu d'espace disponible sur le filesystem
+          descirption: L'espace disponible sur le filesystem est inferieur a 30Gb.
 
       - alert: HighMemoryUsage
         expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 70

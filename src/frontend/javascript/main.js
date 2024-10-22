@@ -97,7 +97,7 @@ const routes =
 	{
 		title: "2FA Verification",
 		render: render2fa
-	}
+	},
 };
 
 /***********************************************\
