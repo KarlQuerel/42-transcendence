@@ -440,7 +440,7 @@ def loggout_user(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def	usersList(request):
+def	otherUsersList(request):
 	try:
 		users = CustomUser.objects.exclude(id=request.user.id)
 		users_data = [

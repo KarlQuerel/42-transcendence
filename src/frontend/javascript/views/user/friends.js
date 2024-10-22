@@ -11,7 +11,7 @@ import { apiRequest } from './signin.js';
 export default function renderFriendsList()
 {	
 	const userContainer = document.createElement('div');
-	userContainer.setAttribute('id', 'users-list');
+	userContainer.setAttribute('id', 'other-users-list');
 	
 	const friendsTitle = document.createElement('h1');
 	friendsTitle.textContent = 'Friends';
@@ -71,7 +71,7 @@ async function createUserCard(other_user)
 async function getAllUsers()
 {
 	try {
-		return await apiRequest('/api/users/users-list/', {
+		return await apiRequest('/api/users/other-users-list/', {
 			method: 'GET',
 		})
 	} catch (error) {
