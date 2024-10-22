@@ -19,6 +19,7 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 API_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,6 +35,12 @@ ALLOWED_HOSTS = [
 	'127.0.0.1',
 	'localhost',
 	'profile',
+]
+
+
+# Trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:4430',
 ]
 
 
@@ -93,6 +100,13 @@ CHANNEL_LAYERS = {
 }
 
 
+########### Pour les fichiers médias (avatars) ###########
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+#########################################################
+
 MIDDLEWARE = [
     'django_prometheus.middleware.PrometheusBeforeMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -103,7 +117,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_prometheus.middleware.PrometheusAfterMiddleware',
-
 ]
 
 ROOT_URLCONF = 'user_management_database.urls'
