@@ -173,50 +173,10 @@ async function loadUserGameHistory()
 	}
 }
 
-// async function loadAvatars()
-// {
-// 	try
-// 	{
-// 		const allAvatars = await apiRequest('/api/user/getAllUserAvatars/', {
-// 			method: 'GET',
-// 			headers: {
-// 				...getAuthHeaders(),
-// 			},
-// 		});
 
-// 		if (GITHUBACTIONS) //TODO: modifier githubActions file
-// 			console.log("Successfully fetched all avatars");
-// 		return allAvatars;
-// 	}
-// 	catch (error)
-// 	{
-// 		console.error("Error fetching users' avatars");
-// 		throw error; //CHECK: check it stops everything or re-throw it
-// 	}
-// }
-
-
-// export async function loadUserManagementData()
-// {
-// 	try {
-// 		const userData = await apiRequest('/api/users/getUsername/', {
-// 			method: 'GET',
-// 			headers: {
-// 				...getAuthHeaders(),
-// 			},
-// 		});
-// 		if (DEBUG)
-// 			console.log("userData = ", userData);
-// 		if (GITHUBACTIONS)
-// 			console.log("Successfully fetched user info");
-// 		return userData;
-// 	} catch (error) {
-// 		console.error('Error: fetch userData', error);
-// 		throw error; // Re-throw the error
-// 	}
-// }
-
-
+//Cette fonction ne fait plus que chopper les usernames et les id puis faut rajouter
+//dans le même tableau les vatars un par un avec la viuew de clément pour éviter
+//l'erreur 414 (Request-URI Too Large)
 async function loadAvatars() {
 	try
 	{
@@ -228,7 +188,13 @@ async function loadAvatars() {
 			},
 		});
 
-		if (GITHUBACTIONS)
+		if (DEBUG) //HERE: undefined donc j'ai pas dû correctement modifier getAllUserAvatars
+		{
+			console.log("user id= ", response.id);
+			console.log("username= ", response.username);
+		}
+
+		if (GITHUBACTIONS) //TODO: modifier githubActions file
 			console.log("Successfully fetched all avatars");
 
 		return response;
@@ -238,63 +204,37 @@ async function loadAvatars() {
 	{
 		console.error("Error fetching users' avatars:", error);
 
-		// Log the response text for debugging
-		if (error.response)
+		if (error.response) //DEBUG
 		{
 			const errorText = await error.response.text();
 			console.error("Response text:", errorText);
 		}
 
-		throw error; // Re-throw the error after logging
+		throw error; //CHECK: check it stops everything or re-throw it
 	}
 }
 
-// async function loadAvatars() {
-// 	try {
-// 		const response = await apiRequest('/api/users/getAllUserAvatars/', {
-// 			method: 'GET',
-// 			headers: {
-// 				'Authorization': `Bearer ${localStorage.getItem('token')}`,
-// 				'Content-Type': 'application/json',
-// 			},
-// 		});
+function getAvatar(user) //HERE
+{
+	apiRequest(`/api/users/getFriendAvatar/${user.id}`, {
+		method: 'GET',
+	})
+	.then(userData =>{
+		if (userData || DEBUG)
+			console.log(userData);
+		else
+			console.log('No user data found');
 
-// 		// Log the full response status and headers
-// 		console.log("Full response:", response);
-// 		console.log("Response status:", response.status);
-
-// 		// Check if the response is OK (status code 200-299)
-// 		if (!response.ok)
-// 		{
-// 			const errorText = await response.text(); // Read the response text
-// 			console.error("Error response text:", errorText);
-// 			throw new Error(`HTTP error! status: ${response.status}`);
-// 		}
-
-// 		// Log the raw response body as text to ensure it's what you expect
-// 		const rawText = await response.text();
-// 		console.log("Raw response body as text:", rawText);
-
-// 		// Attempt to parse the text response as JSON
-// 		let allAvatars;
-// 		try {
-// 			allAvatars = JSON.parse(rawText);
-// 			console.log("Parsed JSON response:", allAvatars);
-// 		} catch (jsonError) {
-// 			console.error("Failed to parse JSON:", jsonError);
-// 			throw new Error("Response is not valid JSON");
-// 		}
-
-// 		return allAvatars;
-// 	}
-// 	catch (error)
-// 	{
-// 		console.error("Error fetching users' avatars:", error);
-// 		throw error; // Re-throw the error after logging
-// 	}
-// }
-
-
+		let avatar;
+		avatar.src = `data:image/png;base64,${userData.avatar}`;
+		return avatar.src;
+	})
+	.catch(error => {
+		console.error('Error fetching user data:', error);
+	})
+}
+	
+	
 
 /***********************************************\
 -				EVENT LISTENERS					-
@@ -417,7 +357,8 @@ function avatars(gameHistory, allAvatars) //TODO: check avatars work once jess w
 			avatarBox.dataset.username = user.username;
 
 			const avatarImg = document.createElement('img');
-			avatarImg.src = user.avatar;
+			// avatarImg.src = user.avatar;
+			avatarImg.src = getAvatar(user.id) //TEST //HERE
 			avatarImg.alt = `${user.username}`; //TODO: faire en sorte que le username apparaisse juste en passant la souris sur l'avatar?
 			avatarImg.className = 'avatar-icon';
 

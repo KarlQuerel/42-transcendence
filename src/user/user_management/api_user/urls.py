@@ -19,6 +19,7 @@ urlpatterns = [
     path('updateProfile/', views.updateProfile, name='update-profile'),
     path('updateAvatar/', views.updateAvatar, name='update-avatar'),
     path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
+    path('getFriendAvatar/<int:user_id>/', views.getFriendAvatar, name='get-friend-avatar'),
 ]
 
 if settings.DEBUG:

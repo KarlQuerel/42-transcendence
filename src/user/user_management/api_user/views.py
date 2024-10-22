@@ -181,6 +181,7 @@ def getUsername(request):
 # 		return Response({'error': str(e)}, status=500)
 
 
+#NE FAIT PLUS QUE RETURN LES ID ET USERNAME DONC CHANGER NOM DE CETTE FONCTION
 @api_view(['GET'])
 # @login_required
 @permission_classes([IsAuthenticated])
@@ -199,12 +200,13 @@ def getAllUserAvatars(request):
 			avatars = []
 
 			for user in users:
-				avatar_image_path = user.avatar.path
-				print(f'   Avatar image path: {avatar_image_path}') # DEBUG
-				print(f'   User: {user.username}') # DEBUG
-				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
-					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-				avatars.append({'username': user.username, 'avatar': avatar})
+				# avatar_image_path = user.avatar.path
+				# print(f'   Avatar image path: {avatar_image_path}') # DEBUG
+				# print(f'   User: {user.username}') # DEBUG
+				# with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+				# 	avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+				# avatars.append({'username': user.username, 'avatar': avatar})
+				avatars.append({'username': user.username, 'id': user.id})
 
 			print(f'Avatars: {avatars}') # DEBUG
 			return JsonResponse(avatars, safe=False, status=200)
@@ -216,9 +218,25 @@ def getAllUserAvatars(request):
 	except Exception as e:
 		print(f'Unexpected error: {str(e)}') # DEBUG
 		return Response({'error': str(e)}, status=500)
+ 
 
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getFriendAvatar(request, user_id):
+	try:
+		print('user id: ', user_id)
+		user = CustomUser.objects.get(id=user_id)
+		print('user: ', user)
+		avatar_image_path = user.avatar.path
+		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+		data = {
+			'avatar': avatar
+		}
+		return JsonResponse(data, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -457,3 +475,5 @@ def resend_2fa_code(request):
 
 
 #########################################
+
+
