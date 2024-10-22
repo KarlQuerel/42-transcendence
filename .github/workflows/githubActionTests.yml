@@ -65,7 +65,7 @@ jobs:
 
       # Runs the make command
       - name: Test Make command
-        run: make
+        run: cd src && docker-compose up -d --build
 
       # Turn the global variable GITHUBACTIONS to true to catch copntrol-logs in future tests
       - name: Set environment variable for GitHub Actions
