@@ -195,23 +195,46 @@ export default function renderProfile()
 
         /************** ANONYMIZE DATA **************/
         
+        
         // bouton pour anonymiser les données
         const anonymizeButton = document.createElement('button');
         anonymizeButton.setAttribute('id', 'anonymize-button');
         anonymizeButton.textContent = 'Anonymize Data';
-
+        
         container.appendChild(anonymizeButton);
+
+        // Cacher le bouton si le user est déjà anonyme
+        const isAnonymous = fetchUserAnonymousStatus();
+
+        if (isAnonymous === false)
+        {
+            const anonymizeButton = document.getElementById('anonymize-button');
+
+            if (anonymizeButton)
+                anonymizeButton.style.display = 'block';
+        }
+        else
+        {
+            const anonymizeButton = document.getElementById('anonymize-button');
+    
+            if (anonymizeButton)
+                anonymizeButton.style.display = 'none';
+        }
+
 
         // Event listener for anonymize button
         anonymizeButton.addEventListener('click', async () =>
         {
             const userConfirmation = confirm('Are you sure you want to anonymize your data?\nThis action cannot be undone.');
             if (userConfirmation)
+            {
+                updateUserAnonymousStatus();
                 anonymizeUserData();
+            }
             else
                 console.log('Anonymization cancelled.');
         });
-        
+
 
 
         /***************** LOG OUT *****************/
@@ -532,6 +555,33 @@ async function saveNewAvatar(avatarFile)
 *                 GDPR FUNCTIONS                *
 \***********************************************/
 
+
+async function updateUserAnonymousStatus()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/updateAnonymousStatus/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Bearer': localStorage.getItem('token'),
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        });
+
+        console.log('Anonymous status updated successfully.');
+
+    }
+    catch (error)
+    {
+        console.error('Error updating anonymous status:', error);
+        alert('Failed to update anonymous status: ' + error.message);
+    }
+}
+
+
 async function anonymizeUserData()
 {
     try
@@ -547,7 +597,6 @@ async function anonymizeUserData()
             },
         });
 
-        const newUsername = response;
         alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
         window.location.href = '/profile';
 
@@ -556,5 +605,24 @@ async function anonymizeUserData()
     {
         console.error('Anonymization error:', error);
         alert('Failed to anonymize data: ' + error.message);
+    }
+}
+
+
+async function fetchUserAnonymousStatus()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/getAnonymousStatus/', {
+            method: 'GET',
+        });
+
+        // const data = await response.json();
+        return response;
+    }
+    catch (error)
+    {
+        console.error('Error fetching anonymous status:', error);
+        return null;
     }
 }

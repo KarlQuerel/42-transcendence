@@ -201,7 +201,7 @@ def changePassword(request):
 	
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 
 #########################################
@@ -440,5 +440,38 @@ def anonymizeUserData(request):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
+
+#########################################
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def updateAnonymousStatus(request):
+	try:
+		user = request.user
+		user.isAnonymous = request.data.get('isAnonymous')
+		user.save()
+
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+	
+
+#########################################
+
+
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+def getAnonymousStatus(request):
+	try:
+		user = request.user
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+	
 
 #########################################
