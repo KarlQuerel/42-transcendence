@@ -47,6 +47,14 @@ from "./views/user/friends.js";
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
 
+import renderChangePassword, { initializeChangePassword }
+from "./views/user/change_password.js";
+
+
+/***			Footer						***/
+import renderPrivacyPolicy
+from "./views/privacy_policy/privacy_policy.js";
+
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
@@ -105,7 +113,13 @@ const routes =
 	{
 		title: "2FA Verification",
 		render: render2fa
-	}
+	},
+	'/change-password':
+	{
+		title: "Change Password",
+		render: renderChangePassword,
+		init: initializeChangePassword
+	},
 };
 
 /***********************************************\

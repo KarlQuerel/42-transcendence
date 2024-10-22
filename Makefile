@@ -5,12 +5,12 @@ NC = \033[0m
 
 #######		RULES		#######
 all :
-	cd src && docker-compose up -d --build
+	@cd src && docker-compose up -d --build
+	@make fill_db
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
-	make fill_db
 
 clean :
-	cd src && docker-compose down
+	@cd src && docker-compose down
 
 fclean : clean
 	cd src && docker system prune -af
@@ -37,10 +37,10 @@ logs-database:
 # DJANGO
 
 fill_dashboard: #populate database
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
+	@docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
 fill_user:
-	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+	@docker exec -it User bash -c "python manage.py makemigrations --merge && python manage.py migrate && python manage.py populate_user_db"
 
 erase_user:
 # docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"
@@ -48,15 +48,15 @@ erase_user:
 
 erase_dashboard:
 # docker exec -it Dashboard bash -c "python manage.py clear_db"
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
-	docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
+	@docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
+	@docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
 
 check_dashboard_db:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
+	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
+	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
 
 check_user_db:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
+	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
 fill_db: fill_user fill_dashboard
 
