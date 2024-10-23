@@ -149,7 +149,8 @@ export async function displayTournamentForm()
 			submitButton.textContent = 'Yes, let\'s do this!';
 			
 			// Pass the playerNames array here
-			submitButton.addEventListener('click', () => {
+			submitButton.addEventListener('click', () =>
+			{
 				// Remove the entire tournament form when starting the game
 				tournamentForm.remove(); // This will remove the entire form from the DOM
 		
@@ -188,8 +189,10 @@ export async function displayTournamentForm()
 		});
 		
 		// Lock first input with signed-in username
-		if (currentPlayerIndex === 0) {
-			try {
+		if (currentPlayerIndex === 0)
+		{
+			try
+			{
 				const	username = await loadUserManagementData();
 				if (DEBUG) console.log("Username:", username);
 				playerInput.value = username.username.toLowerCase();
@@ -198,10 +201,14 @@ export async function displayTournamentForm()
 				currentPlayerIndex++;
 				createPlayerInput();
 				return;
-			} catch (error) {
+			}
+			catch (error)
+			{
 				console.error('Failed to load username:', error);
 			}
-		} else {
+		}
+		else
+		{
 			playerInput.placeholder = `Enter ${label}`;
 		}
 		
@@ -228,7 +235,8 @@ export async function displayTournamentForm()
 				{
 
 					tournamentForm.style.display = 'none';
-					try {
+					try
+					{
 						const	password = await showPasswordModal(playerName, tournamentForm);
 						if (password)
 						{
@@ -257,14 +265,6 @@ export async function displayTournamentForm()
 					createPlayerInput();
 				}
 			}
-			// else
-			// {
-			// 	// alert('❌ Please enter a valid name ❌');
-			// 	// setTimeout(function()
-			// 	// {
-			// 		window.location.href = '/pong';
-			// 	// }, 3000);
-			// }
 		});
 
 		// Append the Next button to the form
@@ -276,8 +276,6 @@ export async function displayTournamentForm()
 
 	document.body.appendChild(tournamentForm);
 }
-
-
 
 // Password validation function
 async function validatePasswordTournament(username, password)
@@ -293,39 +291,6 @@ async function validatePasswordTournament(username, password)
 		return false;
 	}
 }
-
-// export function startTournamentGame(playerNames)
-// {
-// 	if (DEBUG)
-// 		console.log('Starting tournament game...');
-
-// 	// Check that playerNames is an array
-// 	if (!Array.isArray(playerNames))
-// 	{
-// 		console.error('Invalid playerNames passed. Expected an array.');
-// 		return;
-// 	}
-
-// 	// Validate player names
-// 	for (const	playerName of playerNames)
-// 	{
-// 		if (isNameValid(playerName) == false)
-// 		{
-// 			alert('❌ Please enter a valid name ❌');
-// 			return;
-// 		}
-
-// 		if (playerNames.filter(name => name === playerName).length > 1)
-// 		{
-// 			alert('❌ Player names must be unique ❌');
-// 			return;
-// 		}
-// 	}
-
-// 	if (DEBUG)
-// 		console.log('Tournament starting with players:', playerNames);
-// 	initializeTournamentMode(playerNames);
-// }
 
 export function startTournamentGame(playerNames)
 {
@@ -491,4 +456,3 @@ export function tournamentNextMatch()
 		console.error("Unexpected state: no matches left.");
 	}
 }
-

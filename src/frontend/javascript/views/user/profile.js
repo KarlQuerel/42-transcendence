@@ -158,7 +158,7 @@ export function renderProfile()
         // Event listener for change password button
         changePasswordButton.addEventListener('click', () =>
         {
-            window.location.href = '/change-password';
+            navigateTo('/change-password');
         });
 
         
@@ -199,7 +199,7 @@ export function renderProfile()
             {
                 localStorage.removeItem('username');
             }
-            window.location.href = '/sign-in';
+            navigateTo('/sign-in');
         });
 
     return container;

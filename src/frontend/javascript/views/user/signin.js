@@ -1,7 +1,8 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
+import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS, navigateTo }
+from '../../main.js';
 
 /***********************************************\
 *					RENDERING					*
@@ -55,7 +56,7 @@ export function renderSignIn()
 	// Add event listener to the Sign Up button to redirect to /sign-up
     signUpButton.addEventListener('click', () =>
     {
-        window.location.href = '/sign-up';
+        navigateTo('/sign-up');
     });
 
 	// Add event listener to the Log In button to handle login
@@ -124,7 +125,7 @@ function login(username, password)
         {
             localStorage.setItem('totp', data.totp);
             localStorage.setItem('username', data.username);
-            window.location.href = '/2fa_verification';
+            navigateTo('/2fa_verification');
             return Promise.reject('Redirection to 2FA verification');
         }
         else if (data.access)
@@ -148,7 +149,7 @@ function login(username, password)
 		if (GITHUBACTIONS)
 			console.log('Login successful'); //CARO: ajouté pour githubactions
 		setSignedInState(true);
-		window.location.href = '/profile';
+		navigateTo('/profile');
 		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
 
 	})

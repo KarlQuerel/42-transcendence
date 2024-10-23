@@ -23,7 +23,7 @@ export async function fillingResults(winner)
 	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE
+	Results.identified = "yes"; // HERE check with Caro
 
 	if (winner === 1)
 	{

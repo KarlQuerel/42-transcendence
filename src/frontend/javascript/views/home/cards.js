@@ -110,19 +110,19 @@ export function createTheTeamCard()
 		},
 		{
 			title: 'Jessica<br>Rouillon<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // KARL TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/jessica-rouillon-37a22053/',
 			github: 'https://github.com/Lechonita'
 		},
 		{
 			title: 'Clément<br>Bernazeau<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // KARL TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/cl%C3%A9ment-bernazeau-9a89a4182/',
 			github: 'https://github.com/ClementBrz'
 		},
 		{
 			title: 'Karl<br>Querel<br>',
-			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // TODO upload photos
+			imgSrc: '../../../assets/images/home/they_trusted_us/karl_testimonial.jpeg', // KARL TODO upload photos
 			linkedIn: 'https://www.linkedin.com/in/karlquerel/',
 			github: 'https://github.com/KarlQuerel'
 		}

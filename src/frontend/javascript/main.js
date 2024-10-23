@@ -195,7 +195,7 @@ function router()
 	if (isSignedIn == false && restrictedPaths[path])
 	{
 		alert(restrictedPaths[path]);
-		window.location.href = '/sign-in';
+		navigateTo('/sign-in');
 		return;
 	}
 
