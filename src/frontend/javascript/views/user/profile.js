@@ -18,7 +18,7 @@
 -					IMPORTS						-
 \***********************************************/
 
-import { DEBUG }
+import { DEBUG, setSignedInState }
 from '../../main.js';
 
 import { apiRequest, getCookie }
@@ -276,6 +276,7 @@ export default function renderProfile()
             localStorage.removeItem('refresh_token');
             if (localStorage.getItem('username'))
                 localStorage.removeItem('username');
+            setSignedInState(false);
             window.location.href = '/sign-in';
         });
 
@@ -293,15 +294,13 @@ export default function renderProfile()
             const confirmation = confirm("Are you sure you want to delete your account? This action is irreversible.");
             if (confirmation)
             {
-                localStorage.removeItem('access_token');
-                localStorage.removeItem('refresh_token');
-
-                if (localStorage.getItem('username'))
-                    localStorage.removeItem('username');
-
                 deleteUserAccount();
-
-                window.location.href = '/sign-in';
+                // localStorage.removeItem('access_token');
+                // localStorage.removeItem('refresh_token');
+                // if (localStorage.getItem('username'))
+                //     localStorage.removeItem('username');
+                setSignedInState(false);
+                // window.location.href = '/sign-in';
             }
         });
 
@@ -739,13 +738,22 @@ async function updateUser2FAStatus(is2fa)
 
 async function deleteUserAccount()
 {
+    console.log('Deleting account...');
     try
     {
         const response = await apiRequest('/api/user/deleteAccount/', {
             method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
         });
 
+        const errorText = await response.text(); // Get the full response text
+        console.error('Error response text:', errorText); // Log the full response text
+
         console.log('Account deleted successfully.');
+        alert('Your account has been deleted successfully.');
 
     }
     catch (error)
