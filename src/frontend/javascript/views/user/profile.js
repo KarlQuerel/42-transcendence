@@ -181,6 +181,24 @@ export default function renderProfile()
         container.appendChild(friendsButton);
 
 
+        /***************** FRIENDS *****************/
+        
+        // bouton pour aller sur la page friends
+        const requestInfosButton = document.createElement('button');
+        requestInfosButton.setAttribute('id', 'request-infos-button');
+        requestInfosButton.textContent = 'Request My Personnal Informations';
+        container.appendChild(requestInfosButton);
+
+        requestInfosButton.addEventListener('click', () => {
+            apiRequest('/api/users/send-infos-to-user/', {
+                method: 'GET',
+            })
+            .catch(error => {
+                console.error('Error sending their personnal informations to the user:', error);
+            });
+        });
+
+
         /************** MATCH HISTORY **************/
         
         // 1v1 games, dates, and relevant details, accessible to logged-in users.

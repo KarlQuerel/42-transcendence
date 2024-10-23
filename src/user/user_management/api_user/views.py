@@ -359,6 +359,52 @@ def updateAvatar(request):
 		return Response({'error': str(e)}, status=500)
 
 
+##################################################
+##            REQUEST PERSONNAL INFOS   		##
+##################################################
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def send_user_informations(request):
+	try:
+		user = request.user
+
+		user_data = {
+			'first_name': user.first_name,
+			'last_name': user.last_name,
+			'username': user.username,
+			'date_of_birth': user.date_of_birth.isoformat() if user.date_of_birth else None,
+			'email': user.email,
+			'online_status': 'online' if user.is_online else 'offline',
+			'friends': [
+				{
+					'username': friend.username
+				}
+				for friend in user.friends.all()
+			]
+		}
+
+		json_data = json.dumps(user_data, indent=4)
+		print(json_data)
+
+		send_mail(
+			f'Personnal Informations Requested from trascendance.fr for {user.username}',
+			f"""Dear {user.first_name} {user.last_name},
+Thank you for your request regarding your personal data.
+As per your request and in compliance with the General Data Protection Regulation (GDPR),
+we are providing you with an export of your personal data.
+
+{json_data}""",		
+			str(os.getenv('EMAIL_HOST_USER')),
+			['traans.een.daance@gmail.com'],
+			fail_silently=False,
+		)
+
+		return JsonResponse({'success': 'user informations send to user email'}, status=status.HTTP_200_OK)
+	except Exception as e:
+		print(f"Error: {e}")
+		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
