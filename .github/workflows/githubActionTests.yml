@@ -78,11 +78,22 @@ jobs:
 
       # make fill_db command (run Django database migrations and populate database)
       # it actually replicates `make fill_db` directly in YAML because githubAction does not work with "-it" flag
-      - name: make fill_db command
-        working-directory: ./src
+      # - name: make fill_db command
+      #   working-directory: ./src
+      #   run: |
+      #     docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db || true"
+      #     docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db || true"
+
+
+      - name: Run User migrations and populate
         run: |
           docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db || true"
+
+      - name: Run Dashboard migrations and populate
+        run: |
           docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db || true"
+
+
 
       # Run `make fill_db` multiple times to check for errors
       # - name: make fill_db twice
