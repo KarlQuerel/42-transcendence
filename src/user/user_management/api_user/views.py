@@ -308,8 +308,6 @@ def updateAvatar(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		print(f'Updating user avatar (updateAvatar)...') # DEBUG
-
 		data = request.data.get('avatar_input')
 		if not data:
 			return Response({'error': 'No avatar data provided'}, status=400)
@@ -323,9 +321,6 @@ def updateAvatar(request):
 		avatar_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
 		avatar_path = os.path.join(avatar_dir, f'{username}.png')
 
-		print(f'Username: {username}') # DEBUG
-		print(f'Avatar path: {avatar_path}') # DEBUG
-
 		try:
 			with open(avatar_path, 'wb') as f:
 				f.write(avatar_data)
@@ -334,10 +329,8 @@ def updateAvatar(request):
 			return Response({'error de open': str(e)}, status=500)
 
 		user.avatar = avatar_path
-		print(f'Avatar path: {user.avatar}') # DEBUG
 
 		user.save()
-		print(f'Avatar updated (updateAvatar())...') # DEBUG
 
 		return Response({'success': 'Avatar updated successfully'}, status=status.HTTP_200_OK)	
 
