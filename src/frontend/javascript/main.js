@@ -9,11 +9,15 @@ export	const	GITHUBACTIONS = false;
 \***********************************************/
 
 /***			  Page Not Found		 	 ***/
-import renderError404
+import { renderPageNotFound }
 from "./views/error_404/error_404.js";
 
 /***			Nav Bar						***/
-import renderHome
+import { renderNavbar }
+from "./views/navbar/navbar.js";
+
+/***			Home						***/
+import { renderHome }
 from "./views/home/home.js";
 
 /***			Pong						***/
@@ -32,30 +36,31 @@ import { initParticles, destroyParticles }
 from "./components/particles/particles.js"
 
 /***			User						***/
-import render2fa
+import { render2fa }
 from "./views/user/2fa.js";
 
-import renderSignIn
+import { renderSignIn }
 from "./views/user/signin.js";
 
-import renderProfile
+import { renderProfile }
 from "./views/user/profile.js";
 
-import renderSignUp, { initializeSignUp }
+import { renderFriendsList }
+from "./views/user/friends.js";
+
+import { renderSignUp, initializeSignUp }
 from "./views/user/signup.js";
 
-import renderChangePassword, { initializeChangePassword }
+import { renderChangePassword, initializeChangePassword }
 from "./views/user/change_password.js";
 
 
 /***			Footer						***/
-import renderPrivacyPolicy
-from "./views/privacy_policy/privacy_policy.js";
 
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
-const routes =
+const	routes =
 {
 	'':
 	{
@@ -88,7 +93,7 @@ const routes =
 	'/404':
 	{
 		title: "Page Not Found",
-		render: renderError404
+		render: renderPageNotFound,
 	},
 	'/sign-up':
 	{
@@ -100,6 +105,11 @@ const routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
+	},
+	'/friends':
+	{
+		title: "Friends List",
+		render: renderFriendsList
 	},
 	'/2fa_verification':
 	{
@@ -121,6 +131,14 @@ const routes =
 //	Initializing currentPath to an empty string
 let	currentPath = '';
 
+/***			Navbar						***/
+function render()
+{
+	const	navbar = renderNavbar();
+	document.body.insertAdjacentElement('afterbegin', navbar);
+}
+
+
 /***			Normalizing Paths			***/
 function normalizePath(path)
 {
@@ -129,21 +147,9 @@ function normalizePath(path)
 	return path;
 }
 
-
-
 /***			Authentication				***/
-//HERE - Check if authentication is working properly (see router function)
 let	accessToken = localStorage.getItem('access_token');
-let	isSignedIn;
-
-if (accessToken)
-{
-	isSignedIn = true;
-}
-else
-{
-	isSignedIn = false;
-}
+let	isSignedIn = Boolean(accessToken);
 
 export function setSignedInState(state)
 {
@@ -162,10 +168,10 @@ function router()
 
 	//	Assigning default path if none
 	if (!path)
-			path = '/home';
+		path = '/home';
 
-	const previousRoute = routes[currentPath]
-	const route = routes[path] || routes['/404'];
+	const	previousRoute = routes[currentPath]
+	const	route = routes[path] || routes['/404'];
 
 	if (DEBUG)
 	{
@@ -177,22 +183,36 @@ function router()
 	if (previousRoute && previousRoute.cleanup)
 		previousRoute.cleanup();
 
+	// Add this section to call cleanup for /pong on first load
+	if (path === '/pong' && previousRoute !== route)
+	{
+		cleanUpPong();
+	}
+
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
-	// Check user authentication
-	if (path === '/pong' && isSignedIn == false)
+	const	restrictedPaths =
 	{
-		alert("❌ You must be logged in to access the Pong game ❌");
-		window.location.href = '/sign-in';
-		return ;
-	}
+		'/pong': "❌ You must be logged in to access the Pong game ❌",
+		'/dashboard': "❌ You must be logged in to access your dashboard ❌",
+		'/profile': "❌ You must be logged in to access your profile ❌",
+		'/change-password': "❌ You must be logged in to change your password ❌",
+		'/friends': "❌ You must be logged in to see your friends ❌"
+	};
 	
+	// Check if the user is trying to access a restricted route
+	if (isSignedIn == false && restrictedPaths[path])
+	{
+		alert(restrictedPaths[path]);
+		navigateTo('/sign-in');
+		return;
+	}
+
 	if (route)
 	{
 		document.title = route.title;
-		const renderedContent = route.render();
-
+		const	renderedContent = route.render();
 		const	appElement = document.getElementById('app');
 		if (typeof renderedContent === 'string')
 			appElement.innerHTML = renderedContent;
@@ -202,17 +222,17 @@ function router()
 			appElement.appendChild(renderedContent);
 		}
 
-			// Initialize or destroy particles based on the route
-			if (path !== '/pong')
-			{
-				initParticles();
-			}
-			else
-			{
-				destroyParticles();
-				if (DEBUG)
-					console.log('Particles effect disabled on /pong route');
-			}
+		// Initialize or destroy particles based on the route
+		if (path !== '/pong')
+		{
+			initParticles();
+		}
+		else
+		{
+			destroyParticles();
+			if (DEBUG)
+				console.log('Particles effect disabled on /pong route');
+		}
 
 		if (route.init)
 		{
@@ -227,7 +247,7 @@ function router()
 	else
 	{
 		document.title = "Page not Found";
-		document.getElementById('app').innerHTML = renderError404();
+		document.getElementById('app').innerHTML = renderPageNotFound();
 	}
 
 	//	Updating currentPath to the new path
@@ -235,7 +255,7 @@ function router()
 }
 
 /***		Navigation Function				***/
-function navigateTo(path)
+export function navigateTo(path)
 {
 	history.pushState(null, "", path);
 	router();
@@ -249,12 +269,12 @@ document.addEventListener("DOMContentLoaded", () =>
 	document.body.addEventListener("click", (event) =>
 	{
 		// Find the nearest anchor tag if the clicked element is nested inside one
-		const link = event.target.closest("a[data-link]");
+		const	link = event.target.closest("a[data-link]");
 		
 		if (link)
 		{
 			event.preventDefault();
-			const href = link.getAttribute('href');
+			const	href = link.getAttribute('href');
 			if (DEBUG)
 				console.log(`Navigating to ${href}`);
 			navigateTo(href);

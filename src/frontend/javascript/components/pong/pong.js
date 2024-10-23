@@ -12,15 +12,17 @@ import { prepareTwoPlayers, displayPlayer2Form }
 from './twoPlayers.js'
 
 import { prepareTournament, displayTournamentForm, startTournamentGame,
-initializeTournamentMode}
+initializeTournamentMode, tournamentNextMatch, setupFinalMatch }
 from './tournament.js'
 
 import { createContainer, createVideo, createOverlay, createMenuButton,
 createTournamentButton, createHowToPlayButton, createHowToPlayCard, createCardGif,
-createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer }
+createWinningMessage, createRematchButton, createCanvas, createPausedGifContainer, 
+createBackToMenuButton}
 from './createElements.js'
 
-import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu }
+import { drawPaddle, drawBall, drawScore, drawUsernames, drawWinMessage, drawPauseMenu, hidePauseMenu,
+updateRematchButtonText }
 from './drawing.js'
 
 import { movePaddles, moveBall, checkBallPaddleCollision, keyDownHandler, keyUpHandler }
@@ -41,6 +43,9 @@ from './onePlayer.js';
 import { sendResultsToBackend }
 from './sendResultsToBackend.js';
 
+import { checkElement, disableKeyBlocking, enableKeyBlocking, hideCanvas }
+from './utils.js';
+
 /***********************************************\
 -				RENDERING						-
 \***********************************************/
@@ -54,6 +59,7 @@ export function renderPong()
 	container.appendChild(overlay);
 	container.appendChild(createWinningMessage());
 	container.appendChild(createRematchButton());
+	container.appendChild(createBackToMenuButton());
 	container.appendChild(createCanvas());
 	container.appendChild(createPausedGifContainer());
 
@@ -67,6 +73,11 @@ export function initializePong()
 {
 	if (DEBUG)
 		console.log('Initializing Pong...');
+
+	resetNames();
+	clearAll();
+
+	enableKeyBlocking();
 
 	requestAnimationFrame(() =>
 	{
@@ -82,53 +93,69 @@ function setupCanvas()
 	document.body.classList.add('no-scroll');
 	GraphConf.canvas = document.getElementById("pongCanvas");
 
-	if (GraphConf.canvas)
-	{
-		GraphConf.ctx = GraphConf.canvas.getContext("2d");
-		if (!GraphConf.ctx)
-		{
-			console.error("Context could not be retrieved!");
-		}
-	}
-	else
-	{
-		console.error("Canvas element not found!");
-	}
+	if (checkElement(GraphConf.canvas, 'Canvas') === false)
+		return;
+
+	GraphConf.ctx = GraphConf.canvas.getContext("2d");
+
+	if (checkElement(GraphConf.ctx, 'Canvas context') === false)
+		return;
 }
 
 function setupMenuButtons()
 {
-	const	singleplayerButton = document.getElementById('singleplayer-button');
-	const	twoplayerButton = document.getElementById('twoplayer-button');
-	const	tournamentButton = document.getElementById('tournament-button');
-	const	rematchButton = document.getElementById('rematch-button');
-	const	menuOverlay = document.getElementById('menu-overlay');
-
-	if (!singleplayerButton || !twoplayerButton || !tournamentButton)
+	const buttons =
 	{
-		console.error('Menu buttons not found!');
+		singleplayerButton: document.getElementById('singleplayer-button'),
+		twoplayerButton: document.getElementById('twoplayer-button'),
+		tournamentButton: document.getElementById('tournament-button'),
+		rematchButton: document.getElementById('rematch-button'),
+		backtomenuButton: document.getElementById('back-to-menu-button'),
+		menuOverlay: document.getElementById('menu-overlay'),
+	};
+
+	const	missingButtons = Object.entries(buttons)
+		.filter(([_, button]) => !button)
+		.map(([name]) => name);
+
+	if (missingButtons.length > 0)
+	{
+		console.error('Missing menu buttons:', missingButtons.join(', '));
 		return;
 	}
 
-	singleplayerButton.addEventListener('click', () => prepareSinglePlayer(menuOverlay));
-	twoplayerButton.addEventListener('click', () => prepareTwoPlayers(menuOverlay));
-	tournamentButton.addEventListener('click', () => prepareTournament(menuOverlay));
+	buttons.rematchButton.classList.add('hidden-sudden');
+	buttons.backtomenuButton.classList.add('hidden-sudden');
 
-	if (!rematchButton)
+	buttons.singleplayerButton.addEventListener('click', () => prepareSinglePlayer(buttons.menuOverlay));
+	buttons.twoplayerButton.addEventListener('click', () => prepareTwoPlayers(buttons.menuOverlay));
+	buttons.tournamentButton.addEventListener('click', () => prepareTournament(buttons.menuOverlay));
+
+	buttons.rematchButton.addEventListener('click', () =>
 	{
-		console.error('Rematch button not found!');
-	}
-	else
-	{
-		rematchButton.addEventListener('click', resetGame);
-	}
+		if (GameState.isTournament === true)
+		{
+			if (GameState.isFinalMatch === false)
+			{
+				tournamentNextMatch();
+			}
+			else
+			{
+				setupFinalMatch();
+			}
+		}
+		else
+		{
+			resetGame();
+		}
+	});
 }
 
-function setupEventListeners()
+export function setupEventListeners()
 {
-	window.addEventListener('resize', handleResize);
-	document.addEventListener("keydown", keyDownHandler);
-	document.addEventListener("keyup", keyUpHandler);
+		window.addEventListener('resize', handleResize);
+		document.addEventListener("keydown", keyDownHandler);
+		document.addEventListener("keyup", keyUpHandler);
 }
 
 function setupCanvasDimensions()
@@ -136,7 +163,7 @@ function setupCanvasDimensions()
 	const	setCanvasDimensions = () =>
 	{
 		const	viewportHeight = window.innerHeight;
-		GraphConf.canvas.width = viewportHeight * 0.8; // FIXME for later = zooming problem
+		GraphConf.canvas.width = viewportHeight * 0.8;
 		GraphConf.canvas.height = viewportHeight * 0.6;
 	};
 
@@ -169,11 +196,42 @@ export function startGame()
 	player1.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
 	player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
 	player2.y = (GraphConf.canvas.height - PaddleConf.height) / 2;
+	
 	BallConf.x = GraphConf.canvas.width / 2;
 	BallConf.y = GraphConf.canvas.height / 2;
 
-	GameState.game_done = false;
+	randomizeBall();
+
+	window.addEventListener('resize', () =>
+	{
+		player2.x = GraphConf.canvas.width - PaddleConf.width - PaddleConf.offset;
+	});
+
+	GameState.isGameDone = false;
 	gameLoop();
+}
+
+function randomizeBall()
+{
+	const	MIN_ANGLE = Math.PI / 6;
+	const	MAX_ANGLE = Math.PI / 3;
+
+	BallConf.speed = 5;
+	
+	let	direction;
+	if (Math.random() < 0.5)
+	{
+		direction = -1;
+	}
+	else
+	{
+		direction = 1;
+	}
+
+	const	angle = MIN_ANGLE + Math.random() * (MAX_ANGLE - MIN_ANGLE);
+
+	BallConf.dx = BallConf.speed * Math.cos(angle) * direction;
+	BallConf.dy = BallConf.speed * Math.sin(angle);
 }
 
 /***********************************************\
@@ -182,7 +240,7 @@ export function startGame()
 
 /* imports the function that returns the AI paddle's movement */
 
-let data = new GameData();
+let	data = new GameData();
 
 function updateGameData()
 {
@@ -253,14 +311,19 @@ function moveAiPaddle()
 -				GAME STATUS						-
 \***********************************************/
 
-let startTime;
-let elapsedSeconds;
-let current_sec;
+let	startTime;
+let	elapsedSeconds;
+let	current_sec;
+
+export function clearCanvas()
+{
+	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
+}
 
 /***			Main Loop					***/
 export async function gameLoop()
 {
-	if (GameState.game_paused == true)
+	if (GameState.isGamePaused == true)
 	{
 		if (GameState.animationFrameId)
 		{
@@ -272,7 +335,9 @@ export async function gameLoop()
 		return;
 	}
 
-	if (GameState.game_done == true)
+	clearCanvas();
+
+	if (GameState.isGameDone == true)
 	{
 		// console.log('About to call sendResultsToBackend...');
 		// sendResultsToBackend();
@@ -280,10 +345,8 @@ export async function gameLoop()
 		return ;
 	}
 	
-	GraphConf.ctx.clearRect(0, 0, GraphConf.canvas.width, GraphConf.canvas.height);
-
 //---------------------------------- AI ----------------------------------
-	if (GameState.AI_present == true)
+	if (GameState.isAiPresent == true)
 	{
 		// updates the game data for the AI file immediately before starting the time interval
 		if (data.ball_horizontal == undefined)
@@ -314,6 +377,7 @@ export async function gameLoop()
 
 	if (player1.score === GameConf.maxScore)
 	{
+		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
 		await fillingResults(1); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
@@ -323,6 +387,7 @@ export async function gameLoop()
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
+		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
 		await fillingResults(2); //CARO: await added : Results is now properly filled and sent to backend
 		if (DEBUG)
@@ -331,31 +396,118 @@ export async function gameLoop()
 		GameState.game_done = true;
 	}
 
-	if (GameState.game_done == false)
+	if (GameState.isGameDone == false)
 	{
 		GameState.animationFrameId = requestAnimationFrame(gameLoop);
 	}
 }
 
-/***			Resetting Game				***/
-function resetGame()
+function checkTournamentWinner(winnerName)
 {
-	// Reset game state
+	if (GameState.isTournament === true)
+	{
+		if (GameState.isFinalMatch == true)
+		{
+			GameState.isTournamentDone = true;
+			GameConf.winners.push(winnerName);
+			GameConf.tournamentWinner = winnerName;
+			console.log(' tournament winner', GameConf.tournamentWinner);
+			
+			hideWinningMessage();
+			showTournamentResults();
+			return ;
+		}
+		GameConf.matchupIndex++;
+		GameConf.winners.push(winnerName);
+		console.log('GameConf.winners.length: ', GameConf.winners.length);
+		
+		if (GameConf.matchupIndex === 2)
+		{
+			if (GameConf.winners.length === 2)
+			{
+				GameState.isFinalMatch = true;
+				console.log('Setting up final match');
+				console.log(' GameConf', GameConf);
+				console.log(' GameState', GameState);
+				updateRematchButtonText();
+				return;
+			}
+		}
+	}
+}
+
+export function showTournamentResults()
+{
+	hideCanvas();
+	const	messageElement = document.getElementById('winning-message');
+	messageElement.classList.remove('show');
+
+	const	backToMenuButton = document.getElementById('back-to-menu-button');
+	backToMenuButton.classList.remove('hidden-sudden');
+
+	const	resultsContainer = document.createElement('div');
+	resultsContainer.className = 'matchups-container';
+
+	// Create and display the tournament winner
+	const	winnerElement = document.createElement('h2');
+	winnerElement.className = 'tournament-winner';
+	winnerElement.innerHTML = `🏆🏆🏆<br><br>${GameConf.tournamentWinner.toUpperCase()} IS THE TOURNAMENT WINNER!<br><br>🏆🏆🏆`;
+	resultsContainer.appendChild(winnerElement);
+
+	// Append the results container to the DOM
+	document.body.appendChild(resultsContainer);
+}
+
+export function resetTournament()
+{
+	GameState.isTournament = false;
+	GameState.isFinalMatch = false;
+	GameState.isTournamentDone = false;
+	GameConf.winners = [];
+	GameConf.matchupIndex = 0;
+}
+
+function resetNames()
+{
+	player2.name = "";
+}
+
+/***			Resetting Game				***/
+export function resetGame()
+{
+	clearAll();
+	checkCountdown();
+}
+
+export function clearAll()
+{
+	resetScores();
+	randomizeBall();
+	hideWinningMessage();
+	
+	// Restart the game
+	GameState.isGameDone = false;
+	GameState.isGameModeSelected = true;
+	
+	if (DEBUG)
+		console.log('GameState', GameState);
+	
+	setupEventListeners();
+}
+
+function resetScores()
+{
 	player1.score = 0;
 	player2.score = 0;
-	BallConf.speed = 10;
-	BallConf.dx = 5;
-	BallConf.dy = 5;
+}
 
-	// Hide the winning message and rematch button
+
+function hideWinningMessage()
+{
 	const	messageElement = document.getElementById('winning-message');
 	const	rematchButton = document.getElementById('rematch-button');
-
+	const	backToMenuButton = document.getElementById('back-to-menu-button');
 	messageElement.classList.remove('show');
-	rematchButton.classList.add('hidden');
-
-	// Restart the game
-	GameState.game_done = false;
-	GameState.isGameModeSelected = false;
-	requestAnimationFrame(gameLoop);
+	rematchButton.classList.add('hidden-sudden');
+	backToMenuButton.classList.add('hidden-sudden');
 }

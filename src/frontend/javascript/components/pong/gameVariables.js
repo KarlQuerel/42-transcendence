@@ -2,21 +2,20 @@
 -					IMPORTS						-
 \***********************************************/
 
-let	animationFrameId = null;
-
-export const	keysPressed = {};
+let		animationFrameId = null;
+export	const keysPressed = {};
 
 /***			Game State			***/
 export const	GameState =
 {
 	// Check AI state
-	AI_present: false,
+	isAiPresent: false,
 	
 	// Is game done?
-	game_done: false,
+	isGameDone: false,
 	
 	// Is game paused?
-	game_paused: false,
+	isGamePaused: false,
 
 	// For gameloop
 	animationFrameId,
@@ -27,11 +26,20 @@ export const	GameState =
 	// Is it a Tournament?
 	isTournament :false,
 
+	// Is it the final match?
+	isFinalMatch :false,
+
+	// Is Tournament done?
+	isTournamentDone :false,
+
 	// Is countdown active?
 	isCountdownActive: false,
 
 	// Interval between Countdowns
-	countdownInterval: null
+	countdownInterval: null,
+
+	// Are event listeners set up?
+	areEventsListenersSetup : false
 }
 
 /***			Graphics Config			***/
@@ -56,7 +64,12 @@ export const PaddleConf =
 export const GameConf =
 {
 	AI_name : "🤖 Ponginator3000 🤖",
-	maxScore : 2
+	maxScore : 1,
+	matchupIndex : 0,
+	allMatchups : [],
+	winners : [],
+	tournamentWinner : null,
+	keysBlocked : false
 };
 
 
@@ -86,7 +99,7 @@ export const player2 =
 	shadowBlur: 20,
 	dy: 0,
 	score: 0,
-	name: "Jean Pierre"
+	name: ""
 };
 
 /***			Ball Config			***/
