@@ -14,7 +14,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState } from '../../main.js';
+import { DEBUG } from '../../main.js';
 import { apiRequest, getCookie } from './signin.js';
 import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend } from './signup.js';
 
@@ -192,9 +192,9 @@ export default function renderProfile()
 
         // Event listener for logout button
         logoutButton.addEventListener('click', () => {
+            set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
-            setSignedInState(false);
             if (localStorage.getItem('username'))
             {
                 localStorage.removeItem('username');
@@ -221,6 +221,15 @@ export async function fetchUserData() {
     });
 }
 
+async function set_status_offline()
+{
+    apiRequest('/api/users/loggout-user/', {
+        method: 'PUT',
+    })
+    .catch(error => {
+        console.error('Error setting status to offline:', error);
+    });
+}
 
 // Fetch game history data from the API
 async function fetchGameHistoryData() {

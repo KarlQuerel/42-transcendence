@@ -41,6 +41,9 @@ from "./views/user/signin.js";
 import renderProfile
 from "./views/user/profile.js";
 
+import renderFriendsList
+from "./views/user/friends.js";
+
 import renderSignUp, { initializeSignUp }
 from "./views/user/signup.js";
 
@@ -101,6 +104,11 @@ const routes =
 		title: "Sign In",
 		render: renderSignIn
 	},
+	'/friends':
+	{
+		title: "Friends List",
+		render: renderFriendsList
+	},
 	'/2fa_verification':
 	{
 		title: "2FA Verification",
@@ -143,11 +151,6 @@ if (accessToken)
 else
 {
 	isSignedIn = false;
-}
-
-export function setSignedInState(state)
-{
-	isSignedIn = state;
 }
 
 export function getSignedInState()

@@ -25,6 +25,7 @@ from django.core.mail import send_mail
 import pyotp, os, json, base64, logging
 from django.conf import settings
 from .serializers import UsernameSerializer  #TEST CARO
+from pprint import pprint
 
 
 #########################################
@@ -87,6 +88,9 @@ def signInUser(request):
 					refresh = RefreshToken.for_user(user)
 					access_token = str(refresh.access_token)
 					refresh_token = str(refresh)
+					user.is_online = True
+					user.save()
+
 					return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'error': 'Invalid username or password'}, status=403)
@@ -112,7 +116,7 @@ def currentlyLoggedInUser(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		avatar_image_path = user.avatar.path # C'EST CA LE PROBLEME
+		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
 
@@ -123,7 +127,8 @@ def currentlyLoggedInUser(request):
 			'password': user.password,
 			'date_of_birth': user.date_of_birth,
 			'email': user.email,
-			'avatar': avatar
+			'avatar': avatar,
+			'online_status': user.is_online,
 		}
 
 		return JsonResponse(data, status=200)
@@ -397,6 +402,8 @@ def verify_2fa_code(request):
 			refresh = RefreshToken.for_user(request.user)
 			access_token = str(refresh.access_token)
 			refresh_token = str(refresh)
+			user.is_online = True
+			user.save()
 
 			return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
 		else:
@@ -417,6 +424,60 @@ def resend_2fa_code(request):
 		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
 	else:
 		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+#########################################
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def loggout_user(request):
+	try:
+		user = request.user
+		user.is_online = False
+		user.save()
+
+		return JsonResponse({'success': 'Log out successful'}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def	otherUsersList(request):
+	try:
+		users = CustomUser.objects.exclude(id=request.user.id)
+		users_data = [
+			{
+				"id": user.id,
+				"username": user.username,
+				"online_status": user.is_online,
+				# "avatar": user.avatar,
+				"friendship_status": get_friendship_status(request.user, user),
+			}
+			for user in users
+		]
+		return JsonResponse(users_data, safe=False, status=status.HTTP_200_OK)
+	except:
+		return JsonResponse({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getFriendAvatar(request, user_id):
+	try:
+		print('user id: ', user_id)
+		user = CustomUser.objects.get(id=user_id)
+		print('user: ', user)
+		avatar_image_path = user.avatar.path
+		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+		data = {
+			'avatar': avatar
+		}
+		return JsonResponse(data, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+def get_friendship_status(user1, user2):
+	for friend in user1.friends.all():
+		if friend.username == user2.username:
+			return 'already_friends'
+	return 'not_friends'
 
 #########################################

@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
+import { DEBUG, GITHUBACTIONS } from '../../main.js';
 
 /***********************************************\
 *					RENDERING					*
@@ -147,7 +147,6 @@ function login(username, password)
 			console.log('Token refreshed:', newAccessToken);
 		if (GITHUBACTIONS)
 			console.log('Login successful'); //CARO: ajouté pour githubactions
-		setSignedInState(true);
 		window.location.href = '/profile';
 		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
 
