@@ -187,17 +187,17 @@ export async function displayTournamentForm()
 			playerInput.value = playerInput.value.toLowerCase();
 		});
 		
-		// Lock first input with signed-in username (existing logic)
+		// Lock first input with signed-in username
 		if (currentPlayerIndex === 0) {
 			try {
 				const	username = await loadUserManagementData();
 				if (DEBUG) console.log("Username:", username);
 				playerInput.value = username.username.toLowerCase();
-				playerInput.disabled = true; // Disable input for Player 1
-				playerNames[currentPlayerIndex] = playerInput.value; // Store Player 1's name
-				currentPlayerIndex++; // Move to next player
-				createPlayerInput(); // Call function to create the next input
-				return; // Exit the function to prevent further processing
+				playerInput.disabled = true;
+				playerNames[currentPlayerIndex] = playerInput.value;
+				currentPlayerIndex++;
+				createPlayerInput();
+				return;
 			} catch (error) {
 				console.error('Failed to load username:', error);
 			}

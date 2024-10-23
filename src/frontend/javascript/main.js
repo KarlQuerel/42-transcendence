@@ -57,7 +57,7 @@ from "./views/user/change_password.js";
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
-const routes =
+const	routes =
 {
 	'':
 	{
@@ -126,7 +126,7 @@ let	currentPath = '';
 /***			Navbar						***/
 function render()
 {
-	const navbar = renderNavbar();
+	const	navbar = renderNavbar();
 	document.body.insertAdjacentElement('afterbegin', navbar);
 }
 
@@ -162,8 +162,8 @@ function router()
 	if (!path)
 		path = '/home';
 
-	const previousRoute = routes[currentPath]
-	const route = routes[path] || routes['/404'];
+	const	previousRoute = routes[currentPath]
+	const	route = routes[path] || routes['/404'];
 
 	if (DEBUG)
 	{
@@ -184,7 +184,7 @@ function router()
 	if (DEBUG)
 		console.log('isSignedIn = ', isSignedIn);
 
-	const restrictedPaths =
+	const	restrictedPaths =
 	{
 		'/pong': "❌ You must be logged in to access the Pong game ❌",
 		'/dashboard': "❌ You must be logged in to access your dashboard ❌",
@@ -202,7 +202,7 @@ function router()
 	if (route)
 	{
 		document.title = route.title;
-		const renderedContent = route.render();
+		const	renderedContent = route.render();
 		const	appElement = document.getElementById('app');
 		if (typeof renderedContent === 'string')
 			appElement.innerHTML = renderedContent;
@@ -259,12 +259,12 @@ document.addEventListener("DOMContentLoaded", () =>
 	document.body.addEventListener("click", (event) =>
 	{
 		// Find the nearest anchor tag if the clicked element is nested inside one
-		const link = event.target.closest("a[data-link]");
+		const	link = event.target.closest("a[data-link]");
 		
 		if (link)
 		{
 			event.preventDefault();
-			const href = link.getAttribute('href');
+			const	href = link.getAttribute('href');
 			if (DEBUG)
 				console.log(`Navigating to ${href}`);
 			navigateTo(href);
