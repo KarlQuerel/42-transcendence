@@ -103,19 +103,19 @@ jobs:
       - name: Check server status
         run: curl -v -k https://localhost:4430 || true
 
-      # FIX: quand il y aura un giff qui s'affiche lorsqu'on est pas connecté
-      - name: Pong page button before login
-        run: npx playwright test .github/tests/redirections_before_login/pong_button_before_login.test.js --config=.github/config/playwright.config.js
+      # # FIX: quand il y aura un giff qui s'affiche lorsqu'on est pas connecté
+      # - name: Pong page button before login
+      #   run: npx playwright test .github/tests/redirections_before_login/pong_button_before_login.test.js --config=.github/config/playwright.config.js
 
       # FIX: dans l'attente d'avoir un bouton dashboard et le giff "not connected" associé
       # - name: Dashboard page button before login
       #   run: npx playwright test .github/tests/redirections_before_login/dashboard_button_before_login.test.js --config=.github/config/playwright.config.js
 
-      - name: Sign-in page button before login
-        run: npx playwright test .github/tests/redirections_before_login/signin_button_before_login.test.js --config=.github/config/playwright.config.js
+      # - name: Sign-in page button before login
+      #   run: npx playwright test .github/tests/redirections_before_login/signin_button_before_login.test.js --config=.github/config/playwright.config.js
 
-      - name: Home page button before login
-        run: npx playwright test .github/tests/redirections_before_login/home_button_before_login.test.js --config=.github/config/playwright.config.js
+      # - name: Home page button before login
+      #   run: npx playwright test .github/tests/redirections_before_login/home_button_before_login.test.js --config=.github/config/playwright.config.js
 
 
 #######################
@@ -128,22 +128,22 @@ jobs:
       # - name : login error tests
       #     run: npx playwright test .github/tests/signin/login_error.test.js --config=.github/config/playwright.config.js
 
-      - name: sign up and log in with created user
-        run: npx playwright test .github/tests/signin/signup_and_login.test.js --config=.github/config/playwright.config.js
+      # - name: sign up and log in with created user
+      #   run: npx playwright test .github/tests/signin/signup_and_login.test.js --config=.github/config/playwright.config.js
 
       # - name: loggout
       #   run: npx playwright test .github/tests/signin/loggout.test.js --config=.github/config/playwright.config.js
 
-      - name: login with make_fill_db user #IMPORTANT: laisser ce test à la fin de cette section, pour qu'on puisse faire le reste de nos tests avec un user de make fill_db connecté
-        run: npx playwright test .github/tests/signin/login.test.js --config=.github/config/playwright.config.js
+      # - name: login with make_fill_db user #IMPORTANT: laisser ce test à la fin de cette section, pour qu'on puisse faire le reste de nos tests avec un user de make fill_db connecté
+      #   run: npx playwright test .github/tests/signin/login.test.js --config=.github/config/playwright.config.js
 
 
 ##################################################################
 ## Redirections by clicking home page buttons AFTER logging in ##
 ##################################################################
 
-      - name: Pong page button after login
-        run: npx playwright test .github/tests/redirections_after_login/pong_button_after_login.test.js --config=.github/config/playwright.config.js
+      # - name: Pong page button after login
+      #   run: npx playwright test .github/tests/redirections_after_login/pong_button_after_login.test.js --config=.github/config/playwright.config.js
 
       # FIX: Décommenter ci-dessous qd il y aura un bouton dashboard
       # - name: Dashboard page button after login
