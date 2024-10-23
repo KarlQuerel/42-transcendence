@@ -14,15 +14,20 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
-import { apiRequest, getCookie } from './signin.js';
-import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend } from './signup.js';
+import { DEBUG, setSignedInState }
+from '../../main.js';
+
+import { apiRequest, getCookie }
+from './signin.js';
+
+import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
+from './signup.js';
 
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderProfile()
+export function renderProfile()
 {
     // Create a container for the profile information
     const container = document.createElement('div');
@@ -158,7 +163,7 @@ export default function renderProfile()
         // Event listener for change password button
         changePasswordButton.addEventListener('click', () =>
         {
-            window.location.href = '/change-password';
+            navigateTo('/change-password');
         });
 
         
@@ -195,11 +200,12 @@ export default function renderProfile()
             set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            setSignedInState(false);
             if (localStorage.getItem('username'))
             {
                 localStorage.removeItem('username');
             }
-            window.location.href = '/sign-in';
+            navigateTo('/sign-in');
         });
 
     return container;

@@ -1,8 +1,11 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
+import { DEBUG, navigateTo }
 from '../../main.js';
+
+import { resetTournament, setupEventListeners }
+from './pong.js';
 
 /***********************************************\
 -				CREATING ELEMENTS				-
@@ -40,7 +43,6 @@ export function createOverlay()
 	const	menuButtonsContainer = document.createElement('div');
 	menuButtonsContainer.className = 'menu-buttons-container';
 
-	// Container for the first two buttons (row)
 	const	rowContainer = document.createElement('div');
 	rowContainer.className = 'row-container';
 
@@ -50,11 +52,9 @@ export function createOverlay()
 	const	howToPlayButton = createHowToPlayButton();
 	const	howToPlayCard = createHowToPlayCard();
 
-	// Append the first two buttons to the row container
 	rowContainer.appendChild(singlePlayerButton);
 	rowContainer.appendChild(twoPlayerButton);
 
-	// Append the row container and the tournament button to the main container
 	menuButtonsContainer.appendChild(rowContainer);
 	menuButtonsContainer.appendChild(tournamentButton);
 	menuButtonsContainer.appendChild(howToPlayButton);
@@ -107,10 +107,10 @@ export function createTournamentButton()
 export function createHowToPlayButton()
 {
 	const	button = document.createElement('button');
-	button.id = 'how-to-play-button';
 	button.className = 'btn btn-home btn-howtoplay';
 	button.textContent = 'How to Play';
-	button.addEventListener('click', () => {
+	button.addEventListener('click', () =>
+	{
 		const	card = document.getElementById('how-to-play-card');
 		if (card)
 		{
@@ -206,9 +206,45 @@ export function createWinningMessage()
 export function createRematchButton()
 {
 	const	rematchButton = document.createElement('button');
+	rematchButton.className = 'btn btn-home';
 	rematchButton.id = 'rematch-button';
-	rematchButton.textContent = 'Rematch';
+	rematchButton.appendChild(document.createTextNode('Rematch'));
 	return rematchButton;
+}
+
+export function createBackToMenuButton()
+{
+	const	backButton = document.createElement('button');
+	backButton.className = 'btn btn-home';
+	backButton.id = 'back-to-menu-button';
+
+	backButton.appendChild(document.createTextNode('Back to Menu'));
+
+	const	gifElement = document.createElement('img');
+	gifElement.src = '../../../assets/images/pong/menu/back_to_menu.gif';
+	gifElement.alt = 'Back to Menu GIF';
+	gifElement.className = 'back-to-menu-gif';
+	gifElement.style.display = 'none';
+
+	backButton.appendChild(gifElement);
+	
+	backButton.onmouseover = () =>
+	{
+		gifElement.style.display = 'block';
+	};
+
+	backButton.onmouseout = () =>
+	{
+		gifElement.style.display = 'none';
+	};
+
+	backButton.onclick = () =>
+	{
+		resetTournament();
+		navigateTo('/pong');
+	};
+	
+	return backButton;
 }
 
 export function createCanvas()

@@ -11,6 +11,7 @@ urlpatterns = [
 	path('friends/', include('friends.urls')),
 	path('getFriendAvatar/<int:user_id>/', views.getFriendAvatar, name='get-friend-avatar'),
 	path('getUsername/', views.getUsername, name='get-username'),
+	path('does-user-exist/<str:username>/', views.doesUserExist, name='does_user_exist'),
 	path('other-users-list/', views.otherUsersList, name='other_users_list'),
 	path('verify-2fa-code/', views.verify_2fa_code, name='verifiy_2fa_code'),
 	path('resend-2fa-code/', views.resend_2fa_code, name='resend_2fa_code'),
@@ -22,6 +23,7 @@ urlpatterns = [
 	path('updateProfile/', views.updateProfile, name='update-profile'),
 	path('updateAvatar/', views.updateAvatar, name='update-avatar'),
 	path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
+	path('checkUserPassword/', views.checkUserPassword, name='check-user-password'),
 ]
 
 if settings.DEBUG:

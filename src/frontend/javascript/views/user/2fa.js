@@ -1,18 +1,21 @@
 /***********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG } from '../../main.js';
-import { refreshToken, apiRequest } from './signin.js';
+import { DEBUG, navigateTo, setSignedInState }
+from '../../main.js';
+
+import { refreshToken, apiRequest }
+from './signin.js';
 
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
 
-export default function render2fa()
+export function render2fa()
 {
     if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
     {
-        window.location.href = '/profile';        
+        navigateTo('/profile');        
     }
     const form = render_form();
     document.body.appendChild(form);
@@ -47,8 +50,8 @@ export default function render2fa()
 		{
 			if (DEBUG)
 				console.log('Token refreshed:', newAccessToken);
-			
-			window.location.href = '/profile';
+			setSignedInState(true);
+			navigateTo('/profile');
             window.history.replaceState({}, document.title, "/profile");
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
 		})

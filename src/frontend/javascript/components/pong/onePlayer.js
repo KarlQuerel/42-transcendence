@@ -45,7 +45,7 @@ export function prepareSinglePlayer(menuOverlay)
 {
 	getFirstPlayerName();
 	player2.name = GameConf.AI_name;
-	GameState.AI_present = true;
+	GameState.isAiPresent = true;
 	menuOverlay.classList.add('hidden');
 	checkCountdown();
 }

@@ -1,14 +1,17 @@
 /***********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG } from '../../main.js';
-import { apiRequest } from './signin.js';
+import { DEBUG }
+from '../../main.js';
+
+import { apiRequest }
+from './signin.js';
 
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderFriendsList()
+export function renderFriendsList()
 {	
 	const userContainer = document.createElement('div');
 	userContainer.setAttribute('id', 'other-users-list');

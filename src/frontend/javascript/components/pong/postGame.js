@@ -23,7 +23,7 @@ export async function fillingResults(winner)
 	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE - voir avec caro la logique avec un opponent
+	Results.identified = "yes"; // HERE check with Caro
 
 	if (winner === 1)
 	{
@@ -36,20 +36,17 @@ export async function fillingResults(winner)
 		Results.opponent_score = GameConf.maxScore;
 	}
 
-	if (GameState.AI_present === true)
+	if (GameState.isAiPresent === true)
 	{
 		Results.identified = false;
 		Results.opponent_username = GameConf.AI_name;
 	}
-	else if (GameState.AI_present === false)
+	else if (GameState.isAiPresent === false)
 	{
 		Results.opponent_username = player2.name;
 	}
 
 	Results.tournament_date = getDate();
-
-	if (DEBUG)
-		console.log('Results instance:', Results);
 }
 
 /***			Get date					***/
@@ -61,9 +58,7 @@ function getDate()
 	const year = current_date.getFullYear();
 	
 	const formattedDate = `${day}/${month}/${year}`;
-
-	console.log('Formatted Date:', formattedDate);
-
+	
 	return formattedDate;
 }
 
@@ -72,6 +67,24 @@ export function cleanUpPong()
 {
 	if (DEBUG)
 		console.log('Cleaning up Pong...')
+	
+	const	tournamentForms = document.querySelectorAll('#input-form');
+	if (tournamentForms)
+	{
+		tournamentForms.forEach(form => form.remove());
+	}
+	
+	const	matchupsContainers = document.querySelectorAll('.matchups-container');
+	if (matchupsContainers.length > 0)
+	{
+		matchupsContainers.forEach(container => container.remove());
+	}
+	
+	const	passwordModals = document.querySelectorAll('.input-form');
+	if (passwordModals.length > 0)
+	{
+		passwordModals.forEach(modal => modal.remove());
+	}
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
@@ -83,21 +96,17 @@ export function cleanUpPong()
 	// Removing Game Elements
 	const	canvas = document.getElementById("pongCanvas");
 	if (canvas)
+	{
 		canvas.remove();
+	}
 
 	// Resetting Game Variables
-	GameState.game_done = true;
-	GameState.game_paused = false;
-	GameState.AI_present = false;
+	GameState.isGameDone = true;
+	GameState.isGamePaused = false;
+	GameState.isAiPresent = false;
 
 	// Cleaning up the countdown
 	clearInterval(GameState.countdownInterval);
 	GameState.isCountdownActive = false;
 	document.querySelectorAll('.countdown').forEach(el => el.remove());
-
-	const	tournamentForm = document.getElementById('input-form');
-	if (tournamentForm)
-	{
-		tournamentForm.remove();
-	}
 }

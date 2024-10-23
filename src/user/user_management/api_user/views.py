@@ -10,7 +10,7 @@ from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login
 from rest_framework.permissions import AllowAny
 from django.shortcuts import render, redirect
@@ -136,6 +136,16 @@ def currentlyLoggedInUser(request):
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doesUserExist(request, username):
+	try:
+		user = CustomUser.objects.get(username=username)
+
+		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
 
 #########################################
 
@@ -481,3 +491,30 @@ def get_friendship_status(user1, user2):
 	return 'not_friends'
 
 #########################################
+
+##################################################
+##           CHECK PASSWORD VIEWS	            ##
+##################################################
+@csrf_exempt
+def checkUserPassword(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+
+            # Check if the user exists
+            try:
+                user = CustomUser.objects.get(username=username)
+                # Check if the password is correct
+                if check_password(password, user.password):
+                    return JsonResponse({'valid': True}, status=200)
+                else:
+                    return JsonResponse({'valid': False}, status=200)
+            except CustomUser.DoesNotExist:
+                return JsonResponse({'error': 'User not found'}, status=404)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)

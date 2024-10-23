@@ -4,7 +4,7 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { BallConf, GameState, GraphConf, GameConf, PaddleConf, player1, player2, Results }
 from './gameVariables.js';
 
 import { displayTournamentForm, startTournamentGame,
@@ -40,9 +40,23 @@ from './onePlayer.js';
 import { checkCountdown }
 from './preGame.js';
 
+import { apiRequest }
+from '../../views/user/signin.js';
+
 /***********************************************\
 -					UTILS						-
 \***********************************************/
+export function checkElement(element, elementName)
+{
+	if (!element)
+	{
+		console.error(`${elementName} element not found!`);
+		return false;
+	}
+	return true;
+}
+
+/***			User & Password Management			***/
 export function isNameValid(playerName)
 {
 	if (playerName.length > 12)
@@ -57,14 +71,93 @@ export function isNameValid(playerName)
 		return false;
 	}
 
-	console.log('playerName', playerName);
-
 	if (playerName === player1.name)
 	{
 		alert('❌ I know you love yourself but you can\'t play against yourself ❌');
 		return false;
 	}
 
-
 	return true;
+}
+
+export async function doesUserExist(playerName)
+{
+	try
+	{
+		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		{
+			method: 'GET',
+		});
+
+		return data.user_exists;
+	}
+	catch (error)
+	{
+		console.error('API request error:', error);
+		return false;
+	}
+}
+
+export async function checkPassword(username, password)
+{
+	try
+	{
+		const	response = await fetch('/api/users/checkUserPassword/',
+		{
+			method: 'POST',
+			headers:
+			{
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ username, password })
+		});
+
+		const	data = await response.json();
+		return data.valid;
+	}
+	catch (error)
+	{
+		console.error('Error checking password:', error);
+		return false;
+	}
+}
+
+/***			Graphics					***/
+export function showCanvas()
+{
+	const canvas = document.getElementById('pongCanvas');
+	if (canvas)
+	{
+		canvas.style.display = 'block';
+	}
+}
+
+export function hideCanvas()
+{
+	const canvas = document.getElementById('pongCanvas');
+	if (canvas)
+	{
+		canvas.style.display = 'none';
+	}
+}
+
+/***			Keys Handling					***/
+export function blockKeys(event)
+{
+	const blockedKeys = ['p', 'Escape', 'ArrowUp', 'ArrowDown', 'w', 's'];
+
+	if (GameConf.keysBlocked === true && blockedKeys.includes(event.key))
+	{
+		event.preventDefault();
+	}
+}
+
+export function enableKeyBlocking()
+{
+	GameConf.keysBlocked = true;
+}
+
+export function disableKeyBlocking()
+{
+	GameConf.keysBlocked = false;
 }
