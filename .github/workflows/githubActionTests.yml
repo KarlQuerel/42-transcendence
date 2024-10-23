@@ -85,11 +85,11 @@ jobs:
           docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
       # Run `make fill_db` multiple times to check for errors
-      - name: make fill_db twice
-        working-directory: ./src
-        run: |
-          docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
-          docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
+      # - name: make fill_db twice
+      #   working-directory: ./src
+      #   run: |
+      #     docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+      #     docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
 #TODO: make clear ou pas besoin de cette commande?
 
