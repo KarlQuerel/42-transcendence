@@ -4,6 +4,9 @@
 import { DEBUG, navigateTo }
 from '../../main.js';
 
+import { resetTournament, setupEventListeners }
+from './pong.js';
+
 /***********************************************\
 -				CREATING ELEMENTS				-
 \***********************************************/
@@ -237,6 +240,7 @@ export function createBackToMenuButton()
 
 	backButton.onclick = () =>
 	{
+		resetTournament();
 		navigateTo('/pong');
 	};
 	

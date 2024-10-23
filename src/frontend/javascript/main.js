@@ -45,6 +45,9 @@ from "./views/user/signin.js";
 import { renderProfile }
 from "./views/user/profile.js";
 
+import { renderFriendsList }
+from "./views/user/friends.js";
+
 import { renderSignUp, initializeSignUp }
 from "./views/user/signup.js";
 
@@ -102,6 +105,11 @@ const	routes =
 	{
 		title: "Sign In",
 		render: renderSignIn
+	},
+	'/friends':
+	{
+		title: "Friends List",
+		render: renderFriendsList
 	},
 	'/2fa_verification':
 	{
@@ -188,7 +196,9 @@ function router()
 	{
 		'/pong': "❌ You must be logged in to access the Pong game ❌",
 		'/dashboard': "❌ You must be logged in to access your dashboard ❌",
-		'/profile': "❌ You must be logged in to access your profile ❌"
+		'/profile': "❌ You must be logged in to access your profile ❌",
+		'/change-password': "❌ You must be logged in to change your password ❌",
+		'/friends': "❌ You must be logged in to see your friends ❌"
 	};
 	
 	// Check if the user is trying to access a restricted route

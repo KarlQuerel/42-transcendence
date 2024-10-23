@@ -14,9 +14,14 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState } from '../../main.js';
-import { apiRequest, getCookie } from './signin.js';
-import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend } from './signup.js';
+import { DEBUG, setSignedInState }
+from '../../main.js';
+
+import { apiRequest, getCookie }
+from './signin.js';
+
+import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
+from './signup.js';
 
 /***********************************************\
 *                   RENDERING                   *
@@ -192,6 +197,7 @@ export function renderProfile()
 
         // Event listener for logout button
         logoutButton.addEventListener('click', () => {
+            set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             setSignedInState(false);
@@ -221,6 +227,15 @@ export async function fetchUserData() {
     });
 }
 
+async function set_status_offline()
+{
+    apiRequest('/api/users/loggout-user/', {
+        method: 'PUT',
+    })
+    .catch(error => {
+        console.error('Error setting status to offline:', error);
+    });
+}
 
 // Fetch game history data from the API
 async function fetchGameHistoryData() {
@@ -306,11 +321,11 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
         if (isValidData)
         {
-            if (avatarFile && (verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput) == true))
-                await saveNewAvatar(avatarFile);
+            if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
+                saveNewAvatar(avatarFile);
+            await saveProfileChanges(userData_edit);
+            window.location.reload();
         }
-        await saveProfileChanges(userData_edit);
-        window.location.reload();
     });
 }
 
@@ -323,17 +338,6 @@ async function verifyProfileChanges()
     const lastName = getIdentifier('last_name_input');
     const dob = getIdentifier('dob_input');
     const email = getIdentifier('email_input');
-    const avatar = getIdentifier('avatar_input');
-
-    if (DEBUG)
-    {
-        console.log('Verifying profile changes [getIdentifier]...');
-        console.log('First name:', firstName);
-        console.log('Last name:', lastName);
-        console.log('Date of birth:', dob);
-        console.log('Email:', email);
-        console.log('Avatar:', avatar);
-    }
 
     // Check the types based on validation logic
     const first_name_type = checkIdentifierType(firstName, 'first_name_input');
@@ -342,15 +346,6 @@ async function verifyProfileChanges()
     const date_of_birth_type = checkIdentifierType(dob, 'date_of_birth_input');
     const password_type = 'password';
     const email_type = checkIdentifierType(email, 'email_input');
-
-    if (DEBUG)
-    {
-        console.log('Verifying profile changes [checkIdentifierType]...');
-        console.log('First name:', first_name_type);
-        console.log('Last name:', last_name_type);
-        console.log('Date of birth:', date_of_birth_type);
-        console.log('Email:', email_type);
-    }
 
     const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 
@@ -433,6 +428,9 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
         result = false;
     }
 
+    if (DEBUG)
+        console.log('Avatar file verification result:', result);
+
     return result;
 }
 
@@ -464,8 +462,6 @@ async function saveProfileChanges(userData_edit)
             }),
         });
 
-        // console.log('Response JSON:', response); // DEBUG
-    
         console.log('Profile updated successfully.');
 
     }

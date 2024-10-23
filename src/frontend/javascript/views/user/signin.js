@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS, navigateTo }
+import { DEBUG, GITHUBACTIONS, setSignedInState }
 from '../../main.js';
 
 /***********************************************\
@@ -136,19 +136,18 @@ function login(username, password)
 			// Store tokens in local storage
 			localStorage.setItem('access_token', data.access);
 			localStorage.setItem('refresh_token', data.refresh);
-
 			return refreshToken();
 		}
 		else
-			throw new Error('Login failed: No access token received');
-	})
-	.then(newAccessToken =>
+        throw new Error('Username or password incorrect');
+})
+.then(newAccessToken =>
 	{
-		if (DEBUG)
+        if (DEBUG)
 			console.log('Token refreshed:', newAccessToken);
-		if (GITHUBACTIONS)
+        if (GITHUBACTIONS)
 			console.log('Login successful'); //CARO: ajouté pour githubactions
-		setSignedInState(true);
+        setSignedInState(true);
 		navigateTo('/profile');
 		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
 

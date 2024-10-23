@@ -151,15 +151,11 @@ function setupMenuButtons()
 	});
 }
 
-function setupEventListeners()
+export function setupEventListeners()
 {
-	if (GameState.areEventsListenersSetup === false)
-	{
 		window.addEventListener('resize', handleResize);
 		document.addEventListener("keydown", keyDownHandler);
 		document.addEventListener("keyup", keyUpHandler);
-	}
-	GameState.areEventsListenersSetup = true;
 }
 
 function setupCanvasDimensions()
@@ -453,18 +449,13 @@ export function showTournamentResults()
 	document.body.appendChild(resultsContainer);
 }
 
-function resetTournament()
+export function resetTournament()
 {
-	// Reset tournament-related variables
 	GameState.isTournament = false;
 	GameState.isFinalMatch = false;
 	GameState.isTournamentDone = false;
 	GameConf.winners = [];
 	GameConf.matchupIndex = 0;
-
-	// Reset scores and prepare for a new game
-	resetScores();
-	resetGame();
 }
 
 function resetNames()

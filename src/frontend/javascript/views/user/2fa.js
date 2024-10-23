@@ -1,7 +1,7 @@
 /***********************************************\
 -		   IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG, navigateTo }
+import { DEBUG, navigateTo, setSignedInState }
 from '../../main.js';
 
 import { refreshToken, apiRequest }
@@ -50,7 +50,7 @@ export function render2fa()
 		{
 			if (DEBUG)
 				console.log('Token refreshed:', newAccessToken);
-			
+			setSignedInState(true);
 			navigateTo('/profile');
             window.history.replaceState({}, document.title, "/profile");
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
