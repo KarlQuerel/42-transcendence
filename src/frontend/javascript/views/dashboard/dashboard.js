@@ -232,7 +232,37 @@ function getAvatar(userID, avatar)
 		console.error('Error fetching user data:', error);
 	})
 }
-	
+
+
+/* async function getDefaultAvatar() {//HERE //TEST
+    try {
+        console.log('Fetching default avatar...');
+        // const response = await fetch('../../../../user/user_management/media/avatars/default.png');
+        const response = await fetch('src/user/user_management/media/avatars/default.png');
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch the default avatar');
+        }
+        
+        const blob = await response.blob();
+        console.log('Blob content:', blob);  // Vérifie si le Blob est correct
+
+        const reader = new FileReader();
+
+        return new Promise((resolve, reject) => {
+            reader.onloadend = () => {
+                const avatar = `data:image/png;base64,${reader.result.split(',')[1]}`;
+                console.log('Base64 avatar:', avatar);  // Vérifie la chaîne base64 générée
+                resolve(avatar);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);  // Convertir le Blob en base64
+        });
+    } catch (error) {
+        console.error('Error loading default avatar:', error);
+        return null;  // Retourne null en cas d'erreur
+    }
+} */
 	
 
 /***********************************************\
@@ -332,7 +362,7 @@ function chartDoughnutData(gameHistory)
 -				FRIENDS ICON					-
 \***********************************************/
 
-function avatars(gameHistory, allUsers)
+/* async  */function avatars(gameHistory, allUsers) //TEST: async //HERE
 {
 	const opponentsList = []; // To ensure only one avatar per user
 	const avatarContainer = document.querySelector('.avatar-container');
@@ -377,34 +407,42 @@ function avatars(gameHistory, allUsers)
 		}
 	});
 
+	console.log("AVANT");
 	// pour les opponentUsername restants, afficher un avatar par défaut
-	opponentsList.forEach(opponent => {
+	opponentsList.forEach(/* async  */opponent => { //TEST: async //HERE
+		console.log("DEDANS");
 		const avatarBox = document.createElement('div');
 
-			avatarBox.className = 'avatar-box';
-			avatarBox.dataset.toggle = 'tableModal';
-			avatarBox.dataset.username = opponent;
+		avatarBox.className = 'avatar-box';
+		avatarBox.dataset.toggle = 'tableModal';
+		avatarBox.dataset.username = opponent;
 
-			const avatarImg = document.createElement('img');
+		const avatarImg = document.createElement('img');
 
-			//HERE
+		// avatarImg.src = `data:image/png;base64,${`../../../../user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
+		// avatarImg.src = `data:image/png;base64,${`./src/user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
+		// avatarImg.src = '../../../../user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
+		avatarImg.src = './src/user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
 
-			// avatarImg.src = `data:image/png;base64,${`../../../../user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
-			// avatarImg.src = `data:image/png;base64,${`./src/user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
-			// avatarImg.src = '../../../../user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
-			avatarImg.src = './src/user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
+/* 		const defaultAvatar = await getDefaultAvatar();
+		if (defaultAvatar)
+			avatarImg.src = defaultAvatar;
+		else
+			console.error('Failed to load default avatar.'); */
+
+		if (DEBUG)
 			console.log("AVATAR IMG: ", avatarImg.src);
 
-			avatarImg.alt = `${opponent}`;
-			avatarImg.className = 'avatar-icon';
+		avatarImg.alt = `${opponent}`;
+		avatarImg.className = 'avatar-icon';
 
-			avatarBox.appendChild(avatarImg);
-			avatarContainer.appendChild(avatarBox);
+		avatarBox.appendChild(avatarImg);
+		avatarContainer.appendChild(avatarBox);
 
-			avatarBox.addEventListener('click', () => {
-				displayGameHistory(gameHistory.username, opponent, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar cliqué
-				$('#tableModal').modal('show');
-			})
+		avatarBox.addEventListener('click', () => {
+			displayGameHistory(gameHistory.username, opponent, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar cliqué
+			$('#tableModal').modal('show');
+		})
 	});
 	
 }
