@@ -420,6 +420,9 @@ def resend_2fa_code(request):
 def get2FAStatus(request):
 	try:
 		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
 		return JsonResponse({user.is2fa}, status=200)
 
 	except Exception as e:
@@ -436,6 +439,9 @@ def get2FAStatus(request):
 def update2FAStatus(request):
 	try:
 		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
 		is2fa = request.data.get('is2fa')
 
 		if is2fa is not None:
@@ -461,6 +467,8 @@ def update2FAStatus(request):
 def anonymizeUserData(request):
     try:
         user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'User not authenticated'}, status=401)
 
         usernameSuffix = get_random_string(6)
         user.username = f'user_{usernameSuffix}'
@@ -487,6 +495,9 @@ def anonymizeUserData(request):
 def updateAnonymousStatus(request):
 	try:
 		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
 		user.isAnonymous = True
 		user.save()
 
@@ -505,7 +516,37 @@ def updateAnonymousStatus(request):
 def getAnonymousStatus(request):
 	try:
 		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
 		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
+##           	DELETE ACCOUNT VIEWS      	    ##
+##################################################
+
+
+@api_view(['DELETE'])
+@login_required
+@permission_classes([IsAuthenticated])
+def deleteAccount(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		print('About to delete user...') # DEBUG
+
+		user.delete()
+
+		print('User deleted successfully') # DEBUG
+
+		return Response({'message': 'Account deleted successfully'}, status=200)
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)

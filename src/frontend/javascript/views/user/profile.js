@@ -18,7 +18,7 @@
 -					IMPORTS						-
 \***********************************************/
 
-import { DEBUG, setSignedInState }
+import { DEBUG }
 from '../../main.js';
 
 import { apiRequest, getCookie }
@@ -182,7 +182,6 @@ export default function renderProfile()
         });
 
 
-
         /***************** FRIENDS *****************/
         
         // bouton pour aller sur la page friends
@@ -275,12 +274,35 @@ export default function renderProfile()
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
-            setSignedInState(false);
             if (localStorage.getItem('username'))
-            {
                 localStorage.removeItem('username');
-            }
             window.location.href = '/sign-in';
+        });
+
+
+        /************** DELETE ACCOUNT **************/
+
+        // bouton pour supprimer le compte
+        const deleteAccountButton = document.createElement('button');
+        deleteAccountButton.setAttribute('id', 'delete-account-button');
+        deleteAccountButton.textContent = 'Delete Account';
+        container.appendChild(deleteAccountButton);
+
+        deleteAccountButton.addEventListener('click', async () =>
+        {
+            const confirmation = confirm("Are you sure you want to delete your account? This action is irreversible.");
+            if (confirmation)
+            {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+
+                if (localStorage.getItem('username'))
+                    localStorage.removeItem('username');
+
+                deleteUserAccount();
+
+                window.location.href = '/sign-in';
+            }
         });
 
 
@@ -706,5 +728,29 @@ async function updateUser2FAStatus(is2fa)
     {
         console.error('Error updating 2FA status:', error);
         alert('Failed to update 2FA status: ' + error.message);
+    }
+}
+
+
+/***********************************************\
+*            DELETE ACCOUNT FUNCTIONS           *
+\***********************************************/
+
+
+async function deleteUserAccount()
+{
+    try
+    {
+        const response = await apiRequest('/api/user/deleteAccount/', {
+            method: 'DELETE',
+        });
+
+        console.log('Account deleted successfully.');
+
+    }
+    catch (error)
+    {
+        console.error('Error during account deletion:', error);
+        alert('An error occurred while trying to delete your account.');
     }
 }
