@@ -192,6 +192,38 @@ export default function renderProfile()
         container.appendChild(friendsButton);
 
 
+        /***************** 2FA *****************/
+
+        // case pour activer le 2fa
+        const twoFactorAuthContainer = document.createElement('div');
+        twoFactorAuthContainer.className = 'form-group';
+
+        const twoFactorAuthLabel = document.createElement('label');
+        twoFactorAuthLabel.setAttribute('for', 'twoFactorAuthCheckbox');
+        twoFactorAuthLabel.textContent = 'Two-Factor Authentication';
+
+        const twoFactorAuthCheckbox = document.createElement('input');
+        twoFactorAuthCheckbox.type = 'checkbox';
+        twoFactorAuthCheckbox.id = 'twoFactorAuthCheckbox';
+        twoFactorAuthCheckbox.className = 'form-control';
+
+        twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
+        twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
+        container.appendChild(twoFactorAuthContainer);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const is2fa = await getUser2FAStatus();
+            if (is2fa !== null) {
+                twoFactorAuthCheckbox.checked = is2fa;
+            }
+        });
+
+        twoFactorAuthCheckbox.addEventListener('change', () => {
+            const is2fa = twoFactorAuthCheckbox.checked;
+            updateUser2FAStatus(is2fa);
+        });
+
+
 
         /************** ANONYMIZE DATA **************/
         
@@ -357,7 +389,7 @@ async function profileEditMode(userData_edit, personalInfoSection)
         if (isValidData)
         {
             if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
-                saveNewAvatar(avatarFile);
+                await saveNewAvatar(avatarFile);
             await saveProfileChanges(userData_edit);
             window.location.reload();
         }
@@ -503,7 +535,7 @@ async function saveProfileChanges(userData_edit)
     catch (error)
     {
         console.error('Error updating profile:', error.message);
-        alert('An error occurred while updating the profile.');
+        alert('An error occurred while updating the profile. Please check your new information and try again.');
     }
 }
 
@@ -624,5 +656,55 @@ async function fetchUserAnonymousStatus()
     {
         console.error('Error fetching anonymous status:', error);
         return null;
+    }
+}
+
+
+
+/***********************************************\
+*                 2FA FUNCTIONS                 *
+\***********************************************/
+
+async function getUser2FAStatus()
+{
+    try
+    {
+        const response = await apiRequest('api/users/get2FAStatus/', {
+            method: 'GET'   
+        });
+        return response.is2fa;
+    }
+    catch (error)
+    {
+        console.error('Error fetching 2FA status:', error);
+        return null;
+    }
+
+}
+
+
+async function updateUser2FAStatus(is2fa)
+{
+    try
+    {
+        const response = await apiRequest('/api/users/update2FAStatus/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ is2fa }),
+        });
+
+        console.log('2FA status updated successfully.');
+
+    }
+    catch (error)
+    {
+        console.error('Error updating 2FA status:', error);
+        alert('Failed to update 2FA status: ' + error.message);
     }
 }

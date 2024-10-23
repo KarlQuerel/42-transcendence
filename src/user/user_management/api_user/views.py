@@ -409,6 +409,43 @@ def resend_2fa_code(request):
 		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
 	else:
 		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+	
+
+#########################################
+
+
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+def get2FAStatus(request):
+	try:
+		user = request.user
+		return JsonResponse({user.is2fa}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def update2FAStatus(request):
+	try:
+		user = request.user
+		is2fa = request.data.get('is2fa')
+
+		if is2fa is not None:
+			user.is2fa = is2fa
+			user.save()
+
+		return Response({'message': '2FA status updated successfully', 'is2fa': user.is2fa}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
 
 
 
@@ -450,14 +487,14 @@ def anonymizeUserData(request):
 def updateAnonymousStatus(request):
 	try:
 		user = request.user
-		user.isAnonymous = request.data.get('isAnonymous')
+		user.isAnonymous = True
 		user.save()
 
 		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 #########################################
 
@@ -472,6 +509,6 @@ def getAnonymousStatus(request):
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 #########################################
