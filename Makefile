@@ -36,8 +36,11 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
-logs-user: #pour voir les print des views de User
+logs-userViews: #pour voir les print des views de User
 	docker logs User
+
+logs-dashboardViews:
+	docker logs Dashboard
 
 #######		DJANGO		#######
 
@@ -70,4 +73,4 @@ clear_db:
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_db"
 
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard

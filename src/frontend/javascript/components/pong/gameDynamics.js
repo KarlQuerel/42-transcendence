@@ -132,7 +132,7 @@ function resetBall()
 	BallConf.y = GraphConf.canvas.height / 2;
 		
 	// Reset the ball speed to the initial speed
-	BallConf.speed = 5;
+	BallConf.speed = 10;
 
 	// Reverse the horizontal direction of the ball based on its current direction
 	if (BallConf.dx > 0)

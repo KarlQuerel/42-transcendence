@@ -343,7 +343,7 @@ function resetGame()
 	// Reset game state
 	player1.score = 0;
 	player2.score = 0;
-	BallConf.speed = 5;
+	BallConf.speed = 10;
 	BallConf.dx = 5;
 	BallConf.dy = 5;
 

@@ -338,10 +338,15 @@ function avatars(gameHistory, allUsers)
 	const avatarContainer = document.querySelector('.avatar-container');
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
+	console.log("OPPONENT LIST EMPTY: ", opponentsList);
 	gameHistory.forEach(game => {
 		if (!opponentsList.includes(game.opponentUsername)) //if NOT already in list
+		{
+			console.log("OPPONENT LIST BEING FILLED: ", opponentsList);
 			opponentsList.push(game.opponentUsername);
+		}
 	})
+	console.log("OPPONENT LIST FULL: ", opponentsList);
 
 	allUsers.forEach(user => {
 		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
@@ -365,8 +370,43 @@ function avatars(gameHistory, allUsers)
 				displayGameHistory(gameHistory.username, user.username, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar cliqué
 				$('#tableModal').modal('show');
 			})
+
+			//remove opponentUsername from opponentsList
+			opponentsList.splice(opponentsList.indexOf(user.username), 1);
+			console.log("CURRENT OPPONENT LIST: ", opponentsList);
 		}
 	});
+
+	// pour les opponentUsername restants, afficher un avatar par défaut
+	opponentsList.forEach(opponent => {
+		const avatarBox = document.createElement('div');
+
+			avatarBox.className = 'avatar-box';
+			avatarBox.dataset.toggle = 'tableModal';
+			avatarBox.dataset.username = opponent;
+
+			const avatarImg = document.createElement('img');
+
+			//HERE
+
+			// avatarImg.src = `data:image/png;base64,${`../../../../user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
+			// avatarImg.src = `data:image/png;base64,${`./src/user/user_management/media/avatars/default.png`}`; //ERROR: invalid_URL
+			// avatarImg.src = '../../../../user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
+			avatarImg.src = './src/user/user_management/media/avatars/default.png'; //PAS D'ERREUR MAIS NE S'AFFICHE PAS
+			console.log("AVATAR IMG: ", avatarImg.src);
+
+			avatarImg.alt = `${opponent}`;
+			avatarImg.className = 'avatar-icon';
+
+			avatarBox.appendChild(avatarImg);
+			avatarContainer.appendChild(avatarBox);
+
+			avatarBox.addEventListener('click', () => {
+				displayGameHistory(gameHistory.username, opponent, gameHistory); //affiche le tableau d'historique de jeu pour l'avatar cliqué
+				$('#tableModal').modal('show');
+			})
+	});
+	
 }
 
 function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
