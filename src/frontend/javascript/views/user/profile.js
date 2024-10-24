@@ -17,6 +17,9 @@
 import { DEBUG, setSignedInState }
 from '../../main.js';
 
+import { renderNavbar }
+from '../navbar/navbar.js';
+
 import { apiRequest, getCookie }
 from './signin.js';
 
@@ -201,6 +204,7 @@ export function renderProfile()
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             setSignedInState(false);
+            renderNavbar();
             if (localStorage.getItem('username'))
             {
                 localStorage.removeItem('username');
