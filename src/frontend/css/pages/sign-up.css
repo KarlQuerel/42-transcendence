@@ -7,18 +7,18 @@
 {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	align-items: center;
-	height: 75vh;
+	width: 100%;
+	height: 60vh;
 }
 
 /*			TITLE			*/
 .sign-up-title
 {
-	font-size: 4vh;
+	font-size: 5vh;
 	color: var(--base-white);
 	text-align: center;
-	margin-bottom: 3vh;
+	margin-bottom: 2vh;
 	z-index: 1000;
 	background-color: var(--base-dark);
 }
@@ -27,10 +27,11 @@
 #sign-up-form
 {
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	width: 100%;
+	width: -webkit-fill-available;
+	height: -webkit-fill-available;
 }
 
 .form-group
@@ -38,7 +39,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 100%;
+	width: 30%;
 }
 
 /*			INPUT			*/
@@ -47,19 +48,19 @@
 	font-size: 1.75vh;
 	background-color: var(--base-dark);
 	margin-bottom: 1vh;
+	width: max-content;
+	padding: 1vh;
 }
-
 
 .sign-up-input
 {
 	display: block;
-	width: 50vh;
-	height: 3vh;
+	width: auto;
+	height: 4vh;
 	margin-bottom: 2vh;
 	border-radius: 30px;
 	color: var(--base-white);
 	background: var(--base-dark);
-	animation: moveBackground 5s ease infinite;
 	background-size: 300% 300%;
 	font-size: 1.25vh;
 	text-align: center;
@@ -79,9 +80,8 @@
 	margin-top: 3vh;
 	margin-right: 8vh;
 	transform: translate(-50%, -50%);
-	left: 10%;
+	left: 8%;
 	font-size: 1em;
-
 }
 
 .sign-up-wrapper
@@ -92,3 +92,13 @@
 	max-width: 60vh;
 }
 
+/*			ERRORS			*/
+.error-message
+{
+	font-size: 1em;
+	color: var(--base-red);
+	z-index: 1000;
+	background: var(--base-dark);
+	text-align: justify;
+	font-weight: 900;
+}
