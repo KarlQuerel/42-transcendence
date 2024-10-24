@@ -100,6 +100,26 @@ export async function loadUsername() //CARO //CHECK si je l'utilises tjrs quelqu
 	}
 }
 
+export async function loadUserManagementData()
+{
+	try {
+		const userData = await apiRequest('/api/users/getUsername/', {
+			method: 'GET',
+			headers: {
+				...getAuthHeaders(),
+			},
+		});
+		if (DEBUG)
+			console.log("userData = ", userData);
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched user info");
+		return userData;
+	} catch (error) {
+		console.error('Error: fetch userData', error);
+		throw error; // Re-throw the error
+	}
+}
+
 export async function doesUserExist(playerName)
 {
 	try

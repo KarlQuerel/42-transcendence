@@ -381,8 +381,7 @@ export async function gameLoop()
 		drawWinMessage(player1.name);
 		await fillingResults(1);
 		await sendResultsToBackend();
-		GameState.game_done = true; //CARO : pas sûre que ce soit utile : vérifier avec Karl
-		GameState.isGameDone = true; //CARO: rajouté sinon boucle infinie de gameLoop()
+		GameState.isGameDone = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
@@ -390,8 +389,7 @@ export async function gameLoop()
 		drawWinMessage(player2.name);
 		await fillingResults(2);
 		await sendResultsToBackend();
-		GameState.game_done = true; //CARO : pas sûre que ce soit utile : vérifier avec Karl
-		GameState.isGameDone = true; //CARO: rajouté sinon boucle infinie de gameLoop()
+		GameState.isGameDone = true;
 	}
 
 	if (GameState.isGameDone == false)

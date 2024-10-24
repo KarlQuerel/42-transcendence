@@ -11,7 +11,10 @@ from './gameVariables.js';
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
-import { loadUsername }
+// import { loadUsername }
+// from './utils.js';
+
+import { loadUserManagementData }
 from './utils.js';
 
 /***********************************************\
@@ -20,7 +23,7 @@ from './utils.js';
 /***			Filling Results				***/
 export async function fillingResults(winner)
 {
-	const	username = await loadUsername();
+	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
 	Results.identified = "yes"; // HERE check si quelqu'un l'utilise

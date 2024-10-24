@@ -8,7 +8,10 @@ import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2,
 Results }
 from './gameVariables.js';
 
-import { loadUsername }
+// import { loadUsername }
+// from './utils.js';
+
+import { loadUserManagementData }
 from './utils.js';
 
 import { startGame, resetGame, clearAll }
