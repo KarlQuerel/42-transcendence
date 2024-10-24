@@ -2,9 +2,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from api_user.models import CustomUser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class SendFriendRequestView(APIView):
 	def post(self, request):
 		if requestAlreadySent(request) == True:
@@ -35,6 +41,8 @@ def requestAlreadySent(request):
 				except FriendRequest.DoesNotExist:
 					return False
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class AcceptFriendRequestView(APIView):
 	def post(self, request, request_id):
 		try:
@@ -45,6 +53,8 @@ class AcceptFriendRequestView(APIView):
 		except FriendRequest.DoesNotExist:
 			return Response({'error': 'friend request not found or already accepted'}, status=status.HTTP_404_NOT_FOUND)
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class RejectFriendRequestView(APIView):
 	def post(self, request, request_id):
 		try:
@@ -55,6 +65,8 @@ class RejectFriendRequestView(APIView):
 		except FriendRequest.DoesNotExist:
 			return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_404_NOT_FOUND)
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class RemoveFriendView(APIView):
 	def post(self, request, user_id):
 		try:
@@ -71,6 +83,8 @@ class RemoveFriendView(APIView):
 		except CustomUser.DoesNotExist:
 			return Response({'error': 'user does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class FriendRequestStatus(APIView):
 	def get(self, request, user_id):
 		try:
@@ -84,6 +98,8 @@ class FriendRequestStatus(APIView):
 			except FriendRequest.DoesNotExist:
 				return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_200_OK)
 
+@method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
+@method_decorator(login_required, name='dispatch')
 class FriendRequestID(APIView):
 	def get(self, request, user_id):
 		try:

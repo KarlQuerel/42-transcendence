@@ -44,10 +44,10 @@ Right to restrict processing: You can ask us to limit the processing of your per
 Right to data portability: You can request to receive your data in a structured, commonly used format, or to have it transmitted directly to another data controller.
 Right to object: You can object to the processing of your data if it is based on legitimate interests or direct marketing.
 Right to withdraw consent: If we process your data based on consent, you can withdraw your consent at any time.
-To exercise any of these rights, please contact us at [your email/contact information].
+To exercise any of these rights, please contact us at traans.een.daance@gmail.com.
 
 6. Data Retention
-We will retain your personal data for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. Once your data is no longer necessary, we will delete or anonymize it.
+We will retain your personal data for as long as necessary to fulfill the purposes outlined in this Privacy Policy, unless a longer retention period is required or permitted by law. Once your data is no longer necessary (after 3 years of inactivity maximum, unless the account was deleted by the user), we will delete or anonymize it.
 
 7. Security of Your Data
 We are committed to ensuring the security of your personal information. We use technical and organizational measures to protect your data from unauthorized access, alteration, disclosure, or destruction.
