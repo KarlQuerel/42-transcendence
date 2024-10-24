@@ -23,7 +23,7 @@ export async function fillingResults(winner)
 	const	username = await loadUsername();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE check with Caro
+	Results.identified = "yes"; // HERE check si quelqu'un l'utilise
 
 	if (winner === 1)
 	{
@@ -60,8 +60,7 @@ function getDate()
 	const month = String(current_date.getMonth() + 1).padStart(2, '0');
 	const year = current_date.getFullYear();
 	
-	// const formattedDate = `${day}/${month}/${year}`;
-	const formattedDate = `${year}-${month}-${day}`; //CARO: sinon ça ne colle pas avec les dates reconnues dans django
+	const formattedDate = `${year}-${month}-${day}`;
 
 	console.log('Formatted Date:', formattedDate);
 

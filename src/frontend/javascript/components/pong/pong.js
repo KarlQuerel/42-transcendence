@@ -379,21 +379,19 @@ export async function gameLoop()
 	{
 		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
-		await fillingResults(1); //CARO: await added : Results is now properly filled and sent to backend
-		if (DEBUG)
-			console.log('Results object:', Results);
+		await fillingResults(1);
 		await sendResultsToBackend();
-		GameState.game_done = true;
+		GameState.game_done = true; //CARO : pas sûre que ce soit utile : vérifier avec Karl
+		GameState.isGameDone = true; //CARO: rajouté sinon boucle infinie de gameLoop()
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
 		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
-		await fillingResults(2); //CARO: await added : Results is now properly filled and sent to backend
-		if (DEBUG)
-			console.log('Results object:', Results);
+		await fillingResults(2);
 		await sendResultsToBackend();
-		GameState.game_done = true;
+		GameState.game_done = true; //CARO : pas sûre que ce soit utile : vérifier avec Karl
+		GameState.isGameDone = true; //CARO: rajouté sinon boucle infinie de gameLoop()
 	}
 
 	if (GameState.isGameDone == false)
