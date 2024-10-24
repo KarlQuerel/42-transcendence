@@ -45,21 +45,21 @@ test('display dashboard data', async ({ page }) => {
 	await page.goto('https://localhost:4430/dashboard', { timeout: 60000 });
 
 	// Set up console message listener
-    const successMessages = new Set([
-        "Successfully fetched connected user's game history",
-        "Successfully fetched all users",
-    ]);
+	const successMessages = new Set([
+		"Successfully fetched connected user's game history",
+		"Successfully fetched all users",
+	]);
 
-    const foundMessages = new Set();
+	const foundMessages = new Set();
 
-    page.on('console', msg => {
-        const text = msg.text().trim(); // Trim any extra whitespace
-        console.log(`[${msg.type()}] ${text}`); // Log all console messages
-        if (msg.type() === 'log' && successMessages.has(text)) {
-            foundMessages.add(text);
-            console.log('Success message found:', text);
-        }
-    });
+	page.on('console', msg => {
+		const text = msg.text().trim(); // Trim any extra whitespace
+		console.log(`[${msg.type()}] ${text}`); // Log all console messages
+		if (msg.type() === 'log' && successMessages.has(text)) {
+			foundMessages.add(text);
+			console.log('Success message found:', text);
+		}
+	});
 
 	console.log("Fecthed all django databases info");
 

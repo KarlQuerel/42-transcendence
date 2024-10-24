@@ -78,31 +78,20 @@ jobs:
 
       # make fill_db command (run Django database migrations and populate database)
       # it actually replicates `make fill_db` directly in YAML because githubAction does not work with "-it" flag
-      # - name: make fill_db command
-      #   working-directory: ./src
-      #   run: |
-      #     docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db || true"
-      #     docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db || true"
-
-
-      - name: Run User migrations and populate
+      - name: make fill_db command
+        working-directory: ./src
         run: |
           docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db || true"
-
-      - name: Run Dashboard migrations and populate
-        run: |
           docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db || true"
 
-
-
       # Run `make fill_db` multiple times to check for errors
-      # - name: make fill_db twice
-      #   working-directory: ./src
-      #   run: |
-      #     docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
-      #     docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
+      - name: make fill_db twice
+        working-directory: ./src
+        run: |
+          docker exec User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+          docker exec Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
-#TODO: make clear ou pas besoin de cette commande?
+#TODO: make clear
 
 ##################################################################
 ## Redirections by clicking home page buttons BEFORE logging in ##
@@ -114,7 +103,7 @@ jobs:
       - name: Check server status
         run: curl -v -k https://localhost:4430 || true
 
-      # # FIX: quand il y aura un giff qui s'affiche lorsqu'on est pas connecté
+      # # # FIX: quand il y aura un giff qui s'affiche lorsqu'on est pas connecté
       # - name: Pong page button before login
       #   run: npx playwright test .github/tests/redirections_before_login/pong_button_before_login.test.js --config=.github/config/playwright.config.js
 
@@ -167,3 +156,18 @@ jobs:
 
       - name: Dashboard page tests
         run: npx playwright test .github/tests/dashboard/dashboard.test.js --config=.github/config/playwright.config.js
+
+
+
+################################################################################################################################################################################################
+
+##################################################
+## POUR FAIRE DES TESTS À LA MANO AVANT DE PUSH ##
+##################################################
+
+
+# npm install --save-dev @playwright/test
+# npx playwright install
+# npm install
+
+# npx playwright test .github/tests/dashboard/dashboard.test.js --config=.github/config/playwright.config.js
