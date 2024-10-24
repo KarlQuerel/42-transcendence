@@ -235,7 +235,7 @@ export default function renderProfile()
         container.appendChild(anonymizeButton);
 
         // Cacher le bouton si le user est déjà anonyme
-        const isAnonymous = fetchUserAnonymousStatus();
+        const isAnonymous = getUserAnonymousStatus();
 
         if (isAnonymous === false)
         {
@@ -294,13 +294,12 @@ export default function renderProfile()
             const confirmation = confirm("Are you sure you want to delete your account? This action is irreversible.");
             if (confirmation)
             {
-                deleteUserAccount();
-                // localStorage.removeItem('access_token');
-                // localStorage.removeItem('refresh_token');
-                // if (localStorage.getItem('username'))
-                //     localStorage.removeItem('username');
+                await deleteUserAccount();
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                if (localStorage.getItem('username'))
+                    localStorage.removeItem('username');
                 setSignedInState(false);
-                // window.location.href = '/sign-in';
             }
         });
 
@@ -662,7 +661,7 @@ async function anonymizeUserData()
 }
 
 
-async function fetchUserAnonymousStatus()
+async function getUserAnonymousStatus()
 {
     try
     {
@@ -741,7 +740,7 @@ async function deleteUserAccount()
     console.log('Deleting account...');
     try
     {
-        const response = await apiRequest('/api/user/deleteAccount/', {
+        const response = await apiRequest('/api/users/deleteAccount/', {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -749,11 +748,10 @@ async function deleteUserAccount()
             }
         });
 
-        const errorText = await response.text(); // Get the full response text
-        console.error('Error response text:', errorText); // Log the full response text
-
         console.log('Account deleted successfully.');
         alert('Your account has been deleted successfully.');
+
+        window.location.href = '/sign-in';
 
     }
     catch (error)

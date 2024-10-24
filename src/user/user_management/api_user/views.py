@@ -529,19 +529,13 @@ def getAnonymousStatus(request):
 @csrf_protect
 def deleteAccount(request):
 	try:
-		print('Entering deleteAccount...') # DEBUG
 		user = request.user
-		print(f'User: {user}') # DEBUG
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		print('About to delete user...') # DEBUG
-
 		user.delete()
 
-		print('User deleted successfully') # DEBUG
-
-		return JsonResponse({'Account deleted successfully'}, status=200)
+		return Response({'Account deleted successfully'}, status=200)
 
 	except Exception as e:
 		print(f'Error: {str(e)}') # DEBUG
