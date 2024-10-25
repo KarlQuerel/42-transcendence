@@ -111,6 +111,17 @@ export async function initializeChangePassword()
                 return ;
             }
 
+            // Check password length
+            if (newPassword.length < 6)
+            {
+                const errorMessageContainer = document.getElementById('error-messages');
+                errorMessageContainer.innerHTML = '';
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = 'Password must be at least 6 characters long.';
+                errorMessageContainer.appendChild(errorMessage);
+                return ;
+            }
+
             try
             {
                 // Check if the user is authenticated

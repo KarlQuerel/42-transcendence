@@ -1,5 +1,24 @@
 /* TO DO KARL
 
+    Cher Karl,
+
+    Bienvenu sur la merveilleuse page de Profil.
+    Tu seras heureux de retrouver mes commentaires ci-dessous pour te guider dans ce voyage vers le Frontend.
+
+    Il y a bcp de boutons sur cette page :
+
+    1. Change Password
+    Le bouton s'appelle "changePasswordButton" et a pour id "change-password-button".
+    Il redirige vers la page "/change-password" lorsqu'on clique dessus.
+    Il faut le mettre proche/en dessous/a coté du password.
+
+    2. Friends
+    Le bouton s'appelle "friendsButton" et a pour id "friends-button".
+    Il redirige vers la page "/friends" lorsqu'on clique dessus.
+    Tu peux le mettre où tu veux.
+
+    
+
     - Modifier le bouton Signin/Signup dans la navbar pour qu'il affiche "Profile" à la place (et ca redirige vers profile of course)
 
     - Il y a plusieurs boutons sur cette page. Il y a juste une particularité qui est que le bouton "Update profile".
