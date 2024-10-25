@@ -8,8 +8,7 @@ from . import views
 ] """
 
 urlpatterns = [
-	path('dashboard/getData/', views.getData, name='get-data'),
+	# path('dashboard/getData/', views.getData, name='get-data'),
 	path('dashboard/addStats/', views.addStats, name='add-stats'),
 	path('dashboard/getGameHistory/', views.getGameHistory, name='get-match-history'), #TEST JESS
-    # path('users/getUsername/', views.getUsername, name='get-username'), #TEST
 ]

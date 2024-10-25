@@ -1,15 +1,18 @@
 /***********************************************\
 -			IMPORTING GLOBAL VARIABLES			-
 \***********************************************/
-import { DEBUG } from '../../main.js';
-import { apiRequest, getCookie } from './signin.js';
+import { DEBUG }
+from '../../main.js';
+
+import { apiRequest, getCookie }
+from './signin.js';
 
 
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderChangePassword()
+export function renderChangePassword()
 {
     // Main container
 	const container = document.createElement('div');
@@ -153,8 +156,7 @@ export async function initializeChangePassword()
 
                     if (changeResponse.success)
                     {
-                        alert('Password changed successfully');
-                        window.location.href = '/profile';
+                        navigateTo('/profile');
                     }
                     else
                         throw new Error(changeResponse.error || 'Password change failed');

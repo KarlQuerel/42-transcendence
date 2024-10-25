@@ -10,7 +10,7 @@ from api_user.models import CustomUser
 from .forms import CustomUserRegistrationForm
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth import authenticate, login
 from rest_framework.permissions import AllowAny
 from django.shortcuts import render, redirect
@@ -137,6 +137,16 @@ def currentlyLoggedInUser(request):
 		return Response({'error': str(e)}, status=500)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def doesUserExist(request, username):
+	try:
+		user = CustomUser.objects.get(username=username)
+
+		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
+
 #########################################
 
 
@@ -146,11 +156,11 @@ def currentlyLoggedInUser(request):
 @login_required
 @permission_classes([IsAuthenticated])
 def getUsername(request):
-    if request.user.is_authenticated:
-        serializer = UsernameSerializer(request.user)
-        return Response(serializer.data)
-    else:
-        return Response({'error': 'User not authenticated'}, status=401)
+	if request.user.is_authenticated:
+		serializer = UsernameSerializer(request.user)
+		return Response(serializer.data)
+	else:
+		return Response({'error': 'User not authenticated'}, status=401)
 
 
 #########################################
@@ -158,35 +168,81 @@ def getUsername(request):
 
 # Get avatars and usernames of all users
 
+# @api_view(['GET'])
+# @login_required
+# @permission_classes([IsAuthenticated])
+# def getAllUsers(request):
+# 	try:
+# 		user = request.user
+# 		if not user.is_authenticated:
+# 			return Response({'error': 'User not authenticated'}, status=401)
+
+# 		try:
+# 			users = CustomUser.objects.all()
+# 			avatars = []
+		
+# 			for user in users:
+# 				avatar_image_path = user.avatar.path
+# 				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+# 					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+# 				avatars.append({'username': user.username, 'avatar': avatar})
+
+# 			return JsonResponse(avatars, safe=False, status=200)
+
+# 		except Exception as e:
+# 			return Response({'error': str(e)}, status=500)
+
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
+
+
+# Returns all users id and username for dashboard page
 @api_view(['GET'])
-@login_required
 @permission_classes([IsAuthenticated])
-def getAllUserAvatars(request):
+def getAllUsers(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
+			print(f'User: {user}')
 			users = CustomUser.objects.all()
-			avatars = []
-		
-			for user in users:
-				avatar_image_path = user.avatar.path
-				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
-					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-				avatars.append({'username': user.username, 'avatar': avatar})
+			print(f'Users: {users}')
+			users_info = []
 
-			return JsonResponse(avatars, safe=False, status=200)
+			for user in users:
+				users_info.append({'username': user.username, 'id': user.id})
+
+			print(f'Users info: {users_info}')
+			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
+			print(f'Unexpected error: {str(e)}')
 			return Response({'error': str(e)}, status=500)
 
 	except Exception as e:
+		print(f'Unexpected error: {str(e)}')
 		return Response({'error': str(e)}, status=500)
+ 
 
 
-
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getFriendAvatar(request, user_id):
+	try:
+		print('user id: ', user_id)
+		user = CustomUser.objects.get(id=user_id)
+		print('user: ', user)
+		avatar_image_path = user.avatar.path
+		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
+			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
+		data = {
+			'avatar': avatar
+		}
+		return JsonResponse(data, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -214,7 +270,7 @@ def changePassword(request):
 	
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 
 #########################################
@@ -239,19 +295,19 @@ def checkAuthentication(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def verifyPassword(request):
-    user = request.user
-    current_password = request.data.get('current_password')
+	user = request.user
+	current_password = request.data.get('current_password')
 
-    print(f'User: {user}') # DEBUG
-    print(f'Current password: {current_password}') # DEBUG
+	print(f'User: {user}') # DEBUG
+	print(f'Current password: {current_password}') # DEBUG
 
-    if not current_password:
-        return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
+	if not current_password:
+		return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user.check_password(current_password):
-        return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
-    else:
-        return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
+	if user.check_password(current_password):
+		return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
+	else:
+		return Response({'valid': False}, status=status.HTTP_400_BAD_REQUEST)
 
 
 #########################################
@@ -527,3 +583,30 @@ def get_friendship_status(user1, user2):
 	return 'not_friends'
 
 #########################################
+
+##################################################
+##           CHECK PASSWORD VIEWS	            ##
+##################################################
+@csrf_exempt
+def checkUserPassword(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+
+            # Check if the user exists
+            try:
+                user = CustomUser.objects.get(username=username)
+                # Check if the password is correct
+                if check_password(password, user.password):
+                    return JsonResponse({'valid': True}, status=200)
+                else:
+                    return JsonResponse({'valid': False}, status=200)
+            except CustomUser.DoesNotExist:
+                return JsonResponse({'error': 'User not found'}, status=404)
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
