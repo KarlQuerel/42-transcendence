@@ -18,6 +18,8 @@
 @import url('pages/theteam.css');
 @import url('pages/sign-in.css');
 @import url('pages/sign-up.css');
+@import url('pages/change-password.css');
+@import url('pages/pagenotfound.css');
 
 /*				Pong				*/
 @import url('pages/pong/general.css');
