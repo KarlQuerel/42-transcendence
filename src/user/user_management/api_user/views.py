@@ -1,31 +1,23 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.views.decorators.cache import never_cache
-from rest_framework.response import Response
-from django.contrib.auth.forms import SetPasswordForm
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework import status
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from api_user.models import CustomUser
-from .forms import CustomUserRegistrationForm
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status
+from api_user.models import CustomUser
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
-from django.contrib.auth import authenticate, login
-from rest_framework.permissions import AllowAny
-from django.shortcuts import render, redirect
-# from rest_framework.views import APIView
-from rest_framework import generics, status, permissions
+from django.contrib.auth.forms import SetPasswordForm
 from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.contrib.auth import authenticate, login
+from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
-import pyotp, os, json, base64, logging
+from django.http import JsonResponse
 from django.conf import settings
 from .serializers import UsernameSerializer  #TEST CARO
 from pprint import pprint
+from .forms import CustomUserRegistrationForm
+import pyotp, os, json, base64, logging
 
 
 #########################################
@@ -377,8 +369,6 @@ def updateAvatar(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		print(f'Updating user avatar (updateAvatar)...') # DEBUG
-
 		data = request.data.get('avatar_input')
 		if not data:
 			return Response({'error': 'No avatar data provided'}, status=400)
@@ -392,9 +382,6 @@ def updateAvatar(request):
 		avatar_dir = os.path.join(settings.MEDIA_ROOT, 'avatars')
 		avatar_path = os.path.join(avatar_dir, f'{username}.png')
 
-		print(f'Username: {username}') # DEBUG
-		print(f'Avatar path: {avatar_path}') # DEBUG
-
 		try:
 			with open(avatar_path, 'wb') as f:
 				f.write(avatar_data)
@@ -403,10 +390,8 @@ def updateAvatar(request):
 			return Response({'error de open': str(e)}, status=500)
 
 		user.avatar = avatar_path
-		print(f'Avatar path: {user.avatar}') # DEBUG
 
 		user.save()
-		print(f'Avatar updated (updateAvatar())...') # DEBUG
 
 		return Response({'success': 'Avatar updated successfully'}, status=status.HTTP_200_OK)	
 
@@ -480,7 +465,57 @@ def resend_2fa_code(request):
 		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
 	else:
 		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 #########################################
+
+
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+def get2FAStatus(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		return JsonResponse({user.is2fa}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def update2FAStatus(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		is2fa = request.data.get('is2fa')
+
+		if is2fa is not None:
+			user.is2fa = is2fa
+			user.save()
+
+		return Response({'message': '2FA status updated successfully', 'is2fa': user.is2fa}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
+##          	 DASHBOARD VIEWS   		        ##
+##################################################
+
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
@@ -493,6 +528,10 @@ def loggout_user(request):
 		return JsonResponse({'success': 'Log out successful'}, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+#########################################
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -513,6 +552,10 @@ def	otherUsersList(request):
 	except:
 		return JsonResponse({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
 
+
+#########################################
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getFriendAvatar(request, user_id):
@@ -530,13 +573,112 @@ def getFriendAvatar(request, user_id):
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
+
+#########################################
+
+
 def get_friendship_status(user1, user2):
 	for friend in user1.friends.all():
 		if friend.username == user2.username:
 			return 'already_friends'
-	return 'not_friends'
+	return 'not_friends'	
+
+
+
+##################################################
+##           		GDPR VIEWS      		    ##
+##################################################
+
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def anonymizeUserData(request):
+    try:
+        user = request.user
+        if not user.is_authenticated:
+            return Response({'error': 'User not authenticated'}, status=401)
+
+        usernameSuffix = get_random_string(6)
+        user.username = f'user_{usernameSuffix}'
+        user.email = f'anonymized_{usernameSuffix}@example.com'
+        user.first_name = 'Anonymous'
+        user.last_name = 'User'
+        user.date_of_birth = None
+        user.avatar = 'avatars/default.png'
+
+        user.save()
+
+        return JsonResponse({'username': user.username}, status=200)
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+
 
 #########################################
+
+@api_view(['PUT'])
+@login_required
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def updateAnonymousStatus(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		user.isAnonymous = True
+		user.save()
+
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+def getAnonymousStatus(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
+##           	DELETE ACCOUNT VIEWS      	    ##
+##################################################
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def deleteAccount(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		user.delete()
+
+		return Response({'Account deleted successfully'}, status=200)
+
+	except Exception as e:
+		print(f'Error: {str(e)}') # DEBUG
+		return Response({'error': str(e)}, status=500)
+
+
 
 ##################################################
 ##           CHECK PASSWORD VIEWS	            ##

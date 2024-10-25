@@ -1,13 +1,48 @@
 /* TO DO KARL
 
-    - Modifier le bouton Signin/Signup dans la navbar pour qu'il affiche "Profile" à la place (et ca redirige vers profile of course)
+    Cher Karl,
 
-    - Il y a plusieurs boutons sur cette page. Il y a juste une particularité qui est que le bouton "Update profile".
-        const updateProfileButton = document.createElement('button');
-        updateProfileButton.setAttribute('id', 'update-profile-button');
-        updateProfileButton.textContent = 'Update profile';
-    Ce bouton ne doit pas apparaitre si l'utilisateur est en mode édition de son profil.
+    Bienvenu sur la merveilleuse page de Profil.
+    Tu seras heureux de retrouver mes commentaires ci-dessous pour te guider dans ce voyage vers le Frontend.
+
+    Il y a bcp de boutons sur cette page :
+
+    1. Change Password
+    Le bouton s'appelle "changePasswordButton" et a pour id "change-password-button".
+    Il redirige vers la page "/change-password" lorsqu'on clique dessus.
+    Il faut le mettre proche/en dessous/a coté du password.
+
+    2. Friends
+    Le bouton s'appelle "friendsButton" et a pour id "friends-button".
+    Il redirige vers la page "/friends" lorsqu'on clique dessus.
+    Tu peux le mettre où tu veux.
+
+    3. Update Profile
+    Le bouton s'appelle "updateProfileButton" et a pour id "update-profile-button".
+    Le bouton doit disparaitre si l'utilisateur est en mode édition de son profil (si il est dans profileEditMode()).
     En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
+    
+    4. Logout
+    Le bouton s'appelle "logoutButton" et a pour id "logout-button".
+    Il redirige vers la page "/sign-in" lorsqu'on clique dessus.
+    Il faut le mettre en bas de la page, à droite ou ailleurs, juste il faut le mettre un peu a part quoi.
+
+    5. Delete account
+    Le bouton s'appelle "deleteAccountButton" et a pour id "delete-account-button".
+    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir supprimer son compte.
+    Je pense tu peux le placer proche de Logout button.
+    
+    6. Anonymize data
+    Le bouton s'appelle "anonymizeButton" et a pour id "anonymize-button".
+    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir anonymiser ses données.
+    Je pense tu peux le placer proche de Delete account et Logout button ? Maybe ?
+    Il faut que le bouton disparaisse si l'utilisateur est déjà anonyme (on peut vérifier ça avec getUserAnonymousStatus()).
+    Quand un user anonymise son compte, je l'enregistre comme is_anonymous = true dans la base de données.
+
+
+    Autre point :
+    Le Two-Factor Authentication field est dégueulasse actuellement. Normalement c'est une case à cocher mais pour l'instant la case est méconnaissable.
+
 */
 
 
@@ -186,10 +221,80 @@ export function renderProfile()
         container.appendChild(friendsButton);
 
 
-        /************** MATCH HISTORY **************/
+        /***************** 2FA *****************/
+
+        // case pour activer le 2fa
+        const twoFactorAuthContainer = document.createElement('div');
+        twoFactorAuthContainer.className = 'form-group';
+
+        const twoFactorAuthLabel = document.createElement('label');
+        twoFactorAuthLabel.setAttribute('for', 'twoFactorAuthCheckbox');
+        twoFactorAuthLabel.textContent = 'Two-Factor Authentication';
+
+        const twoFactorAuthCheckbox = document.createElement('input');
+        twoFactorAuthCheckbox.type = 'checkbox';
+        twoFactorAuthCheckbox.id = 'twoFactorAuthCheckbox';
+        twoFactorAuthCheckbox.className = 'form-control';
+
+        twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
+        twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
+        container.appendChild(twoFactorAuthContainer);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const is2fa = await getUser2FAStatus();
+            if (is2fa !== null) {
+                twoFactorAuthCheckbox.checked = is2fa;
+            }
+        });
+
+        twoFactorAuthCheckbox.addEventListener('change', () => {
+            const is2fa = twoFactorAuthCheckbox.checked;
+            updateUser2FAStatus(is2fa);
+        });
+
+
+
+        /************** ANONYMIZE DATA **************/
         
-        // 1v1 games, dates, and relevant details, accessible to logged-in users.
         
+        // bouton pour anonymiser les données
+        const anonymizeButton = document.createElement('button');
+        anonymizeButton.setAttribute('id', 'anonymize-button');
+        anonymizeButton.textContent = 'Anonymize Data';
+        
+        container.appendChild(anonymizeButton);
+
+        // Cacher le bouton si le user est déjà anonyme
+        const isAnonymous = getUserAnonymousStatus();
+
+        if (isAnonymous === false)
+        {
+            const anonymizeButton = document.getElementById('anonymize-button');
+
+            if (anonymizeButton)
+                anonymizeButton.style.display = 'block';
+        }
+        else
+        {
+            const anonymizeButton = document.getElementById('anonymize-button');
+    
+            if (anonymizeButton)
+                anonymizeButton.style.display = 'none';
+        }
+
+
+        // Event listener for anonymize button
+        anonymizeButton.addEventListener('click', async () =>
+        {
+            const userConfirmation = confirm('Are you sure you want to anonymize your data?\nThis action cannot be undone.');
+            if (userConfirmation)
+            {
+                updateUserAnonymousStatus();
+                anonymizeUserData();
+            }
+            else
+                console.log('Anonymization cancelled.');
+        });
 
 
 
@@ -200,13 +305,35 @@ export function renderProfile()
             set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
-            setSignedInState(false);
             if (localStorage.getItem('username'))
-            {
                 localStorage.removeItem('username');
-            }
+            setSignedInState(false);
             navigateTo('/sign-in');
         });
+
+
+        /************** DELETE ACCOUNT **************/
+
+        // bouton pour supprimer le compte
+        const deleteAccountButton = document.createElement('button');
+        deleteAccountButton.setAttribute('id', 'delete-account-button');
+        deleteAccountButton.textContent = 'Delete Account';
+        container.appendChild(deleteAccountButton);
+
+        deleteAccountButton.addEventListener('click', async () =>
+        {
+            const confirmation = confirm("Are you sure you want to delete your account? This action is irreversible.");
+            if (confirmation)
+            {
+                await deleteUserAccount();
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                if (localStorage.getItem('username'))
+                    localStorage.removeItem('username');
+                setSignedInState(false);
+            }
+        });
+
 
     return container;
 }
@@ -322,7 +449,7 @@ async function profileEditMode(userData_edit, personalInfoSection)
         if (isValidData)
         {
             if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
-                saveNewAvatar(avatarFile);
+                await saveNewAvatar(avatarFile);
             await saveProfileChanges(userData_edit);
             window.location.reload();
         }
@@ -468,7 +595,7 @@ async function saveProfileChanges(userData_edit)
     catch (error)
     {
         console.error('Error updating profile:', error.message);
-        alert('An error occurred while updating the profile.');
+        alert('An error occurred while updating the profile. Please check your new information and try again.');
     }
 }
 
@@ -512,5 +639,164 @@ async function saveNewAvatar(avatarFile)
             console.error('Error updating avatar:', error);
             alert('An error occurred while updating the avatar.');
         }
+    }
+}
+
+
+/***********************************************\
+*                 GDPR FUNCTIONS                *
+\***********************************************/
+
+
+async function updateUserAnonymousStatus()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/updateAnonymousStatus/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Bearer': localStorage.getItem('token'),
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        });
+
+        console.log('Anonymous status updated successfully.');
+
+    }
+    catch (error)
+    {
+        console.error('Error updating anonymous status:', error);
+        alert('Failed to update anonymous status: ' + error.message);
+    }
+}
+
+
+async function anonymizeUserData()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/anonymizeUserData/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        });
+
+        alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
+        window.location.href = '/profile';
+
+    }
+    catch (error)
+    {
+        console.error('Anonymization error:', error);
+        alert('Failed to anonymize data: ' + error.message);
+    }
+}
+
+
+async function getUserAnonymousStatus()
+{
+    try
+    {
+        const response = await apiRequest('/api/users/getAnonymousStatus/', {
+            method: 'GET',
+        });
+
+        // const data = await response.json();
+        return response;
+    }
+    catch (error)
+    {
+        console.error('Error fetching anonymous status:', error);
+        return null;
+    }
+}
+
+
+
+/***********************************************\
+*                 2FA FUNCTIONS                 *
+\***********************************************/
+
+async function getUser2FAStatus()
+{
+    try
+    {
+        const response = await apiRequest('api/users/get2FAStatus/', {
+            method: 'GET'   
+        });
+        return response.is2fa;
+    }
+    catch (error)
+    {
+        console.error('Error fetching 2FA status:', error);
+        return null;
+    }
+
+}
+
+
+async function updateUser2FAStatus(is2fa)
+{
+    try
+    {
+        const response = await apiRequest('/api/users/update2FAStatus/',
+        {
+            method: 'PUT',
+            headers:
+            {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ is2fa }),
+        });
+
+        console.log('2FA status updated successfully.');
+
+    }
+    catch (error)
+    {
+        console.error('Error updating 2FA status:', error);
+        alert('Failed to update 2FA status: ' + error.message);
+    }
+}
+
+
+/***********************************************\
+*            DELETE ACCOUNT FUNCTIONS           *
+\***********************************************/
+
+
+async function deleteUserAccount()
+{
+    console.log('Deleting account...');
+    try
+    {
+        const response = await apiRequest('/api/users/deleteAccount/', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        });
+
+        console.log('Account deleted successfully.');
+        alert('Your account has been deleted successfully.');
+
+        window.location.href = '/sign-in';
+
+    }
+    catch (error)
+    {
+        console.error('Error during account deletion:', error);
+        alert('An error occurred while trying to delete your account.');
     }
 }

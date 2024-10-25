@@ -102,7 +102,18 @@ export async function initializeChangePassword()
             const currentPassword = document.getElementById('current_password').value;
             const newPassword = document.getElementById('new_password').value;
             const newPasswordConfirmation = document.getElementById('new_password_confirmation').value;
-    
+
+            // Check password length
+            if (newPassword.length < 6)
+            {
+                const errorMessageContainer = document.getElementById('error-messages');
+                errorMessageContainer.innerHTML = '';
+                const errorMessage = document.createElement('p');
+                errorMessage.textContent = 'Password must be at least 6 characters long.';
+                errorMessageContainer.appendChild(errorMessage);
+                return ;
+            }
+
             // Check if new password and new password confirmation match
             if (newPassword !== newPasswordConfirmation)
             {
