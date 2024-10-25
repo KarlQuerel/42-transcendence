@@ -63,6 +63,11 @@
 	color: black;
 }
 
+.avatar-icon {
+	width: 100px; /* Set the desired width */
+	height: 100px; /* Set the desired height */
+}
+
 
 
 /* .icon-box

@@ -4,14 +4,24 @@
 import { DEBUG }
 from '../../main.js';
 
-import { BallConf, GameState, GraphConf, PaddleConf, player1, player2, Results }
+import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2, 
+Results }
 from './gameVariables.js';
+
+import { showTournamentResults }
+from './pong.js';
+
+import { checkElement }
+from './utils.js';
 
 /***********************************************\
 -					DRAWING						-
 \***********************************************/
 export function drawPaddle(paddle)
 {
+	if (GameState.done === true)
+		return;
+	
 	GraphConf.ctx.fillStyle = paddle.color;
 	GraphConf.ctx.shadowColor = paddle.shadowColor || 'rgba(0, 255, 0, 0.8)';
 	GraphConf.ctx.shadowBlur = paddle.shadowBlur || 100;
@@ -75,6 +85,12 @@ export function drawScore()
 /***		Drawing Usernames				***/
 export function drawUsernames(player1Username, player2Username)
 {
+	if (!player1Username || !player2Username)
+	{
+		console.error('Player names are not set!');
+		return;
+	}
+	
 	GraphConf.ctx.font = "15px 'Press Start 2P', cursive";
 	GraphConf.ctx.textAlign = "center";
 	GraphConf.ctx.textBaseline = "middle";
@@ -93,18 +109,32 @@ export function drawUsernames(player1Username, player2Username)
 }
 
 /***		Drawing Winning Message			***/
-export function drawWinMessage(winner)
+export function drawWinMessage(winnerName)
 {
 	const	messageElement = document.getElementById('winning-message');
 	const	rematchButton = document.getElementById('rematch-button');
+	const	backtomenuButton = document.getElementById('back-to-menu-button');
 
-	if (!messageElement)
+	if (checkElement(messageElement, 'Winning message') === false)
+		return;
+	
+	if (checkElement(rematchButton, 'Rematch button') === false)
+		return;
+	
+	if (checkElement(backtomenuButton, 'Back to menu button') === false)
+		return;
+	
+	const	upperWinner = winnerName.toUpperCase();
+	if (GameState.isTournamentDone == true)
 	{
-		console.error('Winning message element not found!');
-		return ;
+		rematchButton.classList.add('hidden-sudden');
+		showTournamentResults();
+		return;
 	}
-
-	const	upperWinner = winner.toUpperCase();
+	else
+	{
+		rematchButton.classList.remove('hidden-sudden');
+	}
 
 	// Update winning message
 	messageElement.innerHTML = upperWinner + "<br>WINS!";
@@ -119,15 +149,41 @@ export function drawWinMessage(winner)
 	// Append GIF below the message
 	messageElement.appendChild(gifElement);
 
-	if (!rematchButton)
+	updateRematchButtonText();
+
+	if (GameState.isTournament == false)
 	{
-		console.error('Rematch button element not found!');
-		return;
+		backtomenuButton.classList.remove('hidden-sudden');
 	}
+}
+
+export function updateRematchButtonText()
+{
+	const rematchButton = document.getElementById('rematch-button');
+
+	if (checkElement(rematchButton, 'Rematch button') === false)
+		return;
+
+	if (GameState.isTournament === true)
+	{
+		if (GameState.isFinalMatch === true && GameState.isGameDone === true)
+		{
+			rematchButton.classList.add('hidden-sudden');
+		}
 		
-	// Show the rematch button
-	rematchButton.classList.remove('hidden');
-	rematchButton.classList.add('show');
+		if (GameState.isFinalMatch === false)
+		{
+			rematchButton.textContent = 'Next Match';
+		}
+		else if (GameState.isFinalMatch === true)
+		{
+			rematchButton.textContent = 'Final Match';
+		}
+	}
+	else
+	{
+		rematchButton.textContent = 'Rematch';
+	}
 }
 
 /***			Drawing Pause Menu			***/

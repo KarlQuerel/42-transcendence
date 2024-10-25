@@ -17,18 +17,31 @@
     Il redirige vers la page "/friends" lorsqu'on clique dessus.
     Tu peux le mettre où tu veux.
 
-    
-
-    - Modifier le bouton Signin/Signup dans la navbar pour qu'il affiche "Profile" à la place (et ca redirige vers profile of course)
-
-    - Il y a plusieurs boutons sur cette page. Il y a juste une particularité qui est que le bouton "Update profile".
-        const updateProfileButton = document.createElement('button');
-        updateProfileButton.setAttribute('id', 'update-profile-button');
-        updateProfileButton.textContent = 'Update profile';
-    Ce bouton ne doit pas apparaitre si l'utilisateur est en mode édition de son profil.
+    3. Update Profile
+    Le bouton s'appelle "updateProfileButton" et a pour id "update-profile-button".
+    Le bouton doit disparaitre si l'utilisateur est en mode édition de son profil (si il est dans profileEditMode()).
     En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
+    
+    4. Logout
+    Le bouton s'appelle "logoutButton" et a pour id "logout-button".
+    Il redirige vers la page "/sign-in" lorsqu'on clique dessus.
+    Il faut le mettre en bas de la page, à droite ou ailleurs, juste il faut le mettre un peu a part quoi.
 
-    - Logout button, Anonymize button & Delete account button doivent être alignés à droite de la page (à droite ou ailleurs, juste il faut les mettre un peu a part quoi)
+    5. Delete account
+    Le bouton s'appelle "deleteAccountButton" et a pour id "delete-account-button".
+    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir supprimer son compte.
+    Je pense tu peux le placer proche de Logout button.
+    
+    6. Anonymize data
+    Le bouton s'appelle "anonymizeButton" et a pour id "anonymize-button".
+    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir anonymiser ses données.
+    Je pense tu peux le placer proche de Delete account et Logout button ? Maybe ?
+    Il faut que le bouton disparaisse si l'utilisateur est déjà anonyme (on peut vérifier ça avec getUserAnonymousStatus()).
+    Quand un user anonymise son compte, je l'enregistre comme is_anonymous = true dans la base de données.
+
+
+    Autre point :
+    Le Two-Factor Authentication field est dégueulasse actuellement. Normalement c'est une case à cocher mais pour l'instant la case est méconnaissable.
 
 */
 
@@ -36,7 +49,6 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-
 import { DEBUG, setSignedInState }
 from '../../main.js';
 
@@ -46,12 +58,11 @@ from './signin.js';
 import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
 from './signup.js';
 
-
 /***********************************************\
 *                   RENDERING                   *
 \***********************************************/
 
-export default function renderProfile()
+export function renderProfile()
 {
     // Create a container for the profile information
     const container = document.createElement('div');
@@ -187,7 +198,7 @@ export default function renderProfile()
         // Event listener for change password button
         changePasswordButton.addEventListener('click', () =>
         {
-            window.location.href = '/change-password';
+            navigateTo('/change-password');
         });
 
         
@@ -291,12 +302,13 @@ export default function renderProfile()
 
         // Event listener for logout button
         logoutButton.addEventListener('click', () => {
+            set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
             if (localStorage.getItem('username'))
                 localStorage.removeItem('username');
             setSignedInState(false);
-            window.location.href = '/sign-in';
+            navigateTo('/sign-in');
         });
 
 
@@ -342,6 +354,15 @@ export async function fetchUserData() {
     });
 }
 
+async function set_status_offline()
+{
+    apiRequest('/api/users/loggout-user/', {
+        method: 'PUT',
+    })
+    .catch(error => {
+        console.error('Error setting status to offline:', error);
+    });
+}
 
 // Fetch game history data from the API
 async function fetchGameHistoryData() {

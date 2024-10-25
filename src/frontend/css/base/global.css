@@ -10,6 +10,11 @@
 	transition: visibility 0s, opacity 0.5s ease;
 }
 
+.hidden-sudden
+{
+	display: none !important;
+}
+
 .hidden-animation
 {
 	opacity: 0;
@@ -38,10 +43,11 @@
 :root
 {
 	--base-green: #00ff00;
-	--base-light-green: rgba(163, 219, 163, 0.7);
 	--base-dark: #000;
 	--base-white: #fff;
 	--base-gray: #262626;
+	--base-blue: #091370;
+	--base-light-green: rgba(163, 219, 163, 0.7);
 	--base-light-blue: rgb(163, 201, 219, 0.7);
 }
 

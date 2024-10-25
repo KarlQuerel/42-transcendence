@@ -3,21 +3,30 @@ GREEN = \033[0;32m
 RED = \033[0;31m
 NC = \033[0m
 
-#######		RULES		#######
+#######		GENERAL RULES		#######
 all :
 	@cd src && docker-compose up -d --build
 	@make fill_db
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
+#CARO: j'ai rajouté make clear_db pq make clean ne 
+#supprimait pas les bases de données
+#je ne peux pas le mettre dans fclean car il faut
+#que la base de données Dashboard soit up pour pouvoir 
+#la clear et que make clean le down
+	make clear_db
 	@cd src && docker-compose down
 
 fclean : clean
+
 	cd src && docker system prune -af
 	cd src && docker volume prune -af
 	@echo "$(GREEN)\n🛁✨ All containers test, networks, volumes and images have been removed ✨🛁\n$(NC)"
 
 re : fclean all
+
+#######		DOCKER CONTAINERS		#######
 
 logs:
 	cd src && docker-compose logs -f
@@ -34,33 +43,45 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
-# DJANGO
+logs-userViews: #pour voir les print des views de User
+	docker logs User
 
-fill_dashboard: #populate database
-	@docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
+logs-dashboardViews:
+	docker logs Dashboard
 
-fill_user:
-	@docker exec -it User bash -c "python manage.py makemigrations --merge && python manage.py migrate && python manage.py populate_user_db"
+#######		DJANGO		#######
 
-erase_user:
-# docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate"
-# docker exec -it User bash -c "python manage.py flush --no-input"
+# Apply changes to database
 
-erase_dashboard:
-# docker exec -it Dashboard bash -c "python manage.py clear_db"
-	@docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
-	@docker exec -it Dashboard bash -c "echo \"BEGIN; TRUNCATE TABLE friends_friendrequest CASCADE; TRUNCATE TABLE api_user_customuser CASCADE; COMMIT;\" | psql -h Database -U postgres -d pong_database"
+makemigrations_dashboard:
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate"
 
-check_dashboard_db:
-	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_stats;'"
-	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
+# Populate database with pre-defined users and games
 
-check_user_db:
-	@docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
+fill_db:
+	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_user_db"
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py populate_dashboard_db"
 
-fill_db: fill_user fill_dashboard
+# Check database
 
-erase_db: erase_dashboard erase_user
+check_allUsers:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
+
+check_allGameHistory:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
+
+# check_userGamehistory:
+# 	@read -p "Enter username: " username; \
+# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT base_gamehistory.* FROM base_gamehistory JOIN api_user_customuser ON base_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
+
+check_userGamehistory:
+	@read -p "Enter username: " username; \
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM base_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
+
+# Clear database
+
+clear_db:
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_db"
 
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-user logs-database logs-dashboard-container fill_dashboard fill_user erase_fill_user erase_fill_dashboard check_dashboard_db check_user_db fill_db erase_db
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard

@@ -1,15 +1,18 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG } from '../../main.js';
-import { getCookie } from './signin.js';
+import { DEBUG, navigateTo }
+from '../../main.js';
+
+import { getCookie }
+from './signin.js';
 
 
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
 
-export default function renderSignUp()
+export function renderSignUp()
 {
 	// Main container for the sign-up form
 	const container = document.createElement('div');
@@ -321,7 +324,7 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
 		const	maskedPassword = '*'.repeat(password.length);
 		const	safeData = { ...data, password: maskedPassword };
 		console.log('Success:', safeData);
-		window.location.href = '/sign-in';
+		navigateTo('/sign-in');
 	})
 	.catch((error) =>
 	{

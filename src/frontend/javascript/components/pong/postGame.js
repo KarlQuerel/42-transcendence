@@ -11,8 +11,11 @@ from './gameVariables.js';
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
+// import { loadUsername }
+// from './utils.js';
+
 import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+from './utils.js';
 
 /***********************************************\
 -					POST-GAME					-
@@ -23,7 +26,7 @@ export async function fillingResults(winner)
 	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE - voir avec caro la logique avec un opponent
+	Results.identified = "yes"; // HERE check si quelqu'un l'utilise
 
 	if (winner === 1)
 	{
@@ -36,12 +39,12 @@ export async function fillingResults(winner)
 		Results.opponent_score = GameConf.maxScore;
 	}
 
-	if (GameState.AI_present === true)
+	if (GameState.isAiPresent === true)
 	{
 		Results.identified = false;
 		Results.opponent_username = GameConf.AI_name;
 	}
-	else if (GameState.AI_present === false)
+	else if (GameState.isAiPresent === false)
 	{
 		Results.opponent_username = player2.name;
 	}
@@ -49,7 +52,7 @@ export async function fillingResults(winner)
 	Results.tournament_date = getDate();
 
 	if (DEBUG)
-		console.log('Results instance:', Results);
+		console.log('Filled Results object:', Results);
 }
 
 /***			Get date					***/
@@ -60,7 +63,7 @@ function getDate()
 	const month = String(current_date.getMonth() + 1).padStart(2, '0');
 	const year = current_date.getFullYear();
 	
-	const formattedDate = `${day}/${month}/${year}`;
+	const formattedDate = `${year}-${month}-${day}`;
 
 	console.log('Formatted Date:', formattedDate);
 
@@ -72,6 +75,24 @@ export function cleanUpPong()
 {
 	if (DEBUG)
 		console.log('Cleaning up Pong...')
+	
+	const	tournamentForms = document.querySelectorAll('#input-form');
+	if (tournamentForms)
+	{
+		tournamentForms.forEach(form => form.remove());
+	}
+	
+	const	matchupsContainers = document.querySelectorAll('.matchups-container');
+	if (matchupsContainers.length > 0)
+	{
+		matchupsContainers.forEach(container => container.remove());
+	}
+	
+	const	passwordModals = document.querySelectorAll('.input-form');
+	if (passwordModals.length > 0)
+	{
+		passwordModals.forEach(modal => modal.remove());
+	}
 
 	// Removing Events Listener
 	document.removeEventListener("keydown", keyDownHandler);
@@ -83,21 +104,17 @@ export function cleanUpPong()
 	// Removing Game Elements
 	const	canvas = document.getElementById("pongCanvas");
 	if (canvas)
+	{
 		canvas.remove();
+	}
 
 	// Resetting Game Variables
-	GameState.game_done = true;
-	GameState.game_paused = false;
-	GameState.AI_present = false;
+	GameState.isGameDone = true;
+	GameState.isGamePaused = false;
+	GameState.isAiPresent = false;
 
 	// Cleaning up the countdown
 	clearInterval(GameState.countdownInterval);
 	GameState.isCountdownActive = false;
 	document.querySelectorAll('.countdown').forEach(el => el.remove());
-
-	const	tournamentForm = document.getElementById('input-form');
-	if (tournamentForm)
-	{
-		tournamentForm.remove();
-	}
 }

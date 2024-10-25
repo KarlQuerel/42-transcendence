@@ -1,12 +1,13 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, setSignedInState, getSignedInState, GITHUBACTIONS } from '../../main.js';
+import { DEBUG, GITHUBACTIONS, setSignedInState }
+from '../../main.js';
 
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
-export default function renderSignIn()
+export function renderSignIn()
 {
 	// Create the form element
 	const form = document.createElement('form');
@@ -55,7 +56,7 @@ export default function renderSignIn()
 	// Add event listener to the Sign Up button to redirect to /sign-up
     signUpButton.addEventListener('click', () =>
     {
-        window.location.href = '/sign-up';
+        navigateTo('/sign-up');
     });
 
 	// Add event listener to the Log In button to handle login
@@ -124,7 +125,7 @@ function login(username, password)
         {
             localStorage.setItem('totp', data.totp);
             localStorage.setItem('username', data.username);
-            window.location.href = '/2fa_verification';
+            navigateTo('/2fa_verification');
             return Promise.reject('Redirection to 2FA verification');
         }
         else if (data.access)
@@ -135,20 +136,19 @@ function login(username, password)
 			// Store tokens in local storage
 			localStorage.setItem('access_token', data.access);
 			localStorage.setItem('refresh_token', data.refresh);
-
 			return refreshToken();
 		}
 		else
-			throw new Error('Username or password incorrect');
-	})
-	.then(newAccessToken =>
+        throw new Error('Username or password incorrect');
+})
+.then(newAccessToken =>
 	{
-		if (DEBUG)
+        if (DEBUG)
 			console.log('Token refreshed:', newAccessToken);
-		if (GITHUBACTIONS)
+        if (GITHUBACTIONS)
 			console.log('Login successful'); //CARO: ajouté pour githubactions
-		setSignedInState(true);
-		window.location.href = '/profile';
+        setSignedInState(true);
+		navigateTo('/profile');
 		console.log('Success:', username, 'is now logged in'); //(CARO) au fait jess ta ligne du dessus se comporte comme un return donc ce console.log ne sera jamais print
 
 	})
