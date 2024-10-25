@@ -177,6 +177,50 @@ services:
     env_file:
       - .env
 
+    
+  celery-worker:
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    container_name: CeleryWorker
+    user: root # user: celeryuser
+    volumes:
+      - user:/app/
+    command: celery -A user_management_database worker --loglevel=info
+    depends_on:
+      - redis
+      - profile
+      - database
+    networks:
+      - transcendance
+    env_file:
+      - .env
+
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    container_name: celeryBeat
+    command: celery -A user_management_database beat --loglevel=info
+    volumes:
+      - ./src:/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - profile
+      - database
+
+  redis:
+    image: redis:6.0
+    container_name: redis
+    ports:
+      - "6378:6378"
+    networks:
+      - transcendance
+
+
 networks:
   transcendance:
     driver: bridge

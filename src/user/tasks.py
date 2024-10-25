@@ -7,8 +7,10 @@ from .user_management.api_user.models import CustomUser
 @shared_task
 def delete_inactive_users():
     # Time
-    three_years_ago = timezone.now() - timedelta(days=3 * 365)
-    warning_threshold = timezone.now() - timedelta(days=(3 * 365 - 90))
+    # three_years_ago = timezone.now() - timedelta(days=3 * 365)
+    three_years_ago = timezone.now() - timedelta(seconds=60)
+    # warning_threshold = timezone.now() - timedelta(days=(3 * 365 - 90))
+    warning_threshold = timezone.now() - timedelta(seconds=30)
 
     # Users
     users_to_delete = CustomUser.objects.filter(last_login__lt=three_years_ago)

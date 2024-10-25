@@ -2,6 +2,10 @@ FROM	python:3.10
 
 RUN		apt update && apt upgrade -y
 
+# # Create a non-root user
+# RUN useradd -m celeryuser
+# USER celeryuser
+
 # Set the working directory
 WORKDIR /app
 

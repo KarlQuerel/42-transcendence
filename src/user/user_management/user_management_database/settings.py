@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_beat',
     'rest_framework_simplejwt',
-    'api_user.apps.ApiConfig', #celery
+    'api_user.apps.ApiConfig', #signals
 	'django_prometheus',
     'rest_framework',
 	'friends',
@@ -218,5 +218,5 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
 
 
 ############ Celery for autmatic deletion of inactive users ############
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or the URL for your Redis/RabbitMQ instance
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6378/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6378/0'
