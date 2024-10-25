@@ -22,8 +22,14 @@ urlpatterns = [
 	path('hashAndChangePassword/', views.hashAndChangePassword, name='hash-and-change-password'),
 	path('updateProfile/', views.updateProfile, name='update-profile'),
 	path('updateAvatar/', views.updateAvatar, name='update-avatar'),
-	path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
+	path('getAllUsers/', views.getAllUsers, name='get-all-users'),
 	path('checkUserPassword/', views.checkUserPassword, name='check-user-password'),
+    path('anonymizeUserData/', views.anonymizeUserData, name='anonymize-user-data'),
+    path('updateAnonymousStatus/', views.updateAnonymousStatus, name='update-anonymous-status'),
+    path('getAnonymousStatus/', views.getAnonymousStatus, name='get-anonymous-status'),
+    path('get2FAStatus/', views.get2FAStatus, name='get-2fa-status'),
+    path('update2FAStatus/', views.update2FAStatus, name='update-2fa-status'),
+    path('deleteAccount/', views.deleteAccount, name='delete-account'),
 ]
 
 if settings.DEBUG:

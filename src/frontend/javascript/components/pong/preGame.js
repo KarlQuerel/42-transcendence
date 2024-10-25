@@ -29,9 +29,6 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
-
 import { fillingResults }
 from './postGame.js';
 

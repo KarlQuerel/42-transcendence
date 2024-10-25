@@ -31,9 +31,6 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
-
 import { startCountdown, checkCountdown }
 from './preGame.js';
 
@@ -42,6 +39,9 @@ from './postGame.js';
 
 import { prepareSinglePlayer }
 from './onePlayer.js';
+
+import { sendResultsToBackend }
+from './sendResultsToBackend.js';
 
 import { checkElement, disableKeyBlocking, enableKeyBlocking, hideCanvas }
 from './utils.js';
@@ -339,6 +339,9 @@ export async function gameLoop()
 
 	if (GameState.isGameDone == true)
 	{
+		// console.log('About to call sendResultsToBackend...');
+		// sendResultsToBackend();
+		// console.log('Called sendResultsToBackend');
 		return ;
 	}
 	
@@ -376,14 +379,16 @@ export async function gameLoop()
 	{
 		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
-		fillingResults(1);
+		await fillingResults(1);
+		await sendResultsToBackend();
 		GameState.isGameDone = true;
 	}
 	else if (player2.score === GameConf.maxScore)
 	{
 		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
-		fillingResults(2);
+		await fillingResults(2);
+		await sendResultsToBackend();
 		GameState.isGameDone = true;
 	}
 

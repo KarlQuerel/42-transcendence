@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-API_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -26,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1$5lkdio1l5qk4l0(qgb45b@(vwi8=n5gl2a#w_+f6is0!(%_i'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY'),
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,10 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
     'rest_framework_simplejwt',
+    'api_user.apps.ApiConfig', #celery
 	'django_prometheus',
     'rest_framework',
-    'api_user',
 	'friends',
 	'pytest',
 ]
@@ -215,3 +215,8 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
 EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+
+
+############ Celery for autmatic deletion of inactive users ############
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or the URL for your Redis/RabbitMQ instance
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'

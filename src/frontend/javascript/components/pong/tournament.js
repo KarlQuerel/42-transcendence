@@ -8,8 +8,11 @@ import { BallConf, GameState, GraphConf, PaddleConf, GameConf, player1, player2,
 Results }
 from './gameVariables.js';
 
+// import { loadUsername }
+// from './utils.js';
+
 import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+from './utils.js';
 
 import { startGame, resetGame, clearAll }
 from './pong.js'
