@@ -11,8 +11,11 @@ from './gameVariables.js';
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
+// import { loadUsername }
+// from './utils.js';
+
 import { loadUserManagementData }
-from '../../views/dashboard/dashboard.js';
+from './utils.js';
 
 /***********************************************\
 -					POST-GAME					-
@@ -23,7 +26,7 @@ export async function fillingResults(winner)
 	const	username = await loadUserManagementData();
 
 	Results.username = username.username;
-	Results.identified = "yes"; // HERE check with Caro
+	Results.identified = "yes"; // HERE check si quelqu'un l'utilise
 
 	if (winner === 1)
 	{
@@ -47,6 +50,9 @@ export async function fillingResults(winner)
 	}
 
 	Results.tournament_date = getDate();
+
+	if (DEBUG)
+		console.log('Filled Results object:', Results);
 }
 
 /***			Get date					***/
@@ -57,8 +63,10 @@ function getDate()
 	const month = String(current_date.getMonth() + 1).padStart(2, '0');
 	const year = current_date.getFullYear();
 	
-	const formattedDate = `${day}/${month}/${year}`;
-	
+	const formattedDate = `${year}-${month}-${day}`;
+
+	console.log('Formatted Date:', formattedDate);
+
 	return formattedDate;
 }
 

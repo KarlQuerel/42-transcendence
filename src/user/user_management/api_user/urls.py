@@ -22,7 +22,7 @@ urlpatterns = [
 	path('hashAndChangePassword/', views.hashAndChangePassword, name='hash-and-change-password'),
 	path('updateProfile/', views.updateProfile, name='update-profile'),
 	path('updateAvatar/', views.updateAvatar, name='update-avatar'),
-	path('getAllUserAvatars/', views.getAllUserAvatars, name='get-all-user-avatars'),
+	path('getAllUsers/', views.getAllUsers, name='get-all-users'),
 	path('checkUserPassword/', views.checkUserPassword, name='check-user-password'),
 ]
 
