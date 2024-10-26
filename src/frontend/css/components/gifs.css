@@ -1,14 +1,6 @@
 /***********************************************
 					GIF STYLES
 ***********************************************/
-.not-found-container
-{
-	text-align: center;
-	padding: 20px;
-	color: var(--base-white);
-	background-color: var(--base-dark);
-}
-
 .gif-frame
 {
 	display: inline-block;

@@ -11,8 +11,9 @@
 	font-size: 0.7em;
 	display: flex;
 	flex-direction: column;
-	min-width: 800px;
-	min-height: 600px;
+	/* KARL DODO CHECK */
+	/* min-width: 800px;
+	min-height: 600px; */
 	padding-top: 60px;
 	padding-bottom: 60px;
 }
