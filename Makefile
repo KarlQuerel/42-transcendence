@@ -11,9 +11,9 @@ all :
 
 clean :
 #if Dashboard and User databases are up, clear it
-# if (docker ps -a | grep -q Dashboard) && (docker ps -a | grep -q User); then \
-# 	make clear_db; \
-# fi
+	if (docker ps -a | grep -q Dashboard) && (docker ps -a | grep -q User); then \
+		make clear_db; \
+	fi
 	@cd src && docker-compose down
 
 fclean : clean
@@ -66,15 +66,15 @@ check_allUsers:
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
 check_allGameHistory:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_dashboard_gamehistory;'"
 
 # check_userGamehistory:
 # 	@read -p "Enter username: " username; \
-# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT base_gamehistory.* FROM base_gamehistory JOIN api_user_customuser ON base_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
+# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT api_dashboard_gamehistory.* FROM api_dashboard_gamehistory JOIN api_user_customuser ON api_dashboard_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
 
 check_userGamehistory:
 	@read -p "Enter username: " username; \
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM base_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM api_dashboard_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
 
 # Clear database
 

@@ -6,5 +6,6 @@ from django_prometheus import exports
 urlpatterns = [
 	path('api/', include('api_dashboard.urls')),
 	path('api/dashboard/', include('api_dashboard.urls')), #"dashboard" : dans nginx file
+	# path('dashboard/', include('api_dashboard.urls')), #TEST
 	path('metrics/', exports.ExportToDjangoView, name='metrics')
 ]

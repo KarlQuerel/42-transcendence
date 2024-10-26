@@ -60,7 +60,7 @@ INSTALLED_APPS = [
 	'friends',
 	'pytest',
 
-# 'api_dashboard', #TEST CARO
+    # 'api_dashboard', #TEST CARO //HERE --> ÇA PÈTE TOUT!! NE PAS LE REMETTRE!!!
 ]
 
 ################# Pour les JWTokens #################

@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from api_user.models import CustomUser
-# from api_dashboard.models import GameHistory #TEST CARO //HERE
+# from api_dashboard.models import GameHistory #TEST CARO //HERE --> les 3 HERE de cette page créent un 502 bad gateway dans la page sign in
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
@@ -596,30 +596,37 @@ def get_friendship_status(user1, user2):
 @permission_classes([IsAuthenticated])
 @csrf_protect
 def anonymizeUserData(request):
-    try:
-        user = request.user
-        if not user.is_authenticated:
-            return Response({'error': 'User not authenticated'}, status=401)
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
 
-        usernameSuffix = get_random_string(6)
-        user.username = f'user_{usernameSuffix}'
-        user.email = f'anonymized_{usernameSuffix}@example.com'
-        user.first_name = 'Anonymous'
-        user.last_name = 'User'
-        user.date_of_birth = None
-        user.avatar = 'avatars/default.png'
+		# userOldUsername = user.username #CARO #HERE
+			
+		usernameSuffix = get_random_string(6)
+		user.username = f'user_{usernameSuffix}'
+		user.email = f'anonymized_{usernameSuffix}@example.com'
+		user.first_name = 'Anonymous'
+		user.last_name = 'User'
+		user.date_of_birth = None
+		user.avatar = 'avatars/default.png'
+		
 
-        user.save()
+		# # Update the user in the dashboard database : check every user's opponent names and change it if it corresponds //HERE
+		# games = GameHistory.objects.filter(user=user) #CHECK
+		# for game in games:
+		# 	if (game.myUsername == userOldUsername):
+		# 		game.myUsername = user.username
+		# 	if (game.opponentUsername == userOldUsername):
+		# 		game.opponentUsername = user.username
+		# 	game.save()
 
-		# # Update the user in the dashboard database //HERE
-        # dashboard_user = GameHistory.objects.get(id=user.id)
-        # dashboard_user.username = user.username
-        # dashboard_user.save()
+		user.save()
 
-        return JsonResponse({'username': user.username}, status=200)
+		return JsonResponse({'username': user.username}, status=200)
 
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
 
 
 #########################################
@@ -691,24 +698,24 @@ def deleteAccount(request):
 ##################################################
 @csrf_exempt
 def checkUserPassword(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            username = data.get('username')
-            password = data.get('password')
+	if request.method == 'POST':
+		try:
+			data = json.loads(request.body)
+			username = data.get('username')
+			password = data.get('password')
 
-            # Check if the user exists
-            try:
-                user = CustomUser.objects.get(username=username)
-                # Check if the password is correct
-                if check_password(password, user.password):
-                    return JsonResponse({'valid': True}, status=200)
-                else:
-                    return JsonResponse({'valid': False}, status=200)
-            except CustomUser.DoesNotExist:
-                return JsonResponse({'error': 'User not found'}, status=404)
+			# Check if the user exists
+			try:
+				user = CustomUser.objects.get(username=username)
+				# Check if the password is correct
+				if check_password(password, user.password):
+					return JsonResponse({'valid': True}, status=200)
+				else:
+					return JsonResponse({'valid': False}, status=200)
+			except CustomUser.DoesNotExist:
+				return JsonResponse({'error': 'User not found'}, status=404)
 
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-    
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+		except json.JSONDecodeError:
+			return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+	
+	return JsonResponse({'error': 'Invalid request method'}, status=405)
