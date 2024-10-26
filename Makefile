@@ -10,12 +10,10 @@ all :
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
-#CARO: j'ai rajouté make clear_db pq make clean ne 
-#supprimait pas les bases de données
-#je ne peux pas le mettre dans fclean car il faut
-#que la base de données Dashboard soit up pour pouvoir 
-#la clear et que make clean le down
-	make clear_db
+#if Dashboard and User databases are up, clear it
+# if (docker ps -a | grep -q Dashboard) && (docker ps -a | grep -q User); then \
+# 	make clear_db; \
+# fi
 	@cd src && docker-compose down
 
 fclean : clean

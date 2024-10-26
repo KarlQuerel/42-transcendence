@@ -115,7 +115,7 @@ function make_the_AI_loose_sometimes_to_avoid_human_frustration(predicted_inters
 	//predicted_intersection we return the predicted intersection + 50
 
 	let random_number = Math.floor(Math.random() * 4) + 1;
-	if (random_number <= 2)
+	if (random_number <= 1) //TODO: tester avec le reste du groupe quelle difficulté on veut
 		return predicted_intersection + 500;
 	else
 		return predicted_intersection;

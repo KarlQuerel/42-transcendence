@@ -52,7 +52,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'api_user',
-    'base',
+    'api_dashboard',
+
 ]
 
 ################# Pour les JWTokens #################

@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     'rest_framework',
 	'friends',
 	'pytest',
+
+# 'api_dashboard', #TEST CARO
 ]
 
 ################# Pour les JWTokens #################

@@ -4,6 +4,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from api_user.models import CustomUser
+# from api_dashboard.models import GameHistory #TEST CARO //HERE
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
@@ -609,6 +610,11 @@ def anonymizeUserData(request):
         user.avatar = 'avatars/default.png'
 
         user.save()
+
+		# # Update the user in the dashboard database //HERE
+        # dashboard_user = GameHistory.objects.get(id=user.id)
+        # dashboard_user.username = user.username
+        # dashboard_user.save()
 
         return JsonResponse({'username': user.username}, status=200)
 

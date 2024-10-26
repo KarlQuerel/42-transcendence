@@ -41,7 +41,9 @@ import { checkCountdown }
 from './preGame.js';
 
 import { apiRequest }
-from '../../views/user/signin.js';
+from '../../views/user/signin.js'
+
+import { getAuthHeaders } from '../../views/user/signin.js';
 
 /***********************************************\
 -					UTILS						-
