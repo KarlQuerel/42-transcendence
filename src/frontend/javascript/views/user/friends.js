@@ -1,5 +1,5 @@
 /***********************************************\
--		   IMPORTING VARIABLES/FUNCTIONS		-
+-			IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG }
 from '../../main.js';
@@ -8,53 +8,104 @@ import { apiRequest }
 from './signin.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 
-export function renderFriendsList()
-{	
-	const userContainer = document.createElement('div');
-	userContainer.setAttribute('id', 'other-users-list');
+// export function renderFriendsList()
+// {	
+// 	const userContainer = document.createElement('div');
+// 	userContainer.setAttribute('id', 'other-users-list');
 	
-	const friendsTitle = document.createElement('h1');
-	friendsTitle.textContent = 'Friends';
+// 	const friendsTitle = document.createElement('h1');
+// 	friendsTitle.textContent = 'Friends';
 
-	getAllUsers()
-		.then(async other_users =>
-		{
-			if (DEBUG) {
-				console.log('other_users: ', other_users);
-				console.log('users length: ', other_users.length);
-			}
+// 	getAllUsers()
+// 		.then(async other_users =>
+// 		{
+// 			if (DEBUG) {
+// 				console.log('other_users: ', other_users);
+// 				console.log('users length: ', other_users.length);
+// 			}
 			
-			for (const other_user of other_users){
-				if (DEBUG) {
-					console.log('other_user: ', other_user.username);
-					console.log('friendship: ', other_user.friendship_status);
-					console.log('users length: ', other_users.length);
-				}
-				const userCard = await createUserCard(other_user);
-				userContainer.appendChild(userCard);
-			}
-		})
-		.catch(error => {
+// 			for (const other_user of other_users){
+// 				if (DEBUG) {
+// 					console.log('other_user: ', other_user.username);
+// 					console.log('friendship: ', other_user.friendship_status);
+// 					console.log('users length: ', other_users.length);
+// 				}
+// 				const userCard = await createUserCard(other_user);
+// 				userContainer.appendChild(userCard);
+// 			}
+// 		})
+// 		.catch(error => {
+// 			console.error('Error:', error);
+// 			userContainer.innerHTML = '<p>Failed to load friends page.</p>';
+// 		});
+	
+// 	return userContainer;
+// }
+
+export function renderFriendsList() {
+    const userContainer = document.createElement('div');
+    userContainer.setAttribute('id', 'other-users-list');
+    userContainer.className = 'container'; // Add Bootstrap container class
+
+    const friendsTitle = document.createElement('h1');
+    friendsTitle.textContent = 'Friends';
+    userContainer.appendChild(friendsTitle); // Append the title to the container
+
+    // Create a row for the user cards
+    const row = document.createElement('div');
+    row.className = 'row'; // Bootstrap row class
+
+    getAllUsers()
+        .then(async other_users => {
+            if (DEBUG) {
+                console.log('other_users: ', other_users);
+                console.log('users length: ', other_users.length);
+            }
+
+            for (const other_user of other_users) {
+                if (DEBUG) {
+                    console.log('other_user: ', other_user.username);
+                    console.log('friendship: ', other_user.friendship_status);
+                    console.log('users length: ', other_users.length);
+                }
+                const userCard = await createUserCard(other_user);
+                
+                // Wrap the userCard in a Bootstrap column
+                const col = document.createElement('div');
+                col.className = 'col-6 col-md-3'; // Use Bootstrap classes for responsive columns
+                col.appendChild(userCard);
+
+                // Append the column to the row
+                row.appendChild(col);
+            }
+        })
+        .catch(error => {
             console.error('Error:', error);
             userContainer.innerHTML = '<p>Failed to load friends page.</p>';
-		});
-	
-	return userContainer;
+        });
+
+    // Append the row to the user container
+    userContainer.appendChild(row);
+    return userContainer;
 }
+
+
 
 async function createUserCard(other_user)
 {
 	const card = document.createElement('div');
-	card.classList.add('user-card');
+	// card.classList.add('user-card');
+	card.classList.add('card');
+	
 
-    const avatar = document.createElement('img');
-    avatar.setAttribute('id', 'avatar');
-    avatar.setAttribute('alt', 'User Avatar');
-    avatar.style.width = '150px';
-    avatar.style.height = '150px';
+	const avatar = document.createElement('img');
+	avatar.setAttribute('id', 'avatar');
+	avatar.setAttribute('alt', 'User Avatar');
+	avatar.style.width = '150px';
+	avatar.style.height = '150px';
 	getAvatar(other_user, avatar);
 	card.appendChild(avatar);
 

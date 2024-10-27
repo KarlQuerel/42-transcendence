@@ -41,6 +41,30 @@ class Command(BaseCommand):
 			'first_name': 'Jessica',
 			'last_name': 'Rouillon',
 		},
+		{
+			'username': 'yako',
+			'password': 'pass123',
+			'email': 'yako@email.com',
+			'date_of_birth': '2017-07-15',
+			'first_name': 'Yako',
+			'last_name': 'Baby',
+		},
+		{
+			'username': 'cherry',
+			'password': 'pass123',
+			'email': 'cherry@email.com',
+			'date_of_birth': '2016-07-15',
+			'first_name': 'Cherry',
+			'last_name': 'Pantoufle',
+		},
+		{
+			'username': 'lebidou',
+			'password': 'pass123',
+			'email': 'lebidou@email.com',
+			'date_of_birth': '2010-01-01',
+			'first_name': 'Lebidou',
+			'last_name': 'Onvoitplus',
+		},
 	]
 
 		# Iterate over predefined data and create entries in the database

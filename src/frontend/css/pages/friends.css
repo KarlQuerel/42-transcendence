@@ -1,0 +1,13 @@
+/************************************************
+					FRIENDS
+***********************************************/
+
+/*		CONTAINER		*/
+.user-card
+{
+	margin-bottom: 20px; /* Space below each card */
+	text-align: center;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds shadow to cards */
+	border-radius: 10px; /* Optional: rounded corners */
+	background-color: #fff;
+}
