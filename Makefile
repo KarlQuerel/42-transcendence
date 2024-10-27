@@ -11,7 +11,7 @@ all :
 
 clean :
 #if Dashboard and User databases are up, clear it
-	if (docker ps -a | grep -q Dashboard) && (docker ps -a | grep -q User); then \
+	@if (docker ps --filter "name=Dashboard" --filter "status=running" | grep -q Dashboard) && (docker ps --filter "name=User" --filter "status=running" | grep -q User); then \
 		make clear_db; \
 	fi
 	@cd src && docker-compose down

@@ -590,6 +590,8 @@ def get_friendship_status(user1, user2):
 ##           		GDPR VIEWS      		    ##
 ##################################################
 
+from django.apps import apps #TEST CARO //HERE
+# from django.apps import AppConfig
 
 @api_view(['PUT'])
 @login_required
@@ -601,7 +603,8 @@ def anonymizeUserData(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		# userOldUsername = user.username #CARO #HERE
+		# from api_dashboard.models import GameHistory  #TEST HERE to avoid circular dependencies
+		userOldUsername = user.username #CARO #HERE
 			
 		usernameSuffix = get_random_string(6)
 		user.username = f'user_{usernameSuffix}'
@@ -611,15 +614,16 @@ def anonymizeUserData(request):
 		user.date_of_birth = None
 		user.avatar = 'avatars/default.png'
 		
+		GameHistory = apps.get_model('api_dashboard', 'GameHistory') #TEST CARO //HERE
 
-		# # Update the user in the dashboard database : check every user's opponent names and change it if it corresponds //HERE
-		# games = GameHistory.objects.filter(user=user) #CHECK
-		# for game in games:
-		# 	if (game.myUsername == userOldUsername):
-		# 		game.myUsername = user.username
-		# 	if (game.opponentUsername == userOldUsername):
-		# 		game.opponentUsername = user.username
-		# 	game.save()
+		# Update the user in the dashboard database : check every user's opponent names and change it if it corresponds //HERE
+		games = GameHistory.objects.filter(user=user) #CHECK
+		for game in games:
+			if (game.myUsername == userOldUsername):
+				game.myUsername = user.username
+			if (game.opponentUsername == userOldUsername):
+				game.opponentUsername = user.username
+			game.save()
 
 		user.save()
 

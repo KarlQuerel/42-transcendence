@@ -51,9 +51,11 @@ INSTALLED_APPS = [
 	'django_prometheus',
     'rest_framework_simplejwt',
     'rest_framework',
-    'api_user',
-    'api_dashboard',
 
+    # 'api_dashboard.apps.ApiDashboardConfig', #C'EST TECHNIQUEMENT NÉCESSAIRE!!! #TEST --> ne make pas
+    # 'api_user', # nécessaire pour importer CustomUser
+    # 'api_dashboard',
+    'api_user.apps.ApiConfig', #TEST --> ne make pas
 ]
 
 ################# Pour les JWTokens #################

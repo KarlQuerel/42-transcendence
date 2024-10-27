@@ -54,12 +54,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_beat',
     'rest_framework_simplejwt',
-    'api_user.apps.ApiConfig', #celery
 	'django_prometheus',
     'rest_framework',
 	'friends',
 	'pytest',
 
+    'api_user.apps.ApiConfig', #celery
+    # 'api_dashboard.apps.ApiDashboardConfig', #C'EST TECHNIQUEMENT NÉCESSAIRE!!!
     # 'api_dashboard', #TEST CARO //HERE --> ÇA PÈTE TOUT!! NE PAS LE REMETTRE!!!
 ]
 
