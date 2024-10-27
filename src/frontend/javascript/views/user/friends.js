@@ -97,8 +97,7 @@ export function renderFriendsList() {
 async function createUserCard(other_user)
 {
 	const card = document.createElement('div');
-	// card.classList.add('user-card');
-	card.classList.add('card');
+	card.classList.add('card', 'friends-card');
 	
 
 	const avatar = document.createElement('img');

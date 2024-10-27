@@ -1,0 +1,142 @@
+/************************************************
+					PRIVACY POLICY
+***********************************************/
+
+/*		PRIVACY POLICY		*/
+.priv-container
+{
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	bottom: 85vh;
+	margin-bottom: 2vh;
+}
+
+.priv-title
+{
+	font-size: 5vh;
+	color: var(--base-white);
+	text-align: center;
+	margin-bottom: 2vh;
+	z-index: 1000;
+	background-color: var(--base-dark);
+}
+
+.priv-body
+{
+	font-size:1vh;
+	background-color: var(--base-dark);
+	text-align: justify;
+}
+
+
+/*			GDRP			*/
+.GDPR-dialog
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+}
+
+.GDPR-header
+{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	/* KARL HERE CHECK WITH OTHERS */
+	/* border-bottom: solid 0.2vh var(--base-white); */
+	border-bottom: none;
+}
+
+.GDPR-title
+{
+	text-align: center;
+	font-size: 4vh;
+	margin: 0;
+	flex-grow: 1;
+}
+
+.GDPR-content
+{
+	height: 80vh;
+	background: linear-gradient(135deg, var(--base-green), var(--base-dark), var(--base-green));
+	background-size: 300% 300%;
+	animation: moveBackground 5s ease infinite, smallScalingSignInGDPR 8s ease infinite;
+	font-size: 2vh;
+	overflow: hidden;
+	border: ridge 0.7vh var(--base-green);
+	border-radius: 10vh;
+	margin-bottom: 2vh;
+	border-radius: 15px;
+	color: var(--base-white);
+	font-size: 2vh;
+	text-align: center;
+}
+
+.GDPR-footer
+{
+	position: relative;
+	justify-content: center;
+	/* KARL HERE CHECK WITH OTHERS */
+	/* border-top: solid 0.2vh var(--base-white); */
+	border-top: none;
+}
+
+.GDPR-button
+{
+	width: auto;
+	height: auto;
+}
+
+.GDPR-gif
+{
+	position: absolute;
+	top: 16%;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+}
+
+.priv-gif
+{
+	height: 55%;
+	width: auto;
+	top: 38%;
+	left: 24%;
+}
+
+@keyframes smallScalingSignInGDPR
+{
+	0%
+	{
+		background-position: 0% 50%;
+		transform: scale(1);
+	}
+	50%
+	{
+		background-position: 100% 50%;
+		transform: scale(1.20);
+	}
+	100%
+	{
+		background-position: 0% 50%;
+		transform: scale(1);
+	}
+}
+
+.GDPR-overlay
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: var(--base-dark);
+	z-index: 1040;
+	display: none;
+}

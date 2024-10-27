@@ -65,6 +65,14 @@ class Command(BaseCommand):
 			'first_name': 'Lebidou',
 			'last_name': 'Onvoitplus',
 		},
+		{
+			'username': 'jeanmichel',
+			'password': 'pass123',
+			'email': 'jeanmichel@email.com',
+			'date_of_birth': '2013-01-01',
+			'first_name': 'jean',
+			'last_name': 'michel',
+		},
 	]
 
 		# Iterate over predefined data and create entries in the database

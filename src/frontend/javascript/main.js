@@ -8,9 +8,17 @@ export	const	GITHUBACTIONS = false;
 -				IMPORTING SCRIPTS				-
 \***********************************************/
 
-/***			  Page Not Found		 	 ***/
+/***			Page Not Found				***/
 import { renderPageNotFound }
 from "./views/error_404/error_404.js";
+
+/***				GDPR					***/
+import { initGDPRModal }
+from "./views/privacy_policy/GDPR.js";
+
+/***			Privacy Policy				***/
+import { renderPrivacyPolicy }
+from "./views/privacy_policy/privacy_policy.js";
 
 /***			Nav Bar						***/
 import { renderNavbar }
@@ -73,6 +81,11 @@ const	routes =
 	{
 		title: "Home",
 		render: renderHome
+	},
+	'/privacy-policy':
+	{
+		title: "Privacy Policy",
+		render: renderPrivacyPolicy
 	},
 	'/dashboard':
 	{
@@ -249,6 +262,13 @@ function router()
 
 		// Scrolling to the top of the page
 		window.scroll(0, 0);
+
+		//TEST KARL
+		if (path !== '/privacy-policy')
+		{
+			initGDPRModal();
+		}
+		//FIN TEST KARL
 	}
 	else
 	{

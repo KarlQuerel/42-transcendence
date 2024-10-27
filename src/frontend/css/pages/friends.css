@@ -3,11 +3,13 @@
 ***********************************************/
 
 /*		CONTAINER		*/
-.user-card
+.friends-card
 {
-	margin-bottom: 20px; /* Space below each card */
+	margin-bottom: 1vh;
 	text-align: center;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optional: adds shadow to cards */
-	border-radius: 10px; /* Optional: rounded corners */
-	background-color: #fff;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	border-radius: 5vh;
+	background: linear-gradient(135deg, var(--base-green), var(--base-dark), var(--base-green));
+	background-size: 300% 300%;
+	animation: moveBackground 5s ease infinite;
 }
