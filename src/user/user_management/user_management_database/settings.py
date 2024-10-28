@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY'),
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_beat',
     'rest_framework_simplejwt',
+    'user_management_database',
     'api_user.apps.ApiConfig', #signals
 	'django_prometheus',
     'rest_framework',
@@ -94,7 +95,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('127.0.0.1', 6378)],
         },
     },
 }
@@ -218,5 +219,5 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
 
 
 ############ Celery for autmatic deletion of inactive users ############
-CELERY_BROKER_URL = 'redis://redis:6378/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6378/0'
+CELERY_BROKER_URL = 'redis://localhost:6378/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6378/0'

@@ -15,7 +15,7 @@ clean :
 #je ne peux pas le mettre dans fclean car il faut
 #que la base de données Dashboard soit up pour pouvoir 
 #la clear et que make clean le down
-	make clear_db
+#make clear_db
 	@cd src && docker-compose down
 
 fclean : clean

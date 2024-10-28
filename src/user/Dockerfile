@@ -37,8 +37,11 @@ COPY ../initiation_files/postgresql_conf/init_database.sh /tmp/init_database.sh
 RUN chmod 777 /tmp/init_database.sh
 
 # Copy the rest of the application code
-COPY user/user_management/ /app
+COPY user/user_management/ /app/
 RUN chmod -R 777 /app
+
+# Set the environment variable for Django settings
+ENV DJANGO_SETTINGS_MODULE=user_management_database.settings
 
 # Voir avec les autres quel port
 EXPOSE 8200

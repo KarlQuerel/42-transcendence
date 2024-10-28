@@ -365,23 +365,23 @@ async function set_status_offline()
 }
 
 // Fetch game history data from the API
-async function fetchGameHistoryData() {
-    try {
-        const userData = await apiRequest('/api/dashboard/getGameHistory/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (DEBUG) {
-            console.log("userData = ", userData);
-        }
-        return userData;
-    } catch (error) {
-        console.error('Error: fetch userData', error);
-        throw error; // Re-throw the error
-    }
-}
+// async function fetchGameHistoryData() {
+//     try {
+//         const userData = await apiRequest('/api/dashboard/getGameHistory/', {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//         });
+//         if (DEBUG) {
+//             console.log("userData = ", userData);
+//         }
+//         return userData;
+//     } catch (error) {
+//         console.error('Error: fetch userData', error);
+//         throw error; // Re-throw the error
+//     }
+// }
 
 
 /***********************************************\
@@ -441,13 +441,16 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
         const avatarFile = document.getElementById('avatar_input').files[0];
 
-        const isValidData = verifyProfileChanges();
+        const isValidData = Boolean(verifyProfileChanges());
 
         if (DEBUG)
             console.log('Updated values are valid:', isValidData);
 
-        if (isValidData)
+        if (isValidData === true)
         {
+            if (DEBUG)
+                console.log('Entering if to save new data.');
+
             if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
                 await saveNewAvatar(avatarFile);
             await saveProfileChanges(userData_edit);
@@ -473,6 +476,9 @@ async function verifyProfileChanges()
     const date_of_birth_type = checkIdentifierType(dob, 'date_of_birth_input');
     const password_type = 'password';
     const email_type = checkIdentifierType(email, 'email_input');
+
+    if (DEBUG)
+        console.log('First name type:', first_name_type, '\nLast name type:', last_name_type, '\nUsername type:', username_type, '\nDate of birth type:', date_of_birth_type, '\nPassword type:', password_type, '\nEmail type:', email_type);
 
     const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 

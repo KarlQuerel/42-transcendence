@@ -9,5 +9,7 @@ def createPeriodicTasks(sender, **kwargs):
     PeriodicTask.objects.get_or_create(
         interval=schedule,
         name='Delete inactive users and send warning emails',
-        task='user_management_database.tasks.delete_inactive_users',
+        task='api_user.tasks.delete_inactive_users',
     )
+
+# task='user_management_database.tasks.delete_inactive_users',

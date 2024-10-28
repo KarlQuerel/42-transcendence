@@ -2,7 +2,7 @@ from celery import shared_task
 from django.utils import timezone
 from django.core.mail import send_mail
 from datetime import timedelta
-from .user_management.api_user.models import CustomUser
+from api_user.models import CustomUser
 
 @shared_task
 def delete_inactive_users():
@@ -18,11 +18,19 @@ def delete_inactive_users():
 
     # Delete inactive users
     for user in users_to_delete:
-        user.delete()
+        try:
+            user.delete()
+        except Exception as e:
+            print(e)
 
     # Warn users about upcoming deletion
     for user in users_to_warn:
-        send_warning_email(user)
+        try:
+            send_warning_email(user)
+        except Exception as e:
+            print(e)
+
+
 
 def send_warning_email(user):
     subject = 'PONG - Your account will be deleted soon due to inactivity'

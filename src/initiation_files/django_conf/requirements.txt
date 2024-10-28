@@ -11,5 +11,5 @@ pytest-django
 faker==9.8.1 #to populate database with fake data for tests
 pyotp
 celery>=5.0,<6.0
-redis>=4.0,<5.0  # if using Redis as the broker
-django-celery-beat>=2.2.1,<3.0  # for scheduling tasks
+redis
+django-celery-beat>=2.2.1,<3.0
