@@ -70,6 +70,25 @@ export function renderSignUp()
 		form.appendChild(formGroup);
 	});
 
+	// GDPR checkbox
+	const	gdprFormGroup = document.createElement('div');
+	gdprFormGroup.classList.add('form-group', 'col-md-12');
+
+	const	gdprCheckbox = document.createElement('input');
+	gdprCheckbox.setAttribute('type', 'checkbox');
+	gdprCheckbox.setAttribute('id', 'gdpr-acceptance');
+	gdprCheckbox.classList.add('form-check-input');
+
+	const	gdprLabel = document.createElement('label');
+	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label', 'GDPR-checkbox');
+	gdprLabel.setAttribute('for', 'gdpr-acceptance');
+	gdprLabel.textContent = 'I accept the Privacy Policy Terms';
+	gdprLabel.classList.add('form-check-label');
+
+	gdprFormGroup.appendChild(gdprCheckbox);
+	gdprFormGroup.appendChild(gdprLabel);
+	form.appendChild(gdprFormGroup);
+
 	// Buttons container (submit + back to sign in)
 	const	buttonsContainer = document.createElement('div');
 	buttonsContainer.classList.add('d-flex', 'justify-content-center', 'col-12', 'mt-3');
@@ -103,7 +122,15 @@ export function initializeSignUp()
 	{
 		form.addEventListener('submit', function (event)
 		{
-			event.preventDefault(); // Prevent default form submission
+			event.preventDefault();
+
+			// Check if GDPR checkbox is checked
+			const gdprCheckbox = document.getElementById('gdpr-acceptance');
+			if (!gdprCheckbox.checked)
+			{
+				alert('Please accept the Privacy Policy Terms before proceeding.');
+				return;
+			}
 
 			// First name
 			let	first_name = getIdentifier('first_name');
@@ -137,7 +164,6 @@ export function initializeSignUp()
 				if (password !== password_confirmation)
 				{
 					console.log('Error: Password and password confirmation do not match.');
-					// TODO KARL voir avec Jess
 				}
 				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 				return ;

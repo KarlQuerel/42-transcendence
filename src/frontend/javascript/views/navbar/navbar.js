@@ -120,4 +120,4 @@ export function renderNavbar()
 	document.body.insertAdjacentElement('afterbegin', navbar);
 }
 
-document.addEventListener("DOMContentLoaded", renderNavbar);
+// document.addEventListener("DOMContentLoaded", renderNavbar);

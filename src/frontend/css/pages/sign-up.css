@@ -92,6 +92,37 @@
 	max-width: 60vh;
 }
 
+/*		CHECKBOX		*/
+.GDPR-checkbox
+{
+	width: 17vh;
+	font-size: 1vh;
+	padding: 2vh;
+}
+
+#gdpr-acceptance
+{
+	width: 3vh;
+	height: 3vh;
+	z-index: 1;
+}
+
+.form-check-input[type=checkbox]
+{
+	border-radius: 60em;
+	border: solid 0.3vh var(--base-green);
+	background-color: var(--base-light-green);
+	appearance: none;
+	margin-top: .25em;
+	position: relative;
+}
+
+.form-check-input:checked[type=checkbox]
+{
+	background-image: url('../../assets/images/sign-up/checked.gif');
+	background-size: 5vh 5vh;
+}
+
 /*		ERRORS			*/
 .error-message
 {

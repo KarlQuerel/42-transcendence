@@ -8,10 +8,12 @@ from '../../main.js';
 -					RENDERING					-
 \***********************************************/
 
-/* KARL HERE FINISH THIS + MARGIN BOTTOM FOR CONTACT US*/
 export function renderPrivacyPolicy()
 {
-	// Create the main container for the policy
+	// Create or clear the main container
+	const	appElement = document.getElementById('app');
+	appElement.innerHTML = '';
+
 	const	policyContainer = document.createElement('div');
 	policyContainer.classList.add('priv-container', 'container');
 
@@ -58,6 +60,16 @@ export function renderPrivacyPolicy()
 
 	// Append the policyContainer to the document or a specific parent element
 	document.body.appendChild(policyContainer);
+}
+
+/*			CLEANING UP			*/
+export function cleanUpPrivacyPolicy()
+{
+	const privContainer = document.querySelector('.priv-container');
+	if (privContainer)
+	{
+		privContainer.remove();
+	}
 }
 
 /*			POLICY TEXT			*/

@@ -17,12 +17,16 @@ import { initGDPRModal }
 from "./views/privacy_policy/GDPR.js";
 
 /***			Privacy Policy				***/
-import { renderPrivacyPolicy }
+import { renderPrivacyPolicy, cleanUpPrivacyPolicy }
 from "./views/privacy_policy/privacy_policy.js";
 
 /***			Nav Bar						***/
 import { renderNavbar }
 from "./views/navbar/navbar.js";
+
+/***			Footer						***/
+import { renderFooter }
+from "./views/footer/footer.js";
 
 /***			Home						***/
 import { renderHome }
@@ -85,7 +89,8 @@ const	routes =
 	'/privacy-policy':
 	{
 		title: "Privacy Policy",
-		render: renderPrivacyPolicy
+		render: renderPrivacyPolicy,
+		cleanup: cleanUpPrivacyPolicy
 	},
 	'/dashboard':
 	{
@@ -145,14 +150,6 @@ const	routes =
 
 //	Initializing currentPath to an empty string
 let	currentPath = '';
-
-/***			Navbar						***/
-function render()
-{
-	const	navbar = renderNavbar();
-	document.body.insertAdjacentElement('afterbegin', navbar);
-}
-
 
 /***			Normalizing Paths			***/
 function normalizePath(path)
@@ -263,12 +260,10 @@ function router()
 		// Scrolling to the top of the page
 		window.scroll(0, 0);
 
-		//TEST KARL
 		if (path !== '/privacy-policy')
 		{
 			initGDPRModal();
 		}
-		//FIN TEST KARL
 	}
 	else
 	{
@@ -292,9 +287,14 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
+	// Rendering Navbar
+	renderNavbar();
+
+	// Rendering Footer
+	renderFooter();
+
 	document.body.addEventListener("click", (event) =>
 	{
-		// Find the nearest anchor tag if the clicked element is nested inside one
 		const	link = event.target.closest("a[data-link]");
 		
 		if (link)

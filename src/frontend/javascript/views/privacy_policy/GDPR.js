@@ -9,12 +9,12 @@ export function initGDPRModal()
 	// Check if the GDPR consent has already been accepted
 	const	GDPRAccepted = localStorage.getItem("GDPRAccepted");
 
-	// KARL HERE - MAYBE ADD IT TO LOGOUT ? ASK OTHERS + TO REMOVE LATER - DEBUG
-	if (DEBUG)
-	{
-		localStorage.setItem("GDPRAccepted", "false");
-		console.log(GDPRAccepted);
-	}
+	// KARL HERE TO REMOVE LATER - DEBUG
+	// if (DEBUG)
+	// {
+	// 	localStorage.setItem("GDPRAccepted", "false");
+	// 	console.log(GDPRAccepted);
+	// }
 
 	if (GDPRAccepted === "false" || GDPRAccepted === null)
 	{
@@ -45,10 +45,11 @@ export function initGDPRModal()
 		title.textContent = "GDPR Consent";
 
 		const	bodyDiv = document.createElement("div");
-		bodyDiv.classList.add("modal-body");
+		bodyDiv.classList.add('modal-body', 'GDPR-modal-body');
 		bodyDiv.style.position = 'relative';
-		bodyDiv.innerHTML = "This site uses cookies for session management and user authentication.<br><br>Learn more in our Privacy Policy Page.<br><br><br><br><br><br><br><br><br><br><br>Do you accept?";
-		// bodyDiv.innerHTML = "Welcome to our site! We use cookies that are strictly necessary for the proper functioning of our website, such as session management and user authentication. These cookies do not collect personal data for advertising or analytics purposes.By continuing to use our website, you agree to the use of these essential cookies, as outlined in our Privacy Policy.<br><br><br><br><br><br><br><br><br><br>Do you accept?";
+		bodyDiv.innerHTML = "We use cookies that are strictly necessary for the proper functioning of our website, such as session management and user authentication.<br>These cookies do not collect personal data for advertising or analytics purposes.By continuing to use our website, you agree to the use of these essential cookies, as outlined in our Privacy Policy.";
+
+
 
 		const	footerDiv = document.createElement("div");
 		footerDiv.classList.add("modal-footer", "GDPR-footer");
@@ -65,7 +66,6 @@ export function initGDPRModal()
 
 		privacyPolicyButton.onclick = () =>
 		{
-			// KARL HERE CHECK WITH OTHERS - open a new page OR go straight to the page
 			window.open('/privacy-policy', "_blank");
 		};
 

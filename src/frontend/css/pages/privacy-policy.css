@@ -10,6 +10,7 @@
 	position: relative;
 	bottom: 85vh;
 	margin-bottom: 2vh;
+	z-index: 1;
 }
 
 .priv-title
@@ -27,6 +28,7 @@
 	font-size:1vh;
 	background-color: var(--base-dark);
 	text-align: justify;
+	padding: 1vh;
 }
 
 
@@ -45,9 +47,8 @@
 	justify-content: center;
 	align-items: center;
 	width: 100%;
-	/* KARL HERE CHECK WITH OTHERS */
-	/* border-bottom: solid 0.2vh var(--base-white); */
 	border-bottom: none;
+	padding-bottom: 0vh;
 }
 
 .GDPR-title
@@ -60,7 +61,8 @@
 
 .GDPR-content
 {
-	height: 80vh;
+	height: 82vh;
+	bottom: 2vh;
 	background: linear-gradient(135deg, var(--base-green), var(--base-dark), var(--base-green));
 	background-size: 300% 300%;
 	animation: moveBackground 5s ease infinite, smallScalingSignInGDPR 8s ease infinite;
@@ -75,13 +77,17 @@
 	text-align: center;
 }
 
+.GDPR-modal-body
+{
+	font-size: 1.5vh;
+}
+
 .GDPR-footer
 {
 	position: relative;
 	justify-content: center;
-	/* KARL HERE CHECK WITH OTHERS */
-	/* border-top: solid 0.2vh var(--base-white); */
 	border-top: none;
+	padding-top: 0vh;
 }
 
 .GDPR-button
@@ -93,7 +99,7 @@
 .GDPR-gif
 {
 	position: absolute;
-	top: 16%;
+	top: 25%;
 	left: 0;
 	width: 100%;
 	height: 100%;
@@ -104,10 +110,31 @@
 
 .priv-gif
 {
-	height: 55%;
+	height: 48%;
 	width: auto;
-	top: 38%;
-	left: 24%;
+	top: 54%;
+	left: -45%;
+	animation: moveAndFlip 4s linear infinite;
+}
+
+@keyframes moveAndFlip
+{
+	0%
+	{
+		transform: translateX(0) scaleX(1);
+	}
+	50%
+	{
+		transform: translateX(70vh) scaleX(1);
+	}
+	51%
+	{
+		transform: translateX(70vh) scaleX(-1);
+	}
+	100%
+	{
+		transform: translateX(0) scaleX(-1);
+	}
 }
 
 @keyframes smallScalingSignInGDPR
@@ -136,7 +163,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background-color: var(--base-dark);
+	background-color: rgba(0, 0, 0, 0.7);
 	z-index: 1040;
 	display: none;
 }
