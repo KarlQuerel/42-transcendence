@@ -5,43 +5,12 @@
 	Bienvenu sur la merveilleuse page de Profil.
 	Tu seras heureux de retrouver mes commentaires ci-dessous pour te guider dans ce voyage vers le Frontend.
 
-	Il y a bcp de boutons sur cette page :
-
-	1. Change Password
-	Le bouton s'appelle "changePasswordButton" et a pour id "change-password-button".
-	Il redirige vers la page "/change-password" lorsqu'on clique dessus.
-	Il faut le mettre proche/en dessous/a coté du password.
-
-	2. Friends
-	Le bouton s'appelle "friendsButton" et a pour id "friends-button".
-	Il redirige vers la page "/friends" lorsqu'on clique dessus.
-	Tu peux le mettre où tu veux.
-
-	3. Update Profile
-	Le bouton s'appelle "updateProfileButton" et a pour id "update-profile-button".
-	Le bouton doit disparaitre si l'utilisateur est en mode édition de son profil (si il est dans profileEditMode()).
-	En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
-		
-	4. Logout
-	Le bouton s'appelle "logoutButton" et a pour id "logout-button".
-	Il redirige vers la page "/sign-in" lorsqu'on clique dessus.
-	Il faut le mettre en bas de la page, à droite ou ailleurs, juste il faut le mettre un peu a part quoi.
-
-	5. Delete account
-	Le bouton s'appelle "deleteAccountButton" et a pour id "delete-account-button".
-	Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir supprimer son compte.
-	Je pense tu peux le placer proche de Logout button.
-		
 	6. Anonymize data
 	Le bouton s'appelle "anonymizeButton" et a pour id "anonymize-button".
 	Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir anonymiser ses données.
 	Je pense tu peux le placer proche de Delete account et Logout button ? Maybe ?
 	Il faut que le bouton disparaisse si l'utilisateur est déjà anonyme (on peut vérifier ça avec getUserAnonymousStatus()).
 	Quand un user anonymise son compte, je l'enregistre comme is_anonymous = true dans la base de données.
-
-
-	Autre point :
-	Le Two-Factor Authentication field est dégueulasse actuellement. Normalement c'est une case à cocher mais pour l'instant la case est méconnaissable.
 
 */
 
@@ -78,13 +47,14 @@ export function renderProfile()
 	profileTitle.textContent = 'My Profile';
 	container.appendChild(profileTitle);
 
-// KARL HERE - TO-DO Karl t'es beau, corrige moi ca et je leche l'oreille:
-// quand je suis log avec un utilisateur et que 
-// je suis sur son profile puis que je me delog, 
-// lorsque je clique sur le bouton page precedente
-// je reviens sur la page profile et je peux voir
-// les infos de l'utilisateur tout juste deconnecte,
-// pour ne plus le voir il faut que je fasse un refresh
+	// KARL HERE - TO-DO 
+	// Karl t'es beau, corrige moi ca et je leche l'oreille:
+	// quand je suis log avec un utilisateur et que 
+	// je suis sur son profile puis que je me delog, 
+	// lorsque je clique sur le bouton page precedente
+	// je reviens sur la page profile et je peux voir
+	// les infos de l'utilisateur tout juste deconnecte,
+	// pour ne plus le voir il faut que je fasse un refresh
 
 	// Create an image element for the avatar
 	const	avatarElement = document.createElement('img');
@@ -236,8 +206,6 @@ export function renderProfile()
 			profileEditMode(userData_edit, personalInfoSection);
 		});
 
-
-
 		// Container for Friends + dashboard
 		const	buttonsContainer2 = document.createElement('div');
 		buttonsContainer2.classList.add('container-btn-profile');
@@ -341,24 +309,46 @@ export function renderProfile()
 		anonymizeButton.classList.add('btn', 'btn-home', 'profile-button');
 		anonymizeButton.textContent = 'Anonymize Data';
 
-
+		// KARL HERE
 		// Cacher le bouton si le user est déjà anonyme
-		const	isAnonymous = getUserAnonymousStatus();
+		// const	isAnonymous = Boolean(getUserAnonymousStatus());
+		// const	isAnonymous = getUserAnonymousStatus();
 
-		if (isAnonymous === false)
-		{
-			const	anonymizeButton = document.getElementById('anonymize-button');
+		// console.log('HERE =====' ,isAnonymous);
 
-			if (anonymizeButton)
-				anonymizeButton.style.display = 'block';
-		}
-		else
-		{
-			const	anonymizeButton = document.getElementById('anonymize-button');
+		// if (isAnonymous === false)
+		// {
+		// 	const	anonymizeButton = document.getElementById('anonymize-button');
+
+			
+		// 	if (anonymizeButton)
+		// 		anonymizeButton.style.display = 'block';
+		// }
+		// else
+		// {
+		// 	const	anonymizeButton = document.getElementById('anonymize-button');
 		
-			if (anonymizeButton)
-				anonymizeButton.style.display = 'none';
-		}
+		// 	if (anonymizeButton)
+		// 		anonymizeButton.style.display = 'none';
+		// }
+
+		// KARL HERE
+		getUserAnonymousStatus().then(isAnonymous => {
+			console.log('HERE =====', isAnonymous);
+			
+			if (isAnonymous === false) {
+				const anonymizeButton = document.getElementById('anonymize-button');
+		
+				if (anonymizeButton)
+					anonymizeButton.style.display = 'block';
+			} else {
+				const anonymizeButton = document.getElementById('anonymize-button');
+				
+				if (anonymizeButton)
+					anonymizeButton.style.display = 'none';
+			}
+		});
+		// FIN KARL HERE
 
 		// Event listener for anonymize button
 		anonymizeButton.addEventListener('click', async () =>
@@ -781,7 +771,7 @@ async function anonymizeUserData()
         });
 
 		alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
-		window.location.href = '/profile';
+		navigateTo('/profile');
 
 	}
 	catch (error)
@@ -799,7 +789,6 @@ async function getUserAnonymousStatus()
 			method: 'GET',
 		});
 
-		// const	data = await response.json();
 		return response;
 	}
 	catch (error)
