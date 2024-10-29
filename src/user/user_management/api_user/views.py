@@ -574,6 +574,7 @@ def update2FAStatus(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
+@csrf_protect
 def loggout_user(request):
 	try:
 		user = request.user
