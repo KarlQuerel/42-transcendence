@@ -25,6 +25,12 @@ urlpatterns = [
 	path('getAllUsers/', views.getAllUsers, name='get-all-users'),
 	path('checkUserPassword/', views.checkUserPassword, name='check-user-password'),
 	path('send-infos-to-user/', views.send_user_informations, name='send_infos_to_user'),
+    path('anonymizeUserData/', views.anonymizeUserData, name='anonymize-user-data'),
+    path('updateAnonymousStatus/', views.updateAnonymousStatus, name='update-anonymous-status'),
+    path('getAnonymousStatus/', views.getAnonymousStatus, name='get-anonymous-status'),
+    path('get2FAStatus/', views.get2FAStatus, name='get-2fa-status'),
+    path('update2FAStatus/', views.update2FAStatus, name='update-2fa-status'),
+    path('deleteAccount/', views.deleteAccount, name='delete-account'),
 ]
 
 if settings.DEBUG:
