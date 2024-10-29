@@ -24,8 +24,7 @@ export function renderFriendsList()
 
 	// Create a row for the user cards
 	const	row = document.createElement('div');
-	// row.className = 'row'; // Bootstrap row class
-	row.className = 'row row-cols-2 row-cols-lg-5 g-2 g-lg-3'; // KARL HERE
+	row.className = 'row row-cols-2 row-cols-lg-5 g-2 g-lg-3';
 
 	getAllUsers()
 		.then(async other_users =>
@@ -220,6 +219,7 @@ async function removeFriend(other_user_id)
 function waitingForResponse(actionSection)
 {
 	const	statusText = document.createElement('p');
+	statusText.classList.add('friends-text');
 	statusText.textContent = 'Request pending';
 	actionSection.appendChild(statusText);
 }
@@ -229,16 +229,19 @@ async function respondToRequest(other_user, actionSection)
 	const	request_id = await getRequestID(other_user.id);
 		
 	const	friendText = document.createElement('p');
+	friendText.classList.add('friends-text');
 	friendText.textContent = `${other_user.username} sent you a friend request!`;
 	actionSection.appendChild(friendText);
 
 	const	acceptButton = document.createElement('button');
+	acceptButton.classList.add('btn', 'btn-home', 'accept-button');
 	acceptButton.textContent = 'Accept';
 	acceptButton.onclick = () => acceptFriendRequest(request_id);
 	actionSection.appendChild(acceptButton);
 
 	const	rejectButton = document.createElement('button');
 	rejectButton.textContent = 'Reject';
+	rejectButton.classList.add('btn', 'btn-home', 'reject-button');
 	rejectButton.onclick = () => rejectFriendRequest(request_id);
 	actionSection.appendChild(rejectButton);
 }
@@ -255,21 +258,27 @@ function sendingRequest(other_user, actionSection)
 function alreadyFriends(other_user, actionSection)
 {
 	const	friendText = document.createElement('p');
+	friendText.classList.add('already-friends-text');
 	friendText.textContent = 'You are already friends!';
 	actionSection.appendChild(friendText);
 
 	const	online_status = document.createElement('p');
 	if (other_user.online_status == true)
 	{
-		online_status.textContent = 'Online status: online'; //HERE KARL mettre "online" en vert
+		online_status.classList.remove('offline-friends');
+		online_status.classList.add('online-friends');
+		online_status.textContent = 'Online';
 	}
 	else
 	{
-		online_status.textContent = 'Online status: offline'; //HERE KARL mettre "offline" en rouge
+		online_status.classList.remove('online-friends');
+		online_status.classList.add('offline-friends');
+		online_status.textContent = 'Offline';
 	}
 	actionSection.appendChild(online_status);
 
 	const	removeButton = document.createElement('button');
+	removeButton.classList.add('btn', 'btn-home', 'remove-button');
 	removeButton.textContent = 'Remove friend';
 	removeButton.onclick = () => removeFriend(other_user.id);
 	actionSection.appendChild(removeButton);

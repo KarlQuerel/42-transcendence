@@ -119,5 +119,3 @@ export function renderNavbar()
 	const	navbar = createNavbar();
 	document.body.insertAdjacentElement('afterbegin', navbar);
 }
-
-// document.addEventListener("DOMContentLoaded", renderNavbar);

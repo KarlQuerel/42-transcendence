@@ -1,0 +1,190 @@
+/************************************************
+					PROFILE
+***********************************************/
+
+/*		CONTAINER		*/
+#profile-container
+{
+	width: auto;
+	/* KARL HERE */
+	/* height: 165%; */
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	z-index: 10;
+	position: relative;
+}
+
+.password-container
+{
+	width: 60%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.container-btn-profile
+{
+	width: 60%;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+
+/*		TITLE		*/
+.profile-title
+{
+	font-size: 5vh;
+	color: var(--base-white);
+	text-align: center;
+	margin-bottom: 2vh;
+	position: relative;
+	z-index: 1;
+	background-color: var(--base-dark);
+}
+
+/*		TEXT		*/
+#personal-info
+{
+	border-radius: 3vh;
+	position: relative;
+	bottom: 30vh;
+	width: 60%;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+}
+
+.profile-text
+{
+	background: var(--base-dark);
+	font-size: 1.5vh;
+	width: fit-content;
+}
+
+.two-factor-text
+{
+	font-size: 1vh;
+}
+
+#two-FA-checkbox
+{
+	width: 15vh;
+}
+
+/*		AVATAR		*/
+.profile-avatar
+{
+	width: 15vh;
+	height: 15vh;
+	border-radius: 3vh;
+	border: 0.5vh solid var(--base-green);
+	animation: borderPulse 2s infinite alternate ease-in-out;
+	right: 40%;
+	bottom: 12vh;
+	position: relative;
+	z-index: 10;
+}
+
+.right-avatar
+{
+	left: 40%;
+	bottom: 27vh;
+}
+
+/* Keyframe animation for pulsing border color */
+@keyframes borderPulse
+{
+	0%
+	{
+		border-color: var(--base-green);
+	}
+	50%
+	{
+		border-color: var(--base-light-green);
+	}
+	100%
+	{
+		border-color: var(--base-green);
+	}
+}
+
+/*		BUTTONS		*/
+.profile-button
+{
+	width: 15vh;
+	height: 5vh;
+	margin-top: 1vh;
+	font-size: 1vh;
+	padding: 0.5vh 1vh;
+	align-self: center;
+}
+
+#change-password-button
+{
+	left: 15%;
+	bottom: 1.5vh;
+}
+
+#update-profile-button
+{
+	left: 0vh;
+}
+
+#logout-button
+{
+	width: 30vh;
+	height: 10vh;
+	top: 5vh;
+	font-size: 2.5vh;
+}
+
+/*		AVATAR		*/
+#avatar_input
+{
+	width: 10vh;;
+}
+
+.custom-file-wrapper
+{
+	position: relative;
+	display: inline-block;
+}
+
+.custom-file-input
+{
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+}
+
+.btn-upload
+{
+	margin-top: 1vh;
+	width: 20vh;
+	height: 5vh;
+	font-size: 100%;
+}
+
+.button-wrapper
+{
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.custom-file-wrapper,
+.profile-button
+{
+	flex-shrink: 0;
+}

@@ -1,5 +1,5 @@
 /***********************************************\
--		   IMPORTING VARIABLES/FUNCTIONS		-
+-			IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG, navigateTo, setSignedInState }
 from '../../main.js';
@@ -8,15 +8,16 @@ import { refreshToken, apiRequest }
 from './signin.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 
 export function render2fa()
 {
-    if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
-    {
-        navigateTo('/profile');        
-    }
+    // KARL HERE - TO REMOVE LATER
+	// if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
+    // {
+    //     navigateTo('/profile');
+    // }
     const form = render_form();
     document.body.appendChild(form);
 

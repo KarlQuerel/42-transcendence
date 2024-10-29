@@ -131,7 +131,7 @@ const	routes =
 		title: "Friends List",
 		render: renderFriendsList
 	},
-	'/2fa_verification':
+	'/2fa-verification':
 	{
 		title: "2FA Verification",
 		render: render2fa

@@ -249,20 +249,20 @@
 .navbar-dark .navbar-toggler-icon::before,
 .navbar-dark .navbar-toggler-icon::after
 {
-background-color: var(--base-white);
+	background-color: var(--base-white);
 }
 
 .navbar-toggler:not(.collapsed) .navbar-toggler-icon
 {
-transform: rotate(45deg);
+	transform: rotate(45deg);
 }
 
 .navbar-toggler:not(.collapsed) .navbar-toggler-icon::before
 {
-opacity: 0;
+	opacity: 0;
 }
 
 .navbar-toggler:not(.collapsed) .navbar-toggler-icon::after
 {
-transform: rotate(-90deg) translateX(7px);
+	transform: rotate(-90deg) translateX(7px);
 }

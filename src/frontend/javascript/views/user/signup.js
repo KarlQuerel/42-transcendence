@@ -80,7 +80,7 @@ export function renderSignUp()
 	gdprCheckbox.classList.add('form-check-input');
 
 	const	gdprLabel = document.createElement('label');
-	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label', 'GDPR-checkbox');
+	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label');
 	gdprLabel.setAttribute('for', 'gdpr-acceptance');
 	gdprLabel.textContent = 'I accept the Privacy Policy Terms';
 	gdprLabel.classList.add('form-check-label');

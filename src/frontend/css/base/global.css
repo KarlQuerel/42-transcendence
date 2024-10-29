@@ -48,8 +48,12 @@
 	--base-gray: #262626;
 	--base-blue: #091370;
 	--base-red: #ff0000;
+	--base-purple: #8c00ff;
 	--base-light-green: rgba(163, 219, 163, 0.7);
 	--base-light-blue: rgb(163, 201, 219, 0.7);
+	--base-light-yellow: rgba(255, 236, 68, 0.7);
+	--base-light-red: rgba(255, 37, 37, 0.7);
+	--base-light-dark: rgba(0, 0, 0, 0.7);
 }
 
 /*		Reset for different browsers		*/
