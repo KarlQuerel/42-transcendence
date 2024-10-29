@@ -22,7 +22,21 @@ export async function getInactiveID()
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-        }});
+        }})
+        // .then(users_tab=>{
+        //     console.log('inactiveUsersID = ', inactive_users_id);
+        //     apiRequest('/api/dashboard/deleteGameHistoryInactiveUsers/', {
+        //         method: 'DELETE',
+        //         headers:
+        //         {
+        //             ...getAuthHeaders(),
+        //             'X-CSRFToken': getCookie('csrftoken'),
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify(users_tab),
+        //     })
+        //     console.log("Finished deleting user's GameHistory")
+        // });
 
         const data = await response.json();
         return data;
@@ -38,9 +52,10 @@ export async function deleteInactiveUsers(inactiveUsersID)
 {
     try
     {
-        const response = await fetch('/api/users/deleteInactiveUsers/', {
+        const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'POST',
             headers: {
+                // 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
@@ -54,3 +69,25 @@ export async function deleteInactiveUsers(inactiveUsersID)
         console.error('Failed to delete inactive users:', error);
     };
 }
+
+
+// export async function deleteInactiveUsers(inactiveUsersID)
+// {
+//     try
+//     {
+//         const response = await fetch('/api/users/deleteInactiveUsers/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ inactiveUsersID })
+//         });
+
+//         if (DEBUG)
+//             console.log('Inactive users deleted successfully.');
+//     }
+//     catch (error)
+//     {
+//         console.error('Failed to delete inactive users:', error);
+//     };
+// }

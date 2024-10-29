@@ -749,11 +749,14 @@ def getInactiveUsersID(request):
 		inactive_users_id = []
 
 		time = timezone.now()
-		cutoffTime = time + timezone.timedelta(days=3*365)
+		# cutoffTime = time + timezone.timedelta(days=3*365)
+		cutoffTime = time + timezone.timedelta(minutes=1)
 
 		for user in users:
 			if user.last_login is not None and user.last_login < cutoffTime:
 				inactive_users_id.append(user.id)
+		
+		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
 
 		return JsonResponse(inactive_users_id, safe=False, status=200)
 
@@ -764,24 +767,24 @@ def getInactiveUsersID(request):
 #########################################
 
 
-@api_view(['POST'])
-def deleteInactiveUsers(request):
-	try:
-		inactiveUsersID = request.data.get('inactiveUsersID', [])
+# @api_view(['POST'])
+# def deleteInactiveUsers(request):
+# 	try:
+# 		inactiveUsersID = request.data.get('inactiveUsersID', [])
 
-		if isinstance(inactiveUsersID, str):
-			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
+# 		if isinstance(inactiveUsersID, str):
+# 			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
 		
-		if request.user.is_authenticated:
-			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+# 		if request.user.is_authenticated:
+# 			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
 
-		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
-		users_to_delete.delete()
+# 		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
+# 		users_to_delete.delete()
 
-		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+# 		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
 
-	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
 
 
 

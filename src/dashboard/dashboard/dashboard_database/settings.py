@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
 
-#chck si j'ai besoin de api_dashboard
+#TODO: check si j'ai besoin de api_dashboard
     'api_dashboard',
     'api_user.apps.ApiConfig',
 ]
