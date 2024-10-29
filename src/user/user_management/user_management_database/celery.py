@@ -4,6 +4,6 @@ import os
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'user_management_database.settings')
 
-app = Celery('user_management')
+app = Celery('user_management_database')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()

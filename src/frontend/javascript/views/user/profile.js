@@ -480,9 +480,9 @@ async function verifyProfileChanges()
     if (DEBUG)
         console.log('First name type:', first_name_type, '\nLast name type:', last_name_type, '\nUsername type:', username_type, '\nDate of birth type:', date_of_birth_type, '\nPassword type:', password_type, '\nEmail type:', email_type);
 
-    const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
+    const allValid = Boolean(allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type));
 
-    if (!allValid)
+    if (allValid === false)
     {
         if (DEBUG)
             console.log('Profile changes are invalid.');

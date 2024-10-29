@@ -219,5 +219,5 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
 
 
 ############ Celery for autmatic deletion of inactive users ############
-CELERY_BROKER_URL = 'redis://localhost:6378/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6378/0'
+CELERY_BROKER_URL = 'redis://redis:6378/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6378/0'

@@ -186,7 +186,7 @@ services:
     user: root
     volumes:
       - ./user:/app/
-    command: celery -A user.user_management.user_management_database worker -l info
+    command: celery -A user_management_database worker -l info
     depends_on:
       - redis
       - profile
@@ -204,7 +204,7 @@ services:
       context: .
       dockerfile: user/Dockerfile
     container_name: CeleryBeat
-    command: celery -A user.user_management.user_management_database beat -l info
+    command: celery -A user_management_database beat -l info
     volumes:
       - ./user:/app
     env_file:
