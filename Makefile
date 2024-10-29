@@ -17,7 +17,6 @@ clean :
 	@cd src && docker-compose down
 
 fclean : clean
-
 	cd src && docker system prune -af
 	cd src && docker volume prune -af
 	@echo "$(GREEN)\n🛁✨ All containers test, networks, volumes and images have been removed ✨🛁\n$(NC)"
@@ -41,7 +40,7 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
-logs-userViews: #pour voir les print des views de User
+logs-userViews:
 	docker logs User
 
 logs-dashboardViews:
@@ -67,10 +66,6 @@ check_allUsers:
 
 check_allGameHistory:
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_dashboard_gamehistory;'"
-
-# check_userGamehistory:
-# 	@read -p "Enter username: " username; \
-# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT api_dashboard_gamehistory.* FROM api_dashboard_gamehistory JOIN api_user_customuser ON api_dashboard_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
 
 check_userGamehistory:
 	@read -p "Enter username: " username; \

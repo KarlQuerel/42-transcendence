@@ -2,7 +2,7 @@ FROM grafana/grafana
 
 USER root
 
-RUN	apk update && apk upgrade && apk add openssl
+RUN	apk --no-cache update || true && apk --no-cache upgrade || true && apk add --no-cache openssl
 RUN mkdir -p /etc/grafana/ssl
 RUN	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/grafana/ssl/grafana.key -out /etc/grafana/ssl/grafana.crt -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=transcendance.42.fr/UID=transcendance"
 

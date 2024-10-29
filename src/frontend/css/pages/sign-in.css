@@ -1,0 +1,77 @@
+/************************************************
+					SIGN-IN
+***********************************************/
+
+/*			FORM			*/
+#sign-in-form
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 75vh;
+	margin-left: 15%;
+}
+
+/*			INPUT			*/
+.sign-in-input
+{
+	display: block;
+	width: 40vh;
+	padding: 3vh;
+	margin-bottom: 2vh;
+	border-radius: 15px;
+	color: var(--base-white);
+	background: linear-gradient(135deg, var(--base-green), var(--base-dark), var(--base-green));
+	background-size: 300% 300%;
+	animation: moveBackground 5s ease infinite, smallScalingSignIn 8s ease infinite;
+	font-size: 2vh;
+	text-align: center;
+}
+
+.sign-in-input::placeholder
+{
+	color: var(--base-white);
+	opacity: 0.7;
+}
+
+@keyframes smallScalingSignIn
+{
+	0%
+	{
+		background-position: 0% 50%;
+		transform: translate(-50%, -50%) scale(1);
+	}
+	50%
+	{
+		background-position: 100% 50%;
+		transform: translate(-50%, -50%) scale(1.20);
+	}
+	100%
+	{
+		background-position: 0% 50%;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+/*			BUTTONS			*/
+.sign-in-button
+{
+	width: 15vh !important;
+	height: 5vh !important;
+	margin-top: 1vh;
+	margin-right: 8vh;
+	transform: translate(-50%, -50%);
+	right: 2%;
+	font-size: 1em;
+
+}
+
+.sign-in-wrapper
+{
+	display: flex;
+	justify-content: flex-start;
+	width: 100%;
+	max-width: 60vh;
+}
+

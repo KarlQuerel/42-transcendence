@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/user/user_management",
+        "./src/dashboard/dashboard"
+    ]
+}

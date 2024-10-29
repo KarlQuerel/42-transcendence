@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.files.storage import default_storage
 from django.contrib.auth import authenticate, login
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
@@ -198,15 +199,12 @@ def getAllUsers(request):
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
-			print(f'User: {user}')
 			users = CustomUser.objects.all()
-			print(f'Users: {users}')
 			users_info = []
 
 			for user in users:
 				users_info.append({'username': user.username, 'id': user.id})
 
-			print(f'Users info: {users_info}')
 			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
@@ -235,6 +233,7 @@ def getFriendAvatar(request, user_id):
 		return JsonResponse(data, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -400,6 +399,61 @@ def updateAvatar(request):
 		return Response({'error': str(e)}, status=500)
 
 
+##################################################
+##            REQUEST PERSONNAL INFOS   		##
+##################################################
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_user_informations(request):
+	try:
+		user = request.user
+		games = request.data
+
+		user_data = {
+			'first_name': user.first_name,
+			'last_name': user.last_name,
+			'username': user.username,
+			'date_of_birth': user.date_of_birth.isoformat() if user.date_of_birth else None,
+			'email': user.email,
+			'online_status': 'online' if user.is_online else 'offline',
+			'friends': [
+				{
+					'username': friend.username
+				}
+				for friend in user.friends.all()
+			],
+			'games': [
+				{
+					'you': game.get('myUsername'),
+					'opponent': game.get('opponentUsername'),
+					'you score': game.get('myScore'),
+					'opponent score': game.get('opponentScore'),
+					'game\'s date': game.get('date'),
+				}
+				for game in games
+			]
+		}
+		json_data = json.dumps(user_data, indent=4)
+
+		send_mail(
+			f'Personnal Informations Requested from trascendance.fr for {user.username}',
+			f"""Dear {user.first_name} {user.last_name},
+Thank you for your request regarding your personal data.
+As per your request and in compliance with the General Data Protection Regulation (GDPR),
+we are providing you with an export of your personal data.
+
+{json_data}""",		
+			str(os.getenv('EMAIL_HOST_USER')),
+			['traans.een.daance@gmail.com'],
+			fail_silently=False,
+		)
+
+		return JsonResponse({'success': 'user informations send to user email'}, status=status.HTTP_200_OK)
+	except Exception as e:
+		print(f"Error: {e}")
+		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
@@ -684,8 +738,58 @@ def deleteAccount(request):
 
 
 ##################################################
+##          DELETE INACTIVE USERS VIEWS   	    ##
+##################################################
+
+
+@api_view(['GET'])
+def getInactiveUsersID(request):
+	try:
+		users = CustomUser.objects.all()
+		inactive_users_id = []
+
+		time = timezone.now()
+		cutoffTime = time + timezone.timedelta(days=3*365)
+
+		for user in users:
+			if user.last_login is not None and user.last_login < cutoffTime:
+				inactive_users_id.append(user.id)
+
+		return JsonResponse(inactive_users_id, safe=False, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+@api_view(['POST'])
+def deleteInactiveUsers(request):
+	try:
+		inactiveUsersID = request.data.get('inactiveUsersID', [])
+
+		if isinstance(inactiveUsersID, str):
+			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
+		
+		if request.user.is_authenticated:
+			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+
+		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
+		users_to_delete.delete()
+
+		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
 ##           CHECK PASSWORD VIEWS	            ##
 ##################################################
+
+
 @csrf_exempt
 def checkUserPassword(request):
 	if request.method == 'POST':

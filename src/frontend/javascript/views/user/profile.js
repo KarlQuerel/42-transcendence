@@ -52,6 +52,9 @@
 import { DEBUG, setSignedInState }
 from '../../main.js';
 
+import { renderNavbar }
+from '../navbar/navbar.js';
+
 import { apiRequest, getAuthHeaders, getCookie }
 from './signin.js';
 
@@ -221,6 +224,34 @@ export function renderProfile()
         container.appendChild(friendsButton);
 
 
+        /***************** RGPD *****************/
+        
+        // bouton pour envoyer les donnees perso de l'utilisateur au format json
+        const requestInfosButton = document.createElement('button');
+        requestInfosButton.setAttribute('id', 'request-infos-button');
+        requestInfosButton.textContent = 'Request My Infos';
+        container.appendChild(requestInfosButton);
+
+        requestInfosButton.addEventListener('click', () => {
+            apiRequest('/api/dashboard/getGameHistory/', {
+                method: 'GET',
+            })
+            .then(games => {
+                console.log('games: ', games);
+                apiRequest('/api/users/send-infos-to-user/', {
+                    method: 'POST',
+                    body: JSON.stringify(games),
+                })
+                .catch(error => {
+                    console.error('Error sending their personnal informations to the user:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error user game history:', error);
+            })
+        });
+
+
         /***************** 2FA *****************/
 
         // case pour activer le 2fa
@@ -304,6 +335,8 @@ export function renderProfile()
             set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            setSignedInState(false);
+            renderNavbar();
             if (localStorage.getItem('username'))
                 localStorage.removeItem('username');
             setSignedInState(false);
@@ -344,7 +377,8 @@ export function renderProfile()
 \***********************************************/
 
 // Fetch user data from the API
-export async function fetchUserData() {
+export async function fetchUserData()
+{
     return apiRequest('/api/users/currentlyLoggedInUser/', {
         method: 'GET',
     })
@@ -361,25 +395,6 @@ async function set_status_offline()
     .catch(error => {
         console.error('Error setting status to offline:', error);
     });
-}
-
-// Fetch game history data from the API
-async function fetchGameHistoryData() {
-    try {
-        const userData = await apiRequest('/api/dashboard/getGameHistory/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        if (DEBUG) {
-            console.log("userData = ", userData);
-        }
-        return userData;
-    } catch (error) {
-        console.error('Error: fetch userData', error);
-        throw error; // Re-throw the error
-    }
 }
 
 
@@ -440,13 +455,16 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
         const avatarFile = document.getElementById('avatar_input').files[0];
 
-        const isValidData = verifyProfileChanges();
+        const isValidData = Boolean(verifyProfileChanges());
 
         if (DEBUG)
             console.log('Updated values are valid:', isValidData);
 
-        if (isValidData)
+        if (isValidData === true)
         {
+            if (DEBUG)
+                console.log('Entering if to save new data.');
+
             if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
                 await saveNewAvatar(avatarFile);
             await saveProfileChanges(userData_edit);
@@ -473,7 +491,10 @@ async function verifyProfileChanges()
     const password_type = 'password';
     const email_type = checkIdentifierType(email, 'email_input');
 
-    const allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
+    if (DEBUG)
+        console.log('First name type:', first_name_type, '\nLast name type:', last_name_type, '\nUsername type:', username_type, '\nDate of birth type:', date_of_birth_type, '\nPassword type:', password_type, '\nEmail type:', email_type);
+
+    const allValid = Boolean(allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type));
 
     if (!allValid)
     {
@@ -621,15 +642,8 @@ async function saveNewAvatar(avatarFile)
                     },
                     body: JSON.stringify({ avatar_input: base64data }),
                 });
-
-            if (DEBUG)
-            {
-                console.log('Response:', response); // Log the entire response object
-                console.log('Response status:', response.status);
-                console.log('Response status text:', response.statusText);
-            }
-    
-            console.log('Avatar updated successfully.');
+        
+                console.log('Avatar updated successfully.');
             };
             reader.readAsDataURL(avatarFile); // Read the file as a data URL
         }
