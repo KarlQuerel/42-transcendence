@@ -1,10 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
-from '../../main.js';
-
-import { getSignedInState }
+import { DEBUG, getSignedInState }
 from '../../main.js';
 
 function createNavbar()

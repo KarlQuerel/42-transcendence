@@ -466,7 +466,7 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 -				TROPHEE ICON					-
 \***********************************************/
 
-function retrieveAllUserStats(allUsers)
+function retrieveAllUserStats(allUsers, gameHistory)
 {
 	const allStats = [];
 
@@ -478,11 +478,16 @@ function retrieveAllUserStats(allUsers)
 			ranking_position: 0
 		};
 
-		user.games_history.forEach(game => {
-			if (game.myScore > game.opponentScore)
-				stats.nb_of_victories++;
-			else
-				stats.nb_of_defeats++;
+		gameHistory.forEach(game => {
+			// Check if the game belongs to the current user
+			if (game.myUsername === stats.username) {
+				// Update victories or defeats based on game score
+				if (game.myScore > game.opponentScore) {
+					stats.nb_of_victories++;
+				} else {
+					stats.nb_of_defeats++;
+				}
+			}
 		});
 
 		allStats.push(stats);
@@ -493,7 +498,7 @@ function retrieveAllUserStats(allUsers)
 
 function badge(gameHistory, allUsers)
 {
-	const allStats = retrieveAllUserStats(allUsers);
+	const allStats = retrieveAllUserStats(allUsers, gameHistory);
 
 	let badge_img = '';
 	let message = '';
