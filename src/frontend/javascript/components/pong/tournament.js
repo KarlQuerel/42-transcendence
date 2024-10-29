@@ -117,7 +117,6 @@ async function showPasswordModal(playerName, tournamentForm)
 	});
 }
 
-
 export async function displayTournamentForm()
 {
 	// Create the form container

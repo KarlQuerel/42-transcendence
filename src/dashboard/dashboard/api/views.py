@@ -25,7 +25,7 @@ def getGameHistory(request):
 			print("ERROR: PONGINATOR NOT FOUND IN GET GAME HISTORY") #DEBUG
 
 		# print(f"Retrieved game history: {serializer.data}") #DEBUG
-		return Response(serializer.data)
+		return Response(serializer.data, status=200)
 	else:
 		return Response({'error': 'User not authenticated'}, status=401)
 

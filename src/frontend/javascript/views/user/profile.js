@@ -52,6 +52,9 @@
 import { DEBUG, setSignedInState }
 from '../../main.js';
 
+import { renderNavbar }
+from '../navbar/navbar.js';
+
 import { apiRequest, getCookie }
 from './signin.js';
 
@@ -221,6 +224,34 @@ export function renderProfile()
         container.appendChild(friendsButton);
 
 
+        /***************** RGPD *****************/
+        
+        // bouton pour envoyer les donnees perso de l'utilisateur au format json
+        const requestInfosButton = document.createElement('button');
+        requestInfosButton.setAttribute('id', 'request-infos-button');
+        requestInfosButton.textContent = 'Request My Infos';
+        container.appendChild(requestInfosButton);
+
+        requestInfosButton.addEventListener('click', () => {
+            apiRequest('/api/dashboard/getGameHistory/', {
+                method: 'GET',
+            })
+            .then(games => {
+                console.log('games: ', games);
+                apiRequest('/api/users/send-infos-to-user/', {
+                    method: 'POST',
+                    body: JSON.stringify(games),
+                })
+                .catch(error => {
+                    console.error('Error sending their personnal informations to the user:', error);
+                });
+            })
+            .catch(error => {
+                console.error('Error user game history:', error);
+            })
+        });
+
+
         /***************** 2FA *****************/
 
         // case pour activer le 2fa
@@ -305,6 +336,8 @@ export function renderProfile()
             set_status_offline();
             localStorage.removeItem('access_token');
             localStorage.removeItem('refresh_token');
+            setSignedInState(false);
+            renderNavbar();
             if (localStorage.getItem('username'))
                 localStorage.removeItem('username');
             setSignedInState(false);
@@ -464,7 +497,7 @@ async function verifyProfileChanges()
 
     const allValid = Boolean(allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type));
 
-    if (allValid === false)
+    if (!allValid)
     {
         if (DEBUG)
             console.log('Profile changes are invalid.');

@@ -1,0 +1,25 @@
+/************************************************
+				PAGE NOT FOUND
+***********************************************/
+
+/*			CONTAINER			*/
+.not-found-container
+{
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	height: 100vh;
+}
+
+/*		TITLE		*/
+.page-not-found-title
+{
+	font-size: 5vh;
+	color: var(--base-white);
+	text-align: center;
+	margin-bottom: 2vh;
+	z-index: 1000;
+	background-color: var(--base-dark);
+}
+

@@ -113,6 +113,12 @@ function createNavbar()
 
 export function renderNavbar()
 {
+	const	existingNavbar = document.querySelector('.navbar');
+	if (existingNavbar)
+	{
+		existingNavbar.remove();
+	}
+
 	const	navbar = createNavbar();
 	document.body.insertAdjacentElement('afterbegin', navbar);
 }
