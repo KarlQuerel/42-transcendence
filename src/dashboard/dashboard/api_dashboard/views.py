@@ -70,6 +70,7 @@ def addStats(request):
 
 @api_view(['PUT'])
 @csrf_protect
+@permission_classes([IsAuthenticated])
 def anonymiseGameHistory(request):
 	try:
 		oldUsername = request.data.get('old_username')
@@ -86,7 +87,7 @@ def anonymiseGameHistory(request):
 				game.opponentUsername = newUsername
 			game.save()
 
-		print("Game history instances anonymised successfully") #DEBUG
+		print("Game history instances anonymised successfully")
 
 		return Response({"anonymiseGameHistory view message": "Game history instance anonymised successfully"})
 
@@ -96,11 +97,10 @@ def anonymiseGameHistory(request):
 
 @api_view(['DELETE'])
 @csrf_protect
+@permission_classes([IsAuthenticated])
 def deleteGameHistory(request):
 	try:
-		print("deleteGameHistory view called") #DEBUG
 		username = request.data.get('username')
-		print("account to delete: ", username) #DEBUG
 		
 		games = GameHistory.objects.filter(Q(myUsername=username))
 		if not games.exists():
