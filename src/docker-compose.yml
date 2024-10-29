@@ -178,52 +178,6 @@ services:
       - .env
 
 
-  celery_worker:
-    build:
-      context: .
-      dockerfile: user/Dockerfile
-    container_name: CeleryWorker
-    user: root
-    volumes:
-      - ./user:/app/
-    command: celery -A user_management_database worker -l info
-    depends_on:
-      - redis
-      - profile
-      - database
-    networks:
-      - transcendance
-    env_file:
-      - .env
-    environment:
-      - PYTHONPATH=/src/user/user_management/user_management_database/
-
-
-  celery_beat:
-    build:
-      context: .
-      dockerfile: user/Dockerfile
-    container_name: CeleryBeat
-    command: celery -A user_management_database beat -l info
-    volumes:
-      - ./user:/app
-    env_file:
-      - .env
-    depends_on:
-      - redis
-      - profile
-      - database
-    environment:
-      - PYTHONPATH=/src/user/user_management/user_management_database/
-
-  redis:
-    image: redis:6.0
-    container_name: Redis
-    ports:
-      - "6378:6378"
-    networks:
-      - transcendance
-
 
 networks:
   transcendance:

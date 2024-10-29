@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.files.storage import default_storage
 from django.contrib.auth import authenticate, login
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
@@ -198,15 +199,12 @@ def getAllUsers(request):
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
-			print(f'User: {user}')
 			users = CustomUser.objects.all()
-			print(f'Users: {users}')
 			users_info = []
 
 			for user in users:
 				users_info.append({'username': user.username, 'id': user.id})
 
-			print(f'Users info: {users_info}')
 			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
@@ -235,6 +233,7 @@ def getFriendAvatar(request, user_id):
 		return JsonResponse(data, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -681,8 +680,58 @@ def deleteAccount(request):
 
 
 ##################################################
+##          DELETE INACTIVE USERS VIEWS   	    ##
+##################################################
+
+
+@api_view(['GET'])
+def getInactiveUsersID(request):
+	try:
+		users = CustomUser.objects.all()
+		inactive_users_id = []
+
+		time = timezone.now()
+		cutoffTime = time + timezone.timedelta(days=3*365)
+
+		for user in users:
+			if user.last_login is not None and user.last_login < cutoffTime:
+				inactive_users_id.append(user.id)
+
+		return JsonResponse(inactive_users_id, safe=False, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+@api_view(['POST'])
+def deleteInactiveUsers(request):
+	try:
+		inactiveUsersID = request.data.get('inactiveUsersID', [])
+
+		if isinstance(inactiveUsersID, str):
+			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
+		
+		if request.user.is_authenticated:
+			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+
+		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
+		users_to_delete.delete()
+
+		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
 ##           CHECK PASSWORD VIEWS	            ##
 ##################################################
+
+
 @csrf_exempt
 def checkUserPassword(request):
     if request.method == 'POST':

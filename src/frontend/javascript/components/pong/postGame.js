@@ -62,7 +62,7 @@ function getDate()
 	const day = String(current_date.getDate()).padStart(2, '0');
 	const month = String(current_date.getMonth() + 1).padStart(2, '0');
 	const year = current_date.getFullYear();
-	
+
 	const formattedDate = `${year}-${month}-${day}`;
 
 	console.log('Formatted Date:', formattedDate);
@@ -75,19 +75,19 @@ export function cleanUpPong()
 {
 	if (DEBUG)
 		console.log('Cleaning up Pong...')
-	
+
 	const	tournamentForms = document.querySelectorAll('#input-form');
 	if (tournamentForms)
 	{
 		tournamentForms.forEach(form => form.remove());
 	}
-	
+
 	const	matchupsContainers = document.querySelectorAll('.matchups-container');
 	if (matchupsContainers.length > 0)
 	{
 		matchupsContainers.forEach(container => container.remove());
 	}
-	
+
 	const	passwordModals = document.querySelectorAll('.input-form');
 	if (passwordModals.length > 0)
 	{

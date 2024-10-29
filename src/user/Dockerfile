@@ -2,10 +2,6 @@ FROM	python:3.10
 
 RUN		apt update && apt upgrade -y
 
-# # Create a non-root user
-# RUN useradd -m celeryuser
-# USER celeryuser
-
 # Set the working directory
 WORKDIR /app
 
@@ -39,9 +35,6 @@ RUN chmod 777 /tmp/init_database.sh
 # Copy the rest of the application code
 COPY user/user_management/ /app/
 RUN chmod -R 777 /app
-
-# Set the environment variable for Django settings
-ENV DJANGO_SETTINGS_MODULE=user_management_database.settings
 
 # Voir avec les autres quel port
 EXPOSE 8200
