@@ -37,6 +37,11 @@ ALLOWED_HOSTS = [
     'profile',
 ]
 
+# Trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:4430',
+]
+
 
 # Application definition
 
@@ -52,10 +57,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
 
-    # 'api_dashboard.apps.ApiDashboardConfig', #C'EST TECHNIQUEMENT NÉCESSAIRE!!! #TEST --> ne make pas
-    # 'api_user', # nécessaire pour importer CustomUser
-    # 'api_dashboard',
-    'api_user.apps.ApiConfig', #TEST --> ne make pas
+    'api_dashboard',
+    'api_user.apps.ApiConfig',
 ]
 
 ################# Pour les JWTokens #################

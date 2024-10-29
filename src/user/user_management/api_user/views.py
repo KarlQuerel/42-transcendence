@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from api_user.models import CustomUser
-# from api_dashboard.models import GameHistory #TEST CARO //HERE --> les 3 HERE de cette page créent un 502 bad gateway dans la page sign in
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
@@ -590,9 +589,6 @@ def get_friendship_status(user1, user2):
 ##           		GDPR VIEWS      		    ##
 ##################################################
 
-from django.apps import apps #TEST CARO //HERE
-# from django.apps import AppConfig
-
 @api_view(['PUT'])
 @login_required
 @permission_classes([IsAuthenticated])
@@ -603,8 +599,7 @@ def anonymizeUserData(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		# from api_dashboard.models import GameHistory  #TEST HERE to avoid circular dependencies
-		userOldUsername = user.username #CARO #HERE
+		userOldUsername = user.username
 			
 		usernameSuffix = get_random_string(6)
 		user.username = f'user_{usernameSuffix}'
@@ -613,21 +608,10 @@ def anonymizeUserData(request):
 		user.last_name = 'User'
 		user.date_of_birth = None
 		user.avatar = 'avatars/default.png'
-		
-		GameHistory = apps.get_model('api_dashboard', 'GameHistory') #TEST CARO //HERE
-
-		# Update the user in the dashboard database : check every user's opponent names and change it if it corresponds //HERE
-		games = GameHistory.objects.filter(user=user) #CHECK
-		for game in games:
-			if (game.myUsername == userOldUsername):
-				game.myUsername = user.username
-			if (game.opponentUsername == userOldUsername):
-				game.opponentUsername = user.username
-			game.save()
 
 		user.save()
 
-		return JsonResponse({'username': user.username}, status=200)
+		return JsonResponse({'old_username': userOldUsername, 'new_username': user.username}, status=200)
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
