@@ -3,6 +3,7 @@
 \***********************************************/
 import { DEBUG }
 from '../../main.js';
+import { getCookie } from './signin.js';
 
 /***********************************************\
 -		   DELETE INACTIVE USERS FUNCTIONS		-
@@ -55,7 +56,7 @@ export async function deleteInactiveUsers(inactiveUsersID)
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'POST',
             headers: {
-                // 'X-CSRFToken': getCookie('csrftoken'),
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
@@ -91,3 +92,4 @@ export async function deleteInactiveUsers(inactiveUsersID)
 //         console.error('Failed to delete inactive users:', error);
 //     };
 // }
+

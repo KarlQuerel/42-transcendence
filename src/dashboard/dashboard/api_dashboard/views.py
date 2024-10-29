@@ -130,7 +130,7 @@ def deleteGameHistory(request):
 	
 
 @api_view(['POST'])
-# @csrf_protect
+@csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		print("ICI")
@@ -139,7 +139,7 @@ def deleteGameHistoryInactiveUsers(request):
 		if isinstance(usersToDeleteID, str):
 			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
 		print('usersToDeleteID', usersToDeleteID)
-		if not usersToDeleteID:
+		if usersToDeleteID is None:
 			return Response({"error": "No matching users found"}, status=404)
 		
 		usersToDeleteUsername = []
