@@ -23,7 +23,7 @@ export async function getInactiveID()
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-        }})
+        }});
         // .then(users_tab=>{
         //     console.log('inactiveUsersID = ', inactive_users_id);
         //     apiRequest('/api/dashboard/deleteGameHistoryInactiveUsers/', {

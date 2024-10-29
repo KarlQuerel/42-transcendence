@@ -139,8 +139,9 @@ def deleteGameHistoryInactiveUsers(request):
 		if isinstance(usersToDeleteID, str):
 			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
 		print('usersToDeleteID', usersToDeleteID)
-		if usersToDeleteID is None:
-			return Response({"error": "No matching users found"}, status=404)
+		if not usersToDeleteID:
+			print("No matching users found")
+			return Response({"error": "No matching users found"})
 		
 		usersToDeleteUsername = []
 		allUsers = CustomUser.objects.all()
@@ -155,16 +156,16 @@ def deleteGameHistoryInactiveUsers(request):
 		for username in usersToDeleteUsername:
 			games = GameHistory.objects.all()
 			for game in games:
-					if game.myUsername == username:
-						print("deleted game for", username)
-						game.delete()
+				if game.myUsername == username:
+					print("deleted game for", username)
+					game.delete()
 
 			games = GameHistory.objects.filter(Q(opponentUsername=username))
 			for game in games:
 				if game.opponentUsername == username:
 					print("deleted opponent username for", username)
 					game.opponentUsername = "deleted_user"
-				game.save()
+					game.save()
 		
 		print("Game history instances deleted successfully")
 
@@ -177,4 +178,4 @@ def deleteGameHistoryInactiveUsers(request):
 		return Response({"deleteGameHistory view message": "Account deleted successfully"})
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'Delete inactive users view error': str(e)}, status=500)
