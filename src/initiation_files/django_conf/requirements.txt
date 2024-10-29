@@ -10,3 +10,4 @@ pytest
 pytest-django
 faker==9.8.1 #to populate database with fake data for tests
 pyotp
+requests

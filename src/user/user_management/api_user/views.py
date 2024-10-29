@@ -22,7 +22,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.core.mail import send_mail
-import pyotp, os, json, base64, logging
+import pyotp, os, json, base64, logging, requests
 from django.conf import settings
 from .serializers import UsernameSerializer  #TEST CARO
 from pprint import pprint
@@ -420,11 +420,12 @@ def updateAvatar(request):
 ##################################################
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def send_user_informations(request):
 	try:
 		user = request.user
+		games = request.data
 
 		user_data = {
 			'first_name': user.first_name,
@@ -438,11 +439,19 @@ def send_user_informations(request):
 					'username': friend.username
 				}
 				for friend in user.friends.all()
+			],
+			'games': [
+				{
+					'you': game.get('myUsername'),
+					'opponent': game.get('opponentUsername'),
+					'you score': game.get('myScore'),
+					'opponent score': game.get('opponentScore'),
+					'game\'s date': game.get('date'),
+				}
+				for game in games
 			]
 		}
-
 		json_data = json.dumps(user_data, indent=4)
-		print(json_data)
 
 		send_mail(
 			f'Personnal Informations Requested from trascendance.fr for {user.username}',

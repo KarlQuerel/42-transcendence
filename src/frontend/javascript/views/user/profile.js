@@ -186,21 +186,31 @@ export function renderProfile()
         container.appendChild(friendsButton);
 
 
-        /***************** FRIENDS *****************/
+        /***************** RGPD *****************/
         
-        // bouton pour aller sur la page friends
+        // bouton pour envoyer les donnees perso de l'utilisateur au format json
         const requestInfosButton = document.createElement('button');
         requestInfosButton.setAttribute('id', 'request-infos-button');
         requestInfosButton.textContent = 'Request My Personnal Informations';
         container.appendChild(requestInfosButton);
 
         requestInfosButton.addEventListener('click', () => {
-            apiRequest('/api/users/send-infos-to-user/', {
+            apiRequest('/api/dashboard/getGameHistory/', {
                 method: 'GET',
             })
+            .then(games => {
+                console.log('games: ', games);
+                apiRequest('/api/users/send-infos-to-user/', {
+                    method: 'POST',
+                    body: JSON.stringify(games),
+                })
+                .catch(error => {
+                    console.error('Error sending their personnal informations to the user:', error);
+                });
+            })
             .catch(error => {
-                console.error('Error sending their personnal informations to the user:', error);
-            });
+                console.error('Error user game history:', error);
+            })
         });
 
 
