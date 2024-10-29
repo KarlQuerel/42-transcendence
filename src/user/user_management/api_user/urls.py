@@ -31,6 +31,8 @@ urlpatterns = [
     path('get2FAStatus/', views.get2FAStatus, name='get-2fa-status'),
     path('update2FAStatus/', views.update2FAStatus, name='update-2fa-status'),
     path('deleteAccount/', views.deleteAccount, name='delete-account'),
+	path('getInactiveUsersID/', views.getInactiveUsersID, name='get-inactive-users-id'),
+	path('deleteInactiveUsers/', views.deleteInactiveUsers, name='delete-inactive-users'),
 ]
 
 if settings.DEBUG:

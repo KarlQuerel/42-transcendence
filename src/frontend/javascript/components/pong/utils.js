@@ -40,7 +40,7 @@ from './onePlayer.js';
 import { checkCountdown }
 from './preGame.js';
 
-import { apiRequest }
+import { apiRequest, getAuthHeaders }
 from '../../views/user/signin.js';
 
 /***********************************************\

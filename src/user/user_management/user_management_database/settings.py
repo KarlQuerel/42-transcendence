@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY'),
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,11 +53,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_beat',
+    # 'api_user.apps.ApiConfig', #signals
     'rest_framework_simplejwt',
-    'api_user.apps.ApiConfig', #celery
-	'django_prometheus',
     'rest_framework',
+	'django_prometheus',
+    'api_user',
 	'friends',
 	'pytest',
 ]
@@ -95,7 +95,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [('127.0.0.1', 6378)],
         },
     },
 }
@@ -216,8 +216,3 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
 EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
-
-
-############ Celery for autmatic deletion of inactive users ############
-CELERY_BROKER_URL = 'redis://localhost:6379/0'  # or the URL for your Redis/RabbitMQ instance
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
