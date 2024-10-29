@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
 	'localhost',
     'dashboard',
     'profile',
+	'nginx',
 ]
 
 
