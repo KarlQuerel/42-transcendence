@@ -4,5 +4,6 @@ from . import views
 urlpatterns = [
 	path('dashboard/addStats/', views.addStats, name='add-stats'),
 	path('dashboard/getGameHistory/', views.getGameHistory, name='get-match-history'),
-	path('dashboard/anonymiseDashboard/', views.anonymiseDashboard, name='anonymise-dashboard'),
+	path('dashboard/anonymiseGameHistory/', views.anonymiseGameHistory, name='anonymise-game-history'),
+	path('dashboard/deleteGameHistory/', views.deleteGameHistory, name='delete-game-history'),
 ]

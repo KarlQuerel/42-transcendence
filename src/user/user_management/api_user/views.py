@@ -671,9 +671,11 @@ def deleteAccount(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		user.delete()
+		# user.delete()
+		print(f'Account to delete: {user.username}. Sending to deleteGameHistory view') # DEBUG
 
-		return Response({'Account deleted successfully'}, status=200)
+		# return (Response({'Account deleted successfully'}, status=200))
+		return JsonResponse({'username': user.username}, status=200)
 
 	except Exception as e:
 		print(f'Error: {str(e)}') # DEBUG

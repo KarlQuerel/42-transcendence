@@ -70,7 +70,7 @@ def addStats(request):
 
 @api_view(['PUT'])
 @csrf_protect
-def anonymiseDashboard(request):
+def anonymiseGameHistory(request):
 	try:
 		oldUsername = request.data.get('old_username')
 		newUsername = request.data.get('new_username')
@@ -86,9 +86,44 @@ def anonymiseDashboard(request):
 				game.opponentUsername = newUsername
 			game.save()
 
-		print("Game history instance anonymised successfully") #DEBUG
+		print("Game history instances anonymised successfully") #DEBUG
 
-		return Response({"anonymise_dashboard view message": "Game history instance anonymised successfully"})
+		return Response({"anonymiseGameHistory view message": "Game history instance anonymised successfully"})
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+	
+
+@api_view(['DELETE'])
+@csrf_protect
+def deleteGameHistory(request):
+	try:
+		print("deleteGameHistory view called") #DEBUG
+		username = request.data.get('username')
+		print("account to delete: ", username) #DEBUG
+		
+		games = GameHistory.objects.filter(Q(myUsername=username))
+		if not games.exists():
+			return Response({"error": "No matching games found"}, status=404)
+
+		for game in games:
+			if game.myUsername == username:
+				game.delete()
+
+		games = GameHistory.objects.filter(Q(opponentUsername=username))
+		for game in games:
+			if game.opponentUsername == username:
+				game.opponentUsername = "deleted_user"
+			game.save()
+
+		print("Game history instances deleted successfully")
+
+		user = CustomUser.objects.get(username=username)
+		user.delete()
+
+		print("User account deleted successfully")
+
+		return Response({"deleteGameHistory view message": "Account deleted successfully"})
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)

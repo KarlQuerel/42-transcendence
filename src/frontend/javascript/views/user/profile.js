@@ -689,7 +689,7 @@ async function anonymizeUserData()
         })
         .then(user=>{
             console.log('old_username = ', user.old_username, 'new_username = ', user.new_username);
-            apiRequest('/api/dashboard/anonymiseDashboard/', {
+            apiRequest('/api/dashboard/anonymiseGameHistory/', {
                 method: 'PUT',
                 headers:
                 {
@@ -798,6 +798,20 @@ async function deleteUserAccount()
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'X-CSRFToken': getCookie('csrftoken'),
             }
+        })
+        .then(user=>{
+            console.log('username = ', user.username);
+            apiRequest('/api/dashboard/deleteGameHistory/', {
+                method: 'DELETE',
+                headers:
+                {
+                    ...getAuthHeaders(),
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            console.log("Finished deleting user's GameHistory")
         });
 
         console.log('Account deleted successfully.');

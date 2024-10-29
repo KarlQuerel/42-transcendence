@@ -149,26 +149,6 @@ a promise that is still pending when we pass statsData into evenlisteners and th
 -					FETCHING DATA				-
 \***********************************************/
 
-// async function anonymiseDashboard(data)
-// {
-// 	try {
-// 		const response = await apiRequest('/api/dashboard/anonymiseDashboard/', {
-// 			method: 'PUT',
-// 			headers: {
-// 				...getAuthHeaders(),
-// 			},
-// 			body: JSON.stringify({data}),
-// 		});
-
-// 		if (DEBUG)
-// 			console.log("Successfully anonymised dashboard");
-
-// 	}
-// 	catch (error) {
-// 		console.error("Error anonymising dashboard:", error);
-// 	}
-// }
-
 async function loadUserGameHistory()
 {
 	try
@@ -404,7 +384,10 @@ function avatars(gameHistory, allUsers)
 		avatarBox.dataset.username = opponent;
 
 		const avatarImg = document.createElement('img');
-		avatarImg.src = '/assets/images/dashboard/default.png';
+		if (opponent === 'deleted_user')
+			avatarImg.src = '/assets/images/dashboard/deleted_user.png';
+		else
+			avatarImg.src = '/assets/images/dashboard/default.png';
 		if (DEBUG)
 			console.log("AVATAR IMG: ", avatarImg.src);
 
