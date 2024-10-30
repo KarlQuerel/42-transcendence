@@ -1,20 +1,3 @@
-/* TO DO KARL
-
-	Cher Karl,
-
-	Bienvenu sur la merveilleuse page de Profil.
-	Tu seras heureux de retrouver mes commentaires ci-dessous pour te guider dans ce voyage vers le Frontend.
-
-	6. Anonymize data
-	Le bouton s'appelle "anonymizeButton" et a pour id "anonymize-button".
-	Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir anonymiser ses données.
-	Je pense tu peux le placer proche de Delete account et Logout button ? Maybe ?
-	Il faut que le bouton disparaisse si l'utilisateur est déjà anonyme (on peut vérifier ça avec getUserAnonymousStatus()).
-	Quand un user anonymise son compte, je l'enregistre comme is_anonymous = true dans la base de données.
-
-*/
-
-
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
@@ -46,15 +29,6 @@ export function renderProfile()
 	profileTitle.classList.add('profile-title');
 	profileTitle.textContent = 'My Profile';
 	container.appendChild(profileTitle);
-
-	// KARL HERE - TO-DO 
-	// Karl t'es beau, corrige moi ca et je leche l'oreille:
-	// quand je suis log avec un utilisateur et que 
-	// je suis sur son profile puis que je me delog, 
-	// lorsque je clique sur le bouton page precedente
-	// je reviens sur la page profile et je peux voir
-	// les infos de l'utilisateur tout juste deconnecte,
-	// pour ne plus le voir il faut que je fasse un refresh
 
 	// Create an image element for the avatar
 	const	avatarElement = document.createElement('img');
@@ -242,6 +216,7 @@ export function renderProfile()
         // bouton pour envoyer les donnees perso de l'utilisateur au format json
         const requestInfosButton = document.createElement('button');
         requestInfosButton.setAttribute('id', 'request-infos-button');
+		requestInfosButton.classList.add('btn', 'btn-home', 'profile-button');
         requestInfosButton.textContent = 'Request My Infos';
         container.appendChild(requestInfosButton);
 
@@ -309,46 +284,24 @@ export function renderProfile()
 		anonymizeButton.classList.add('btn', 'btn-home', 'profile-button');
 		anonymizeButton.textContent = 'Anonymize Data';
 
-		// KARL HERE
-		// Cacher le bouton si le user est déjà anonyme
-		// const	isAnonymous = Boolean(getUserAnonymousStatus());
-		// const	isAnonymous = getUserAnonymousStatus();
-
-		// console.log('HERE =====' ,isAnonymous);
-
-		// if (isAnonymous === false)
-		// {
-		// 	const	anonymizeButton = document.getElementById('anonymize-button');
-
+		const	checkAnonymousStatus = async () =>
+		{
+			const	status = await getUserAnonymousStatus();
 			
-		// 	if (anonymizeButton)
-		// 		anonymizeButton.style.display = 'block';
-		// }
-		// else
-		// {
-		// 	const	anonymizeButton = document.getElementById('anonymize-button');
-		
-		// 	if (anonymizeButton)
-		// 		anonymizeButton.style.display = 'none';
-		// }
+			if (DEBUG)
+				console.log(status);
 
-		// KARL HERE
-		getUserAnonymousStatus().then(isAnonymous => {
-			console.log('HERE =====', isAnonymous);
-			
-			if (isAnonymous === false) {
-				const anonymizeButton = document.getElementById('anonymize-button');
-		
-				if (anonymizeButton)
-					anonymizeButton.style.display = 'block';
-			} else {
-				const anonymizeButton = document.getElementById('anonymize-button');
-				
-				if (anonymizeButton)
-					anonymizeButton.style.display = 'none';
+			if (status.isAnonymous === false)
+			{
+				anonymizeButton.style.display = 'block';
 			}
-		});
-		// FIN KARL HERE
+			else
+			{
+				anonymizeButton.style.display = 'none';
+			}
+		}
+
+		checkAnonymousStatus();
 
 		// Event listener for anonymize button
 		anonymizeButton.addEventListener('click', async () =>
@@ -362,8 +315,6 @@ export function renderProfile()
 			else
 				console.log('Anonymization cancelled.');
 		});
-
-
 
 		/***************** LOG OUT *****************/
 
@@ -403,14 +354,20 @@ export function renderProfile()
 			}
 		});
 
+		// 1
 		buttonsContainer1.appendChild(twoFactorAuthContainer);
 		buttonsContainer1.appendChild(updateProfileButton);
+
+		// 2
 		buttonsContainer2.appendChild(friendsButton);
 		buttonsContainer2.appendChild(dashboardButton);
+		
+		// 3
 		buttonsContainer3.appendChild(anonymizeButton);
-		// buttonsContainer3.appendChild(requestInfosButton);
+		buttonsContainer3.appendChild(requestInfosButton);
 		buttonsContainer3.appendChild(deleteAccountButton);
 
+		// All
 		personalInfoSection.appendChild(buttonsContainer1);
 		personalInfoSection.appendChild(buttonsContainer2);
 		personalInfoSection.appendChild(buttonsContainer3);

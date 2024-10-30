@@ -6,15 +6,12 @@
 #profile-container
 {
 	width: auto;
-	/* KARL HERE */
-	/* height: 165%; */
 	display: flex;
 	flex-direction: column;
 	align-content: center;
 	justify-content: center;
 	align-items: center;
 	flex-wrap: wrap;
-	z-index: 10;
 	position: relative;
 }
 
@@ -66,6 +63,7 @@
 	background: var(--base-dark);
 	font-size: 1.5vh;
 	width: fit-content;
+	z-index: 1;
 }
 
 .two-factor-text
@@ -145,7 +143,7 @@
 	font-size: 2.5vh;
 }
 
-/*		AVATAR		*/
+/*		AVATAR	EDIT	*/
 #avatar_input
 {
 	width: 10vh;;
