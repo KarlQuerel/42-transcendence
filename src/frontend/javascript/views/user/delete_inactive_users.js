@@ -82,7 +82,6 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
         const response = await fetch('api/users/friends/DeleteInactiveUsersFriendRequests/', {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })

@@ -32,6 +32,7 @@ urlpatterns = [
     path('update2FAStatus/', views.update2FAStatus, name='update-2fa-status'),
     path('deleteAccount/', views.deleteAccount, name='delete-account'),
 	path('getInactiveUsersID/', views.getInactiveUsersID, name='get-inactive-users-id'),
+	path('deleteInactiveUsersFriends/', views.deleteInactiveUsersFriends, name='delete-inactive-users-friends'),
 	# path('updateUserLastLogin/', views.updateUserLastLogin, name='update-user-last-login'),
 ]
 

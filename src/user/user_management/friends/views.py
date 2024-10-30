@@ -120,10 +120,10 @@ class DeleteInactiveUsersFriendRequests(APIView):
 				try:
 					usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
 				except ValueError:
-					return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
-				
+					return Response({'error': 'Invalid user ID format'}, status=status.HTTP_405_BAD_REQUEST)
+
 			if not usersToDeleteID:
-				return Response({'error': 'No matching users found'}, status=status.HTTP_400_BAD_REQUEST)
+				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
 
 			friendRequests = FriendRequest.objects.filter(Q(sender_id__in=usersToDeleteID) | Q(receiver_id__in=usersToDeleteID))
 			friendRequests.delete()

@@ -72,6 +72,12 @@ check_userGamehistory:
 	@read -p "Enter username: " username; \
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM api_dashboard_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
 
+check_allFriendRequests:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM friends_friendrequest;'"
+
+check_allFriends:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser_friends;'"
+
 # Clear database
 
 clear_db:
