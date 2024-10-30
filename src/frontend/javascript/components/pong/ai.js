@@ -20,7 +20,6 @@ export class GameData
 		this.fieldX_right = undefined; //field's right bound X coordinate
 
 		this.paddleY = undefined;
-		this.paddle_height = undefined;
 		this.paddle_width = undefined;
 	}
 }
@@ -33,7 +32,6 @@ If it is inside the field's boundaries, it means there will be
 no rebounds : no further maths are required.
 If intersection Y is outside the field's boundaries, it means there 
 will be at least one rebound. See ai_algorithm_explained.png*/
-//TODO: où puis-je ajouter ai_algorithm_explained.png pour les correcteurs?
 function	predict_ball_paddle_intersection(data)
 {
 	let intersectionX = data.fieldX_right - data.paddle_width;
@@ -104,7 +102,7 @@ export function getPaddleAction()
 	if (!checkGameData(data))
 	{
 		console.log("Error updating data : data variables are undefined");
-		return ERROR; //TODO: mettre dans pong.js que si return 42 alors stop le jeu
+		return ERROR;
 	}
 
 	let predicted_intersection = predict_ball_paddle_intersection(data);

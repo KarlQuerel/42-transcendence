@@ -29,9 +29,6 @@ from './gameDynamics.js'
 import { getPaddleAction, GameData }
 from './ai.js';
 
-// import { loadUsername }
-// from './utils.js';
-
 import { loadUserManagementData }
 from './utils.js';
 

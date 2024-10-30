@@ -80,14 +80,11 @@ export function isNameValid(playerName)
 	return true;
 }
 
-export async function loadUsername() //CARO //CHECK si je l'utilises tjrs quelque part, karl semble utiliser loadUserManagement à la place ou un truc du genre
+export async function loadUsername()
 {
 	try {
 		const username = await apiRequest('/api/users/getUsername/', {
 			method: 'GET',
-			// headers: {
-			// 	...getAuthHeaders(),
-			// },
 		});
 		if (DEBUG)
 			console.log("username = ", username);

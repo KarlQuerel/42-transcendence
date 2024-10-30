@@ -56,8 +56,6 @@ INSTALLED_APPS = [
 	'django_prometheus',
     'rest_framework_simplejwt',
     'rest_framework',
-
-#TODO: check si j'ai besoin de api_dashboard
     'api_dashboard',
     'api_user.apps.ApiConfig',
 ]
