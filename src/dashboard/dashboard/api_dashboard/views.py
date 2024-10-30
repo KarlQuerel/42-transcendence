@@ -133,9 +133,8 @@ def deleteGameHistory(request):
 @csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
-		print("ICI")
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
-		print('usersToDeleteID', usersToDeleteID)
+		# Convert string to list of integers
 		if isinstance(usersToDeleteID, str):
 			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
 		print('usersToDeleteID', usersToDeleteID)

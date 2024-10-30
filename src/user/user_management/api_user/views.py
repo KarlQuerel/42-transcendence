@@ -752,7 +752,7 @@ def getInactiveUsersID(request):
 		cutoffTime = time + timezone.timedelta(days=3*365)
 
 		for user in users:
-			if user.last_login is not None and user.last_login < cutoffTime:
+			if user.last_login is not None and user.last_login > cutoffTime:
 				inactive_users_id.append(user.id)
 		
 		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
