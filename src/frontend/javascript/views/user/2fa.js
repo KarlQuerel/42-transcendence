@@ -60,6 +60,8 @@ export function render2fa()
 			alert('Login failed: ' + error.message);
 		});
     });
+    userPingBackend();
+	console.log('j\'ai ping apres le login');
     return form;
 }
 

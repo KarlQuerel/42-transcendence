@@ -141,6 +141,7 @@ services:
       cd /app &&
       python manage.py makemigrations &&
       python manage.py migrate &&
+      ./run_check_status.sh &
       gunicorn user_management_database.wsgi:application --bind 0.0.0.0:8200"
     expose:
       - "8200"

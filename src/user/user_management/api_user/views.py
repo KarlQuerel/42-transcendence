@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate, login
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.utils import timezone
 from django.conf import settings
 from .serializers import UsernameSerializer  #TEST CARO
 from pprint import pprint
@@ -92,6 +93,24 @@ def signInUser(request):
 	except Exception as e:
 		print(f'Unexpected error: {str(e)}') # DEBUG
 		return Response({'error': 'Internal Server Error'}, status=500)
+
+
+#########################################
+
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def updateOnlineStatus(request):
+	try:
+		user = request.user
+		user.last_ping = timezone.now()
+		if (user.is_online == False):
+			user.is_online = True
+		user.save()
+		return JsonResponse({'status': 'user is online'}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
 
 
 #########################################
@@ -217,24 +236,6 @@ def getAllUsers(request):
 		print(f'Unexpected error: {str(e)}')
 		return Response({'error': str(e)}, status=500)
  
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getFriendAvatar(request, user_id):
-	try:
-		print('user id: ', user_id)
-		user = CustomUser.objects.get(id=user_id)
-		print('user: ', user)
-		avatar_image_path = user.avatar.path
-		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
-			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-		data = {
-			'avatar': avatar
-		}
-		return JsonResponse(data, status=status.HTTP_200_OK)
-	except Exception as e:
-		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 ##################################################
 ##             CHANGE PASSWORD VIEWS            ##
@@ -616,9 +617,7 @@ def	otherUsersList(request):
 @permission_classes([IsAuthenticated])
 def getFriendAvatar(request, user_id):
 	try:
-		print('user id: ', user_id)
 		user = CustomUser.objects.get(id=user_id)
-		print('user: ', user)
 		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
