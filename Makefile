@@ -14,7 +14,8 @@ clean :
 	@if (docker ps --filter "name=Dashboard" --filter "status=running" | grep -q Dashboard) && (docker ps --filter "name=User" --filter "status=running" | grep -q User); then \
 		make clear_db; \
 	fi
-	@cd src && docker-compose down
+	@find . -name "*.pyc" -delete
+	@cd src && docker-compose down --remove-orphans
 
 fclean : clean
 	cd src && docker system prune -af
