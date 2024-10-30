@@ -55,7 +55,7 @@ from '../../main.js';
 import { renderNavbar }
 from '../navbar/navbar.js';
 
-import { apiRequest, getCookie }
+import { apiRequest, getAuthHeaders, getCookie }
 from './signin.js';
 
 import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
@@ -286,8 +286,7 @@ export function renderProfile()
 
 
         /************** ANONYMIZE DATA **************/
-        
-        
+                
         // bouton pour anonymiser les données
         const anonymizeButton = document.createElement('button');
         anonymizeButton.setAttribute('id', 'anonymize-button');
@@ -701,11 +700,24 @@ async function anonymizeUserData()
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
+        })
+        .then(user=>{
+            console.log('old_username = ', user.old_username, 'new_username = ', user.new_username);
+            apiRequest('/api/dashboard/anonymiseGameHistory/', {
+                method: 'PUT',
+                headers:
+                {
+                    ...getAuthHeaders(),
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            console.log("Finished anonymising GameHistory")
         });
 
         alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
         window.location.href = '/profile';
-
     }
     catch (error)
     {
@@ -800,6 +812,20 @@ async function deleteUserAccount()
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 'X-CSRFToken': getCookie('csrftoken'),
             }
+        })
+        .then(user=>{
+            console.log('username = ', user.username);
+            apiRequest('/api/dashboard/deleteGameHistory/', {
+                method: 'DELETE',
+                headers:
+                {
+                    ...getAuthHeaders(),
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            })
+            console.log("Finished deleting user's GameHistory")
         });
 
         console.log('Account deleted successfully.');

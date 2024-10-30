@@ -57,9 +57,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
 	'django_prometheus',
-    'api_user',
+    # 'api_user',
 	'friends',
 	'pytest',
+
+    'api_user.apps.ApiConfig', #celery
+    # 'api_dashboard.apps.ApiDashboardConfig', #C'EST TECHNIQUEMENT NÉCESSAIRE!!!
+    # 'api_dashboard', #TEST CARO //HERE --> ÇA PÈTE TOUT!! NE PAS LE REMETTRE!!!
 ]
 
 ################# Pour les JWTokens #################

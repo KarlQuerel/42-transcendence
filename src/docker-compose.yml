@@ -160,6 +160,10 @@ services:
     build:
       context: .
       dockerfile: dashboard/Dockerfile
+    # environment:
+    #   - PYTHONPATH=/app/src:/app/src/dashboard/api_dashboard #TEST CARO //HERE
+    # environment:
+      # - PYTHONPATH=/app/src:/app/src/dashboard #TEST CARO //HERE
     command: >
       sh -c "
       sleep 8 &&

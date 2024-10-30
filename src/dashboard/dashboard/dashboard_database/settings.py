@@ -38,6 +38,11 @@ ALLOWED_HOSTS = [
 	'nginx',
 ]
 
+# Trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:4430',
+]
+
 
 # Application definition
 
@@ -51,8 +56,10 @@ INSTALLED_APPS = [
 	'django_prometheus',
     'rest_framework_simplejwt',
     'rest_framework',
-    'api_user',
-    'base',
+
+#TODO: check si j'ai besoin de api_dashboard
+    'api_dashboard',
+    'api_user.apps.ApiConfig',
 ]
 
 ################# Pour les JWTokens #################
