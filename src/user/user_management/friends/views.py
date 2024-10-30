@@ -112,7 +112,6 @@ class FriendRequestID(APIView):
 				return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_200_OK)
 
 
-@csrf_protect
 class DeleteInactiveUsersFriendRequests(APIView):
 	def delete(self, request):
 		try:

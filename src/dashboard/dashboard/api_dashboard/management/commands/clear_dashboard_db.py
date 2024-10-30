@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from api_dashboard.models import GameHistory
-from api_user.models import CustomUser
-from friends.models import FriendRequest
+# from api_user.models import CustomUser
+# from friends.models import FriendRequest
 from django.db import connection
 
 class Command(BaseCommand):
@@ -9,9 +9,9 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **kwargs):
 		# Delete all friend requests
-		FriendRequest.objects.all().delete()
+		# FriendRequest.objects.all().delete()
 		# Delete all users
-		CustomUser.objects.all().delete()
+		# CustomUser.objects.all().delete()
 		# Delete all game history
 		GameHistory.objects.all().delete()
 
