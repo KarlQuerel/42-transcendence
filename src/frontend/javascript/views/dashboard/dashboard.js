@@ -1,94 +1,18 @@
 /* **********************************************\
 -			IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG, GITHUBACTIONS } from '../../main.js';
-import { apiRequest } from '../user/signin.js';
-import { getAuthHeaders } from '../user/signin.js';
+import { DEBUG, GITHUBACTIONS }
+from '../../main.js';
+
+import { apiRequest }
+from '../user/signin.js';
+
+import { getAuthHeaders }
+from '../user/signin.js';
 
 /***********************************************\
 *				   RENDERING				   *
 \***********************************************/
-
-// KARL HERE BACKUP
-// export function renderDashboard()
-// {
-// 	// Container
-// 	const	dashboard = document.createElement('div');
-// 	dashboard.id = 'dashboard-container';
-
-// 	// Title
-// 	const	title = document.createElement('h1');
-// 	title.id = 'dashboard-title';
-// 	title.textContent = 'Your Dashboard';
-
-// 	// Create icons container
-// 	const	iconsContainer = document.createElement('div');
-
-// 	// Create clickable icons
-// 	const	icons = [
-// 		{ id: 'chart_icon', src: '../../../assets/images/dashboard/chart.gif' },
-// 		{ id: 'friends_icon', src: '../../../assets/images/dashboard/friends.gif' },
-// 		{ id: 'trophee_icon', src: '../../../assets/images/dashboard/trophee.gif' },
-// 	];
-
-// 	icons.forEach(icon => {
-// 		const	iconDiv = document.createElement('div');
-// 		iconDiv.id = icon.id;
-// 		iconDiv.className = 'dashboard-icon';
-
-// 		const	img = document.createElement('img');
-// 		img.src = icon.src;
-
-// 		iconDiv.appendChild(img);
-// 		iconsContainer.appendChild(iconDiv);
-// 	});
-
-// 	dashboard.appendChild(iconsContainer);
-
-// 	// Create the modal for avatars
-// 	const	avatarModal = createModal('Friends Avatars', 'avatarModal', 'avatar-container');
-// 	dashboard.appendChild(avatarModal);
-
-// 	// Create the modal for game history
-// 	const	gameHistoryModal = createGameHistoryModal();
-// 	dashboard.appendChild(gameHistoryModal);
-
-// 	// Add canvas elements
-// 	const	chartCanvas = document.createElement('canvas');
-// 	chartCanvas.id = 'chartCanvas';
-// 	chartCanvas.width = 400;
-// 	chartCanvas.height = 400;
-// 	dashboard.appendChild(chartCanvas);
-
-// 	const	progressionChart = document.createElement('canvas');
-// 	progressionChart.id = 'progressionChart';
-// 	progressionChart.width = 600;
-// 	progressionChart.height = 400;
-// 	dashboard.appendChild(progressionChart);
-
-// 	// Create the badge modal
-// 	const	badgeModal = createBadgeModal();
-// 	dashboard.appendChild(badgeModal);
-
-// 	// Create hidden badge images
-// 	const	badgeImages = [
-// 		'top1.gif', 'top3.gif', 'top5.gif', 'top10.gif', 'regular.gif'
-// 	];
-
-// 	badgeImages.forEach(badge => {
-// 		const	img = document.createElement('img');
-// 		img.id = badge.replace('.gif', '_badge'); // e.g., top1_badge
-// 		img.src = `../../../assets/images/dashboard/${badge}`;
-// 		img.style.display = 'none'; // Hide by default
-// 		dashboard.appendChild(img);
-// 	});
-
-// 	// Append
-// 	dashboard.appendChild(title);
-
-
-// 	return dashboard;
-// }
 
 export function renderDashboard()
 {
@@ -114,8 +38,7 @@ export function renderDashboard()
 
 	statsButton.addEventListener('click', () =>
 	{
-		console.log('fix me');
-		// chartPieData(gameHistory); // Directly calls the function to display the chart
+		myStatsContainer.classList.toggle('active');
 	});
 
 	// My Friends Stats
@@ -136,22 +59,34 @@ export function renderDashboard()
 
 	dashboard.appendChild(buttonsContainer);
 
-	// Charts Container
-	const	chartsContainer = document.createElement('div');
-	chartsContainer.classList.add('container');
-	chartsContainer.id = 'charts-container';
+	// Mystats Container
+	const	myStatsContainer = document.createElement('div');
+	myStatsContainer.classList.add('container');
+	myStatsContainer.id = 'mystats-container';
 
-	// Chart Canvas for Pie Chart
-	const	chartCanvas = document.createElement('canvas');
-	chartCanvas.id = 'chart-canvas';
-	chartsContainer.appendChild(chartCanvas);
+	// Avatar container
+	const	avatarContainer = document.createElement('div');
+	avatarContainer.classList.add('avatar-container');
+	myStatsContainer.appendChild(avatarContainer);
 
-	// Chart Canvas for Pie Chart
-	const	progressionChart = document.createElement('canvas');
-	progressionChart.id = 'progressionChart';
-	chartsContainer.appendChild(progressionChart);
+	// Close Button for the Charts Container
+	const	closeButton = document.createElement('button');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn');
+	closeButton.textContent = 'Close';
 
-	dashboard.appendChild(chartsContainer);
+	closeButton.addEventListener('click', () =>
+	{
+		myStatsContainer.classList.remove('active');
+	});
+
+	myStatsContainer.appendChild(closeButton);
+
+	// My Stats Canvas
+	const	myStatsCanvas = document.createElement('canvas');
+	myStatsCanvas.id = 'mystats-canvas';
+	myStatsContainer.appendChild(myStatsCanvas);
+
+	dashboard.appendChild(myStatsContainer);
 
 	// Create the badge modal
 	const	badgeModal = createBadgeModal();
@@ -172,6 +107,8 @@ export function renderDashboard()
 
 	return dashboard;
 }
+
+
 // Helper function to create a modal
 function createModal(title, modalId, bodyClass) {
 	const	modal = document.createElement('div');
@@ -327,7 +264,7 @@ a promise that is still pending when we pass statsData into evenlisteners and th
 	const	gameHistory = await loadUserGameHistory();
 	const	allUsers = await loadAllUsers();
 
-	setupEventListeners(gameHistory, allUsers); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	setupEventListeners(gameHistory, allUsers);
 }
 
 /***********************************************\
@@ -357,7 +294,6 @@ async function loadUserGameHistory()
 		throw error;
 	}
 }
-
 
 //Cette fonction ne fait plus que chopper les usernames et les id puis faut rajouter
 //dans le même tableau les vatars un par un avec la viuew de clément pour éviter
@@ -420,209 +356,280 @@ function getAvatar(userID, avatar)
 -				EVENT LISTENERS					-
 \***********************************************/
 
+// function setupEventListeners(gameHistory, allUsers)
+// {
+// 	const	chartButton = document.getElementById('statsButton');
+// 	const	friendsButton = document.getElementById('friendsStatsButton');
+// 	const	trophyButton = document.getElementById('rankButton');
+
+// 	if (chartButton)
+// 	{
+// 		chartButton.addEventListener('click', function()
+// 		{
+// 			$('#chartModal').modal('show');
+// 			chartPieData(gameHistory);
+// 			favouritePlayingBuddy(gameHistory, allUsers);
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "chart_button" not found.');
+// 	}
+
+// 	if (friendsButton)
+// 	{
+// 		friendsButton.addEventListener('click', function()
+// 		{
+// 			avatars(gameHistory, allUsers);
+// 			$('#avatarModal').modal('show');
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "friends_button" not found.');
+// 	}
+
+// 	if (trophyButton)
+// 	{
+// 		trophyButton.addEventListener('click', function()
+// 		{
+// 			badge(gameHistory, allUsers);
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "trophy_button" not found.');
+// 	}
+
+// 	favouritePlayingBuddy(gameHistory, allUsers);
+// 	// chartPieData(gameHistory);
+// 	showConnectedUserAvatar(gameHistory, allUsers);
+// }
+
 function setupEventListeners(gameHistory, allUsers)
 {
 	const	chartButton = document.getElementById('statsButton');
 	const	friendsButton = document.getElementById('friendsStatsButton');
 	const	trophyButton = document.getElementById('rankButton');
+	// const	myStatsContainer = document.getElementById('mystats-container');
 
 	if (chartButton)
 	{
 		chartButton.addEventListener('click', function()
 		{
-			$('#chartModal').modal('show');
 			chartPieData(gameHistory);
-			progressionGraph(gameHistory);
+			// KARL HERE
+			favouritePlayingBuddy(gameHistory, allUsers);
 		});
-	}
-	else
-	{
+	} else {
 		console.error('Button element with id "chart_button" not found.');
 	}
 
-	if (friendsButton)
-	{
-		friendsButton.addEventListener('click', function()
-		{
+	if (friendsButton) {
+		friendsButton.addEventListener('click', function() {
 			avatars(gameHistory, allUsers);
 			$('#avatarModal').modal('show');
 		});
-	}
-	else
-	{
+	} else {
 		console.error('Button element with id "friends_button" not found.');
 	}
 
-	if (trophyButton)
-	{
-		trophyButton.addEventListener('click', function()
-		{
+	if (trophyButton) {
+		trophyButton.addEventListener('click', function() {
 			badge(gameHistory, allUsers);
 		});
-	}
-	else
-	{
+	} else {
 		console.error('Button element with id "trophy_button" not found.');
 	}
 
-	favouritePlayingBuddy(gameHistory, allUsers);
-	// chartPieData(gameHistory);
-	// progressionGraph(gameHistory);
-	showConnectedUserAvatar(gameHistory, allUsers);
+	// Initial favorite buddy display within myStatsContainer
+	// favouritePlayingBuddy(gameHistory, allUsers, myStatsContainer);
 }
+
+
 
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
 
+// KARL HERE FINISH IT
 function chartPieData(gameHistory)
 {
-	// Count the number of victories and defeats in gameHistory
+	// Count the number of victories and defeats
 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
 
-	const	chartCanvas = document.getElementById('chart-canvas');
+	const myStatsCanvas = document.getElementById('mystats-canvas');
+	if (!myStatsCanvas)
+	{
+		console.error('Canvas element with id "mystats-canvas" not found.');
+		return;
+	}
 
-    if (!chartCanvas) {
-        console.error('Canvas element with id "chartCanvas" not found.');
-        return;
-    }
-
-	const	ctx = chartCanvas.getContext('2d'); // Gets the context of the canvas
-	if (!ctx) {
-		console.error('Unable to get context for "chartCanvas".');
+	const ctx = myStatsCanvas.getContext('2d');
+	if (!ctx)
+	{
+		console.error('Unable to get context for "mystats-canvas".');
 		return;
 	}
 
 	// Clear the canvas
-	ctx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
+	ctx.clearRect(0, 0, myStatsCanvas.width, myStatsCanvas.height);
 
-	// Calculate total games and the angles for the pie chart
-	const	totalGames = nb_of_victories + nb_of_defeats;
-	const	angles = [
+	// Calculate angles for the pie chart
+	const totalGames = nb_of_victories + nb_of_defeats;
+	const angles = [
 		(nb_of_victories / totalGames) * 2 * Math.PI,
 		(nb_of_defeats / totalGames) * 2 * Math.PI
 	];
 
 	// Define colors
-	const	colors = ['#091370', '#ff0000'];
+	const styles = getComputedStyle(document.documentElement);
+	const colors = [
+		styles.getPropertyValue('--base-light-green').trim(), // Wins
+		styles.getPropertyValue('--base-light-red').trim() // Losses
+	];
 
 	// Draw the pie chart
-	let startAngle = 0;
+	const centerX = myStatsCanvas.width / 2;
+	const centerY = myStatsCanvas.height / 2;
+	const radius = Math.min(myStatsCanvas.width, myStatsCanvas.height) / 2 - 10;
+
+	let startAngle = Math.PI / 2;
 
 	angles.forEach((angle, index) => {
-		ctx.beginPath();
-		ctx.moveTo(chartCanvas.width / 2, chartCanvas.height / 2); // Move to center
-		ctx.arc(
-			chartCanvas.width / 2,
-			chartCanvas.height / 2,
-			Math.min(chartCanvas.width, chartCanvas.height) / 2 - 10, // Radius
-			startAngle,
-			startAngle + angle // End angle
-		);
-		ctx.closePath();
 		ctx.fillStyle = colors[index];
+		ctx.beginPath();
+		ctx.moveTo(centerX, centerY);
+		ctx.arc(centerX, centerY, radius, startAngle, startAngle + angle);
+		ctx.closePath();
 		ctx.fill();
-		
-		startAngle += angle; // Update the starting angle for the next slice
+		startAngle += angle;
 	});
 
-	// Optional: Draw the legend
-	const	legendLabels = ['Wins', 'Losses'];
-	const	legendX = chartCanvas.width / 2 + 20; // X position for legend
-	const	legendY = chartCanvas.height / 2 - 20; // Y position for legend
+	// Remove any existing legend
+	const existingLegend = document.querySelector('.chart-legend');
+	if (existingLegend) {
+		existingLegend.remove();
+	}
+
+	// Create a stylable legend below the chart
+	const legendContainer = document.createElement('div');
+	legendContainer.className = 'chart-legend';
+	const legendLabels = ['Wins', 'Losses'];
 
 	legendLabels.forEach((label, index) => {
-		ctx.fillStyle = colors[index];
-		ctx.fillRect(legendX, legendY + index * 20, 15, 15); // Draw legend box
-		ctx.fillStyle = '#000'; // Reset color for text
-		ctx.fillText(label, legendX + 20, legendY + index * 20 + 12); // Draw legend text
+		const legendItem = document.createElement('div');
+		legendItem.className = 'legend-item';
+
+		// Color box
+		const colorBox = document.createElement('span');
+		colorBox.className = 'color-box';
+		colorBox.style.backgroundColor = colors[index];
+
+		// Label text
+		const labelText = document.createElement('span');
+		labelText.className = 'label-text';
+		labelText.textContent = label;
+
+		legendItem.appendChild(colorBox);
+		legendItem.appendChild(labelText);
+		legendContainer.appendChild(legendItem);
 	});
+
+	// Insert the legend after the chart
+	myStatsCanvas.parentNode.insertBefore(legendContainer, myStatsCanvas.nextSibling);
 }
 
-function progressionGraph(gameHistory) {
-	// Create an object to hold daily stats
-	const	dailyStats = {};
+// KARL HERE TEST HOVER
+// function chartPieData(gameHistory) {
+// 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
+// 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
 
-	// Process game history to collect wins and games per day
-	gameHistory.forEach(game => {
-		const	date = new Date(game.date).toLocaleDateString();
+// 	const myStatsCanvas = document.getElementById('mystats-canvas');
+// 	if (!myStatsCanvas) {
+// 		console.error('Canvas element with id "mystats-canvas" not found.');
+// 		return;
+// 	}
 
-		if (!dailyStats[date]) {
-			dailyStats[date] = { wins: 0, totalGames: 0 };
-		}
+// 	const ctx = myStatsCanvas.getContext('2d');
+// 	if (!ctx) {
+// 		console.error('Unable to get context for "mystats-canvas".');
+// 		return;
+// 	}
 
-		dailyStats[date].totalGames++;
+// 	const totalGames = nb_of_victories + nb_of_defeats;
+// 	const angles = [
+// 		(nb_of_victories / totalGames) * 2 * Math.PI,
+// 		(nb_of_defeats / totalGames) * 2 * Math.PI
+// 	];
 
-		// Increment wins if the current user won
-		if (game.myScore > game.opponentScore) {
-			dailyStats[date].wins++;
-		}
-	});
+// 	const styles = getComputedStyle(document.documentElement);
+// 	const colors = [
+// 		styles.getPropertyValue('--base-light-green').trim(), // Wins
+// 		styles.getPropertyValue('--base-light-red').trim() // Losses
+// 	];
 
-	// Prepare data for the chart
-	const	labels = Object.keys(dailyStats);
-	const	winPercentages = labels.map(date => {
-		const	{ wins, totalGames } = dailyStats[date];
-		return totalGames > 0 ? (wins / totalGames) * 100 : 0; // Calculate percentage
-	});
+// 	const centerX = myStatsCanvas.width / 2;
+// 	const centerY = myStatsCanvas.height / 2;
+// 	const radius = Math.min(myStatsCanvas.width, myStatsCanvas.height) / 2 - 10;
 
-	// Render the chart
-	renderProgressionChart(labels, winPercentages);
-}
+// 	let segments = [];
+// 	let startAngle = Math.PI / 2;
 
-function renderProgressionChart(labels, winPercentages) {
-	const	progressionChart = document.getElementById('progressionChart'); // Use existing canvas
-	const	ctx = progressionChart.getContext('2d');
-	
-	// Clear the canvas
-	ctx.clearRect(0, 0, progressionChart.width, progressionChart.height);
+// 	// Function to draw the pie chart
+// 	function drawChart(highlightIndex = null) {
+// 		ctx.clearRect(0, 0, myStatsCanvas.width, myStatsCanvas.height);
 
-	const	padding = 50;
-	const	chartWidth = progressionChart.width - 2 * padding;
-	const	chartHeight = progressionChart.height - 2 * padding;
+// 		angles.forEach((angle, index) => {
+// 			const isHighlighted = index === highlightIndex;
+// 			const segmentRadius = isHighlighted ? radius + 10 : radius; // Slightly increase radius on hover
 
-	// Find max win percentage for scaling
-	const	maxWinPercentage = Math.max(...winPercentages);
-	
-	// Draw axes
-	ctx.beginPath();
-	ctx.moveTo(padding, progressionChart.height - padding);
-	ctx.lineTo(progressionChart.width - padding, progressionChart.height - padding); // x-axis
-	ctx.lineTo(progressionChart.width - padding, padding); // y-axis
-	ctx.stroke();
+// 			ctx.fillStyle = colors[index];
+// 			ctx.beginPath();
+// 			ctx.moveTo(centerX, centerY);
+// 			ctx.arc(centerX, centerY, segmentRadius, startAngle, startAngle + angle);
+// 			ctx.closePath();
+// 			ctx.fill();
 
-	// Draw labels
-	ctx.font = '12px Arial';
-	labels.forEach((label, index) => {
-		const	x = padding + (index * (chartWidth / (labels.length - 1)));
-		ctx.fillText(label, x, progressionChart.height - padding + 20); // x-axis labels
-	});
+// 			segments[index] = {
+// 				startAngle,
+// 				endAngle: startAngle + angle,
+// 				color: colors[index]
+// 			};
 
-	// Draw win percentage points
-	ctx.beginPath();
-	winPercentages.forEach((percentage, index) => {
-		const	x = padding + (index * (chartWidth / (labels.length - 1)));
-		const	y = progressionChart.height - padding - (percentage / maxWinPercentage * chartHeight);
-		if (index === 0) {
-			ctx.moveTo(x, y);
-		} else {
-			ctx.lineTo(x, y);
-		}
-	});
-	ctx.strokeStyle = '#36a2eb';
-	ctx.stroke();
+// 			startAngle += angle;
+// 		});
+// 	}
 
-	// Draw points on the line
-	winPercentages.forEach((percentage, index) => {
-		const	x = padding + (index * (chartWidth / (labels.length - 1)));
-		const	y = progressionChart.height - padding - (percentage / maxWinPercentage * chartHeight);
-		ctx.beginPath();
-		ctx.arc(x, y, 5, 0, 2 * Math.PI);
-		ctx.fillStyle = '#36a2eb';
-		ctx.fill();
-	});
-}
+// 	// Event listener to handle hover
+// 	myStatsCanvas.addEventListener('mousemove', (event) => {
+// 		const mouseX = event.offsetX;
+// 		const mouseY = event.offsetY;
+// 		const dx = mouseX - centerX;
+// 		const dy = mouseY - centerY;
+// 		const distance = Math.sqrt(dx * dx + dy * dy);
+
+// 		if (distance <= radius + 10) {
+// 			const angle = Math.atan2(dy, dx);
+// 			const adjustedAngle = angle >= -Math.PI / 2 ? angle : angle + 2 * Math.PI;
+
+// 			let hoveredIndex = null;
+// 			segments.forEach((segment, index) => {
+// 				if (adjustedAngle >= segment.startAngle && adjustedAngle < segment.endAngle) {
+// 					hoveredIndex = index;
+// 				}
+// 			});
+
+// 			drawChart(hoveredIndex);
+// 		} else {
+// 			drawChart();
+// 		}
+// 	});
+
+// 	// Initial draw
+// 	drawChart();
+// }
 
 
 
@@ -766,7 +773,6 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 	});
 }
 
-
 /***********************************************\
 -				TROPHEE ICON					-
 \***********************************************/
@@ -899,55 +905,81 @@ window.onclick = function(event)
 
 function favouritePlayingBuddy(gameHistory, allUsers)
 {
-	//make opponent list a 2 column table with username and number of games played
-	//sort by number of games played
-	//display the avatar of the most common opponent username
+	// Find the container where the chart is displayed
+	const	myStatsContainer = document.getElementById('mystats-container');
+	if (!myStatsContainer)
+	{
+		console.error('Container element with id "mystats-container" not found.');
+		return;
+	}
 
-	const	opponentsList = [];
-	const	avatarContainer = document.querySelector('.avatar-container');
-	avatarContainer.innerHTML = ''; // Clear existing avatars
+	// Clear any previous favorite buddy content within the container
+	let favouriteBuddyContainer = document.querySelector('.favourite-buddy-container');
+	if (favouriteBuddyContainer)
+	{
+		favouriteBuddyContainer.remove();
+	}
 
-	gameHistory.forEach(game => {
-		if (!opponentsList.includes(game.opponentUsername))
-			opponentsList.push(game.opponentUsername);
-	});
+	// Create a new container for the favorite buddy
+	favouriteBuddyContainer = document.createElement('div');
+	favouriteBuddyContainer.className = 'favourite-buddy-container';
 
-	const	opponentsStats = [];
-	opponentsList.forEach(opponent => {
-		const	stats = {
-			username: opponent,
-			nb_of_games: 0
-		};
+	// Title
+	const	favouriteBuddyTitle = document.createElement('h3');
+	favouriteBuddyTitle.classList.add('favourite-buddy-title');
+	favouriteBuddyTitle.textContent = 'Favorite Buddy';
+	favouriteBuddyContainer.appendChild(favouriteBuddyTitle);
 
-		gameHistory.forEach(game => {
-			if (game.opponentUsername === stats.username)
-				stats.nb_of_games++;
-		});
+	// Create a sub-container for the avatar and name
+	const	avatarNameContainer = document.createElement('div');
+	avatarNameContainer.className = 'avatar-name-container'; // New container class
 
-		opponentsStats.push(stats);
-	});
+	// Find the most played opponent
+	const	opponentsList = gameHistory.reduce((acc, game) =>
+	{
+		acc[game.opponentUsername] = (acc[game.opponentUsername] || 0) + 1;
+		return acc;
+	}, {});
 
-	opponentsStats.sort((a, b) => b.nb_of_games - a.nb_of_games); //WTF
+	const	mostPlayedOpponent = Object.keys(opponentsList).reduce((a, b) => 
+		opponentsList[a] > opponentsList[b] ? a : b
+	);
 
-	const	mostPlayedOpponent = opponentsStats[0].username;
+	// Find the user object for the most played opponent
+	const	mostPlayedUser = allUsers.find(user => user.username === mostPlayedOpponent);
+	if (mostPlayedUser)
+	{
+		// Avatar Image
+		const	avatarImg = document.createElement('img');
+		avatarImg.className = 'avatar-icon';
+		getAvatar(mostPlayedUser.id, avatarImg);
+		avatarImg.alt = `${mostPlayedUser.username}`;
 
-	allUsers.forEach(user => {
-		if (user.username === mostPlayedOpponent) {
-			
-			//show avatar on the upper right corner
-			const	avatarImg = document.createElement('img');
-			avatarImg.className = 'avatar-icon'
-			avatarImg.style.position = 'absolute';
-			avatarImg.style.top = '20';
-			avatarImg.style.right = '20';
-			avatarImg.style.width = '100px';
-			avatarImg.style.height = '100px';
-			avatarImg.src = getAvatar(user.id, avatarImg)
-			avatarImg.alt = `${user.username}`;
-			document.body.appendChild(avatarImg);
-		}
-	});
+		// Buddy Name
+		const	buddyName = document.createElement('span');
+		buddyName.classList.add('favourite-buddy-name');
+		buddyName.textContent = mostPlayedUser.username;
+
+		// Append the avatar and name to the new container
+		avatarNameContainer.appendChild(avatarImg);
+		avatarNameContainer.appendChild(buddyName);
+
+		// Append the new container to the main favorite buddy container
+		favouriteBuddyContainer.appendChild(avatarNameContainer);
+	}
+	else
+	{
+		console.warn("Most played opponent not found in allUsers.");
+		favouriteBuddyTitle.textContent = 'No favorite buddy found.';
+	}
+
+	// Append the favorite buddy container below the chart
+	myStatsContainer.appendChild(favouriteBuddyContainer);
 }
+
+
+
+
 
 /************************************************
 - 			SHOW CONNECTED USER AVATAR			-
