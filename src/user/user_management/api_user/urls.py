@@ -33,7 +33,7 @@ urlpatterns = [
     path('deleteAccount/', views.deleteAccount, name='delete-account'),
 	path('getInactiveUsersID/', views.getInactiveUsersID, name='get-inactive-users-id'),
 	path('deleteInactiveUsersFriends/', views.deleteInactiveUsersFriends, name='delete-inactive-users-friends'),
-	# path('updateUserLastLogin/', views.updateUserLastLogin, name='update-user-last-login'),
+	path('deleteUserFriendships/', views.deleteUserFriendships, name='delete-user-friendships'),
 ]
 
 if settings.DEBUG:

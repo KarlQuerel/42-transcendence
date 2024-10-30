@@ -94,7 +94,7 @@ def anonymiseGameHistory(request):
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 @api_view(['DELETE'])
 @csrf_protect
@@ -102,27 +102,45 @@ def anonymiseGameHistory(request):
 def deleteGameHistory(request):
 	try:
 		username = request.data.get('username')
-		
-		games = GameHistory.objects.filter(Q(myUsername=username))
-		if not games.exists():
-			return Response({"error": "No matching games found"}, status=404)
+		if not username:
+			return Response({"error": "Username is required"}, status=400)
 
-		for game in games:
-			if game.myUsername == username:
-				game.delete()
+		with transaction.atomic():
 
-		games = GameHistory.objects.filter(Q(opponentUsername=username))
-		for game in games:
-			if game.opponentUsername == username:
+			games = GameHistory.objects.filter(Q(myUsername=username))
+			if not games.exists():
+				return Response({"error": "No matching games found"}, status=404)
+			games.delete()
+			print(f"Deleted games where user is {username}")
+
+		# try:
+		# 	for game in games:
+		# 		if game.myUsername == username:
+		# 			game.delete()
+		# except Exception as e:
+		# 	print("Error deleting game history instances: ", e)
+		# 	return Response({'error': str(e)}, status=500)
+
+			opponent_games = GameHistory.objects.filter(Q(opponentUsername=username))
+			for game in opponent_games:
 				game.opponentUsername = "deleted_user"
-			game.save()
+				game.save()
 
-		print("Game history instances deleted successfully")
+			print(f"Deleted games where opponent is {username}")
 
-		user = CustomUser.objects.get(username=username)
-		user.delete()
 
-		print("User account deleted successfully")
+		# games = GameHistory.objects.filter(Q(opponentUsername=username))
+		# for game in games:
+		# 	if game.opponentUsername == username:
+		# 		game.opponentUsername = "deleted_user"
+		# 	game.save()
+
+		# print("Game history instances deleted successfully")
+
+			user = CustomUser.objects.get(username=username)
+			user.delete()
+
+			print("User account deleted successfully")
 
 		return Response({"deleteGameHistory view message": "Account deleted successfully"})
 
@@ -131,7 +149,6 @@ def deleteGameHistory(request):
 
 
 @api_view(['DELETE'])
-@csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
@@ -141,7 +158,6 @@ def deleteGameHistoryInactiveUsers(request):
 			except ValueError:
 				return Response({"error": "Invalid user ID format"}, status=400)
 
-		print('usersToDeleteID', usersToDeleteID)
 		if not usersToDeleteID:
 			print("No matching users found")
 			return Response({"error": "No matching users found"})

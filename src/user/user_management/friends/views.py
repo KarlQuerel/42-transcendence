@@ -124,7 +124,7 @@ class DeleteInactiveUsersFriendRequests(APIView):
 
 			if not usersToDeleteID:
 				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
-
+			
 			friendRequests = FriendRequest.objects.filter(Q(sender_id__in=usersToDeleteID) | Q(receiver_id__in=usersToDeleteID))
 			friendRequests.delete()
 
@@ -134,7 +134,18 @@ class DeleteInactiveUsersFriendRequests(APIView):
 			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class DeleteUserFriendRequests(APIView):
+	def delete(self, request, user_id):
+		print('\n>>>>>>> DeleteUserFriendRequests <<<<<<<') # DEBUG
+		try:
+			friendRequests = FriendRequest.objects.filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
+			print('friendRequests', friendRequests) # DEBUG
+			friendRequests.delete()
 
+			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
+
+		except:
+			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 # class SentFriendRequestView(APIView):

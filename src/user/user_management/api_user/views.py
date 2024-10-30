@@ -721,6 +721,7 @@ def getAnonymousStatus(request):
 @permission_classes([IsAuthenticated])
 @csrf_protect
 def deleteAccount(request):
+	print('\n>>>>>>> deleteAccount view <<<<<<<') # DEBUG
 	try:
 		user = request.user
 		if not user.is_authenticated:
@@ -737,6 +738,38 @@ def deleteAccount(request):
 		return Response({'error': str(e)}, status=500)
 
 
+#########################################
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def deleteUserFriendships(request):
+	print('\n>>>>>>> deleteUserFriendships view <<<<<<<') # DEBUG
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
+
+		try:
+			friendships = CustomUser.objects.filter(friends=user)
+			print('friendships to delete:', friendships)
+
+			for friendship in friendships:
+				friendship.friends.remove(user)
+			
+			return JsonResponse({'success': 'User friendships deleted successfully'}, status=200)
+
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return Response({'error': str(e)}, status=500)
+
+	except CustomUser.DoesNotExist:
+		return Response({'error': 'User does not exist'}, status=404)
+	except Exception as e:
+		print(f'Error: {str(e)}')
+		return Response({'error': str(e)}, status=500)
+
+
 
 ##################################################
 ##          DELETE INACTIVE USERS VIEWS   	    ##
@@ -750,14 +783,12 @@ def getInactiveUsersID(request):
 		inactive_users_id = []
 
 		time = timezone.now()
-		cutoffTime = time + timezone.timedelta(days=3*365)
 
 		for user in users:
 			if user.last_login is not None:
-				if user.last_login > cutoffTime:
+				cutoffTime = user.last_login + timezone.timedelta(days=3*365)
+				if time > cutoffTime and user.is_online == False:
 					inactive_users_id.append(user.id)
-
-		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
 
 		return JsonResponse(inactive_users_id, safe=False, status=200)
 
@@ -768,8 +799,7 @@ def getInactiveUsersID(request):
 #########################################
 
 
-@api_view(['DELETE'])
-@csrf_protect
+@api_view(['POST'])
 def deleteInactiveUsersFriends(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
@@ -780,8 +810,7 @@ def deleteInactiveUsersFriends(request):
 				return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
 
 		if not usersToDeleteID:
-				return Response({'error': 'No matching users found'}, status=status.HTTP_400_BAD_REQUEST)
-
+				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
 
 		friendships = CustomUser.objects.filter(Q(friends__id__in=usersToDeleteID))
 		friendships.delete()

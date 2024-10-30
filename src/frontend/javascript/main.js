@@ -125,11 +125,6 @@ const	routes =
 		render: renderChangePassword,
 		init: initializeChangePassword
 	},
-	'/delete-inactive-users':
-	{
-		title: "Delete Inactive Users",
-		render: manageInactiveUsers
-	}
 };
 
 /***********************************************\
@@ -172,9 +167,7 @@ export function getSignedInState()
 /***			Router Function				***/
 function router()
 {
-	// FONCTION JESS
 	manageInactiveUsers();
-	// FIN FONCTION JESS
 	
 	let path = normalizePath(window.location.pathname) || '/home';
 

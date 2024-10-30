@@ -27,21 +27,8 @@ export async function getInactiveID()
             headers: {
                 'Content-Type': 'application/json',
         }});
-        // .then(users_tab=>{
-        //     console.log('inactiveUsersID = ', inactive_users_id);
-        //     apiRequest('/api/dashboard/deleteGameHistoryInactiveUsers/', {
-        //         method: 'DELETE',
-        //         headers:
-        //         {
-        //             ...getAuthHeaders(),
-        //             'X-CSRFToken': getCookie('csrftoken'),
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify(users_tab),
-        //     })
-        //     console.log("Finished deleting user's GameHistory")
-        // });
 
+        
         const data = await response.json();
         return data;
     }
@@ -59,13 +46,10 @@ export async function deleteInactiveUsers(inactiveUsersID)
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'DELETE',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
         });
-
-        console.log(response);
     }
     catch (error)
     {
@@ -86,6 +70,8 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
             },
             body: JSON.stringify({ inactiveUsersID })
         });
+
+        console.log('Delete users friend requests (front):', response);
     }
     catch (error)
     {
@@ -96,9 +82,8 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
     try
     {
         const response = await fetch('api/users/deleteInactiveUsersFriends/', {
-            method: 'DELETE',
+            method: 'POST',
             headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })

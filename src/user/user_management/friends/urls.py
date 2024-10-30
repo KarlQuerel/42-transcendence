@@ -9,6 +9,7 @@ urlpatterns = [
 	path('friend-request-status/<int:user_id>/', FriendRequestStatus.as_view(), name='friend_request_status'),
 	path('friend-request-id/<int:user_id>/', FriendRequestID.as_view(), name='friend_request_id'),
 	path('DeleteInactiveUsersFriendRequests/', DeleteInactiveUsersFriendRequests.as_view(), name='delete_friend_requests'),
+    path('DeleteUserFriendRequests/', DeleteInactiveUsersFriendRequests.as_view(), name='delete_friend_requests'),
 	# path('sent-requests/', SentFriendRequestView.as_view(), name='sent_requests'),
 	# path('received-requests/', ReceivedFriendRequestView.as_view(), name='received_requests'),
 ]

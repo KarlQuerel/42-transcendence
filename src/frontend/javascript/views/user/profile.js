@@ -1,51 +1,3 @@
-/* TO DO KARL
-
-    Cher Karl,
-
-    Bienvenu sur la merveilleuse page de Profil.
-    Tu seras heureux de retrouver mes commentaires ci-dessous pour te guider dans ce voyage vers le Frontend.
-
-    Il y a bcp de boutons sur cette page :
-
-    1. Change Password
-    Le bouton s'appelle "changePasswordButton" et a pour id "change-password-button".
-    Il redirige vers la page "/change-password" lorsqu'on clique dessus.
-    Il faut le mettre proche/en dessous/a coté du password.
-
-    2. Friends
-    Le bouton s'appelle "friendsButton" et a pour id "friends-button".
-    Il redirige vers la page "/friends" lorsqu'on clique dessus.
-    Tu peux le mettre où tu veux.
-
-    3. Update Profile
-    Le bouton s'appelle "updateProfileButton" et a pour id "update-profile-button".
-    Le bouton doit disparaitre si l'utilisateur est en mode édition de son profil (si il est dans profileEditMode()).
-    En gros, il doit disparaitre si l'utilisateur clique dessus, et réapparaitre une fois qu'il a fini de modifier son profil (après avoir cliqué sur "Save changes" et que la sauvegarde a été réussie).
-    
-    4. Logout
-    Le bouton s'appelle "logoutButton" et a pour id "logout-button".
-    Il redirige vers la page "/sign-in" lorsqu'on clique dessus.
-    Il faut le mettre en bas de la page, à droite ou ailleurs, juste il faut le mettre un peu a part quoi.
-
-    5. Delete account
-    Le bouton s'appelle "deleteAccountButton" et a pour id "delete-account-button".
-    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir supprimer son compte.
-    Je pense tu peux le placer proche de Logout button.
-    
-    6. Anonymize data
-    Le bouton s'appelle "anonymizeButton" et a pour id "anonymize-button".
-    Il affiche une boite de dialogue pour demander à l'utilisateur s'il est sûr de vouloir anonymiser ses données.
-    Je pense tu peux le placer proche de Delete account et Logout button ? Maybe ?
-    Il faut que le bouton disparaisse si l'utilisateur est déjà anonyme (on peut vérifier ça avec getUserAnonymousStatus()).
-    Quand un user anonymise son compte, je l'enregistre comme is_anonymous = true dans la base de données.
-
-
-    Autre point :
-    Le Two-Factor Authentication field est dégueulasse actuellement. Normalement c'est une case à cocher mais pour l'instant la case est méconnaissable.
-
-*/
-
-
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
@@ -805,6 +757,7 @@ async function deleteUserAccount()
     console.log('Deleting account...');
     try
     {
+        // get username of account to delete
         const response = await apiRequest('/api/users/deleteAccount/', {
             method: 'DELETE',
             headers: {
@@ -814,6 +767,19 @@ async function deleteUserAccount()
         })
         .then(user=>{
             console.log('username = ', user.username);
+
+            // delete friend requests
+            apiRequest('api/users/friends/DeleteUserFriendRequests/', {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(user),
+            });
+            console.log("Finished deleting user's Friend Requests");
+
+            // delete user's game history and account
             apiRequest('/api/dashboard/deleteGameHistory/', {
                 method: 'DELETE',
                 headers:
@@ -824,7 +790,21 @@ async function deleteUserAccount()
                 },
                 body: JSON.stringify(user),
             })
-            console.log("Finished deleting user's GameHistory")
+            console.log("Finished deleting user's GameHistory");
+
+            // delete friendships
+            apiRequest('/api/users/deleteUserFriendships/', {
+                method: 'DELETE',
+                headers:
+                {
+                    ...getAuthHeaders(),
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
+            });
+            console.log("Finished deleting user's Friendships");
+
         });
 
         console.log('Account deleted successfully.');
@@ -839,3 +819,44 @@ async function deleteUserAccount()
         alert('An error occurred while trying to delete your account.');
     }
 }
+
+
+// async function deleteUserAccount()
+// {
+//     console.log('Deleting account...');
+//     try
+//     {
+//         const response = await apiRequest('/api/users/deleteAccount/', {
+//             method: 'DELETE',
+//             headers: {
+//                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//                 'X-CSRFToken': getCookie('csrftoken'),
+//             }
+//         })
+//         .then(user=>{
+//             console.log('username = ', user.username);
+//             apiRequest('/api/dashboard/deleteGameHistory/', {
+//                 method: 'DELETE',
+//                 headers:
+//                 {
+//                     ...getAuthHeaders(),
+//                     'X-CSRFToken': getCookie('csrftoken'),
+//                     'Content-Type': 'application/json',
+//                 },
+//                 body: JSON.stringify(user),
+//             })
+//             console.log("Finished deleting user's GameHistory")
+//         });
+
+//         console.log('Account deleted successfully.');
+//         alert('Your account has been deleted successfully.');
+
+//         navigateTo('/sign-in');
+
+//     }
+//     catch (error)
+//     {
+//         console.error('Error during account deletion:', error);
+//         alert('An error occurred while trying to delete your account.');
+//     }
+// }
