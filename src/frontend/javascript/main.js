@@ -57,6 +57,7 @@ from "./views/user/change_password.js";
 import { manageInactiveUsers }
 from "./views/user/delete_inactive_users.js";
 
+
 /***			Footer						***/
 
 /***********************************************\
@@ -124,6 +125,11 @@ const	routes =
 		render: renderChangePassword,
 		init: initializeChangePassword
 	},
+	'/delete-inactive-users':
+	{
+		title: "Delete Inactive Users",
+		render: manageInactiveUsers
+	}
 };
 
 /***********************************************\

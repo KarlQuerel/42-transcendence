@@ -15,8 +15,8 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
-from .serializers import UsernameSerializer  #TEST CARO
-from pprint import pprint
+from .serializers import UsernameSerializer
+from django.db.models import Q
 from .forms import CustomUserRegistrationForm
 import pyotp, os, json, base64, logging
 
@@ -71,20 +71,21 @@ def signInUser(request):
 		user = authenticate(request, username=username, password=password)
 
 		if user is not None:
-				if user.is2fa == True:
-					totp = send_2fa_totp(user)
-					request.session['pre_2fa_user_id'] = user.id
+			if user.is2fa == True:
+				totp = send_2fa_totp(user)
+				request.session['pre_2fa_user_id'] = user.id
 
-					return JsonResponse({'username': user.username, 'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
-				else:
-					login(request, user)
-					refresh = RefreshToken.for_user(user)
-					access_token = str(refresh.access_token)
-					refresh_token = str(refresh)
-					user.is_online = True
-					user.save()
+				return JsonResponse({'username': user.username, 'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
+			else:
+				login(request, user)
+				refresh = RefreshToken.for_user(user)
+				access_token = str(refresh.access_token)
+				refresh_token = str(refresh)
+				user.is_online = True
+				user.save()
+			
+				return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 
-					return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'error': 'Invalid username or password'}, status=403)
 
@@ -752,9 +753,10 @@ def getInactiveUsersID(request):
 		cutoffTime = time + timezone.timedelta(days=3*365)
 
 		for user in users:
-			if user.last_login is not None and user.last_login > cutoffTime:
-				inactive_users_id.append(user.id)
-		
+			if user.last_login is not None:
+				if user.last_login > cutoffTime:
+					inactive_users_id.append(user.id)
+
 		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
 
 		return JsonResponse(inactive_users_id, safe=False, status=200)
@@ -766,24 +768,28 @@ def getInactiveUsersID(request):
 #########################################
 
 
-# @api_view(['POST'])
-# def deleteInactiveUsers(request):
-# 	try:
-# 		inactiveUsersID = request.data.get('inactiveUsersID', [])
+@api_view(['DELETE'])
+@csrf_protect
+def deleteInactiveUsersFriends(request):
+	try:
+		usersToDeleteID = request.data.get('inactiveUsersID', [])
+		if isinstance(usersToDeleteID, str):
+			try:
+				usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			except ValueError:
+				return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
 
-# 		if isinstance(inactiveUsersID, str):
-# 			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
-		
-# 		if request.user.is_authenticated:
-# 			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+		if not usersToDeleteID:
+				return Response({'error': 'No matching users found'}, status=status.HTTP_400_BAD_REQUEST)
 
-# 		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
-# 		users_to_delete.delete()
 
-# 		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+		friendships = CustomUser.objects.filter(Q(friends__id__in=usersToDeleteID))
+		friendships.delete()
 
-# 	except Exception as e:
-# 		return Response({'error': str(e)}, status=500)
+		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
 
 
 

@@ -735,7 +735,6 @@ async function getUserAnonymousStatus()
             method: 'GET',
         });
 
-        // const data = await response.json();
         return response;
     }
     catch (error)
@@ -831,7 +830,7 @@ async function deleteUserAccount()
         console.log('Account deleted successfully.');
         alert('Your account has been deleted successfully.');
 
-        window.location.href = '/sign-in';
+        navigateTo('/sign-in');
 
     }
     catch (error)

@@ -75,7 +75,8 @@ check_userGamehistory:
 # Clear database
 
 clear_db:
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_db"
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_dashboard_db"
+	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_user_db"
 
 
 .PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard

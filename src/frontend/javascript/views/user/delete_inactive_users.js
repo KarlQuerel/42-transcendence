@@ -3,7 +3,9 @@
 \***********************************************/
 import { DEBUG }
 from '../../main.js';
-import { getCookie } from './signin.js';
+
+import { getCookie }
+from './signin.js';
 
 /***********************************************\
 -		   DELETE INACTIVE USERS FUNCTIONS		-
@@ -13,6 +15,7 @@ export async function manageInactiveUsers()
 {
     let inactiveUsersID = await getInactiveID();
     deleteInactiveUsers(inactiveUsersID);
+    deleteInactiveUsersFriendsAndRequests(inactiveUsersID);
 }
 
 export async function getInactiveID()
@@ -54,7 +57,7 @@ export async function deleteInactiveUsers(inactiveUsersID)
     try
     {
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
@@ -62,8 +65,7 @@ export async function deleteInactiveUsers(inactiveUsersID)
             body: JSON.stringify({ inactiveUsersID })
         });
 
-        if (DEBUG)
-            console.log('Inactive users deleted successfully.');
+        console.log(response);
     }
     catch (error)
     {
@@ -72,24 +74,39 @@ export async function deleteInactiveUsers(inactiveUsersID)
 }
 
 
-// export async function deleteInactiveUsers(inactiveUsersID)
-// {
-//     try
-//     {
-//         const response = await fetch('/api/users/deleteInactiveUsers/', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ inactiveUsersID })
-//         });
+export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
+{
+    // delete inactive users' friend requests
+    try
+    {
+        const response = await fetch('api/users/friends/DeleteInactiveUsersFriendRequests/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ inactiveUsersID })
+        });
+    }
+    catch (error)
+    {
+        console.error('Failed to delete inactive users friend requests:', error);
+    };
 
-//         if (DEBUG)
-//             console.log('Inactive users deleted successfully.');
-//     }
-//     catch (error)
-//     {
-//         console.error('Failed to delete inactive users:', error);
-//     };
-// }
-
+    // delete inactive users' friends 
+    try
+    {
+        const response = await fetch('api/users/deleteInactiveUsersFriends/', {
+            method: 'DELETE',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ inactiveUsersID })
+        });
+    }
+    catch (error)
+    {
+        console.error('Failed to delete inactive users friends:', error);
+    };
+}

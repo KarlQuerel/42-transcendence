@@ -6,6 +6,7 @@ from api_user.models import CustomUser
 from .serializers import GameHistorySerializer
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
+from django.db import transaction
 
 # Returns the game history of the connected user
 @api_view(['GET'])
@@ -127,21 +128,28 @@ def deleteGameHistory(request):
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
 
-@api_view(['POST'])
+
+@api_view(['DELETE'])
 @csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
-		# Convert string to list of integers
 		if isinstance(usersToDeleteID, str):
-			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			try:
+				usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			except ValueError:
+				return Response({"error": "Invalid user ID format"}, status=400)
+
 		print('usersToDeleteID', usersToDeleteID)
 		if not usersToDeleteID:
 			print("No matching users found")
 			return Response({"error": "No matching users found"})
 		
+		usersToDelete = CustomUser.objects.filter(id__in=usersToDeleteID)
+		if not usersToDelete.exists():
+			return Response({"error": "No matching users found"}, status=404)
+
 		usersToDeleteUsername = []
 		allUsers = CustomUser.objects.all()
 		print('allUsers', allUsers)
