@@ -4,7 +4,7 @@
 import { DEBUG, navigateTo, setSignedInState }
 from '../../main.js';
 
-import { refreshToken, apiRequest }
+import { refreshToken, userPingBackend }
 from './signin.js';
 
 /***********************************************\
@@ -51,8 +51,8 @@ export function render2fa()
 			if (DEBUG)
 				console.log('Token refreshed:', newAccessToken);
 			setSignedInState(true);
-			navigateTo('/profile');
             window.history.replaceState({}, document.title, "/profile");
+			navigateTo('/profile');
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
 		})
 		.catch(error => {

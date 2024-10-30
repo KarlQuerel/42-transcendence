@@ -448,7 +448,7 @@ we are providing you with an export of your personal data.
 
 {json_data}""",		
 			str(os.getenv('EMAIL_HOST_USER')),
-			['traans.een.daance@gmail.com'],
+			[user.email],
 			fail_silently=False,
 		)
 
@@ -474,7 +474,7 @@ def send_2fa_totp(user):
 		f'Verification code for {user.username} on transcendance.fr',
 		f'Please enter this one-time code to log into your account: {code}',
 		str(os.getenv('EMAIL_HOST_USER')),
-		['traans.een.daance@gmail.com'],
+		[user.email],
 		fail_silently=False,
 	)
 
@@ -493,7 +493,6 @@ def verify_2fa_code(request):
 	if user_id:
 		user = CustomUser.objects.get(id=user_id)
 		totp = pyotp.TOTP(user.totp_secret)
-		print('totp: ', totp.now())
 		if totp.verify(code):
 			login(request, user)
 			refresh = RefreshToken.for_user(request.user)
@@ -575,7 +574,6 @@ def update2FAStatus(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-@csrf_protect
 def loggout_user(request):
 	try:
 		user = request.user
