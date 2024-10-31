@@ -56,6 +56,7 @@ class Command(BaseCommand):
 			'date_of_birth': '2017-07-15',
 			'first_name': 'Yako',
 			'last_name': 'Baby',
+			'avatar_path': '/app/media/avatars/yako.png'
 		},
 		{
 			'username': 'cherry',
@@ -64,6 +65,7 @@ class Command(BaseCommand):
 			'date_of_birth': '2016-07-15',
 			'first_name': 'Cherry',
 			'last_name': 'Pantoufle',
+			'avatar_path': '/app/media/avatars/cherry.png'
 		},
 		{
 			'username': 'lebidou',
@@ -72,6 +74,7 @@ class Command(BaseCommand):
 			'date_of_birth': '2010-01-01',
 			'first_name': 'Lebidou',
 			'last_name': 'Onvoitplus',
+			'avatar_path': '/app/media/avatars/lebidou.png'
 		},
 		{
 			'username': 'jeanmichel',
@@ -80,6 +83,7 @@ class Command(BaseCommand):
 			'date_of_birth': '2013-01-01',
 			'first_name': 'jean',
 			'last_name': 'michel',
+			'avatar_path': '/app/media/avatars/jeanmichel.png'
 		},
 	]
 
