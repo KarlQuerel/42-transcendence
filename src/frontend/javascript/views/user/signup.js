@@ -7,6 +7,9 @@ from '../../main.js';
 import { getCookie }
 from './signin.js';
 
+import { doesUserExist, doesEmailExist }
+from '../../../javascript/components/pong/utils.js';
+
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
@@ -240,11 +243,13 @@ function isValidDateOfBirth(date_of_birth)
 
 function isValidUsername(username)
 {
-	const	acceptedCharacters = /^[a-zA-Z0-9_-]+$/;
+	const acceptedCharacters = /^[a-z0-9_-]+$/;
 
 	if (username.length >= 12)
 		return false;
 	else if (acceptedCharacters.test(username) == false)
+		return false;
+	if (doesUserExist(username))
 		return false;
 	return true;
 }
@@ -269,6 +274,8 @@ function isValidEmail(email)
 		return false;
 	if (domainPart.length > 255)
 		return false;
+	if (doesEmailExist(email))
+		return false;
 	return true;
 }
 
@@ -282,19 +289,16 @@ export function allValuesAreValid(first_name_type, last_name_type, username_type
 export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type)
 {
 	if (DEBUG)
-	{
 		console.log('Enter sendErrorToFrontend');
-		console.log('first name type = ', first_name_type);
-	}
 
 	const	errorMessages =
 	{
 		first_name: 'Please enter a first name with fewer than 30 characters, using only letters.',
 		last_name: 'Please enter a last name with fewer than 30 characters, using letters, spaces, and hyphens only.',
 		date_of_birth: 'Please enter a valid date of birth.',
-		username: 'Username must be fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
+		username: 'Username must be unique, fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
 		password: 'Password must be at least 6 characters long.',
-		email: 'Please enter a valid email address.',
+		email: 'Email must be unique and in valid format [email@email.xxx].',
 		password_confirmation: 'Password and password confirmation do not match.'
 	};
 
@@ -306,31 +310,18 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		{ type: username_type, id: 'username', message: errorMessages.username },
 		{ type: password_type, id: 'password', message: errorMessages.password },
 		{ type: email_type, id: 'email', message: errorMessages.email },
-		{ type: password_confirmation_type, id: 'password_confirmation', message: errorMessages.password_confirmation },
 		{ type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
 		{ type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
-		{ type: date_of_birth_type, id: 'date_of_birth_input', message: errorMessages.date_of_birth },
-		{ type: username_type, id: 'username_input', message: errorMessages.username },
-		{ type: password_type, id: 'password_input', message: errorMessages.password },
-		{ type: email_type, id: 'email_input', message: errorMessages.email },
+		{ type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
+		{ type: email_type, id: 'email_input', message: errorMessages.email }
 	];
+
+	if (typeof password_confirmation_type !== 'undefined')
+		fields.push({ type: password_confirmation_type, id: 'password_confirmation', message: errorMessages.password_confirmation });
 
 	fields.forEach(field =>
 	{
 		const	formGroup = document.getElementById(field.id).parentElement;
-
-		// const formGroup = document.getElementById(field.id);
-        // if (!formGroup) {
-        //     console.error(`Element with id '${field.id}' not found.`);
-        //     return;
-        // }
-
-        // const parentElement = formGroup.parentElement;
-        // if (!parentElement) {
-        //     console.error(`Parent element of '${field.id}' not found.`);
-        //     return;
-        // }
-
 		const	existingError = formGroup.querySelector('.error-message');
 		if (existingError)
 			existingError.remove();
@@ -340,6 +331,10 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 			const	error = document.createElement('p');
 			error.textContent = field.message;
 			error.classList.add('error-message');
+			
+			if (field.id === 'email_input')
+				error.classList.add('email-input-error-message');
+
 			formGroup.appendChild(error);
 		}
 	});

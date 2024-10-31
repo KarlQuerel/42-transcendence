@@ -472,14 +472,14 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
 		const	avatarFile = avatarInput.files[0];
 
-		// const	isValidData = verifyProfileChanges();
+		const	isValidData = verifyProfileChanges();
         // JESS HERE
-		const	isValidData = Boolean(verifyProfileChanges());
+		// const	isValidData = Boolean(verifyProfileChanges());
 
         if (DEBUG)
             console.log('isValidData = ', isValidData);
 
-		if (isValidData === true)
+		if (isValidData)
 		{
             if (DEBUG)
                 console.log('Profile changes are valid.');
@@ -506,7 +506,7 @@ function hideAllButtonsExcept(allowedButtonIds)
 	});
 }
 
-async function verifyProfileChanges()
+function verifyProfileChanges()
 {
     if (DEBUG)
         console.log('Verifying profile changes...');

@@ -129,8 +129,10 @@ def currentlyLoggedInUser(request):
 		return Response({'currentlyLoggedInUser error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+#########################################
+
+
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def doesUserExist(request, username):
 	try:
 		user = CustomUser.objects.get(username=username)
@@ -138,6 +140,20 @@ def doesUserExist(request, username):
 		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
+
+
+#########################################
+
+
+@api_view(['GET'])
+def doesEmailExist(request, email):
+	try:
+		user = CustomUser.objects.get(email=email)
+
+		return JsonResponse({'email_exists': True}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'email_exists': False}, status=status.HTTP_200_OK)
+
 
 #########################################
 

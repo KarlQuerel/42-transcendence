@@ -12,6 +12,7 @@ urlpatterns = [
 	path('getFriendAvatar/<int:user_id>/', views.getFriendAvatar, name='get-friend-avatar'),
 	path('getUsername/', views.getUsername, name='get-username'),
 	path('does-user-exist/<str:username>/', views.doesUserExist, name='does_user_exist'),
+	path('does-email-exist/<str:email>/', views.doesEmailExist, name='does_email_exist'),
 	path('other-users-list/', views.otherUsersList, name='other_users_list'),
 	path('verify-2fa-code/', views.verify_2fa_code, name='verifiy_2fa_code'),
 	path('resend-2fa-code/', views.resend_2fa_code, name='resend_2fa_code'),
