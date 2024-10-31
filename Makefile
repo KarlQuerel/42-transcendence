@@ -72,10 +72,17 @@ check_userGamehistory:
 	@read -p "Enter username: " username; \
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM api_dashboard_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
 
+check_allFriendRequests:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM friends_friendrequest;'"
+
+check_allFriends:
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser_friends;'"
+
 # Clear database
 
 clear_db:
-	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_db"
+	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_dashboard_db"
+	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_user_db"
 
 
 .PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard
