@@ -238,8 +238,6 @@ function randomizeBall()
  -					AI							-
  \***********************************************/
 
-const	ERROR = 42
-
 let	data = new GameData();
 
 function updateGameData()
@@ -255,7 +253,6 @@ function updateGameData()
 	data.fieldX_right = GraphConf.canvas.width;
 
 	data.paddleY = player2.y;
-	data.paddle_height = PaddleConf.height;
 	data.paddle_width = PaddleConf.width;
 }
 
@@ -283,10 +280,6 @@ It compares the predicted_intersection to the AI paddle
 to decide if it should move up or down */
 function moveAiPaddle()
 {
-
-/* 	if (getPaddleAction() == ERROR) //TODO
-		STOP THE GAME */
-
 	let predicted_intersection = getPaddleAction();
 
 	if (predicted_intersection < data.paddleY)
@@ -385,15 +378,15 @@ export async function gameLoop()
 	{
 		checkTournamentWinner(player1.name);
 		drawWinMessage(player1.name);
-		await fillingResults(1);
-		await sendResultsToBackend();
-		GameState.isGameDone = true;
 	}
-	else if (player2.score === GameConf.maxScore)
+	if (player2.score === GameConf.maxScore)
 	{
 		checkTournamentWinner(player2.name);
 		drawWinMessage(player2.name);
-		await fillingResults(2);
+	}
+	if (player1.score === GameConf.maxScore || player2.score === GameConf.maxScore)
+	{
+		await fillingResults();
 		await sendResultsToBackend();
 		GameState.isGameDone = true;
 	}
@@ -421,16 +414,14 @@ function checkTournamentWinner(winnerName)
 		}
 		GameConf.matchupIndex++;
 		GameConf.winners.push(winnerName);
-		console.log('GameConf.winners.length: ', GameConf.winners.length);
+		if (DEBUG)
+			console.log('GameConf.winners.length: ', GameConf.winners.length);
 		
 		if (GameConf.matchupIndex === 2)
 		{
 			if (GameConf.winners.length === 2)
 			{
 				GameState.isFinalMatch = true;
-				console.log('Setting up final match');
-				console.log(' GameConf', GameConf);
-				console.log(' GameState', GameState);
 				updateRematchButtonText();
 				return;
 			}

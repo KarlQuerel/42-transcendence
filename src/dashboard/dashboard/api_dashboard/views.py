@@ -14,7 +14,6 @@ from rest_framework import status
 @permission_classes([IsAuthenticated])
 def getGameHistory(request):
 	if request.user.is_authenticated:
-		# game_history = GameHistory.objects.filter(user=request.user)
 		game_history = GameHistory.objects.filter(myUsername=request.user.username)
 		serializer = GameHistorySerializer(game_history, many=True)
 
@@ -28,11 +27,7 @@ def getGameHistory(request):
 @permission_classes([IsAuthenticated])
 def addStats(request):
 	try:
-		user = request.user
-		# if not user.is_authenticated:
-		# 	return Response({'error': 'User not authenticated'}, status=401)
-
-		myUsername = user.username
+		myUsername = request.data.get('myUsername')
 		opponentUsername = request.data.get('opponentUsername')
 		opponentScore = request.data.get('opponentScore')
 		myScore = request.data.get('myScore')
@@ -41,8 +36,10 @@ def addStats(request):
 		if not opponentUsername or opponentScore is None or myScore is None or not date:
 			return Response({'error': 'Missing required fields'}, status=400)
 		
-		if user.is_authenticated:
-			# Add game history instance
+
+		user = CustomUser.objects.filter(username=myUsername).first()
+		if user and user.is_authenticated:
+			print("User is authenticated : ", myUsername)
 			GameHistory.objects.create(
 				myUsername=myUsername,
 				opponentUsername=opponentUsername,
@@ -50,13 +47,12 @@ def addStats(request):
 				myScore=myScore,
 				date=date
 			)
-			print("gamehistory instance created for user: ", myUsername, "\n opponent: ", 
-			opponentUsername, "\n opponent score: ", opponentScore, "\n my score: ", 
-			myScore, "\n date: ", date) #DEBUG
+			print("gamehistory instance created for user: ", myUsername)
 
 		# Check if the opponent is authenticated and add their game history if they have an account
 		opponent = CustomUser.objects.filter(username=opponentUsername).first()
 		if opponent and opponent.is_authenticated:
+			print("Opponent is authenticated : ", opponentUsername)
 			GameHistory.objects.create(
 				myUsername=opponentUsername,
 				opponentUsername=myUsername,
@@ -64,6 +60,7 @@ def addStats(request):
 				myScore=opponentScore,
 				date=date
 			)
+			print("gamehistory instance created for user: ", myUsername)
 
 		return Response({"message": "Game history instance added successfully"})
 	except Exception as e:

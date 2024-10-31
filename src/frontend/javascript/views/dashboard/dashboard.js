@@ -648,15 +648,12 @@ function avatars(gameHistory, allUsers)
 	}
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
-	console.log("OPPONENT LIST EMPTY: ", opponentsList);
 	gameHistory.forEach(game => {
 		if (!opponentsList.includes(game.opponentUsername)) //if NOT already in list
-		{
-			console.log("OPPONENT LIST BEING FILLED: ", opponentsList);
 			opponentsList.push(game.opponentUsername);
-		}
 	})
-	console.log("OPPONENT LIST FULL: ", opponentsList);
+	if (DEBUG)
+		console.log("Full opponent list: ", opponentsList);
 
 	allUsers.forEach(user => {
 		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
@@ -683,7 +680,6 @@ function avatars(gameHistory, allUsers)
 
 			//remove opponentUsername from opponentsList
 			opponentsList.splice(opponentsList.indexOf(user.username), 1);
-			console.log("CURRENT OPPONENT LIST: ", opponentsList);
 		}
 	});
 
@@ -698,10 +694,12 @@ function avatars(gameHistory, allUsers)
 		const	avatarImg = document.createElement('img');
 		if (opponent === 'deleted_user')
 			avatarImg.src = '/assets/images/dashboard/deleted_user.png';
+		else if (opponent === '🤖 Ponginator3000 🤖')
+			avatarImg.src = '/assets/images/dashboard/robot.png';
 		else
 			avatarImg.src = '/assets/images/dashboard/default.png';
 		if (DEBUG)
-			console.log("AVATAR IMG: ", avatarImg.src);
+			console.log("AVATAR IMG for user ", opponent, ": ", avatarImg.src);
 
 		avatarImg.alt = `${opponent}`;
 		avatarImg.className = 'avatar-icon';

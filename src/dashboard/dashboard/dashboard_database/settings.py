@@ -57,9 +57,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework',
     'api_user',
-    # 'friends',
-
-#TODO: check si j'ai besoin de api_dashboard
     'api_dashboard',
 ]
 

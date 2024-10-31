@@ -11,9 +11,6 @@ from './gameVariables.js';
 import { keyDownHandler, keyUpHandler }
 from './gameDynamics.js';
 
-// import { loadUsername }
-// from './utils.js';
-
 import { loadUserManagementData }
 from './utils.js';
 
@@ -21,33 +18,21 @@ from './utils.js';
 -					POST-GAME					-
 \***********************************************/
 /***			Filling Results				***/
-export async function fillingResults(winner)
+export async function fillingResults()
 {
-	const	username = await loadUserManagementData();
-
-	Results.username = username.username;
-	Results.identified = "yes"; // HERE check si quelqu'un l'utilise
-
-	if (winner === 1)
-	{
-		Results.score = GameConf.maxScore;
-		Results.opponent_score = player2.score;
-	}
-	else if (winner === 2)
-	{
-		Results.score = player1.score;
-		Results.opponent_score = GameConf.maxScore;
-	}
+	Results.username = player1.name;
 
 	if (GameState.isAiPresent === true)
 	{
-		Results.identified = false;
 		Results.opponent_username = GameConf.AI_name;
 	}
 	else if (GameState.isAiPresent === false)
 	{
 		Results.opponent_username = player2.name;
 	}
+
+	Results.score = player1.score;
+	Results.opponent_score = player2.score;
 
 	Results.tournament_date = getDate();
 
@@ -64,8 +49,6 @@ function getDate()
 	const year = current_date.getFullYear();
 
 	const formattedDate = `${year}-${month}-${day}`;
-
-	console.log('Formatted Date:', formattedDate);
 
 	return formattedDate;
 }
