@@ -131,6 +131,7 @@ def deleteGameHistory(request):
 
 
 @api_view(['DELETE'])
+@csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
