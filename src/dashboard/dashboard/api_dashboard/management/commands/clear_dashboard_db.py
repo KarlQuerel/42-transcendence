@@ -1,14 +1,17 @@
 from django.core.management.base import BaseCommand
 from api_dashboard.models import GameHistory
-from api_user.models import CustomUser
+# from api_user.models import CustomUser
+# from friends.models import FriendRequest
 from django.db import connection
 
 class Command(BaseCommand):
 	help = 'Deletes all users and their game history from both user and dashboard databases'
 
 	def handle(self, *args, **kwargs):
+		# Delete all friend requests
+		# FriendRequest.objects.all().delete()
 		# Delete all users
-		CustomUser.objects.all().delete()
+		# CustomUser.objects.all().delete()
 		# Delete all game history
 		GameHistory.objects.all().delete()
 

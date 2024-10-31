@@ -56,8 +56,8 @@ INSTALLED_APPS = [
 	'django_prometheus',
     'rest_framework_simplejwt',
     'rest_framework',
+    'api_user',
     'api_dashboard',
-    'api_user.apps.ApiConfig',
 ]
 
 ################# Pour les JWTokens #################

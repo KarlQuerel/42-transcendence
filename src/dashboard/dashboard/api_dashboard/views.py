@@ -6,6 +6,8 @@ from api_user.models import CustomUser
 from .serializers import GameHistorySerializer
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
+from django.db import transaction
+from rest_framework import status
 
 # Returns the game history of the connected user
 @api_view(['GET'])
@@ -90,55 +92,62 @@ def anonymiseGameHistory(request):
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 @api_view(['DELETE'])
 @csrf_protect
 @permission_classes([IsAuthenticated])
 def deleteGameHistory(request):
 	try:
-		username = request.data.get('username')
-		
-		games = GameHistory.objects.filter(Q(myUsername=username))
-		if not games.exists():
-			return Response({"error": "No matching games found"}, status=404)
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		for game in games:
-			if game.myUsername == username:
-				game.delete()
+		username = user.username
 
-		games = GameHistory.objects.filter(Q(opponentUsername=username))
-		for game in games:
-			if game.opponentUsername == username:
-				game.opponentUsername = "deleted_user"
-			game.save()
+		with transaction.atomic():
 
-		print("Game history instances deleted successfully")
+			games = GameHistory.objects.filter(Q(myUsername=username))
+			if not games.exists():
+				return Response({"error": "No matching games found"}, status=status.HTTP_200_OK)
 
-		user = CustomUser.objects.get(username=username)
-		user.delete()
+			games.delete()
+			print(f"Deleted games where user is {username}")
 
-		print("User account deleted successfully")
+			opponent_games = GameHistory.objects.filter(Q(opponentUsername=username))
+			for game in opponent_games:
+				if game.opponentUsername == username:
+					game.opponentUsername = "deleted_user"
+				game.save()
 
-		return Response({"deleteGameHistory view message": "Account deleted successfully"})
+			print(f"Deleted games where opponent is {username}")
+
+		return Response({"deleteGameHistory view message": "Game history instances deleted successfully"}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
-	
+		print("deleteGameHistory view error:", str(e))
+		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST'])
-@csrf_protect
+
+
+@api_view(['DELETE'])
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
-		# Convert string to list of integers
 		if isinstance(usersToDeleteID, str):
-			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
-		print('usersToDeleteID', usersToDeleteID)
+			try:
+				usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			except ValueError:
+				return Response({"error": "Invalid user ID format"}, status=400)
+
 		if not usersToDeleteID:
 			print("No matching users found")
 			return Response({"error": "No matching users found"})
 		
+		usersToDelete = CustomUser.objects.filter(id__in=usersToDeleteID)
+		if not usersToDelete.exists():
+			return Response({"error": "No matching users found"}, status=404)
+
 		usersToDeleteUsername = []
 		allUsers = CustomUser.objects.all()
 		print('allUsers', allUsers)
