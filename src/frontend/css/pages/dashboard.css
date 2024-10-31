@@ -75,8 +75,10 @@
 #mystats-canvas
 {
 	position: relative;
-	width: 85%;
+	width: 60%;
+	height: auto;
 	z-index: 10;
+	margin-top: 5vh;
 }
 
 #progression-canvas
@@ -90,17 +92,30 @@
 .chart-legend
 {
 	position: relative;
-	right: 40%;
-	bottom: 34vh;
+	right: 35%;
+	bottom: 20vh;
 	font-size: 2vh;
 	color: var(--base-white);
+}
+
+.chart-message
+{
+	width: 15vh;
+	position: relative;
+	left: 35%;
+	bottom: 27vh;
+	font-size: 125%;
+	background-color: var(--base-light-green);
+	border-radius: 30px;
+	padding: 1vh;
+	text-align: center;
 }
 
 .legend-item
 {
 	display: flex;
 	align-items: center;
-	gap: 0.5vh;
+	gap: 2vh;
 }
 
 .color-box
@@ -110,9 +125,15 @@
 	border-radius: 30px;
 }
 
+
 .label-text
 {
 	color: inherit;
+}
+
+.graph-label
+{
+	background-color: var(--base-light-yellow);
 }
 
 /*		BUTTONS		*/
@@ -130,7 +151,7 @@
 	width: 25vh;
 }
 
-#friendsStatsButton
+#myGameHistory
 {
 	width: 25vh;
 }
@@ -161,6 +182,8 @@
 	flex-wrap: nowrap;
 	justify-content: center;
 	align-items: center;
+	position: relative;
+	bottom: 5vh;
 }
 
 .avatar-name-container
@@ -204,17 +227,129 @@
 	}
 }
 
-
 /*		AVATAR		*/
-.avatar-container
-{
-	width: 100%;
-}
-
 .avatar-icon
 {
 	width: 13%;
 	height: auto;
 	margin-bottom: 2vh;
 	border-radius: 1vh;
+}
+
+/*		BADGES		*/
+.badge-icon
+{
+	top: 50%;
+}
+
+/*		MY GAME INFO	*/
+.mygameinfocontainer
+{
+	display: flex;
+	flex-direction: column;
+	position: fixed;
+	justify-content: center;
+	align-items: center;
+	width: 75vh;
+	background-color: var(--base-dark);
+	border: 1vh solid var(--base-green);
+	border-radius: 30px;
+	z-index: 10;
+	transform: translateY(20px);
+	transition: opacity 0.3s ease, transform 0.3s ease;
+	pointer-events: none;
+	bottom: 15vh;
+}
+
+.mygameinfocontainer.active
+{
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: all;
+}
+
+.avatar-box
+{
+	display: flex;
+	z-index: 10;
+	pointer-events: auto;
+	width: 90%;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/* GAME HISTORY */
+.game-history-container
+{
+	color: var(--base-green);
+	padding: 20px;
+	background-color: var(--base-dark);
+	border: 1px solid #ddd;
+	border-radius: 20px;
+	/* margin-top: 20px; */
+	position: relative;
+	bottom: 50vh;
+	z-index: 20;
+}
+
+.game-history-header
+{
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.game-history-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.game-history-header-row
+{
+	background-color: var(--base-light-green);
+}
+
+.game-history-header-cell,
+.game-history-cell
+{
+	padding: 1px;
+	border: 1px solid var(--base-light-yellow);
+	text-align: left;
+}
+
+.game-history-row:hover 
+{
+	background-color: var(--base-light-green);
+}
+
+.badge-container
+{
+	display: flex;
+	align-items: center;
+	margin-top: 20px;
+}
+
+.badge-icon {
+	width: 50px;
+	height: 50px;
+	margin-right: 10px;
+}
+
+.badge-message {
+	font-size: 16px;
+	color: #333;
+}
+
+.username-text
+{
+	color: var(--base-white);
+	font-size: 2.5vh;
+}
+
+.game-history-close
+{
+	color: var(--base-white);
+	z-index: 150;
 }
