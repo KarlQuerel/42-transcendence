@@ -70,8 +70,6 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
             },
             body: JSON.stringify({ inactiveUsersID })
         });
-
-        console.log('Delete users friend requests (front):', response);
     }
     catch (error)
     {

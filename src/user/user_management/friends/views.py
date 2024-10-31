@@ -135,17 +135,23 @@ class DeleteInactiveUsersFriendRequests(APIView):
 
 
 class DeleteUserFriendRequests(APIView):
-	def delete(self, request, user_id):
-		print('\n>>>>>>> DeleteUserFriendRequests <<<<<<<') # DEBUG
+	def delete(self, request):
 		try:
+			user = request.user
+			if not user.is_authenticated:
+				return Response({'error': 'User not authenticated'}, status=status.HTTP_400_BAD_REQUEST)
+			
+			user_id = user.id
+
 			friendRequests = FriendRequest.objects.filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
-			print('friendRequests', friendRequests) # DEBUG
+			print('friendRequests', friendRequests)
 			friendRequests.delete()
 
 			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
 
-		except:
-			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
+		except Exception as e:
+			print('Error in DeleteUserFriendRequests', str(e))
+			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # class SentFriendRequestView(APIView):

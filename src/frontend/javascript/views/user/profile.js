@@ -121,9 +121,7 @@ export function renderProfile()
     fetchUserData()
         .then(userData =>
         {
-            if (userData || DEBUG)
-                console.log(userData);
-            else
+            if (!userData)
                 console.log('No user data found');
 
             userData_edit = userData;
@@ -751,61 +749,59 @@ async function updateUser2FAStatus(is2fa)
 *            DELETE ACCOUNT FUNCTIONS           *
 \***********************************************/
 
-
 async function deleteUserAccount()
 {
     console.log('Deleting account...');
     try
     {
-        // get username of account to delete
-        const response = await apiRequest('/api/users/deleteAccount/', {
+        // delete user's game history and account
+        await apiRequest('/api/dashboard/deleteGameHistory/', {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            headers:
+            {
                 'X-CSRFToken': getCookie('csrftoken'),
-            }
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
         })
-        .then(user=>{
-            console.log('username = ', user.username);
+        console.log("Finished deleting user's GameHistory");
 
-            // delete friend requests
-            apiRequest('api/users/friends/DeleteUserFriendRequests/', {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
-                body: JSON.stringify(user),
-            });
-            console.log("Finished deleting user's Friend Requests");
-
-            // delete user's game history and account
-            apiRequest('/api/dashboard/deleteGameHistory/', {
-                method: 'DELETE',
-                headers:
-                {
-                    ...getAuthHeaders(),
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            })
-            console.log("Finished deleting user's GameHistory");
-
-            // delete friendships
-            apiRequest('/api/users/deleteUserFriendships/', {
-                method: 'DELETE',
-                headers:
-                {
-                    ...getAuthHeaders(),
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            });
-            console.log("Finished deleting user's Friendships");
-
+        // delete friend requests
+        await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
         });
+        console.log("Finished deleting user's Friend Requests");
+
+        // delete friendships
+        await apiRequest('/api/users/deleteUserFriendships/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
+        });
+        console.log("Finished deleting user's Friendships");
+
+        // delete account
+        await apiRequest('/api/users/deleteUser/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
+        });
+        console.log("Finished deleting user's Account");
+
 
         console.log('Account deleted successfully.');
         alert('Your account has been deleted successfully.');
@@ -819,44 +815,3 @@ async function deleteUserAccount()
         alert('An error occurred while trying to delete your account.');
     }
 }
-
-
-// async function deleteUserAccount()
-// {
-//     console.log('Deleting account...');
-//     try
-//     {
-//         const response = await apiRequest('/api/users/deleteAccount/', {
-//             method: 'DELETE',
-//             headers: {
-//                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//                 'X-CSRFToken': getCookie('csrftoken'),
-//             }
-//         })
-//         .then(user=>{
-//             console.log('username = ', user.username);
-//             apiRequest('/api/dashboard/deleteGameHistory/', {
-//                 method: 'DELETE',
-//                 headers:
-//                 {
-//                     ...getAuthHeaders(),
-//                     'X-CSRFToken': getCookie('csrftoken'),
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify(user),
-//             })
-//             console.log("Finished deleting user's GameHistory")
-//         });
-
-//         console.log('Account deleted successfully.');
-//         alert('Your account has been deleted successfully.');
-
-//         navigateTo('/sign-in');
-
-//     }
-//     catch (error)
-//     {
-//         console.error('Error during account deletion:', error);
-//         alert('An error occurred while trying to delete your account.');
-//     }
-// }

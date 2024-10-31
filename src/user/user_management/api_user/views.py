@@ -222,9 +222,7 @@ def getAllUsers(request):
 @permission_classes([IsAuthenticated])
 def getFriendAvatar(request, user_id):
 	try:
-		print('user id: ', user_id)
 		user = CustomUser.objects.get(id=user_id)
-		print('user: ', user)
 		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
@@ -720,35 +718,11 @@ def getAnonymousStatus(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 @csrf_protect
-def deleteAccount(request):
-	print('\n>>>>>>> deleteAccount view <<<<<<<') # DEBUG
-	try:
-		user = request.user
-		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
-
-		# user.delete()
-		print(f'Account to delete: {user.username}. Sending to deleteGameHistory view') # DEBUG
-
-		# return (Response({'Account deleted successfully'}, status=200))
-		return JsonResponse({'username': user.username}, status=200)
-
-	except Exception as e:
-		print(f'Error: {str(e)}') # DEBUG
-		return Response({'error': str(e)}, status=500)
-
-
-#########################################
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated])
-@csrf_protect
 def deleteUserFriendships(request):
-	print('\n>>>>>>> deleteUserFriendships view <<<<<<<') # DEBUG
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		try:
 			friendships = CustomUser.objects.filter(friends=user)
@@ -757,18 +731,36 @@ def deleteUserFriendships(request):
 			for friendship in friendships:
 				friendship.friends.remove(user)
 			
-			return JsonResponse({'success': 'User friendships deleted successfully'}, status=200)
+			return JsonResponse({'success': 'User friendships deleted successfully'}, status=status.HTTP_200_OK)
 
 		except Exception as e:
 			print(f'Error: {str(e)}')
 			return Response({'error': str(e)}, status=500)
 
 	except CustomUser.DoesNotExist:
-		return Response({'error': 'User does not exist'}, status=404)
+		return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 	except Exception as e:
 		print(f'Error: {str(e)}')
-		return Response({'error': str(e)}, status=500)
+		return Response({'deleteUserFriendships error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+#########################################
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def deleteUser(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+		user.delete()
+		return Response({'success': 'User account deleted successfully'}, status=status.HTTP_200_OK)
+
+	except Exception as e:
+		print(f'Error: {str(e)}')
+		return Response({'deleteUser error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
@@ -793,7 +785,7 @@ def getInactiveUsersID(request):
 		return JsonResponse(inactive_users_id, safe=False, status=200)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'getInactiveUsersID error': str(e)}, status=500)
 
 
 #########################################
@@ -818,7 +810,7 @@ def deleteInactiveUsersFriends(request):
 		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=200)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'deleteInactiveUsersFriends error': str(e)}, status=500)
 
 
 
