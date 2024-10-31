@@ -9,8 +9,7 @@ import { DEBUG } from '../../main.js';
 import { initParticles, destroyParticles, createParticlesContainer }
 from '../../components/particles/particles.js';
 
-import { createWhatIsPongCard, createTheTeamCard, createWhatWeDidCard,
-createTheyTrustedUsCard }
+import { createWhatIsPongCard, createTheTeamCard }
 from './cards.js'
 
 import { createElementWithClass, createImage, createTextElement,
@@ -49,7 +48,5 @@ function createContentRow()
 	row.className = 'd-flex flex-column align-items-center position-relative';
 	row.appendChild(createWhatIsPongCard());
 	row.appendChild(createTheTeamCard());
-	row.appendChild(createWhatWeDidCard());
-	row.appendChild(createTheyTrustedUsCard());
 	return row;
 }

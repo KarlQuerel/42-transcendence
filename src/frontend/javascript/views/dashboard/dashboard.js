@@ -296,13 +296,21 @@ function chartPieData(gameHistory)
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		let	labelText;
-		if (index === 0)
+		if (totalGames === 1)
 		{
-			labelText = nb_of_victories;
+			labelText = '100%';
+
+			if (index === 0)
+				labelText = '100%';
+			else
+				labelText = '';
 		}
 		else
 		{
-			labelText = nb_of_defeats;
+			if (index === 0)
+				labelText = nb_of_victories / totalGames * 100 + '%';
+			else
+				labelText = nb_of_defeats / totalGames * 100 + '%';
 		}
 		ctx.fillText(labelText, labelX, labelY);
 
@@ -444,7 +452,13 @@ function avatars(gameHistory, allUsers)
 		avatarImg.alt = `${opponent}`;
 		avatarImg.className = 'avatar-icon';
 
+		// Create and append the username under the avatar image
+		const noaccountusernametext = document.createElement('p');
+		noaccountusernametext.textContent = opponent;
+		noaccountusernametext.className = 'username-text';
+
 		avatarBox.appendChild(avatarImg);
+		avatarBox.appendChild(noaccountusernametext);
 		mygameinfocontainer.appendChild(avatarBox);
 
 		// Add click event to display game history
