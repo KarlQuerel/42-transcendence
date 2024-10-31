@@ -131,13 +131,11 @@ export function renderProfile()
 
 	let userData_edit = null;
 
-	fetchUserData()
-		.then(userData =>
-		{
-			if (userData || DEBUG)
-				console.log(userData);
-			else
-				console.log('No user data found');
+    fetchUserData()
+        .then(userData =>
+        {
+            if (!userData)
+                console.log('No user data found');
 
 			userData_edit = userData;
 
@@ -225,7 +223,6 @@ export function renderProfile()
                 method: 'GET',
             })
             .then(games => {
-                console.log('games: ', games);
                 apiRequest('/api/users/send-infos-to-user/', {
                     method: 'POST',
                     body: JSON.stringify(games),
@@ -373,9 +370,10 @@ export function renderProfile()
 		personalInfoSection.appendChild(buttonsContainer3);
 		personalInfoSection.appendChild(logoutButton);
 
-
 	return container;
 }
+
+
 
 /***********************************************\
 *				FETCH DATA FUNCTIONS			*
@@ -811,37 +809,64 @@ async function deleteUserAccount()
     console.log('Deleting account...');
     try
     {
-        const response = await apiRequest('/api/users/deleteAccount/', {
+        // delete user's game history and account
+        await apiRequest('/api/dashboard/deleteGameHistory/', {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            headers:
+            {
                 'X-CSRFToken': getCookie('csrftoken'),
-            }
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
         })
-        .then(user=>{
-            console.log('username = ', user.username);
-            apiRequest('/api/dashboard/deleteGameHistory/', {
-                method: 'DELETE',
-                headers:
-                {
-                    ...getAuthHeaders(),
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            })
-            console.log("Finished deleting user's GameHistory")
+        console.log("Finished deleting user's GameHistory");
+
+        // delete friend requests
+        await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
         });
+        console.log("Finished deleting user's Friend Requests");
 
-		console.log('Account deleted successfully.');
-		alert('Your account has been deleted successfully.');
+        // delete friendships
+        await apiRequest('/api/users/deleteUserFriendships/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
+        });
+        console.log("Finished deleting user's Friendships");
 
-		window.location.href = '/sign-in';
+        // delete account
+        await apiRequest('/api/users/deleteUser/', {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+            // body: JSON.stringify(user),
+        });
+        console.log("Finished deleting user's Account");
 
-	}
-	catch (error)
-	{
-		console.error('Error during account deletion:', error);
-		alert('An error occurred while trying to delete your account.');
-	}
+
+        console.log('Account deleted successfully.');
+        alert('Your account has been deleted successfully.');
+
+        navigateTo('/sign-in');
+
+    }
+    catch (error)
+    {
+        console.error('Error during account deletion:', error);
+        alert('An error occurred while trying to delete your account.');
+    }
 }

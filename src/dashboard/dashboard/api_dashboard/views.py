@@ -6,13 +6,14 @@ from api_user.models import CustomUser
 from .serializers import GameHistorySerializer
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
+from django.db import transaction
+from rest_framework import status
 
 # Returns the game history of the connected user
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getGameHistory(request):
 	if request.user.is_authenticated:
-		# game_history = GameHistory.objects.filter(user=request.user)
 		game_history = GameHistory.objects.filter(myUsername=request.user.username)
 		serializer = GameHistorySerializer(game_history, many=True)
 
@@ -26,11 +27,7 @@ def getGameHistory(request):
 @permission_classes([IsAuthenticated])
 def addStats(request):
 	try:
-		user = request.user
-		# if not user.is_authenticated:
-		# 	return Response({'error': 'User not authenticated'}, status=401)
-
-		myUsername = user.username
+		myUsername = request.data.get('myUsername')
 		opponentUsername = request.data.get('opponentUsername')
 		opponentScore = request.data.get('opponentScore')
 		myScore = request.data.get('myScore')
@@ -39,8 +36,10 @@ def addStats(request):
 		if not opponentUsername or opponentScore is None or myScore is None or not date:
 			return Response({'error': 'Missing required fields'}, status=400)
 		
-		if user.is_authenticated:
-			# Add game history instance
+
+		user = CustomUser.objects.filter(username=myUsername).first()
+		if user and user.is_authenticated:
+			print("User is authenticated : ", myUsername)
 			GameHistory.objects.create(
 				myUsername=myUsername,
 				opponentUsername=opponentUsername,
@@ -48,13 +47,12 @@ def addStats(request):
 				myScore=myScore,
 				date=date
 			)
-			print("gamehistory instance created for user: ", myUsername, "\n opponent: ", 
-			opponentUsername, "\n opponent score: ", opponentScore, "\n my score: ", 
-			myScore, "\n date: ", date) #DEBUG
+			print("gamehistory instance created for user: ", myUsername)
 
 		# Check if the opponent is authenticated and add their game history if they have an account
 		opponent = CustomUser.objects.filter(username=opponentUsername).first()
 		if opponent and opponent.is_authenticated:
+			print("Opponent is authenticated : ", opponentUsername)
 			GameHistory.objects.create(
 				myUsername=opponentUsername,
 				opponentUsername=myUsername,
@@ -62,6 +60,7 @@ def addStats(request):
 				myScore=opponentScore,
 				date=date
 			)
+			print("gamehistory instance created for user: ", myUsername)
 
 		return Response({"message": "Game history instance added successfully"})
 	except Exception as e:
@@ -93,55 +92,62 @@ def anonymiseGameHistory(request):
 
 	except Exception as e:
 		return Response({'error': str(e)}, status=500)
-	
+
 
 @api_view(['DELETE'])
 @csrf_protect
 @permission_classes([IsAuthenticated])
 def deleteGameHistory(request):
 	try:
-		username = request.data.get('username')
-		
-		games = GameHistory.objects.filter(Q(myUsername=username))
-		if not games.exists():
-			return Response({"error": "No matching games found"}, status=404)
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		for game in games:
-			if game.myUsername == username:
-				game.delete()
+		username = user.username
 
-		games = GameHistory.objects.filter(Q(opponentUsername=username))
-		for game in games:
-			if game.opponentUsername == username:
-				game.opponentUsername = "deleted_user"
-			game.save()
+		with transaction.atomic():
 
-		print("Game history instances deleted successfully")
+			games = GameHistory.objects.filter(Q(myUsername=username))
+			if not games.exists():
+				return Response({"error": "No matching games found"}, status=status.HTTP_200_OK)
 
-		user = CustomUser.objects.get(username=username)
-		user.delete()
+			games.delete()
+			print(f"Deleted games where user is {username}")
 
-		print("User account deleted successfully")
+			opponent_games = GameHistory.objects.filter(Q(opponentUsername=username))
+			for game in opponent_games:
+				if game.opponentUsername == username:
+					game.opponentUsername = "deleted_user"
+				game.save()
 
-		return Response({"deleteGameHistory view message": "Account deleted successfully"})
+			print(f"Deleted games where opponent is {username}")
+
+		return Response({"deleteGameHistory view message": "Game history instances deleted successfully"}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
-	
+		print("deleteGameHistory view error:", str(e))
+		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-@api_view(['POST'])
-@csrf_protect
+
+
+@api_view(['DELETE'])
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
-		# Convert string to list of integers
 		if isinstance(usersToDeleteID, str):
-			usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
-		print('usersToDeleteID', usersToDeleteID)
+			try:
+				usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			except ValueError:
+				return Response({"error": "Invalid user ID format"}, status=400)
+
 		if not usersToDeleteID:
 			print("No matching users found")
 			return Response({"error": "No matching users found"})
 		
+		usersToDelete = CustomUser.objects.filter(id__in=usersToDeleteID)
+		if not usersToDelete.exists():
+			return Response({"error": "No matching users found"}, status=404)
+
 		usersToDeleteUsername = []
 		allUsers = CustomUser.objects.all()
 		print('allUsers', allUsers)

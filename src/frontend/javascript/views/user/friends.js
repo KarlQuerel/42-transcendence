@@ -296,7 +296,7 @@ function getAvatar(other_user, avatar)
 	})
 	.then(userData =>
 	{
-		if (userData || DEBUG)
+		if (userData && DEBUG)
 			console.log(userData);
 		else
 			console.log('No user data found');

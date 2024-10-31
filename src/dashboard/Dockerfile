@@ -21,8 +21,8 @@ RUN	apt install libpq-dev -y
 RUN pip install channels_redis
 RUN pip install channels
 
-########### ^ Install the dependencies ^ ###########
 
+########### ^ Install the dependencies ^ ###########
 
 # Copy the entrypoint script for PostgreSQL
 COPY ../initiation_files/postgresql_conf/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
@@ -37,11 +37,8 @@ COPY dashboard/dashboard/ /app
 COPY ../user/user_management/api_user /app/api_user
 RUN chmod -R 777 /app
 
-# Voir avec les autres quel port
+# Port
 EXPOSE 8100
 
 # Define environment variable
 ENV PYTHONUNBUFFERED=1
-
-# Run the command to start uWSGI
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

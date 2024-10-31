@@ -13,10 +13,9 @@ from './signin.js';
 
 export function render2fa()
 {
-    // KARL HERE - TO REMOVE LATER
-	if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
+    if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
     {
-        navigateTo('/profile');
+        window.location.href = '/profile';
     }
     const form = render_form();
     document.body.appendChild(form);
@@ -53,7 +52,6 @@ export function render2fa()
 				console.log('Token refreshed:', newAccessToken);
 			setSignedInState(true);
             userPingBackend();
-            console.log('j\'ai ping apres le login');
             window.history.replaceState({}, document.title, "/profile");
 			navigateTo('/profile');
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
@@ -69,36 +67,42 @@ export function render2fa()
 function render_form()
 {
 	const formContainer = document.createElement('div');
-    formContainer.id = '2fa-form-container';
+    formContainer.classList.add('two-fa-container', 'container');
 
-    const title = document.createElement('h2');
+    const title = document.createElement('h1');
     title.textContent = "2fa Verification";
+    title.classList.add('two-fa-title', 'text-center');
     formContainer.appendChild(title);
-
-    const form = document.createElement('form');
-    form.id = '2fa-form';
 
     const label = document.createElement('label');
     label.setAttribute('for', 'code');
-    label.textContent = 'Enter the 6 digits code your received:';
-    form.appendChild(label);
+    label.textContent = 'Enter the 2FA code your received by email:';
+	label.classList.add('form-input', 'two-fa-label', 'form-label');
+    formContainer.appendChild(label);
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'code';
-    input.name = 'code';
-    input.required = true;
-    form.appendChild(input);
+    const form = document.createElement('form');
+    formContainer.setAttribute('id', 'two-fa-form');
 
-    const submit_button = document.createElement('button');
-    submit_button.type = 'submit';
-    submit_button.textContent = "Verify the code";
-    form.appendChild(submit_button);
+    const codeInput = document.createElement('input');
+    codeInput.setAttribute('type', 'code');
+    codeInput.setAttribute('id', 'code');
+    codeInput.setAttribute('name', 'code');
+    codeInput.setAttribute('autocomplete', 'code');
+	codeInput.setAttribute('placeholder', 'Enter the 2FA code you received');
+    codeInput.classList.add('form-input', 'two-fa-input');
+    form.appendChild(codeInput);
 
-    const resend_button = document.createElement('button');
-    resend_button.type = 'button';
-    resend_button.textContent = "Resend a code";
-    resend_button.addEventListener('click', function() {
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('type', 'submit');
+    submitButton.textContent = "Verify the code";
+	submitButton.classList.add('btn', 'btn-home', 'two-fa-button');
+    form.appendChild(submitButton);
+
+    const resendButton = document.createElement('button');
+    resendButton.setAttribute('type', 'button');
+    resendButton.textContent = "Resend a code";
+	resendButton.classList.add('btn', 'btn-home', 'two-fa-button');
+    resendButton.addEventListener('click', function() {
         fetch('/api/users/resend-2fa-code/', {
             method: 'POST',
             headers: {
@@ -114,7 +118,13 @@ function render_form()
             alert('Failure to send a new code:' + error.message);
         })
     })
-    form.appendChild(resend_button);
+    form.appendChild(resendButton);
+
+	const	buttonWrapper = document.createElement('div');
+	buttonWrapper.classList.add('two-fa-wrapper');
+	buttonWrapper.appendChild(submitButton);
+	buttonWrapper.appendChild(resendButton);
+    form.appendChild(buttonWrapper);
 
     const error_message = document.createElement('div');
     error_message.id = 'error-message';
