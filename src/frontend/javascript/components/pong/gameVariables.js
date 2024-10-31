@@ -117,7 +117,6 @@ export const BallConf =
 export const	Results =
 {
 	username : undefined,
-	identified : false,
 	score : undefined,
 	opponent_username : undefined,
 	opponent_score : undefined,

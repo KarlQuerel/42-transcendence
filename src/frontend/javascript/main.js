@@ -69,6 +69,7 @@ from "./views/user/change_password.js";
 import { manageInactiveUsers }
 from "./views/user/delete_inactive_users.js";
 
+
 /***			Footer						***/
 
 /***********************************************\
@@ -176,9 +177,7 @@ export function getSignedInState()
 /***			Router Function				***/
 function router()
 {
-	// FONCTION JESS
 	manageInactiveUsers();
-	// FIN FONCTION JESS
 	
 	let path = normalizePath(window.location.pathname) || '/home';
 

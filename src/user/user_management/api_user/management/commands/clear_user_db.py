@@ -3,12 +3,12 @@ from api_user.models import CustomUser
 from friends.models import FriendRequest
 
 class Command(BaseCommand):
-    help = 'Deletes all users'
+	help = 'Deletes all users'
 
-    def handle(self, *args, **kwargs):
-        # Delete all friend requests
-        FriendRequest.objects.all().delete()
-        # Delete all user
-        CustomUser.objects.all().delete()
+	def handle(self, *args, **kwargs):
+		# Delete all friend requests
+		FriendRequest.objects.all().delete()
+		# Delete all user
+		CustomUser.objects.all().delete()
 
-        self.stdout.write(self.style.SUCCESS('Successfully deleted all users'))
+		self.stdout.write(self.style.SUCCESS('Successfully deleted all users'))

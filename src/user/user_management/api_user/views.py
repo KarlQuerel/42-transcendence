@@ -15,8 +15,8 @@ from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.conf import settings
-from .serializers import UsernameSerializer  #TEST CARO
-from pprint import pprint
+from .serializers import UsernameSerializer
+from django.db.models import Q
 from .forms import CustomUserRegistrationForm
 import pyotp, os, json, base64, logging
 
@@ -71,20 +71,21 @@ def signInUser(request):
 		user = authenticate(request, username=username, password=password)
 
 		if user is not None:
-				if user.is2fa == True:
-					totp = send_2fa_totp(user)
-					request.session['pre_2fa_user_id'] = user.id
+			if user.is2fa == True:
+				totp = send_2fa_totp(user)
+				request.session['pre_2fa_user_id'] = user.id
 
-					return JsonResponse({'username': user.username, 'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
-				else:
-					login(request, user)
-					refresh = RefreshToken.for_user(user)
-					access_token = str(refresh.access_token)
-					refresh_token = str(refresh)
-					user.is_online = True
-					user.save()
+				return JsonResponse({'username': user.username, 'totp': totp, 'is2fa': True}, status=status.HTTP_200_OK)
+			else:
+				login(request, user)
+				refresh = RefreshToken.for_user(user)
+				access_token = str(refresh.access_token)
+				refresh_token = str(refresh)
+				user.is_online = True
+				user.save()
+			
+				return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 
-					return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 		else:
 			return JsonResponse({'error': 'Invalid username or password'}, status=403)
 
@@ -221,9 +222,7 @@ def getAllUsers(request):
 @permission_classes([IsAuthenticated])
 def getFriendAvatar(request, user_id):
 	try:
-		print('user id: ', user_id)
 		user = CustomUser.objects.get(id=user_id)
-		print('user: ', user)
 		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
 			avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
@@ -719,22 +718,49 @@ def getAnonymousStatus(request):
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])
 @csrf_protect
-def deleteAccount(request):
+def deleteUserFriendships(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		# user.delete()
-		print(f'Account to delete: {user.username}. Sending to deleteGameHistory view') # DEBUG
+		try:
+			friendships = CustomUser.objects.filter(friends=user)
+			print('friendships to delete:', friendships)
 
-		# return (Response({'Account deleted successfully'}, status=200))
-		return JsonResponse({'username': user.username}, status=200)
+			for friendship in friendships:
+				friendship.friends.remove(user)
+			
+			return JsonResponse({'success': 'User friendships deleted successfully'}, status=status.HTTP_200_OK)
+
+		except Exception as e:
+			print(f'Error: {str(e)}')
+			return Response({'error': str(e)}, status=500)
+
+	except CustomUser.DoesNotExist:
+		return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+	except Exception as e:
+		print(f'Error: {str(e)}')
+		return Response({'deleteUserFriendships error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+#########################################
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@csrf_protect
+def deleteUser(request):
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+		user.delete()
+		return Response({'success': 'User account deleted successfully'}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		print(f'Error: {str(e)}') # DEBUG
-		return Response({'error': str(e)}, status=500)
-
+		print(f'Error: {str(e)}')
+		return Response({'deleteUser error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
@@ -749,41 +775,42 @@ def getInactiveUsersID(request):
 		inactive_users_id = []
 
 		time = timezone.now()
-		cutoffTime = time + timezone.timedelta(days=3*365)
 
 		for user in users:
-			if user.last_login is not None and user.last_login > cutoffTime:
-				inactive_users_id.append(user.id)
-		
-		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
+			if user.last_login is not None:
+				cutoffTime = user.last_login + timezone.timedelta(days=3*365)
+				if time > cutoffTime and user.is_online == False:
+					inactive_users_id.append(user.id)
 
 		return JsonResponse(inactive_users_id, safe=False, status=200)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'getInactiveUsersID error': str(e)}, status=500)
 
 
 #########################################
 
 
-# @api_view(['POST'])
-# def deleteInactiveUsers(request):
-# 	try:
-# 		inactiveUsersID = request.data.get('inactiveUsersID', [])
+@api_view(['POST'])
+def deleteInactiveUsersFriends(request):
+	try:
+		usersToDeleteID = request.data.get('inactiveUsersID', [])
+		if isinstance(usersToDeleteID, str):
+			try:
+				usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+			except ValueError:
+				return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
 
-# 		if isinstance(inactiveUsersID, str):
-# 			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
-		
-# 		if request.user.is_authenticated:
-# 			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+		if not usersToDeleteID:
+				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
 
-# 		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
-# 		users_to_delete.delete()
+		friendships = CustomUser.objects.filter(Q(friends__id__in=usersToDeleteID))
+		friendships.delete()
 
-# 		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=200)
 
-# 	except Exception as e:
-# 		return Response({'error': str(e)}, status=500)
+	except Exception as e:
+		return Response({'deleteInactiveUsersFriends error': str(e)}, status=500)
 
 
 
