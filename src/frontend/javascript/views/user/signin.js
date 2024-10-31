@@ -128,7 +128,7 @@ function login(username, password)
 		{
 			localStorage.setItem('totp', data.totp);
 			localStorage.setItem('username', data.username);
-			navigateTo('/2fa_verification');
+			navigateTo('/2fa-verification');
 			return Promise.reject('Redirection to 2FA verification');
 		}
 		else if (data.access)
