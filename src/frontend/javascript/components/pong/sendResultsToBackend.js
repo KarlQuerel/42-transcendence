@@ -18,11 +18,9 @@ addStats view, informing Django of the game’s result so it can update the data
 */
 export async function sendResultsToBackend() {
 	try {
-		// Log all fields to verify their values before the request
 		if (DEBUG)
 		console.log("Results object:", Results);
 
-		// Check if any required field is missing or undefined
 		if (!Results.opponent_username) {
 			throw new Error("Missing opponent_username");
 		}
@@ -36,10 +34,6 @@ export async function sendResultsToBackend() {
 			throw new Error("Missing tournament_date");
 		}
 
-		let connectedUser = await loadUsername();
-		let myUsernameStr = connectedUser.username;
-		console.log("myUsernameStr:", myUsernameStr);
-
 		const response = await fetch('/api/dashboard/addStats/', {
 			method: 'POST',
 			headers: {
@@ -47,7 +41,7 @@ export async function sendResultsToBackend() {
 				...getAuthHeaders()
 			},
 			body: JSON.stringify({
-				myUsername: myUsernameStr,
+				myUsername: Results.username,
 				opponentUsername: Results.opponent_username,
 				opponentScore: Results.opponent_score,
 				myScore: Results.score,
@@ -59,7 +53,7 @@ export async function sendResultsToBackend() {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		const data = await json();
+		const data = await response.json();
 		if (DEBUG) {
 			console.log('Response from backend:', data);
 		}
