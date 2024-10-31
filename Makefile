@@ -88,4 +88,4 @@ clear_db:
 clean_images:
 	find ./src/user/user_management/media/avatars/ -type f -name '*_*' -exec rm {} \;
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard clean_images
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends clean_images

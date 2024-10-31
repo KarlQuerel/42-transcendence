@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 def addUser(request):
 	try:
 		data = json.loads(request.body)
-		print(f"Received data: {data}") # DEBUG
+		print(f"Received data: {data}")
 	except json.JSONDecodeError:
 		return JsonResponse({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -46,7 +46,7 @@ def addUser(request):
 		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
 
 	else:
-		print(f"Form errors: {form.errors}") # DEBUG
+		print(f"addUser errors: {form.errors}")
 		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -62,9 +62,6 @@ def addUser(request):
 def signInUser(request):
 	try:
 		data = json.loads(request.body)
-
-		print(f'SignInUser json data: {data}') # DEBUG
-
 		username = data.get('username')
 		password = data.get('password')
 
@@ -87,13 +84,13 @@ def signInUser(request):
 				return JsonResponse({'access': access_token, 'refresh': refresh_token, 'is2fa': False}, status=status.HTTP_200_OK)
 
 		else:
-			return JsonResponse({'error': 'Invalid username or password'}, status=403)
+			return JsonResponse({'signInUser error': 'Invalid username or password'}, status=status.HTTP_200_OK)
 
 	except json.JSONDecodeError:
-		return JsonResponse({'error': 'Invalid JSON'}, status=401)
+		return JsonResponse({'signInUser error': 'Invalid JSON'}, status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as e:
-		print(f'Unexpected error: {str(e)}') # DEBUG
-		return Response({'error': 'Internal Server Error'}, status=500)
+		print(f'signInUser error: {str(e)}')
+		return Response({'signInUser error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -108,7 +105,7 @@ def currentlyLoggedInUser(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		avatar_image_path = user.avatar.path
 		with default_storage.open(avatar_image_path, 'rb') as avatar_image:
@@ -125,14 +122,17 @@ def currentlyLoggedInUser(request):
 			'online_status': user.is_online,
 		}
 
-		return JsonResponse(data, status=200)
+		return JsonResponse(data, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		print(f'currentlyLoggedInUser error: {str(e)}')
+		return Response({'currentlyLoggedInUser error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+#########################################
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def doesUserExist(request, username):
 	try:
 		user = CustomUser.objects.get(username=username)
@@ -140,6 +140,20 @@ def doesUserExist(request, username):
 		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
 	except Exception as e:
 		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
+
+
+#########################################
+
+
+@api_view(['GET'])
+def doesEmailExist(request, email):
+	try:
+		user = CustomUser.objects.get(email=email)
+
+		return JsonResponse({'email_exists': True}, status=status.HTTP_200_OK)
+	except Exception as e:
+		return JsonResponse({'email_exists': False}, status=status.HTTP_200_OK)
+
 
 #########################################
 
@@ -154,50 +168,21 @@ def getUsername(request):
 		serializer = UsernameSerializer(request.user)
 		return Response(serializer.data)
 	else:
-		return Response({'error': 'User not authenticated'}, status=401)
+		return Response({'getUsername error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 #########################################
 
 
-# Get avatars and usernames of all users
-
-# @api_view(['GET'])
-# @login_required
-# @permission_classes([IsAuthenticated])
-# def getAllUsers(request):
-# 	try:
-# 		user = request.user
-# 		if not user.is_authenticated:
-# 			return Response({'error': 'User not authenticated'}, status=401)
-
-# 		try:
-# 			users = CustomUser.objects.all()
-# 			avatars = []
-		
-# 			for user in users:
-# 				avatar_image_path = user.avatar.path
-# 				with default_storage.open(avatar_image_path, 'rb') as avatar_image:
-# 					avatar = base64.b64encode(avatar_image.read()).decode('utf-8')
-# 				avatars.append({'username': user.username, 'avatar': avatar})
-
-# 			return JsonResponse(avatars, safe=False, status=200)
-
-# 		except Exception as e:
-# 			return Response({'error': str(e)}, status=500)
-
-# 	except Exception as e:
-# 		return Response({'error': str(e)}, status=500)
-
-
 # Returns all users id and username for dashboard page
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getAllUsers(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'getAllUsers error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		try:
 			users = CustomUser.objects.all()
@@ -209,12 +194,12 @@ def getAllUsers(request):
 			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
-			print(f'Unexpected error: {str(e)}')
-			return Response({'error': str(e)}, status=500)
+			print(f'getAllUsers error: {str(e)}')
+			return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 	except Exception as e:
-		print(f'Unexpected error: {str(e)}')
-		return Response({'error': str(e)}, status=500)
+		print(f'getAllUsers error: {str(e)}')
+		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
  
 
 
@@ -231,7 +216,7 @@ def getFriendAvatar(request, user_id):
 		}
 		return JsonResponse(data, status=status.HTTP_200_OK)
 	except Exception as e:
-		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({'getAllUsers error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 ##################################################
@@ -248,7 +233,7 @@ def changePassword(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		form = SetPasswordForm(user, request.data)
 
@@ -259,7 +244,7 @@ def changePassword(request):
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'changePassword error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -273,7 +258,7 @@ def changePassword(request):
 def checkAuthentication(request):
 	user = request.user
 	if not user.is_authenticated:
-			return Response({'authenticated': False}, status=401)
+			return Response({'authenticated': False}, status=status.HTTP_401_UNAUTHORIZED)
 	return Response({'authenticated': True}, status=200)
 
 
@@ -288,11 +273,8 @@ def verifyPassword(request):
 	user = request.user
 	current_password = request.data.get('current_password')
 
-	print(f'User: {user}') # DEBUG
-	print(f'Current password: {current_password}') # DEBUG
-
 	if not current_password:
-		return Response({'error': 'Current password is required'}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'error': 'Current password is required'}, status=status.HTTP_200_OK)
 
 	if user.check_password(current_password):
 		return Response({'valid': True, 'current_password': user.password}, status=status.HTTP_200_OK)
@@ -314,7 +296,7 @@ def hashAndChangePassword(request):
 	new_password = request.data.get('newPassword')
 
 	if not new_password:
-		return Response({'error': 'New password is required'}, status=status.HTTP_400_BAD_REQUEST)
+		return Response({'error': 'New password is required'}, status=status.HTTP_200_OK)
 
 	try:
 		hashed_password = make_password(new_password)
@@ -322,7 +304,7 @@ def hashAndChangePassword(request):
 		user.save()
 		return Response({'success': 'Password changed successfully'}, status=status.HTTP_200_OK)
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'hashAndChangePassword error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	
 
 
@@ -339,7 +321,7 @@ def updateProfile(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		user.email = request.data.get('email')
 		user.date_of_birth = request.data.get('date_of_birth')
@@ -351,7 +333,7 @@ def updateProfile(request):
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'updateProfile error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -365,11 +347,11 @@ def updateAvatar(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		data = request.data.get('avatar_input')
 		if not data:
-			return Response({'error': 'No avatar data provided'}, status=400)
+			return Response({'error': 'No avatar data provided'}, status=status.HTTP_200_OK)
 
 		try:
 			avatar_data = base64.b64decode(data)
@@ -385,17 +367,16 @@ def updateAvatar(request):
 				f.write(avatar_data)
 		except Exception as e:
 			print(f'Error de open: {str(e)}')
-			return Response({'error de open': str(e)}, status=500)
+			return Response({'error de open': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 		user.avatar = avatar_path
-
 		user.save()
 
 		return Response({'success': 'Avatar updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		print(f'Error: {str(e)}') # DEBUG
-		return Response({'error': str(e)}, status=500)
+		print(f'updateAvatar Error: {str(e)}')
+		return Response({'updateAvatar error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
@@ -405,7 +386,7 @@ def updateAvatar(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def send_user_informations(request):
+def send_user_information(request):
 	try:
 		user = request.user
 		games = request.data
@@ -452,7 +433,7 @@ we are providing you with an export of your personal data.
 		return JsonResponse({'success': 'user informations send to user email'}, status=status.HTTP_200_OK)
 	except Exception as e:
 		print(f"Error: {e}")
-		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return JsonResponse({'send_user_information error': 'An error occurred while sending user information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 ##################################################
@@ -501,9 +482,9 @@ def verify_2fa_code(request):
 
 			return JsonResponse({'access': access_token, 'refresh': refresh_token, '2fa': False}, status=status.HTTP_200_OK)
 		else:
-			return JsonResponse({'error': 'Invalid 2fa code'}, status=status.HTTP_400_BAD_REQUEST)
+			return JsonResponse({'verify_2fa_code error': 'Invalid 2fa code'}, status=status.HTTP_400_BAD_REQUEST)
 	else:
-			return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+			return JsonResponse({'verify_2fa_code error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -517,7 +498,7 @@ def resend_2fa_code(request):
 		send_2fa_totp(user)
 		return JsonResponse({'message': 'New 2FA code sent'}, status=status.HTTP_200_OK)
 	else:
-		return JsonResponse({'error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({'resend_2fa_code error': 'User ID doesn\'t exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -531,12 +512,12 @@ def get2FAStatus(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		return JsonResponse({user.is2fa}, status=200)
+		return JsonResponse({user.is2fa}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'get2FAStatus error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -550,7 +531,7 @@ def update2FAStatus(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		is2fa = request.data.get('is2fa')
 
@@ -558,10 +539,10 @@ def update2FAStatus(request):
 			user.is2fa = is2fa
 			user.save()
 
-		return Response({'message': '2FA status updated successfully', 'is2fa': user.is2fa}, status=200)
+		return Response({'message': '2FA status updated successfully', 'is2fa': user.is2fa}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'update2FAStatus error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -580,7 +561,7 @@ def loggout_user(request):
 
 		return JsonResponse({'success': 'Log out successful'}, status=status.HTTP_200_OK)
 	except Exception as e:
-		return JsonResponse({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+		return JsonResponse({'loggout_user error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 #########################################
@@ -596,14 +577,13 @@ def	otherUsersList(request):
 				"id": user.id,
 				"username": user.username,
 				"online_status": user.is_online,
-				# "avatar": user.avatar,
 				"friendship_status": get_friendship_status(request.user, user),
 			}
 			for user in users
 		]
 		return JsonResponse(users_data, safe=False, status=status.HTTP_200_OK)
 	except:
-		return JsonResponse({'error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({'otherUsersList error': 'user not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -624,7 +604,7 @@ def getFriendAvatar(request, user_id):
 		}
 		return JsonResponse(data, status=status.HTTP_200_OK)
 	except Exception as e:
-		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
+		return JsonResponse({'getFriendAvatar error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -634,7 +614,7 @@ def get_friendship_status(user1, user2):
 	for friend in user1.friends.all():
 		if friend.username == user2.username:
 			return 'already_friends'
-	return 'not_friends'	
+	return 'not_friends'
 
 
 
@@ -650,7 +630,7 @@ def anonymizeUserData(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		userOldUsername = user.username
 			
@@ -664,10 +644,10 @@ def anonymizeUserData(request):
 
 		user.save()
 
-		return JsonResponse({'old_username': userOldUsername, 'new_username': user.username}, status=200)
+		return JsonResponse({'old_username': userOldUsername, 'new_username': user.username}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'anonymizeUserData error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -680,15 +660,15 @@ def updateAnonymousStatus(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
 		user.isAnonymous = True
 		user.save()
 
-		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'updateAnonymousStatus error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -701,12 +681,12 @@ def getAnonymousStatus(request):
 	try:
 		user = request.user
 		if not user.is_authenticated:
-			return Response({'error': 'User not authenticated'}, status=401)
+			return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-		return JsonResponse({'isAnonymous': user.isAnonymous}, status=200)
+		return JsonResponse({'isAnonymous': user.isAnonymous}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'getAnonymousStatus error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -735,10 +715,10 @@ def deleteUserFriendships(request):
 
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return Response({'error': str(e)}, status=500)
+			return Response({'deleteUserFriendships error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 	except CustomUser.DoesNotExist:
-		return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
+		return Response({'deleteUserFriendships error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 	except Exception as e:
 		print(f'Error: {str(e)}')
 		return Response({'deleteUserFriendships error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -769,6 +749,7 @@ def deleteUser(request):
 
 
 @api_view(['GET'])
+@csrf_protect
 def getInactiveUsersID(request):
 	try:
 		users = CustomUser.objects.all()
@@ -778,14 +759,15 @@ def getInactiveUsersID(request):
 
 		for user in users:
 			if user.last_login is not None:
-				cutoffTime = user.last_login + timezone.timedelta(days=3*365)
+				cutoffTime = user.last_login + timezone.timedelta(minutes=2)
+				# cutoffTime = user.last_login + timezone.timedelta(days=3*365)
 				if time > cutoffTime and user.is_online == False:
 					inactive_users_id.append(user.id)
 
-		return JsonResponse(inactive_users_id, safe=False, status=200)
+		return JsonResponse(inactive_users_id, safe=False, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'getInactiveUsersID error': str(e)}, status=500)
+		return Response({'getInactiveUsersID error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 #########################################
@@ -807,10 +789,10 @@ def deleteInactiveUsersFriends(request):
 		friendships = CustomUser.objects.filter(Q(friends__id__in=usersToDeleteID))
 		friendships.delete()
 
-		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=200)
+		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'deleteInactiveUsersFriends error': str(e)}, status=500)
+		return Response({'deleteInactiveUsersFriends error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -832,13 +814,13 @@ def checkUserPassword(request):
 				user = CustomUser.objects.get(username=username)
 				# Check if the password is correct
 				if check_password(password, user.password):
-					return JsonResponse({'valid': True}, status=200)
+					return JsonResponse({'valid': True}, status=status.HTTP_200_OK)
 				else:
-					return JsonResponse({'valid': False}, status=200)
+					return JsonResponse({'valid': False}, status=status.HTTP_200_OK)
 			except CustomUser.DoesNotExist:
-				return JsonResponse({'error': 'User not found'}, status=404)
+				return JsonResponse({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
 		except json.JSONDecodeError:
 			return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 	
-	return JsonResponse({'error': 'Invalid request method'}, status=405)
+	return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

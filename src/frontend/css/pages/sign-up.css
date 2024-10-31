@@ -134,6 +134,13 @@
 	font-weight: 900;
 }
 
+.email-input-error-message
+{
+    bottom: 2vh;
+    position: relative;
+}
+
+
 /*		MEDIA QUERIES		*/
 @media (max-width: 768px)
 {
