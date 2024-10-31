@@ -293,12 +293,12 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 
 	const	errorMessages =
 	{
-		first_name: 'Please enter a first name with fewer than 30 characters, using only letters.',
+		first_name: 'First name must have less than 30 characters, using only letters.',
 		last_name: 'Please enter a last name with fewer than 30 characters, using letters, spaces, and hyphens only.',
 		date_of_birth: 'Please enter a valid date of birth.',
 		username: 'Username must be unique, fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
 		password: 'Password must be at least 6 characters long.',
-		email: 'Email must be unique and in valid format [email@email.xxx].',
+		email: 'Email must be unique and in valid format [xxx@xxx.xxx].',
 		password_confirmation: 'Password and password confirmation do not match.'
 	};
 
