@@ -644,45 +644,60 @@ function retrieveAllUserStats(allUsers, gameHistory)
 }
 
 function badge(gameHistory, allUsers) {
-	const allStats = retrieveAllUserStats(allUsers, gameHistory);
 
 	let badgeImgSrc = '';
 	let message = '';
 	let rankingPosition = 0;
 
-	// Determine ranking position
-	allStats.sort((a, b) => {
-		if (b.nb_of_victories !== a.nb_of_victories) {
-			return b.nb_of_victories - a.nb_of_victories;
-		}
-		return a.nb_of_defeats - b.nb_of_defeats;
-	});
+	console.log('allUsers:', allUsers);
 
-	// Assign ranking to each user
-	allStats.forEach((user, index) => {
-		user.ranking_position = index + 1;
-	});
-
-	// Find the ranking position of the connected user
-	allStats.forEach(user => {
-		if (user.username === gameHistory.username) {
-			rankingPosition = user.ranking_position;
-		}
-	});
-
-	// Determine the badge image and message
-	if (rankingPosition < 3) {
-		message = ' You need to improve!';
-		badgeImgSrc = '../../../assets/images/dashboard/chart.gif';
-	} else if (rankingPosition === 3) {
-		message = ' You are the 3rd best player!';
-		badgeImgSrc = '../../../assets/images/dashboard/top3.gif';
-	} else if (rankingPosition === 2) {
-		message = ` You are the 2nd best player!`;
-		badgeImgSrc = '../../../assets/images/dashboard/top3_badge.png';
-	} else if (rankingPosition === 1) {
+	if (allUsers.length === 1)
+	{
 		message = " You're the best player ever!";
 		badgeImgSrc = '../../../assets/images/dashboard/top1_badge.png';
+	}
+	else
+	{
+		const allStats = retrieveAllUserStats(allUsers, gameHistory);
+
+		// Determine ranking position
+		allStats.sort((a, b) => {
+			const aRatio = a.nb_of_victories / (a.nb_of_defeats + a.nb_of_victories);
+			const bRatio = b.nb_of_victories / (b.nb_of_defeats + b.nb_of_victories);
+
+			if (bRatio > aRatio) {
+				return 1; // sort it putting b first
+			} else {
+				return -1; // sort it putting a first
+			}
+		});
+
+		// Assign ranking to each user
+		allStats.forEach((user, index) => {
+			user.ranking_position = index + 1;
+		});
+
+		// Find the ranking position of the connected user
+		allStats.forEach(user => {
+			if (user.username === gameHistory.username) {
+				rankingPosition = user.ranking_position;
+			}
+		});
+
+		// Determine the badge image and message
+		if (rankingPosition < 3) {
+			message = ' You need to improve!';
+			badgeImgSrc = '../../../assets/images/dashboard/chart.gif';
+		} else if (rankingPosition === 3) {
+			message = ' You are the 3rd best player!';
+			badgeImgSrc = '../../../assets/images/dashboard/top3.gif';
+		} else if (rankingPosition === 2) {
+			message = ` You are the 2nd best player!`;
+			badgeImgSrc = '../../../assets/images/dashboard/top3_badge.png';
+		} else if (rankingPosition === 1) {
+			message = " You're the best player ever!";
+			badgeImgSrc = '../../../assets/images/dashboard/top1_badge.png';
+		}
 	}
 
 	// Create a container for the badge display
