@@ -82,7 +82,8 @@ export function renderSignUp()
 	const	gdprLabel = document.createElement('label');
 	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label');
 	gdprLabel.setAttribute('for', 'gdpr-acceptance');
-	gdprLabel.textContent = 'I accept the Privacy Policy Terms';
+	gdprLabel.style.textAlign = 'center';
+	gdprLabel.innerHTML = 'I accept the<br>Privacy Policy Terms';
 	gdprLabel.classList.add('form-check-label');
 
 	gdprFormGroup.appendChild(gdprCheckbox);
@@ -154,18 +155,21 @@ export function initializeSignUp()
 
 			// Password confirmation
 			let	password_confirmation = getIdentifier('password_confirmation');
+			let password_confirmation_type = 'password_confirmation';
 
 			// Email
 			let	email = getIdentifier('email');
 			let	email_type = checkIdentifierType(email, 'email');
+
 
 			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) || password !== password_confirmation)
 			{
 				if (password !== password_confirmation)
 				{
 					console.log('Error: Password and password confirmation do not match.');
+					password_confirmation_type = 'error';
 				}
-				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
+				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type);
 				return ;
 			}
 			else
@@ -275,8 +279,14 @@ export function allValuesAreValid(first_name_type, last_name_type, username_type
 	return true;
 }
 
-export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
+export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type)
 {
+	if (DEBUG)
+	{
+		console.log('Enter sendErrorToFrontend');
+		console.log('first name type = ', first_name_type);
+	}
+
 	const	errorMessages =
 	{
 		first_name: 'Please enter a first name with fewer than 30 characters, using only letters.',
@@ -284,7 +294,8 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		date_of_birth: 'Please enter a valid date of birth.',
 		username: 'Username must be fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
 		password: 'Password must be at least 6 characters long.',
-		email: 'Please enter a valid email address.'
+		email: 'Please enter a valid email address.',
+		password_confirmation: 'Password and password confirmation do not match.'
 	};
 
 	const	fields =
@@ -294,12 +305,32 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		{ type: date_of_birth_type, id: 'date_of_birth', message: errorMessages.date_of_birth },
 		{ type: username_type, id: 'username', message: errorMessages.username },
 		{ type: password_type, id: 'password', message: errorMessages.password },
-		{ type: email_type, id: 'email', message: errorMessages.email }
+		{ type: email_type, id: 'email', message: errorMessages.email },
+		{ type: password_confirmation_type, id: 'password_confirmation', message: errorMessages.password_confirmation },
+		{ type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
+		{ type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
+		{ type: date_of_birth_type, id: 'date_of_birth_input', message: errorMessages.date_of_birth },
+		{ type: username_type, id: 'username_input', message: errorMessages.username },
+		{ type: password_type, id: 'password_input', message: errorMessages.password },
+		{ type: email_type, id: 'email_input', message: errorMessages.email },
 	];
 
 	fields.forEach(field =>
 	{
 		const	formGroup = document.getElementById(field.id).parentElement;
+
+		// const formGroup = document.getElementById(field.id);
+        // if (!formGroup) {
+        //     console.error(`Element with id '${field.id}' not found.`);
+        //     return;
+        // }
+
+        // const parentElement = formGroup.parentElement;
+        // if (!parentElement) {
+        //     console.error(`Parent element of '${field.id}' not found.`);
+        //     return;
+        // }
+
 		const	existingError = formGroup.querySelector('.error-message');
 		if (existingError)
 			existingError.remove();
@@ -317,6 +348,7 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 /***********************************************\
 *				 MAIN FUNCTION				 *
 \***********************************************/
+
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
 	fetch('/api/users/addUser/',

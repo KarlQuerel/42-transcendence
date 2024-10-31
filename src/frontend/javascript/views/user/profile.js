@@ -472,13 +472,18 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
 		const	avatarFile = avatarInput.files[0];
 
+		// const	isValidData = verifyProfileChanges();
+        // JESS HERE
 		const	isValidData = Boolean(verifyProfileChanges());
 
-		if (DEBUG)
-			console.log('Updated values are valid:', isValidData);
+        if (DEBUG)
+            console.log('isValidData = ', isValidData);
 
 		if (isValidData === true)
 		{
+            if (DEBUG)
+                console.log('Profile changes are valid.');
+
 			if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
 				await saveNewAvatar(avatarFile);
 			await saveProfileChanges(userData_edit);
@@ -503,6 +508,9 @@ function hideAllButtonsExcept(allowedButtonIds)
 
 async function verifyProfileChanges()
 {
+    if (DEBUG)
+        console.log('Verifying profile changes...');
+
 	// Fetch the values from the input fields
 	const	firstName = getIdentifier('first_name_input');
 	const	lastName = getIdentifier('last_name_input');
@@ -519,7 +527,10 @@ async function verifyProfileChanges()
 
 	const	allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 
-	if (!allValid)
+    if (DEBUG)
+        console.log('allValuesAreValid = ', allValid);
+
+	if (allValid == false)
 	{
 		if (DEBUG)
 			console.log('Profile changes are invalid.');
@@ -540,12 +551,14 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 
 	let result = true;
 
-	if (!saveButton) {
+	if (!saveButton)
+    {
 		console.error('Save button not found.');
 		return false;
 	}
 
-	if (!avatarInput) {
+	if (!avatarInput)
+    {
 		console.error('Avatar input not found.');
 		return false;
 	}
@@ -557,7 +570,8 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 	if (existingError) existingError.remove();
 
 	// Check if the file is not empty
-	if (!avatarFile || !avatarFile.size || avatarFile.name === '') {
+	if (!avatarFile || !avatarFile.size || avatarFile.name === '')
+    {
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'Select a file';
@@ -567,7 +581,8 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 
 	// Check if the file type is jpeg, jpg, or png
 	const	validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-	if (!validTypes.includes(avatarFile.type)) {
+	if (!validTypes.includes(avatarFile.type))
+    {
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'File type not supported (only jpeg, jpg, png)';
@@ -576,7 +591,8 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 	}
 
 	// Check if the file size is no more than 1 MB
-	if (avatarFile.size > 1000000) {
+	if (avatarFile.size > 1000000)
+    {
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'File too large (max 1 MB)';
@@ -818,9 +834,9 @@ async function deleteUserAccount()
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
-            // body: JSON.stringify(user),
         })
         console.log("Finished deleting user's GameHistory");
+
 
         // delete friend requests
         await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
@@ -830,9 +846,9 @@ async function deleteUserAccount()
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
-            // body: JSON.stringify(user),
         });
         console.log("Finished deleting user's Friend Requests");
+
 
         // delete friendships
         await apiRequest('/api/users/deleteUserFriendships/', {
@@ -842,9 +858,9 @@ async function deleteUserAccount()
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
-            // body: JSON.stringify(user),
         });
         console.log("Finished deleting user's Friendships");
+
 
         // delete account
         await apiRequest('/api/users/deleteUser/', {
@@ -854,7 +870,6 @@ async function deleteUserAccount()
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
-            // body: JSON.stringify(user),
         });
         console.log("Finished deleting user's Account");
 
