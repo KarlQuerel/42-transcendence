@@ -80,7 +80,7 @@ export function renderSignUp()
 	gdprCheckbox.classList.add('form-check-input');
 
 	const	gdprLabel = document.createElement('label');
-	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label');
+	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label', 'sign-up-accept-terms');
 	gdprLabel.setAttribute('for', 'gdpr-acceptance');
 	gdprLabel.textContent = 'I accept the Privacy Policy Terms';
 	gdprLabel.classList.add('form-check-label');
@@ -93,14 +93,6 @@ export function renderSignUp()
 	const	buttonsContainer = document.createElement('div');
 	buttonsContainer.classList.add('d-flex', 'justify-content-center', 'col-12', 'mt-3');
 
-	// Submit button
-	const	submitButton = document.createElement('button');
-	submitButton.setAttribute('type', 'submit');
-	submitButton.textContent = 'Submit';
-	submitButton.classList.add('btn', 'btn-home', 'sign-up-button');
-	submitButton.id = 'submit-button';
-	buttonsContainer.appendChild(submitButton);
-
 	// Back to Sign In button
 	const	backButton = document.createElement('button');
 	backButton.setAttribute('type', 'button');
@@ -109,6 +101,14 @@ export function renderSignUp()
 	backButton.id = 'back-button';
 	backButton.addEventListener('click', () => navigateTo('/sign-in'));
 	buttonsContainer.appendChild(backButton);
+	
+	// Submit button
+	const	submitButton = document.createElement('button');
+	submitButton.setAttribute('type', 'submit');
+	submitButton.textContent = 'Submit';
+	submitButton.classList.add('btn', 'btn-home', 'sign-up-button');
+	submitButton.id = 'submit-button';
+	buttonsContainer.appendChild(submitButton);
 
 	form.appendChild(buttonsContainer);
 

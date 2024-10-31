@@ -72,6 +72,15 @@
 	opacity: 0.7;
 }
 
+.sign-up-accept-terms
+{
+	width: 20vh;
+	font-size: 1.25vh;
+	border-radius: 30px;
+	padding: 2vh;
+	margin-top: 1vh;
+}
+
 /*		BUTTONS			*/
 .sign-up-button
 {

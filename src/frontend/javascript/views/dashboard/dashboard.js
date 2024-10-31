@@ -102,7 +102,7 @@ export async function initializeDashboard()
 -					FETCHING DATA				-
 \***********************************************/
 
-async function loadUserGameHistory()
+export async function loadUserGameHistory()
 {
 	try
 	{
@@ -373,13 +373,32 @@ function chartPieData(gameHistory)
 -				FRIENDS ICON					-
 \***********************************************/
 
-// KARL HERE AJOUTER SCROLLING
 function avatars(gameHistory, allUsers)
 {
 	// Create the main container for game info
 	const	mygameinfocontainer = document.createElement('div');
 	mygameinfocontainer.id = 'mygameinfocontainer';
-	mygameinfocontainer.classList.add('mygameinfocontainer');
+	mygameinfocontainer.classList.add('container', 'mygameinfocontainer');
+
+
+	// Create a close button
+	const closeButton = document.createElement('button');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn', 'btn-avatar-close');
+	closeButton.textContent = 'Close';
+
+	// Add event listener to close the mygameinfocontainer
+	closeButton.addEventListener('click', () =>
+	{
+		mygameinfocontainer.remove();
+	});
+
+	// Append the close button to the mygameinfocontainer
+	mygameinfocontainer.appendChild(closeButton);
+
+
+	// Create a row to hold the avatar boxes
+	const	row = document.createElement('div');
+	row.classList.add('row');
 
 	// Collect unique opponent usernames from game history
 	const	opponentsList = [];
@@ -393,9 +412,13 @@ function avatars(gameHistory, allUsers)
 
 	// Loop through all users and create avatar boxes for opponents
 	allUsers.forEach(user =>
-	{
-		if (opponentsList.includes(user.username))
 		{
+		if (opponentsList.includes(user.username))
+			{
+			// Create a column for each avatar
+			const	col = document.createElement('div');
+			col.classList.add('col-md-4', 'mb-3');
+
 			const	avatarBox = document.createElement('div');
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.username = user.username;
@@ -408,14 +431,13 @@ function avatars(gameHistory, allUsers)
 			avatarBox.appendChild(avatarImg);
 
 			// Create and append the username under the avatar image
-			const usernameText = document.createElement('p');
+			const	usernameText = document.createElement('p');
 			usernameText.textContent = user.username;
 			usernameText.className = 'username-text';
 
-
 			avatarBox.appendChild(usernameText);
-			mygameinfocontainer.appendChild(avatarBox);
-
+			col.appendChild(avatarBox);
+			row.appendChild(col);
 
 			// Add click event to display game history
 			avatarBox.addEventListener('click', () =>
@@ -430,7 +452,10 @@ function avatars(gameHistory, allUsers)
 
 	// Handle remaining opponents without user data
 	opponentsList.forEach(opponent =>
-	{
+		{
+		const	col = document.createElement('div');
+		col.classList.add('col-md-4', 'mb-3');
+
 		const	avatarBox = document.createElement('div');
 		avatarBox.className = 'avatar-box';
 		avatarBox.dataset.username = opponent;
@@ -444,8 +469,15 @@ function avatars(gameHistory, allUsers)
 		avatarImg.alt = `${opponent}`;
 		avatarImg.className = 'avatar-icon';
 
+		// Create and append the username under the avatar image
+		const	noAccountUsernameText = document.createElement('p');
+		noAccountUsernameText.textContent = opponent;
+		noAccountUsernameText.className = 'username-text';
+
 		avatarBox.appendChild(avatarImg);
-		mygameinfocontainer.appendChild(avatarBox);
+		avatarBox.appendChild(noAccountUsernameText);
+		col.appendChild(avatarBox);
+		row.appendChild(col);
 
 		// Add click event to display game history
 		avatarBox.addEventListener('click', () =>
@@ -454,88 +486,95 @@ function avatars(gameHistory, allUsers)
 		});
 	});
 
+	// Append the row to the container
+	mygameinfocontainer.appendChild(row);
+
 	// Append the container to the dashboard
 	document.getElementById('dashboard-container').appendChild(mygameinfocontainer);
 
 	return mygameinfocontainer;
 }
 
-function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
-{
-	// Create a container for the game history
-	const gameHistoryContainer = document.createElement('div');
-	gameHistoryContainer.classList.add('container', 'game-history-container');
+function displayGameHistory(connectedUser, chosenOpponent, gameHistory) {
+    // Create an overlay
+    const overlay = document.createElement('div');
+    overlay.classList.add('overlay');
 
-	// Create a header for the game history
-	const header = document.createElement('div');
-	header.classList.add('game-history-header');
-	header.textContent = `Game History with ${chosenOpponent}`;
-	gameHistoryContainer.appendChild(header);
+    // Add event listener to prevent clicks on the overlay
+    overlay.addEventListener('click', (e) => e.stopPropagation());
 
-	// Create a close button
-	const	closeButton = document.createElement('button');
-	closeButton.classList.add('btn', 'close-btn', 'game-history-close');
-	closeButton.text = 'close';
+    // Create a container for the game history
+    const gameHistoryContainer = document.createElement('div');
+    gameHistoryContainer.classList.add('container', 'game-history-container');
 
-	// Close button functionality to remove the game history container
-	closeButton.addEventListener('click', () =>
-	{
-		gameHistoryContainer.remove();
-	});
+    // Create a header for the game history
+    const header = document.createElement('div');
+    header.classList.add('game-history-header');
+    header.textContent = `Game History with ${chosenOpponent}`;
+    gameHistoryContainer.appendChild(header);
 
-	// Append the close button to the game history container
-	gameHistoryContainer.appendChild(closeButton);
+    // Create a close button
+    const closeButton = document.createElement('div');
+    closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close');
+    closeButton.textContent = 'X';
 
-	// Create a table element to display game history
-	const table = document.createElement('table');
-	table.classList.add('game-history-table');
+    // Close button functionality to remove the game history container and overlay
+    closeButton.addEventListener('click', () => {
+        gameHistoryContainer.remove();
+        overlay.remove();
+    });
 
-	// Create the table header
-	const tableHeaderRow = document.createElement('tr');
-	tableHeaderRow.classList.add('game-history-header-row');
+    // Append the close button to the game history container
+    gameHistoryContainer.appendChild(closeButton);
 
-	const dateHeader = document.createElement('th');
-	dateHeader.textContent = 'Date';
-	dateHeader.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(dateHeader);
+    // Create a table element to display game history
+    const table = document.createElement('table');
+    table.classList.add('game-history-table');
 
-	const username1Header = document.createElement('th');
-	username1Header.textContent = connectedUser; // Current user's username
-	username1Header.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(username1Header);
+    // Create the table header
+    const tableHeaderRow = document.createElement('tr');
+    tableHeaderRow.classList.add('game-history-header-row');
 
-	const username2Header = document.createElement('th');
-	username2Header.textContent = chosenOpponent; // Opponent user's username
-	username2Header.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(username2Header);
+    const dateHeader = document.createElement('th');
+    dateHeader.textContent = 'Date';
+    dateHeader.classList.add('game-history-header-cell');
+    tableHeaderRow.appendChild(dateHeader);
 
-	// Append the header row to the table
-	table.appendChild(tableHeaderRow);
+    const username1Header = document.createElement('th');
+    username1Header.textContent = connectedUser;
+    username1Header.classList.add('game-history-header-cell');
+    tableHeaderRow.appendChild(username1Header);
 
-	// Call function to add game history to the table
-	addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
+    const username2Header = document.createElement('th');
+    username2Header.textContent = chosenOpponent;
+    username2Header.classList.add('game-history-header-cell');
+    tableHeaderRow.appendChild(username2Header);
 
-	// Append the table to the game history container
-	gameHistoryContainer.appendChild(table);
+    // Append the header row to the table
+    table.appendChild(tableHeaderRow);
 
-	// Append the game history container to the dashboard or another element
-	const dashboard = document.getElementById('dashboard-container');
-	if (dashboard)
-	{
-		// Remove any existing game history containers before appending a new one
-		const existingGameHistory = document.querySelector('.game-history-container');
-		if (existingGameHistory)
-		{
-			existingGameHistory.remove();
-		}
+    // Call function to add game history to the table
+    addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
 
-		dashboard.appendChild(gameHistoryContainer);
-	}
-	else
-	{
-		console.error("Dashboard container not found.");
-	}
+    // Append the table to the game history container
+    gameHistoryContainer.appendChild(table);
+
+    // Append the overlay and game history container to the dashboard or another element
+    const dashboard = document.getElementById('dashboard-container');
+    if (dashboard) {
+        // Remove any existing game history containers and overlays before appending new ones
+        const existingOverlay = document.querySelector('.overlay');
+        const existingGameHistory = document.querySelector('.game-history-container');
+        if (existingOverlay) existingOverlay.remove();
+        if (existingGameHistory) existingGameHistory.remove();
+
+        dashboard.appendChild(overlay);
+        dashboard.appendChild(gameHistoryContainer);
+    } else {
+        console.error("Dashboard container not found.");
+    }
 }
+
 
 function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 {
@@ -543,20 +582,20 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 	table.innerHTML = '';
 
 	// Create the header row
-	const headerRow = document.createElement('tr');
+	const	headerRow = document.createElement('tr');
 	headerRow.classList.add('game-history-header-row'); // Add your custom class
 
-	const dateHeader = document.createElement('th');
+	const	dateHeader = document.createElement('th');
 	dateHeader.textContent = 'Date';
 	dateHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(dateHeader);
 
-	const myUsernameHeader = document.createElement('th');
+	const	myUsernameHeader = document.createElement('th');
 	myUsernameHeader.textContent = 'Me';
 	myUsernameHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(myUsernameHeader);
 
-	const opponentUsernameHeader = document.createElement('th');
+	const	opponentUsernameHeader = document.createElement('th');
 	opponentUsernameHeader.textContent = chosenOpponent;
 	opponentUsernameHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(opponentUsernameHeader);
@@ -568,23 +607,23 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 	gameHistory.forEach(game => {
 		if (game.opponentUsername === chosenOpponent) {
 			// Create a row for the match details
-			const matchRow = document.createElement('tr');
+			const	matchRow = document.createElement('tr');
 			matchRow.classList.add('game-history-row'); // Add your custom class
 
 			// Date cell
-			const dateCell = document.createElement('td');
+			const	dateCell = document.createElement('td');
 			dateCell.textContent = new Date(game.date).toLocaleDateString();
 			dateCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(dateCell);
 
 			// My score cell
-			const myScoreCell = document.createElement('td');
+			const	myScoreCell = document.createElement('td');
 			myScoreCell.textContent = game.myScore;
 			myScoreCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(myScoreCell);
 
 			// Opponent's score cell
-			const opponentScoreCell = document.createElement('td');
+			const	opponentScoreCell = document.createElement('td');
 			opponentScoreCell.textContent = game.opponentScore;
 			opponentScoreCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(opponentScoreCell);
@@ -599,25 +638,107 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 -				TROPHY ICON					-
 \***********************************************/
 
+
+// KARL HERE BACKUP
+// function badge(gameHistory, allUsers)
+// {
+// 	const	allStats = retrieveAllUserStats(allUsers, gameHistory);
+
+// 	let badgeImgSrc = '';
+// 	let message = '';
+// 	let rankingPosition = 0;
+
+// 	// Determine ranking position
+// 	allStats.sort((a, b) =>
+// 	{
+// 		if (b.nb_of_victories !== a.nb_of_victories)
+// 		{
+// 			return b.nb_of_victories - a.nb_of_victories;
+// 		}
+// 		return a.nb_of_defeats - b.nb_of_defeats;
+// 	});
+
+// 	// Assign ranking to each user
+// 	allStats.forEach((user, index) => {
+// 		user.ranking_position = index + 1;
+// 	});
+
+// 	// Find the ranking position of the connected user
+// 	allStats.forEach(user => {
+// 		if (user.username === gameHistory.username) {
+// 			rankingPosition = user.ranking_position;
+// 		}
+// 	});
+
+// 	// Determine the badge image and message
+// 	if (rankingPosition < 3) {
+// 		message = ' You need to improve!';
+// 		badgeImgSrc = '../../../assets/images/dashboard/chart.gif';
+// 	} else if (rankingPosition === 3) {
+// 		message = ' You are the 3rd best player!';
+// 		badgeImgSrc = '../../../assets/images/dashboard/top3.gif';
+// 	} else if (rankingPosition === 2) {
+// 		message = ` You are the 2nd best player!`;
+// 		badgeImgSrc = '../../../assets/images/dashboard/top3_badge.png';
+// 	} else if (rankingPosition === 1) {
+// 		message = " You're the best player ever!";
+// 		badgeImgSrc = '../../../assets/images/dashboard/top1_badge.png';
+// 	}
+
+// 	// Create a container for the badge display
+// 	const	badgeContainer = document.createElement('div');
+// 	badgeContainer.classList.add('badge-container');
+
+// 	// Create the badge image element
+// 	const	badgeIcon = document.createElement('img');
+// 	badgeIcon.src = badgeImgSrc;
+// 	badgeIcon.alt = 'Badge Icon';
+// 	badgeIcon.classList.add('badge-icon');
+
+// 	// Create the message element
+// 	const	badgeMessage = document.createElement('p');
+// 	badgeMessage.textContent = message;
+// 	badgeMessage.classList.add('badge-message');
+
+// 	// Append the badge icon and message to the container
+// 	badgeContainer.appendChild(badgeIcon);
+// 	badgeContainer.appendChild(badgeMessage);
+
+// 	// Append the badge container to the dashboard
+// 	const	dashboard = document.getElementById('dashboard-container');
+// 	if (dashboard) {
+// 		dashboard.appendChild(badgeContainer);
+// 	} else {
+// 		console.error('Dashboard container not found!');
+// 	}
+// }
+
 function retrieveAllUserStats(allUsers, gameHistory)
 {
 	const	allStats = [];
 
-	allUsers.forEach(user => {
-		const	stats = {
+	allUsers.forEach(user =>
+	{
+		const	stats =
+		{
 			username: user.username,
 			nb_of_victories: 0,
 			nb_of_defeats: 0,
 			ranking_position: 0
 		};
 
-		gameHistory.forEach(game => {
+		gameHistory.forEach(game =>
+		{
 			// Check if the game belongs to the current user
-			if (game.myUsername === stats.username) {
+			// if (game.myUsername === stats.username)
+			{
 				// Update victories or defeats based on game score
-				if (game.myScore > game.opponentScore) {
+				if (game.myScore > game.opponentScore)
+				{
 					stats.nb_of_victories++;
-				} else {
+				}
+				else
+				{
 					stats.nb_of_defeats++;
 				}
 			}
@@ -629,46 +750,75 @@ function retrieveAllUserStats(allUsers, gameHistory)
 	return allStats;
 }
 
-function badge(gameHistory, allUsers) {
-	const allStats = retrieveAllUserStats(allUsers, gameHistory);
+function badge(gameHistory, allUsers)
+{
 
 	let badgeImgSrc = '';
 	let message = '';
 	let rankingPosition = 0;
 
-	// Determine ranking position
-	allStats.sort((a, b) => {
-		if (b.nb_of_victories !== a.nb_of_victories) {
-			return b.nb_of_victories - a.nb_of_victories;
-		}
-		return a.nb_of_defeats - b.nb_of_defeats;
-	});
-
-	// Assign ranking to each user
-	allStats.forEach((user, index) => {
-		user.ranking_position = index + 1;
-	});
-
-	// Find the ranking position of the connected user
-	allStats.forEach(user => {
-		if (user.username === gameHistory.username) {
-			rankingPosition = user.ranking_position;
-		}
-	});
-
-	// Determine the badge image and message
-	if (rankingPosition < 3) {
-		message = ' You need to improve!';
-		badgeImgSrc = '../../../assets/images/dashboard/chart.gif';
-	} else if (rankingPosition === 3) {
-		message = ' You are the 3rd best player!';
-		badgeImgSrc = '../../../assets/images/dashboard/top3.gif';
-	} else if (rankingPosition === 2) {
-		message = ` You are the 2nd best player!`;
-		badgeImgSrc = '../../../assets/images/dashboard/top3_badge.png';
-	} else if (rankingPosition === 1) {
+	if (allUsers.length === 1)
+	{
 		message = " You're the best player ever!";
-		badgeImgSrc = '../../../assets/images/dashboard/top1_badge.png';
+		badgeImgSrc = '../../../assets/images/dashboard/alone.gif';
+	}
+	else
+	{
+		const allStats = retrieveAllUserStats(allUsers, gameHistory);
+		console.log(allStats);
+		console.log(gameHistory);
+
+
+		// Determine ranking position
+		allStats.sort((a, b) =>
+		{
+			const aRatio = a.nb_of_victories / (a.nb_of_defeats + a.nb_of_victories);
+			const bRatio = b.nb_of_victories / (b.nb_of_defeats + b.nb_of_victories);
+
+			if (bRatio > aRatio)
+			{
+				return 1; // sort it putting b first
+			}
+			else
+			{
+				return -1; // sort it putting a first
+			}
+		});
+
+		// Assign ranking to each user
+		allStats.forEach((user, index) => {
+			user.ranking_position = index + 1;
+		});
+
+		// Find the ranking position of the connected user
+		allStats.forEach(user => {
+			if (user.username === gameHistory.username) {
+				rankingPosition = user.ranking_position;
+			}
+		});
+
+		console.log(rankingPosition);
+		// Determine the badge image and message
+		if (rankingPosition > 3)
+		{
+			message = ' You need to improve!';
+			badgeImgSrc = '../../../assets/images/dashboard/unranked.gif';
+		}
+		else if (rankingPosition === 3)
+		{
+			message = ' You are the 3rd best player!';
+			badgeImgSrc = '../../../assets/images/dashboard/3rd.gif';
+		}
+		else if (rankingPosition === 2)
+		{
+			message = ` You are the 2nd best player!`;
+			badgeImgSrc = '../../../assets/images/dashboard/2nd.gif';
+		}
+		else if (rankingPosition === 1)
+		{
+			message = " You are the best player ever!";
+			badgeImgSrc = '../../../assets/images/dashboard/1st.gif';
+		}
 	}
 
 	// Create a container for the badge display
@@ -692,9 +842,12 @@ function badge(gameHistory, allUsers) {
 
 	// Append the badge container to the dashboard
 	const dashboard = document.getElementById('dashboard-container');
-	if (dashboard) {
+	if (dashboard)
+	{
 		dashboard.appendChild(badgeContainer);
-	} else {
+	}
+	else
+	{
 		console.error('Dashboard container not found!');
 	}
 }

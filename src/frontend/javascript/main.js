@@ -155,9 +155,12 @@ let	currentPath = '';
 /***			Normalizing Paths			***/
 function normalizePath(path)
 {
-	if (path.endsWith('/'))
-		return path.slice(0, -1);
-	return path;
+	// KARL HERE DEBUG
+	// console.log('first test', '/dashboard/'.replace(/\/+$/, ''));	// --> Should output: "/dashboard"
+	// console.log('second test', '/'.replace(/\/+$/, ''));			// --> Should output:
+
+	path = path.startsWith('/') ? path : '/' + path;
+	return path.replace(/\/+$/, '') || '/';
 }
 
 /***			Authentication				***/
@@ -179,6 +182,7 @@ function router()
 {
 	manageInactiveUsers();
 	
+	// KARL HERE FIX ME
 	let path = normalizePath(window.location.pathname) || '/home';
 
 	//	Assigning default path if none

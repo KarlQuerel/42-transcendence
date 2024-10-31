@@ -13,6 +13,9 @@ from './signin.js';
 import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
 from './signup.js';
 
+import { loadUserGameHistory }
+from '../dashboard/dashboard.js';
+
 /***********************************************\
 *				   RENDERING					*
 \***********************************************/
@@ -131,11 +134,11 @@ export function renderProfile()
 
 	let userData_edit = null;
 
-    fetchUserData()
-        .then(userData =>
-        {
-            if (!userData)
-                console.log('No user data found');
+	fetchUserData()
+		.then(userData =>
+		{
+			if (!userData)
+				console.log('No user data found');
 
 			userData_edit = userData;
 
@@ -204,38 +207,60 @@ export function renderProfile()
 		dashboardButton.classList.add('btn', 'btn-home', 'profile-button');
 		dashboardButton.textContent = 'Dashboard';
 
-		dashboardButton.addEventListener('click', () =>
+		
+		// Preventing access if no games played
+		let gameHistory = [];
+
+		loadUserGameHistory()
+			.then((history) =>
 			{
-				navigateTo('/dashboard');
+				gameHistory = history;
+			})
+			.catch((error) =>
+			{
+				console.error('Error loading user game history:', error);
 			});
 
-        /***************** RGPD *****************/
-        
-        // bouton pour envoyer les donnees perso de l'utilisateur au format json
-        const requestInfosButton = document.createElement('button');
-        requestInfosButton.setAttribute('id', 'request-infos-button');
-		requestInfosButton.classList.add('btn', 'btn-home', 'profile-button');
-        requestInfosButton.textContent = 'Request My Infos';
-        container.appendChild(requestInfosButton);
+		dashboardButton.addEventListener('click', () =>
+		{
+			if (gameHistory.length === 0)
+			{
+				alert('❌ You must play at least one game to access your dashboard ❌\n- Press OK to be redirected to Pong');
+				navigateTo('/pong');
+			}
+			else
+			{
+				navigateTo('/dashboard');
+			}
+		});
 
-        requestInfosButton.addEventListener('click', () => {
-            apiRequest('/api/dashboard/getGameHistory/', {
-                method: 'GET',
-            })
-            .then(games => {
-                console.log('games: ', games);
-                apiRequest('/api/users/send-infos-to-user/', {
-                    method: 'POST',
-                    body: JSON.stringify(games),
-                })
-                .catch(error => {
-                    console.error('Error sending their personnal informations to the user:', error);
-                });
-            })
-            .catch(error => {
-                console.error('Error user game history:', error);
-            })
-        });
+		/***************** RGPD *****************/
+		
+		// bouton pour envoyer les donnees perso de l'utilisateur au format json
+		const requestInfosButton = document.createElement('button');
+		requestInfosButton.setAttribute('id', 'request-infos-button');
+		requestInfosButton.classList.add('btn', 'btn-home', 'profile-button');
+		requestInfosButton.textContent = 'Request My Infos';
+		container.appendChild(requestInfosButton);
+
+		requestInfosButton.addEventListener('click', () => {
+			apiRequest('/api/dashboard/getGameHistory/', {
+				method: 'GET',
+			})
+			.then(games => {
+				console.log('games: ', games);
+				apiRequest('/api/users/send-infos-to-user/', {
+					method: 'POST',
+					body: JSON.stringify(games),
+				})
+				.catch(error => {
+					console.error('Error sending their personnal informations to the user:', error);
+				});
+			})
+			.catch(error => {
+				console.error('Error user game history:', error);
+			})
+		});
 
 
 		/***************** 2FA *****************/
@@ -245,7 +270,7 @@ export function renderProfile()
 		twoFactorAuthContainer.className = 'form-group';
 
 		const	twoFactorAuthLabel = document.createElement('label');
-		twoFactorAuthLabel.setAttribute('for', 'twoFactorAuthCheckbox');
+		twoFactorAuthLabel.setAttribute('for', 'gdpr-acceptance');
 		twoFactorAuthLabel.classList.add('profile-text', 'two-factor-text');
 		twoFactorAuthLabel.setAttribute('id', 'two-FA-checkbox');
 		twoFactorAuthLabel.textContent = 'Two-Factor Authentication';
@@ -269,6 +294,38 @@ export function renderProfile()
 			const	is2fa = twoFactorAuthCheckbox.checked;
 			updateUser2FAStatus(is2fa);
 		});
+
+		// KARL HERE FIX ME DOESNT WORK
+		// Retrieve the 2FA status from localStorage on page load
+		// document.addEventListener('DOMContentLoaded', async () => {
+		// 	try {
+		// 		// Try to get the saved state from localStorage
+		// 		const saved2FAState = localStorage.getItem('twoFactorAuthChecked');
+
+		// 		if (saved2FAState !== null) {
+		// 			// Use the saved state from localStorage
+		// 			twoFactorAuthCheckbox.checked = JSON.parse(saved2FAState);
+		// 		} else {
+		// 			// If no saved state, fetch from the server
+		// 			const is2fa = await getUser2FAStatus();
+		// 			if (is2fa !== null) {
+		// 				twoFactorAuthCheckbox.checked = is2fa;
+		// 				// Save the fetched state in localStorage
+		// 				localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa));
+		// 			}
+		// 		}
+		// 	} catch (error) {
+		// 		console.error('Error retrieving 2FA status:', error);
+		// 	}
+		// });
+		// FIN KARL FIX
+
+// Save the checkbox state in localStorage when it's toggled
+twoFactorAuthCheckbox.addEventListener('change', () => {
+	const is2fa = twoFactorAuthCheckbox.checked;
+	localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa)); // Save the state
+	updateUser2FAStatus(is2fa);
+});
 
 		/************** ANONYMIZE DATA **************/
 		
@@ -699,32 +756,32 @@ async function updateUserAnonymousStatus()
 
 async function anonymizeUserData()
 {
-    try
-    {
-        const response = await apiRequest('/api/users/anonymizeUserData/',
-        {
-            method: 'PUT',
-            headers:
-            {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(user=>{
-            console.log('old_username = ', user.old_username, 'new_username = ', user.new_username);
-            apiRequest('/api/dashboard/anonymiseGameHistory/', {
-                method: 'PUT',
-                headers:
-                {
-                    ...getAuthHeaders(),
-                    'X-CSRFToken': getCookie('csrftoken'),
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(user),
-            })
-            console.log("Finished anonymising GameHistory")
-        });
+	try
+	{
+		const response = await apiRequest('/api/users/anonymizeUserData/',
+		{
+			method: 'PUT',
+			headers:
+			{
+				'Authorization': `Bearer ${localStorage.getItem('token')}`,
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		})
+		.then(user=>{
+			console.log('old_username = ', user.old_username, 'new_username = ', user.new_username);
+			apiRequest('/api/dashboard/anonymiseGameHistory/', {
+				method: 'PUT',
+				headers:
+				{
+					...getAuthHeaders(),
+					'X-CSRFToken': getCookie('csrftoken'),
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(user),
+			})
+			console.log("Finished anonymising GameHistory")
+		});
 
 		alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
 		navigateTo('/profile');
@@ -807,67 +864,67 @@ async function updateUser2FAStatus(is2fa)
 
 async function deleteUserAccount()
 {
-    console.log('Deleting account...');
-    try
-    {
-        // delete user's game history and account
-        await apiRequest('/api/dashboard/deleteGameHistory/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify(user),
-        })
-        console.log("Finished deleting user's GameHistory");
+	console.log('Deleting account...');
+	try
+	{
+		// delete user's game history and account
+		await apiRequest('/api/dashboard/deleteGameHistory/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+			// body: JSON.stringify(user),
+		})
+		console.log("Finished deleting user's GameHistory");
 
-        // delete friend requests
-        await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify(user),
-        });
-        console.log("Finished deleting user's Friend Requests");
+		// delete friend requests
+		await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+			// body: JSON.stringify(user),
+		});
+		console.log("Finished deleting user's Friend Requests");
 
-        // delete friendships
-        await apiRequest('/api/users/deleteUserFriendships/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify(user),
-        });
-        console.log("Finished deleting user's Friendships");
+		// delete friendships
+		await apiRequest('/api/users/deleteUserFriendships/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+			// body: JSON.stringify(user),
+		});
+		console.log("Finished deleting user's Friendships");
 
-        // delete account
-        await apiRequest('/api/users/deleteUser/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-            // body: JSON.stringify(user),
-        });
-        console.log("Finished deleting user's Account");
+		// delete account
+		await apiRequest('/api/users/deleteUser/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+			// body: JSON.stringify(user),
+		});
+		console.log("Finished deleting user's Account");
 
 
-        console.log('Account deleted successfully.');
-        alert('Your account has been deleted successfully.');
+		console.log('Account deleted successfully.');
+		alert('Your account has been deleted successfully.');
 
-        navigateTo('/sign-in');
+		navigateTo('/sign-in');
 
-    }
-    catch (error)
-    {
-        console.error('Error during account deletion:', error);
-        alert('An error occurred while trying to delete your account.');
-    }
+	}
+	catch (error)
+	{
+		console.error('Error during account deletion:', error);
+		alert('An error occurred while trying to delete your account.');
+	}
 }
