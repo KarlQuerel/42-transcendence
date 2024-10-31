@@ -7,4 +7,5 @@ urlpatterns = [
 	path('dashboard/anonymiseGameHistory/', views.anonymiseGameHistory, name='anonymise-game-history'),
 	path('dashboard/deleteGameHistory/', views.deleteGameHistory, name='delete-game-history'),
 	path('dashboard/deleteGameHistoryInactiveUsers/', views.deleteGameHistoryInactiveUsers, name='delete-game-history-inactive-users'),
+	path('dashboard/getSpecificUserGameHistory/', views.getSpecificUserGameHistory, name='get-specific-user-game-history'),
 ]

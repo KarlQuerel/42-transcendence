@@ -21,6 +21,24 @@ def getGameHistory(request):
 	else:
 		return Response({'error': 'User not authenticated'}, status=401)
 
+# Get a user's game history
+@api_view(['GET'])
+# @csrf_protect
+def getSpecificUserGameHistory(request):
+	try:
+		username = request.query_params.get('username')
+		if not username:
+			return Response({'error': 'Username parameter is missing'}, status=400)
+
+		game_history = GameHistory.objects.filter(myUsername=username)
+		if not game_history.exists():
+			return Response({'error': 'The user has no GameHistory'}, status=404)
+		serializer = GameHistorySerializer(game_history, many=True)
+
+		return Response(serializer.data)
+	except Exception as e:
+		return Response({'getSpecificUserGameHistory error': str(e)}, status=500)
+
 
 # Adds a new game history instance
 @api_view(['POST'])
