@@ -46,6 +46,7 @@ export async function deleteInactiveUsers(inactiveUsersID)
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'DELETE',
             headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
