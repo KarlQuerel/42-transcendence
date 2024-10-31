@@ -7,6 +7,9 @@ from '../../main.js';
 import { refreshToken, userPingBackend }
 from './signin.js';
 
+import { renderNavbar }
+from '../navbar/navbar.js';
+
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
@@ -51,6 +54,7 @@ export function render2fa()
 			if (DEBUG)
 				console.log('Token refreshed:', newAccessToken);
 			setSignedInState(true);
+		    renderNavbar();
             userPingBackend();
             window.history.replaceState({}, document.title, "/profile");
 			navigateTo('/profile');

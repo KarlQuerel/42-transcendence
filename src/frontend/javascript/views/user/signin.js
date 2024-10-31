@@ -153,7 +153,6 @@ function login(username, password)
 		setSignedInState(true);
 		renderNavbar();
 		userPingBackend();
-		console.log('j\'ai ping apres le login');
 		navigateTo('/profile');
 	})
 	.catch(error =>
