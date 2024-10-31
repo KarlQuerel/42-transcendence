@@ -28,16 +28,6 @@ export function createTheTeamButton()
 	return createButtonWithListener('The Team', '#multiCollapseExample2', 'false');
 }
 
-export function createWhatWeDidButton()
-{
-	return createButtonWithListener('What We Did', '#whatWeDidCard', 'false');
-}
-
-export function createTheyTrustedUsButton()
-{
-	return createButtonWithListener('They Trusted Us', '#TheyTrustedUsCarousel', 'false');
-}
-
 export function createButtonWithListener(text, targetId, expanded)
 {
 	const	button = createButton(
@@ -53,7 +43,6 @@ export function createButtonWithListener(text, targetId, expanded)
 
 	button.addEventListener('click', () =>
 	{
-		// moveButtonToCenter(button); // KARL TODO FIX IT
 		toggleButtons(text);
 	});
 
@@ -76,7 +65,7 @@ function toggleButtons(clickedButton)
 
 function disableOtherButtons(clickedButton)
 {
-	const	buttons = ['What is Pong?', 'The Team', 'What We Did', 'They Trusted Us'];
+	const	buttons = ['What is Pong?', 'The Team'];
 
 	buttons.forEach(buttonText =>
 	{

@@ -25,12 +25,13 @@ export async function getInactiveID()
         const response = await fetch('/api/users/getInactiveUsersID/', {
             method: 'GET',
             headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
         }});
 
-        
         const data = await response.json();
         return data;
+
     }
     catch (error)
     {
@@ -46,6 +47,7 @@ export async function deleteInactiveUsers(inactiveUsersID)
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'DELETE',
             headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
