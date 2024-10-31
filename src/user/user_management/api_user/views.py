@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.files.storage import default_storage
 from django.contrib.auth import authenticate, login
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
@@ -217,15 +218,12 @@ def getAllUsers(request):
 			return Response({'error': 'User not authenticated'}, status=401)
 
 		try:
-			print(f'User: {user}')
 			users = CustomUser.objects.all()
-			print(f'Users: {users}')
 			users_info = []
 
 			for user in users:
 				users_info.append({'username': user.username, 'id': user.id})
 
-			print(f'Users info: {users_info}')
 			return JsonResponse(users_info, safe=False, status=200)
 
 		except Exception as e:
@@ -447,7 +445,7 @@ As per your request and in compliance with the General Data Protection Regulatio
 we are providing you with an export of your personal data.
 
 {json_data}""",		
-			str(os.getenv('EMAIL_HOST_USER')),
+			'noreply@orange.fr',
 			[user.email],
 			fail_silently=False,
 		)
@@ -473,7 +471,7 @@ def send_2fa_totp(user):
 	send_mail(
 		f'Verification code for {user.username} on transcendance.fr',
 		f'Please enter this one-time code to log into your account: {code}',
-		str(os.getenv('EMAIL_HOST_USER')),
+		'noreply@orange.fr',
 		[user.email],
 		fail_silently=False,
 	)
@@ -642,31 +640,32 @@ def get_friendship_status(user1, user2):
 ##           		GDPR VIEWS      		    ##
 ##################################################
 
-
 @api_view(['PUT'])
 @login_required
 @permission_classes([IsAuthenticated])
 @csrf_protect
 def anonymizeUserData(request):
-    try:
-        user = request.user
-        if not user.is_authenticated:
-            return Response({'error': 'User not authenticated'}, status=401)
+	try:
+		user = request.user
+		if not user.is_authenticated:
+			return Response({'error': 'User not authenticated'}, status=401)
 
-        usernameSuffix = get_random_string(6)
-        user.username = f'user_{usernameSuffix}'
-        user.email = f'anonymized_{usernameSuffix}@example.com'
-        user.first_name = 'Anonymous'
-        user.last_name = 'User'
-        user.date_of_birth = None
-        user.avatar = 'avatars/default.png'
+		userOldUsername = user.username
+			
+		usernameSuffix = get_random_string(6)
+		user.username = f'user_{usernameSuffix}'
+		user.email = f'anonymized_{usernameSuffix}@example.com'
+		user.first_name = 'Anonymous'
+		user.last_name = 'User'
+		user.date_of_birth = None
+		user.avatar = 'avatars/default.png'
 
-        user.save()
+		user.save()
 
-        return JsonResponse({'username': user.username}, status=200)
+		return JsonResponse({'old_username': userOldUsername, 'new_username': user.username}, status=200)
 
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
 
 
 #########################################
@@ -723,9 +722,11 @@ def deleteAccount(request):
 		if not user.is_authenticated:
 			return Response({'error': 'User not authenticated'}, status=401)
 
-		user.delete()
+		# user.delete()
+		print(f'Account to delete: {user.username}. Sending to deleteGameHistory view') # DEBUG
 
-		return Response({'Account deleted successfully'}, status=200)
+		# return (Response({'Account deleted successfully'}, status=200))
+		return JsonResponse({'username': user.username}, status=200)
 
 	except Exception as e:
 		print(f'Error: {str(e)}') # DEBUG
@@ -734,28 +735,80 @@ def deleteAccount(request):
 
 
 ##################################################
+##          DELETE INACTIVE USERS VIEWS   	    ##
+##################################################
+
+
+@api_view(['GET'])
+def getInactiveUsersID(request):
+	try:
+		users = CustomUser.objects.all()
+		inactive_users_id = []
+
+		time = timezone.now()
+		cutoffTime = time + timezone.timedelta(days=3*365)
+
+		for user in users:
+			if user.last_login is not None and user.last_login > cutoffTime:
+				inactive_users_id.append(user.id)
+		
+		print(f'Inactive users ID: {inactive_users_id}') # DEBUG
+
+		return JsonResponse(inactive_users_id, safe=False, status=200)
+
+	except Exception as e:
+		return Response({'error': str(e)}, status=500)
+
+
+#########################################
+
+
+# @api_view(['POST'])
+# def deleteInactiveUsers(request):
+# 	try:
+# 		inactiveUsersID = request.data.get('inactiveUsersID', [])
+
+# 		if isinstance(inactiveUsersID, str):
+# 			inactiveUsersID = [int(id) for id in inactiveUsersID.split(",")]
+		
+# 		if request.user.is_authenticated:
+# 			inactiveUsersID = [id for id in inactiveUsersID if id != request.user.id]
+
+# 		users_to_delete = CustomUser.objects.filter(id__in=inactiveUsersID)
+# 		users_to_delete.delete()
+
+# 		return JsonResponse({'success': 'Inactive users deleted successfully'}, status=200)
+
+# 	except Exception as e:
+# 		return Response({'error': str(e)}, status=500)
+
+
+
+##################################################
 ##           CHECK PASSWORD VIEWS	            ##
 ##################################################
+
+
 @csrf_exempt
 def checkUserPassword(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            username = data.get('username')
-            password = data.get('password')
+	if request.method == 'POST':
+		try:
+			data = json.loads(request.body)
+			username = data.get('username')
+			password = data.get('password')
 
-            # Check if the user exists
-            try:
-                user = CustomUser.objects.get(username=username)
-                # Check if the password is correct
-                if check_password(password, user.password):
-                    return JsonResponse({'valid': True}, status=200)
-                else:
-                    return JsonResponse({'valid': False}, status=200)
-            except CustomUser.DoesNotExist:
-                return JsonResponse({'error': 'User not found'}, status=404)
+			# Check if the user exists
+			try:
+				user = CustomUser.objects.get(username=username)
+				# Check if the password is correct
+				if check_password(password, user.password):
+					return JsonResponse({'valid': True}, status=200)
+				else:
+					return JsonResponse({'valid': False}, status=200)
+			except CustomUser.DoesNotExist:
+				return JsonResponse({'error': 'User not found'}, status=404)
 
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON format'}, status=400)
-    
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+		except json.JSONDecodeError:
+			return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+	
+	return JsonResponse({'error': 'Invalid request method'}, status=405)

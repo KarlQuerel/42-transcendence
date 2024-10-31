@@ -10,10 +10,14 @@ all :
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
-	@cd src && docker-compose down
+#if Dashboard and User databases are up, clear it
+	@if (docker ps --filter "name=Dashboard" --filter "status=running" | grep -q Dashboard) && (docker ps --filter "name=User" --filter "status=running" | grep -q User); then \
+		make clear_db; \
+	fi
+	@find . -name "*.pyc" -delete
+	@cd src && docker-compose down --remove-orphans
 
 fclean : clean
-# CARO: tester que la base de données dashboard est supprimée avec make fclean
 	cd src && docker system prune -af
 	cd src && docker volume prune -af
 	@echo "$(GREEN)\n🛁✨ All containers test, networks, volumes and images have been removed ✨🛁\n$(NC)"
@@ -37,7 +41,7 @@ logs-dashboard:
 logs-database:
 	cd src && docker-compose logs -f database
 
-logs-userViews: #pour voir les print des views de User
+logs-userViews:
 	docker logs User
 
 logs-dashboardViews:
@@ -62,15 +66,11 @@ check_allUsers:
 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_user_customuser;'"
 
 check_allGameHistory:
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM base_gamehistory;'"
-
-# check_userGamehistory:
-# 	@read -p "Enter username: " username; \
-# 	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT base_gamehistory.* FROM base_gamehistory JOIN api_user_customuser ON base_gamehistory.user_id = api_user_customuser.id WHERE api_user_customuser.username = '$$username';\""
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c 'SELECT * FROM api_dashboard_gamehistory;'"
 
 check_userGamehistory:
 	@read -p "Enter username: " username; \
-	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM base_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
+	docker exec -it Database bash -c "psql -U postgres -d pong_database -c \"SELECT * FROM api_dashboard_gamehistory WHERE \\\"myUsername\\\" = '$$username';\""
 
 # Clear database
 

@@ -64,7 +64,7 @@ export const PaddleConf =
 export const GameConf =
 {
 	AI_name : "🤖 Ponginator3000 🤖",
-	maxScore : 1,
+	maxScore : 10,
 	matchupIndex : 0,
 	allMatchups : [],
 	winners : [],
@@ -108,7 +108,7 @@ export const BallConf =
 	x: 0,
 	y: 0,
 	radius: 10,
-	speed: 5,
+	speed: 8,
 	dx: 5,
 	dy: 5
 };

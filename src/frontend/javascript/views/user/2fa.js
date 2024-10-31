@@ -1,5 +1,5 @@
 /***********************************************\
--		   IMPORTING VARIABLES/FUNCTIONS		-
+-			IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
 import { DEBUG, navigateTo, setSignedInState }
 from '../../main.js';
@@ -8,14 +8,15 @@ import { refreshToken, userPingBackend }
 from './signin.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*					RENDERING					*
 \***********************************************/
 
 export function render2fa()
 {
-    if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
+    // KARL HERE - TO REMOVE LATER
+	if (localStorage.getItem('access_token') || !localStorage.getItem('username'))
     {
-        navigateTo('/profile');        
+        navigateTo('/profile');
     }
     const form = render_form();
     document.body.appendChild(form);
@@ -51,6 +52,8 @@ export function render2fa()
 			if (DEBUG)
 				console.log('Token refreshed:', newAccessToken);
 			setSignedInState(true);
+            userPingBackend();
+            console.log('j\'ai ping apres le login');
             window.history.replaceState({}, document.title, "/profile");
 			navigateTo('/profile');
 			console.log('Success:', localStorage.getItem('username'), 'is now logged in');
@@ -60,8 +63,6 @@ export function render2fa()
 			alert('Login failed: ' + error.message);
 		});
     });
-    userPingBackend();
-	console.log('j\'ai ping apres le login');
     return form;
 }
 

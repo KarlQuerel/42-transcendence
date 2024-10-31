@@ -1,134 +1,256 @@
 /* **********************************************\
--		   IMPORTING VARIABLES/FUNCTIONS		-
+-			IMPORTING VARIABLES/FUNCTIONS		-
 \***********************************************/
-import { DEBUG, GITHUBACTIONS } from '../../main.js';
-import { apiRequest } from '../user/signin.js';
-import { getAuthHeaders } from '../user/signin.js';
+import { DEBUG, GITHUBACTIONS }
+from '../../main.js';
+
+import { apiRequest }
+from '../user/signin.js';
+
+import { getAuthHeaders }
+from '../user/signin.js';
 
 /***********************************************\
-*                   RENDERING                   *
+*				   RENDERING				   *
 \***********************************************/
 
 export function renderDashboard()
 {
-	return `
-		<div id="dashboard">
-			<h1>Welcome to the Dashboard</h1>
+	// Container
+	const	dashboard = document.createElement('div');
+	dashboard.id = 'dashboard-container';
 
-<!-- Main clickable icons -->
+	// Title
+	const	title = document.createElement('h1');
+	title.id = 'dashboard-title';
+	title.textContent = 'Your Dashboard';
+	dashboard.appendChild(title);
 
-			<div id="chart_icon" class="dashboard-icon">
-				<img src="../../../assets/images/dashboard/chart.gif">
-			</div>
-			<div id="friends_icon" class="dashboard-icon">
-				<img src="../../../assets/images/dashboard/friends.gif">
-			</div>
-			<div id="trophee_icon" class="dashboard-icon">
-				<img src="../../../assets/images/dashboard/trophee.gif">
-			</div>
+	// Create buttons container
+	const	buttonsContainer = document.createElement('div');
+	buttonsContainer.id = 'dashboard-buttons-container';
 
-			<!-- EXPLANATION: if I had used img_id instead of div_id the icons would not be clickable -->
+	// My Stats
+	const	statsButton = document.createElement('div');
+	statsButton.classList.add('btn', 'btn-home', 'btn-dashboard');
+	statsButton.id = 'statsButton';
+	statsButton.textContent = 'My Stats';
 
-<!-- Friends Icon -->
+	statsButton.addEventListener('click', () =>
+	{
+		myStatsContainer.classList.toggle('active');
+	});
 
-	<!-- Avatars -->
+	// My Friends Stats
+	const	friendsStatsButton = document.createElement('div');
+	friendsStatsButton.classList.add('btn', 'btn-home', 'btn-dashboard');
+	friendsStatsButton.id = 'friendsStatsButton';
+	friendsStatsButton.textContent = 'My Friends Stats';
 
-			<div id="avatarModal" class="modal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Friends Avatars</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<div class="avatar-container"></div> <!-- Avatar container goes inside the modal body -->
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
+	// My Rank
+	const	rankButton = document.createElement('div');
+	rankButton.classList.add('btn', 'btn-home', 'btn-dashboard');
+	rankButton.id = 'rankButton';
+	rankButton.textContent = 'My Rank';
 
-	<!-- Game History -->
+	buttonsContainer.appendChild(statsButton);
+	buttonsContainer.appendChild(friendsStatsButton);
+	buttonsContainer.appendChild(rankButton);
 
-			<div id="tableModal" class="modal">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Game History</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<table class="table table-striped">
-								<thead>
-									<tr id="tableHeaderRow">
-										<!-- Headers will be populated dynamically -->
-									</tr>
-								</thead>
-								<tbody id="tableBody">
-									<!-- Rows will be populated dynamically -->
-								</tbody>
-							</table>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
+	dashboard.appendChild(buttonsContainer);
 
-<!-- Chart Icon -->
+	// Mystats Container
+	const	myStatsContainer = document.createElement('div');
+	myStatsContainer.classList.add('container');
+	myStatsContainer.id = 'mystats-container';
 
-			<div id="chartModal" class="modal" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title">Chart</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body">
-							<canvas id="chartCanvas" width="400" height="400"></canvas>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-			</div>
+	// Avatar container
+	const	avatarContainer = document.createElement('div');
+	avatarContainer.classList.add('avatar-container');
+	myStatsContainer.appendChild(avatarContainer);
 
-<!-- Trophee Icon -->
+	// Close Button for the Charts Container
+	const	closeButton = document.createElement('button');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn');
+	closeButton.textContent = 'Close';
 
-			<div id="badgeModal" class="modal">
-				<div class="modal-body">
-					<img id="badge" class="badge-icon" src="" alt="Badge">
-					<p class="badge-message"></p>
-				</div>
-			</div>
+	closeButton.addEventListener('click', () =>
+	{
+		myStatsContainer.classList.remove('active');
+	});
 
-			<!-- EXPLANATION: "alt" is used to provide alternative text for an image if it cannot be displayed -->
+	myStatsContainer.appendChild(closeButton);
 
-<!-- Badge Images -->
-<!-- TODO: changer tous les gifs -->
+	// My Stats Canvas
+	const	myStatsCanvas = document.createElement('canvas');
+	myStatsCanvas.id = 'mystats-canvas';
+	myStatsContainer.appendChild(myStatsCanvas);
 
-			<img id="top1_badge" src="../../../assets/images/dashboard/top1.gif" style="display: none;">
-			<img id="top3_badge" src="../../../assets/images/dashboard/top3.gif" style="display: none;">
-			<img id="top5_badge" src="../../../assets/images/dashboard/top5.gif" style="display: none;">
-			<img id="top10_badge" src="../../../assets/images/dashboard/top10.gif" style="display: none;">
-			<img id="regular_badge" src="../../../assets/images/dashboard/regular.gif" style="display: none;">
+	dashboard.appendChild(myStatsContainer);
 
-			<!-- EXPLANATION: without "style="display: none;", all three badges would appear on the screen at all times -->
+	// Create the badge modal
+	const	badgeModal = createBadgeModal();
+	dashboard.appendChild(badgeModal);
+
+	// Create hidden badge images
+	const	badgeImages = [
+		'top1.gif', 'top3.gif', 'top5.gif', 'top10.gif', 'regular.gif'
+	];
+
+	badgeImages.forEach(badge => {
+		const	img = document.createElement('img');
+		img.id = badge.replace('.gif', '_badge'); // e.g., top1_badge
+		img.src = `../../../assets/images/dashboard/${badge}`;
+		img.style.display = 'none'; // Hide by default
+		dashboard.appendChild(img);
+	});
+
+	return dashboard;
+}
 
 
+// Helper function to create a modal
+function createModal(title, modalId, bodyClass) {
+	const	modal = document.createElement('div');
+	modal.id = modalId;
+	modal.className = 'modal';
 
-		</div>
-	`;
+	const	dialog = document.createElement('div');
+	dialog.className = 'modal-dialog';
+
+	const	content = document.createElement('div');
+	content.className = 'modal-content';
+
+	const	header = document.createElement('div');
+	header.className = 'modal-header';
+
+	const	modalTitle = document.createElement('h5');
+	modalTitle.className = 'modal-title';
+	modalTitle.textContent = title;
+	header.appendChild(modalTitle);
+
+	const	closeButton = document.createElement('button');
+	closeButton.type = 'button';
+	closeButton.className = 'close';
+	closeButton.setAttribute('data-dismiss', 'modal');
+	closeButton.setAttribute('aria-label', 'Close');
+	closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+	header.appendChild(closeButton);
+
+	const	body = document.createElement('div');
+	body.className = 'modal-body';
+	
+	const	bodyContainer = document.createElement('div');
+	bodyContainer.className = bodyClass;
+	body.appendChild(bodyContainer);
+
+	const	footer = document.createElement('div');
+	footer.className = 'modal-footer';
+
+	const	footerButton = document.createElement('button');
+	footerButton.type = 'button';
+	footerButton.className = 'btn btn-secondary';
+	footerButton.setAttribute('data-dismiss', 'modal');
+	footerButton.textContent = 'Close';
+	footer.appendChild(footerButton);
+
+	content.appendChild(header);
+	content.appendChild(body);
+	content.appendChild(footer);
+	dialog.appendChild(content);
+	modal.appendChild(dialog);
+
+	return modal;
+}
+
+// Helper function to create the game history modal
+function createGameHistoryModal() {
+	const	modal = document.createElement('div');
+	modal.id = 'tableModal';
+	modal.className = 'modal';
+
+	const	dialog = document.createElement('div');
+	dialog.className = 'modal-dialog';
+
+	const	content = document.createElement('div');
+	content.className = 'modal-content';
+
+	const	header = document.createElement('div');
+	header.className = 'modal-header';
+
+	const	modalTitle = document.createElement('h5');
+	modalTitle.className = 'modal-title';
+	modalTitle.textContent = 'Game History';
+	header.appendChild(modalTitle);
+
+	const	closeButton = document.createElement('button');
+	closeButton.type = 'button';
+	closeButton.className = 'close';
+	closeButton.setAttribute('data-dismiss', 'modal');
+	closeButton.setAttribute('aria-label', 'Close');
+	closeButton.innerHTML = '<span aria-hidden="true">&times;</span>';
+	header.appendChild(closeButton);
+
+	const	body = document.createElement('div');
+	body.className = 'modal-body';
+
+	const	table = document.createElement('table');
+	table.className = 'table table-striped';
+
+	const	thead = document.createElement('thead');
+	const	headerRow = document.createElement('tr');
+	headerRow.id = 'tableHeaderRow';
+	thead.appendChild(headerRow);
+	
+	const	tbody = document.createElement('tbody');
+	tbody.id = 'tableBody';
+
+	table.appendChild(thead);
+	table.appendChild(tbody);
+	body.appendChild(table);
+
+	const	footer = document.createElement('div');
+	footer.className = 'modal-footer';
+
+	const	footerButton = document.createElement('button');
+	footerButton.type = 'button';
+	footerButton.className = 'btn btn-secondary';
+	footerButton.setAttribute('data-dismiss', 'modal');
+	footerButton.textContent = 'Close';
+	footer.appendChild(footerButton);
+
+	content.appendChild(header);
+	content.appendChild(body);
+	content.appendChild(footer);
+	dialog.appendChild(content);
+	modal.appendChild(dialog);
+
+	return modal;
+}
+
+// Helper function to create the badge modal
+function createBadgeModal() {
+	const	modal = document.createElement('div');
+	modal.id = 'badgeModal';
+	modal.className = 'modal';
+
+	const	body = document.createElement('div');
+	body.className = 'modal-body';
+
+	const	badgeImg = document.createElement('img');
+	badgeImg.id = 'badge';
+	badgeImg.className = 'badge-icon';
+	badgeImg.src = '';
+	badgeImg.alt = 'Badge';
+
+	const	badgeMessage = document.createElement('p');
+	badgeMessage.className = 'badge-message';
+
+	body.appendChild(badgeImg);
+	body.appendChild(badgeMessage);
+	modal.appendChild(body);
+
+	return modal;
 }
 
 
@@ -139,10 +261,10 @@ export function renderDashboard()
 export async function initializeDashboard() /*assync and wait needed otherwise we receive 
 a promise that is still pending when we pass statsData into evenlisteners and therefore the data is undefined*/
 {
-	const gameHistory = await loadUserGameHistory();
-	const allUsers = await loadAllUsers();
+	const	gameHistory = await loadUserGameHistory();
+	const	allUsers = await loadAllUsers();
 
-	setupEventListeners(gameHistory, allUsers); //pour charts etc qui s'affichent au click sauf pour gameHistory qd on clique sur un avatar qui se trouve plus tard
+	setupEventListeners(gameHistory, allUsers);
 }
 
 /***********************************************\
@@ -153,7 +275,7 @@ async function loadUserGameHistory()
 {
 	try
 	{
-		const gameHistory = await apiRequest('/api/dashboard/getGameHistory/', {
+		const	gameHistory = await apiRequest('/api/dashboard/getGameHistory/', {
 			method: 'GET',
 			headers: {
 				...getAuthHeaders(),
@@ -173,14 +295,13 @@ async function loadUserGameHistory()
 	}
 }
 
-
 //Cette fonction ne fait plus que chopper les usernames et les id puis faut rajouter
 //dans le même tableau les vatars un par un avec la viuew de clément pour éviter
 //l'erreur 414 (Request-URI Too Large)
 async function loadAllUsers() {
 	try
 	{
-		const response = await apiRequest('/api/users/getAllUsers/', {
+		const	response = await apiRequest('/api/users/getAllUsers/', {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -207,7 +328,7 @@ async function loadAllUsers() {
 
 		if (error.response) //DEBUG
 		{
-			const errorText = await error.response.text();
+			const	errorText = await error.response.text();
 			console.error("Response text:", errorText);
 		}
 
@@ -223,8 +344,6 @@ function getAvatar(userID, avatar)
 	.then(userData =>{
 		if (DEBUG)
 			console.log(userData);
-		else
-			console.log('No user data found');
 
 		avatar.src = `data:image/png;base64,${userData.avatar}`;
 	})
@@ -237,93 +356,281 @@ function getAvatar(userID, avatar)
 -				EVENT LISTENERS					-
 \***********************************************/
 
+// function setupEventListeners(gameHistory, allUsers)
+// {
+// 	const	chartButton = document.getElementById('statsButton');
+// 	const	friendsButton = document.getElementById('friendsStatsButton');
+// 	const	trophyButton = document.getElementById('rankButton');
+
+// 	if (chartButton)
+// 	{
+// 		chartButton.addEventListener('click', function()
+// 		{
+// 			$('#chartModal').modal('show');
+// 			chartPieData(gameHistory);
+// 			favouritePlayingBuddy(gameHistory, allUsers);
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "chart_button" not found.');
+// 	}
+
+// 	if (friendsButton)
+// 	{
+// 		friendsButton.addEventListener('click', function()
+// 		{
+// 			avatars(gameHistory, allUsers);
+// 			$('#avatarModal').modal('show');
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "friends_button" not found.');
+// 	}
+
+// 	if (trophyButton)
+// 	{
+// 		trophyButton.addEventListener('click', function()
+// 		{
+// 			badge(gameHistory, allUsers);
+// 		});
+// 	}
+// 	else
+// 	{
+// 		console.error('Button element with id "trophy_button" not found.');
+// 	}
+
+// 	favouritePlayingBuddy(gameHistory, allUsers);
+// 	// chartPieData(gameHistory);
+// 	showConnectedUserAvatar(gameHistory, allUsers);
+// }
+
 function setupEventListeners(gameHistory, allUsers)
 {
-	const chartIcon = document.getElementById('chart_icon');
-	const friendsIcon = document.getElementById('friends_icon');
-	const tropheeIcon = document.getElementById('trophee_icon');
+	const	chartButton = document.getElementById('statsButton');
+	const	friendsButton = document.getElementById('friendsStatsButton');
+	const	trophyButton = document.getElementById('rankButton');
+	// const	myStatsContainer = document.getElementById('mystats-container');
 
-	if (chartIcon)
+	if (chartButton)
 	{
-		chartIcon.addEventListener('click', function() {
-			$('#chartModal').modal('show');
-			chartDoughnutData(gameHistory);
+		chartButton.addEventListener('click', function()
+		{
+			chartPieData(gameHistory);
+			// KARL HERE
+			favouritePlayingBuddy(gameHistory, allUsers);
 		});
+	} else {
+		console.error('Button element with id "chart_button" not found.');
 	}
-	else
-		console.error('Canvas element with id "chartModal" not found or context is null.');
-	
-	if (friendsIcon)
-	{
-		friendsIcon.addEventListener('click', function() {
+
+	if (friendsButton) {
+		friendsButton.addEventListener('click', function() {
 			avatars(gameHistory, allUsers);
-			$('#avatarModal').modal('show'); //pour afficher la fenetre
+			$('#avatarModal').modal('show');
 		});
+	} else {
+		console.error('Button element with id "friends_button" not found.');
 	}
-	else
-		console.error('Canvas element with id "avatarModal" not found or context is null.');
 
-	if (tropheeIcon)
-	{
-		tropheeIcon.addEventListener('click', function() {
-			// $('#badgeModal').modal('show');
+	if (trophyButton) {
+		trophyButton.addEventListener('click', function() {
 			badge(gameHistory, allUsers);
 		});
+	} else {
+		console.error('Button element with id "trophy_button" not found.');
 	}
-	else
-		console.error('Canvas element with id "badgeModal" not found or context is null.');
+
+	// Initial favorite buddy display within myStatsContainer
+	// favouritePlayingBuddy(gameHistory, allUsers, myStatsContainer);
 }
+
+
+
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
-let doughnutChart; // variable to store the Chart instance
 
-function chartDoughnutData(gameHistory)
+// KARL HERE FINISH IT
+function chartPieData(gameHistory)
 {
-	// Count the number of victories and defeats in gameHistory
+	// Count the number of victories and defeats
 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
 
-	const chartCanvas = document.getElementById('chartCanvas'); // Gets the canvas element
-
-	if (!chartCanvas) {
-		console.error('Canvas element with id "chartCanvas" not found.');
+	const myStatsCanvas = document.getElementById('mystats-canvas');
+	if (!myStatsCanvas)
+	{
+		console.error('Canvas element with id "mystats-canvas" not found.');
 		return;
 	}
 
-	const ctx2 = chartCanvas.getContext('2d'); // Gets the context of the canvas
-	if (!ctx2) {
-		console.error('Unable to get context for "chartCanvas".');
+	const ctx = myStatsCanvas.getContext('2d');
+	if (!ctx)
+	{
+		console.error('Unable to get context for "mystats-canvas".');
 		return;
 	}
 
-	// Destroys the existing Chart instance if it exists
-	if (doughnutChart)
-		doughnutChart.destroy();
-	
-	doughnutChart = new Chart(ctx2, {
-		type: 'doughnut',
-		data: {
-			labels: ['Wins', 'Losses'],
-			datasets: [{
-				label: 'Games',
-				data: [nb_of_victories, nb_of_defeats],
-				backgroundColor: ['#36a2eb', '#ff6384'],
-				hoverBackgroundColor: ['#36a2eb', '#ff6384']
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins: {
-				legend: {
-					display: true,
-					position: 'bottom'
-				}
-			}
-		}
+	// Clear the canvas
+	ctx.clearRect(0, 0, myStatsCanvas.width, myStatsCanvas.height);
+
+	// Calculate angles for the pie chart
+	const totalGames = nb_of_victories + nb_of_defeats;
+	const angles = [
+		(nb_of_victories / totalGames) * 2 * Math.PI,
+		(nb_of_defeats / totalGames) * 2 * Math.PI
+	];
+
+	// Define colors
+	const styles = getComputedStyle(document.documentElement);
+	const colors = [
+		styles.getPropertyValue('--base-light-green').trim(), // Wins
+		styles.getPropertyValue('--base-light-red').trim() // Losses
+	];
+
+	// Draw the pie chart
+	const centerX = myStatsCanvas.width / 2;
+	const centerY = myStatsCanvas.height / 2;
+	const radius = Math.min(myStatsCanvas.width, myStatsCanvas.height) / 2 - 10;
+
+	let startAngle = Math.PI / 2;
+
+	angles.forEach((angle, index) => {
+		ctx.fillStyle = colors[index];
+		ctx.beginPath();
+		ctx.moveTo(centerX, centerY);
+		ctx.arc(centerX, centerY, radius, startAngle, startAngle + angle);
+		ctx.closePath();
+		ctx.fill();
+		startAngle += angle;
 	});
+
+	// Remove any existing legend
+	const existingLegend = document.querySelector('.chart-legend');
+	if (existingLegend) {
+		existingLegend.remove();
+	}
+
+	// Create a stylable legend below the chart
+	const legendContainer = document.createElement('div');
+	legendContainer.className = 'chart-legend';
+	const legendLabels = ['Wins', 'Losses'];
+
+	legendLabels.forEach((label, index) => {
+		const legendItem = document.createElement('div');
+		legendItem.className = 'legend-item';
+
+		// Color box
+		const colorBox = document.createElement('span');
+		colorBox.className = 'color-box';
+		colorBox.style.backgroundColor = colors[index];
+
+		// Label text
+		const labelText = document.createElement('span');
+		labelText.className = 'label-text';
+		labelText.textContent = label;
+
+		legendItem.appendChild(colorBox);
+		legendItem.appendChild(labelText);
+		legendContainer.appendChild(legendItem);
+	});
+
+	// Insert the legend after the chart
+	myStatsCanvas.parentNode.insertBefore(legendContainer, myStatsCanvas.nextSibling);
 }
+
+// KARL HERE TEST HOVER
+// function chartPieData(gameHistory) {
+// 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
+// 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
+
+// 	const myStatsCanvas = document.getElementById('mystats-canvas');
+// 	if (!myStatsCanvas) {
+// 		console.error('Canvas element with id "mystats-canvas" not found.');
+// 		return;
+// 	}
+
+// 	const ctx = myStatsCanvas.getContext('2d');
+// 	if (!ctx) {
+// 		console.error('Unable to get context for "mystats-canvas".');
+// 		return;
+// 	}
+
+// 	const totalGames = nb_of_victories + nb_of_defeats;
+// 	const angles = [
+// 		(nb_of_victories / totalGames) * 2 * Math.PI,
+// 		(nb_of_defeats / totalGames) * 2 * Math.PI
+// 	];
+
+// 	const styles = getComputedStyle(document.documentElement);
+// 	const colors = [
+// 		styles.getPropertyValue('--base-light-green').trim(), // Wins
+// 		styles.getPropertyValue('--base-light-red').trim() // Losses
+// 	];
+
+// 	const centerX = myStatsCanvas.width / 2;
+// 	const centerY = myStatsCanvas.height / 2;
+// 	const radius = Math.min(myStatsCanvas.width, myStatsCanvas.height) / 2 - 10;
+
+// 	let segments = [];
+// 	let startAngle = Math.PI / 2;
+
+// 	// Function to draw the pie chart
+// 	function drawChart(highlightIndex = null) {
+// 		ctx.clearRect(0, 0, myStatsCanvas.width, myStatsCanvas.height);
+
+// 		angles.forEach((angle, index) => {
+// 			const isHighlighted = index === highlightIndex;
+// 			const segmentRadius = isHighlighted ? radius + 10 : radius; // Slightly increase radius on hover
+
+// 			ctx.fillStyle = colors[index];
+// 			ctx.beginPath();
+// 			ctx.moveTo(centerX, centerY);
+// 			ctx.arc(centerX, centerY, segmentRadius, startAngle, startAngle + angle);
+// 			ctx.closePath();
+// 			ctx.fill();
+
+// 			segments[index] = {
+// 				startAngle,
+// 				endAngle: startAngle + angle,
+// 				color: colors[index]
+// 			};
+
+// 			startAngle += angle;
+// 		});
+// 	}
+
+// 	// Event listener to handle hover
+// 	myStatsCanvas.addEventListener('mousemove', (event) => {
+// 		const mouseX = event.offsetX;
+// 		const mouseY = event.offsetY;
+// 		const dx = mouseX - centerX;
+// 		const dy = mouseY - centerY;
+// 		const distance = Math.sqrt(dx * dx + dy * dy);
+
+// 		if (distance <= radius + 10) {
+// 			const angle = Math.atan2(dy, dx);
+// 			const adjustedAngle = angle >= -Math.PI / 2 ? angle : angle + 2 * Math.PI;
+
+// 			let hoveredIndex = null;
+// 			segments.forEach((segment, index) => {
+// 				if (adjustedAngle >= segment.startAngle && adjustedAngle < segment.endAngle) {
+// 					hoveredIndex = index;
+// 				}
+// 			});
+
+// 			drawChart(hoveredIndex);
+// 		} else {
+// 			drawChart();
+// 		}
+// 	});
+
+// 	// Initial draw
+// 	drawChart();
+// }
+
 
 
 /***********************************************\
@@ -332,8 +639,13 @@ function chartDoughnutData(gameHistory)
 
 function avatars(gameHistory, allUsers)
 {
-	const opponentsList = []; // To ensure only one avatar per user
-	const avatarContainer = document.querySelector('.avatar-container');
+	const	opponentsList = []; // To ensure only one avatar per user
+	const	avatarContainer = document.querySelector('.avatar-container');
+	if (!avatarContainer)
+	{
+		console.error("Avatar container element not found.");
+		return;
+	}
 	avatarContainer.innerHTML = ''; // Clear existing avatars
 
 	console.log("OPPONENT LIST EMPTY: ", opponentsList);
@@ -349,13 +661,13 @@ function avatars(gameHistory, allUsers)
 	allUsers.forEach(user => {
 		if (opponentsList.includes(user.username)) //if current user is inside opponentsList : display avatar
 		{
-			const avatarBox = document.createElement('div');
+			const	avatarBox = document.createElement('div');
 
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.toggle = 'tableModal';
 			avatarBox.dataset.username = user.username;
 
-			const avatarImg = document.createElement('img');
+			const	avatarImg = document.createElement('img');
 			avatarImg.src = getAvatar(user.id, avatarImg)
 			//TODO FRONT KARL: afficher le username en passant la souris sur l'avatar SOIT en dessous de l'avatar
 			avatarImg.alt = `${user.username}`;
@@ -377,14 +689,17 @@ function avatars(gameHistory, allUsers)
 
 	// pour les opponentUsername restants, afficher un avatar par défaut
 	opponentsList.forEach(opponent => {
-		const avatarBox = document.createElement('div');
+		const	avatarBox = document.createElement('div');
 
 		avatarBox.className = 'avatar-box';
 		avatarBox.dataset.toggle = 'tableModal';
 		avatarBox.dataset.username = opponent;
 
-		const avatarImg = document.createElement('img');
-		avatarImg.src = '/assets/images/dashboard/default.png';
+		const	avatarImg = document.createElement('img');
+		if (opponent === 'deleted_user')
+			avatarImg.src = '/assets/images/dashboard/deleted_user.png';
+		else
+			avatarImg.src = '/assets/images/dashboard/default.png';
 		if (DEBUG)
 			console.log("AVATAR IMG: ", avatarImg.src);
 
@@ -405,18 +720,18 @@ function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
 {
 	//creation du tableau et ajout des headers avec les params + date
 
-	const tableHeaderRow = document.getElementById('tableHeaderRow');
+	const	tableHeaderRow = document.getElementById('tableHeaderRow');
 	tableHeaderRow.innerHTML = ''; // Clears existing header cells
 
-	const dateHeader = document.createElement('th');
+	const	dateHeader = document.createElement('th');
 	dateHeader.textContent = 'Date';
 	tableHeaderRow.appendChild(dateHeader);
 
-	const username1Header = document.createElement('th');
+	const	username1Header = document.createElement('th');
 	username1Header.textContent = connectedUser; // Current user's username
 	tableHeaderRow.appendChild(username1Header);
 
-	const username2Header = document.createElement('th');
+	const	username2Header = document.createElement('th');
 	username2Header.textContent = chosenOpponent; // Opponent user's username
 	tableHeaderRow.appendChild(username2Header);
 
@@ -425,32 +740,32 @@ function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
 
 function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 {
-	const tableBody = document.getElementById('tableBody');
+	const	tableBody = document.getElementById('tableBody');
 	tableBody.innerHTML = ''; // Clears existing rows
 
 	gameHistory.forEach(game => {
 		if (game.opponentUsername === chosenOpponent) 
 		{
 			// Adds date row
-			const dateRow = document.createElement('tr');
-			const dateCell = document.createElement('td');
+			const	dateRow = document.createElement('tr');
+			const	dateCell = document.createElement('td');
 			dateCell.textContent = new Date(game.date).toLocaleDateString();
 			dateCell.colSpan = 3;
 			dateRow.appendChild(dateCell);
 			tableBody.appendChild(dateRow);
 
 			// Adds score row
-			const scoreRow = document.createElement('tr');
+			const	scoreRow = document.createElement('tr');
 
-			const username1Cell = document.createElement('td');
+			const	username1Cell = document.createElement('td');
 			username1Cell.textContent = connectedUser;
 			scoreRow.appendChild(username1Cell);
 
-			const username2Cell = document.createElement('td');
+			const	username2Cell = document.createElement('td');
 			username2Cell.textContent = game.opponentUsername;
 			scoreRow.appendChild(username2Cell);
 
-			const scoresCell = document.createElement('td');
+			const	scoresCell = document.createElement('td');
 			scoresCell.textContent = `${game.myScore} - ${game.opponentScore}`;
 			scoreRow.appendChild(scoresCell);
 			tableBody.appendChild(scoreRow);
@@ -458,28 +773,32 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory)
 	});
 }
 
-
 /***********************************************\
 -				TROPHEE ICON					-
 \***********************************************/
 
-function retrieveAllUserStats(allUsers)
+function retrieveAllUserStats(allUsers, gameHistory)
 {
-	const allStats = [];
+	const	allStats = [];
 
 	allUsers.forEach(user => {
-		const stats = {
+		const	stats = {
 			username: user.username,
 			nb_of_victories: 0,
 			nb_of_defeats: 0,
 			ranking_position: 0
 		};
 
-		user.games_history.forEach(game => {
-			if (game.myScore > game.opponentScore)
-				stats.nb_of_victories++;
-			else
-				stats.nb_of_defeats++;
+		gameHistory.forEach(game => {
+			// Check if the game belongs to the current user
+			if (game.myUsername === stats.username) {
+				// Update victories or defeats based on game score
+				if (game.myScore > game.opponentScore) {
+					stats.nb_of_victories++;
+				} else {
+					stats.nb_of_defeats++;
+				}
+			}
 		});
 
 		allStats.push(stats);
@@ -490,7 +809,7 @@ function retrieveAllUserStats(allUsers)
 
 function badge(gameHistory, allUsers)
 {
-	const allStats = retrieveAllUserStats(allUsers);
+	const	allStats = retrieveAllUserStats(allUsers, gameHistory);
 
 	let badge_img = '';
 	let message = '';
@@ -565,7 +884,7 @@ function badge(gameHistory, allUsers)
 		console.error("Badge message element not found!");
 
 	// Show the modal
-	const badgeModal = document.getElementById('badgeModal');
+	const	badgeModal = document.getElementById('badgeModal');
 	if (badgeModal)
 		badgeModal.style.display = 'block';
 	else
@@ -575,8 +894,113 @@ function badge(gameHistory, allUsers)
 // Function to close the modal when clicking outside of it
 window.onclick = function(event)
 {
-	const modal = document.getElementById('badgeModal');
+	const	modal = document.getElementById('badgeModal');
 	if (event.target == modal)
 		modal.style.display = 'none';
-};
+}
 
+/***********************************************\
+-			FAVOURITE PLAYING BUDDY				-
+ * *********************************************/
+
+function favouritePlayingBuddy(gameHistory, allUsers)
+{
+	// Find the container where the chart is displayed
+	const	myStatsContainer = document.getElementById('mystats-container');
+	if (!myStatsContainer)
+	{
+		console.error('Container element with id "mystats-container" not found.');
+		return;
+	}
+
+	// Clear any previous favorite buddy content within the container
+	let favouriteBuddyContainer = document.querySelector('.favourite-buddy-container');
+	if (favouriteBuddyContainer)
+	{
+		favouriteBuddyContainer.remove();
+	}
+
+	// Create a new container for the favorite buddy
+	favouriteBuddyContainer = document.createElement('div');
+	favouriteBuddyContainer.className = 'favourite-buddy-container';
+
+	// Title
+	const	favouriteBuddyTitle = document.createElement('h3');
+	favouriteBuddyTitle.classList.add('favourite-buddy-title');
+	favouriteBuddyTitle.textContent = 'Favorite Buddy';
+	favouriteBuddyContainer.appendChild(favouriteBuddyTitle);
+
+	// Create a sub-container for the avatar and name
+	const	avatarNameContainer = document.createElement('div');
+	avatarNameContainer.className = 'avatar-name-container'; // New container class
+
+	// Find the most played opponent
+	const	opponentsList = gameHistory.reduce((acc, game) =>
+	{
+		acc[game.opponentUsername] = (acc[game.opponentUsername] || 0) + 1;
+		return acc;
+	}, {});
+
+	const	mostPlayedOpponent = Object.keys(opponentsList).reduce((a, b) => 
+		opponentsList[a] > opponentsList[b] ? a : b
+	);
+
+	// Find the user object for the most played opponent
+	const	mostPlayedUser = allUsers.find(user => user.username === mostPlayedOpponent);
+	if (mostPlayedUser)
+	{
+		// Avatar Image
+		const	avatarImg = document.createElement('img');
+		avatarImg.className = 'avatar-icon';
+		getAvatar(mostPlayedUser.id, avatarImg);
+		avatarImg.alt = `${mostPlayedUser.username}`;
+
+		// Buddy Name
+		const	buddyName = document.createElement('span');
+		buddyName.classList.add('favourite-buddy-name');
+		buddyName.textContent = mostPlayedUser.username;
+
+		// Append the avatar and name to the new container
+		avatarNameContainer.appendChild(avatarImg);
+		avatarNameContainer.appendChild(buddyName);
+
+		// Append the new container to the main favorite buddy container
+		favouriteBuddyContainer.appendChild(avatarNameContainer);
+	}
+	else
+	{
+		console.warn("Most played opponent not found in allUsers.");
+		favouriteBuddyTitle.textContent = 'No favorite buddy found.';
+	}
+
+	// Append the favorite buddy container below the chart
+	myStatsContainer.appendChild(favouriteBuddyContainer);
+}
+
+
+
+
+
+/************************************************
+- 			SHOW CONNECTED USER AVATAR			-
+**********************************************/
+
+function showConnectedUserAvatar(gameHistory, allUsers)
+{
+	const	connectedUser = gameHistory.username;
+
+	allUsers.forEach(user => {
+		if (user.username === connectedUser) {
+			const	avatarImg = document.createElement('img');
+			avatarImg.className = 'avatar-icon'
+			avatarImg.style.position = 'absolute';
+			avatarImg.style.top = '0';
+			avatarImg.style.right = '0';
+			avatarImg.style.width = '100px';
+			avatarImg.style.height = '100px';
+			avatarImg.src = getAvatar(user.id, avatarImg)
+			avatarImg.alt = `${user.username}`;
+			document.body.appendChild(avatarImg);
+		}
+	});
+}

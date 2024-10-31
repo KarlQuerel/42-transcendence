@@ -216,7 +216,7 @@ function randomizeBall()
 	const	MIN_ANGLE = Math.PI / 6;
 	const	MAX_ANGLE = Math.PI / 3;
 
-	BallConf.speed = 5;
+	BallConf.speed = 8;
 	
 	let	direction;
 	if (Math.random() < 0.5)
@@ -238,7 +238,7 @@ function randomizeBall()
  -					AI							-
  \***********************************************/
 
-/* imports the function that returns the AI paddle's movement */
+const	ERROR = 42
 
 let	data = new GameData();
 
@@ -268,11 +268,6 @@ export function update_game_data()
 	return data;
 }
 
-/* All possible returns from getPaddleAction() */
-const	DOWN = 0
-const	UP = 1
-const	ERROR = 42
-
 function simulateKeyPress(key)
 {
 	document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
@@ -283,27 +278,34 @@ function simulateKeyRelease(key)
 	document.dispatchEvent(new KeyboardEvent('keyup', { key: key }));
 }
 
-/* Simulates a key press from the AI's paddle */
+/* Simulates a key press from the AI's paddle.
+It compares the predicted_intersection to the AI paddle
+to decide if it should move up or down */
 function moveAiPaddle()
 {
 
-/* 	if (getPaddleAction() == ERROR)
+/* 	if (getPaddleAction() == ERROR) //TODO
 		STOP THE GAME */
-	if (getPaddleAction() == UP)
+
+	let predicted_intersection = getPaddleAction();
+
+	if (predicted_intersection < data.paddleY)
 	{
 		simulateKeyPress('ArrowUp');
 		setTimeout(() =>
 		{
 			simulateKeyRelease('ArrowUp');
 		}, 50);
+		data.paddleY -= PaddleConf.speed;
 	}
-	else if (getPaddleAction() == DOWN)
+	else if (predicted_intersection > data.paddleY)
 	{
 		simulateKeyPress('ArrowDown');
 		setTimeout(() =>
 		{
 			simulateKeyRelease('ArrowUp');
 		}, 50);
+		data.paddleY += PaddleConf.speed;
 	}
 }
 
@@ -314,6 +316,7 @@ function moveAiPaddle()
 let	startTime;
 let	elapsedSeconds;
 let	current_sec;
+let isGameDataInitialized = false;
 
 export function clearCanvas()
 {
@@ -338,27 +341,30 @@ export async function gameLoop()
 	clearCanvas();
 
 	if (GameState.isGameDone == true)
-	{
-		// console.log('About to call sendResultsToBackend...');
-		// sendResultsToBackend();
-		// console.log('Called sendResultsToBackend');
 		return ;
-	}
 	
 //---------------------------------- AI ----------------------------------
 	if (GameState.isAiPresent == true)
 	{
 		// updates the game data for the AI file immediately before starting the time interval
-		if (data.ball_horizontal == undefined)
+		if (isGameDataInitialized == false)
 		{
+			if (DEBUG)
+				console.log('Initializing game data');
 			startTime = Date.now();
 			current_sec = 0;
 			updateGameData();
+			isGameDataInitialized = true;
 		}
-		elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+		
 		// updates the game data every second
+		elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
 		if (current_sec != elapsedSeconds)
+		{
+			if (DEBUG)
+				console.log("Updating game data. Elapsed seconds: ", elapsedSeconds);
 			updateGameData();
+		}
 		current_sec = elapsedSeconds;
 
 		moveAiPaddle();

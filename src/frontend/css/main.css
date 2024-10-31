@@ -20,6 +20,9 @@
 @import url('pages/sign-up.css');
 @import url('pages/change-password.css');
 @import url('pages/pagenotfound.css');
+@import url('pages/friends.css');
+@import url('pages/privacy-policy.css');
+@import url('pages/profile.css');
 
 /*				Pong				*/
 @import url('pages/pong/general.css');

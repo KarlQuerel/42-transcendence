@@ -1,10 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG }
-from '../../main.js';
-
-import { getSignedInState }
+import { DEBUG, getSignedInState }
 from '../../main.js';
 
 function createNavbar()
@@ -15,20 +12,13 @@ function createNavbar()
 
 	const	container = document.createElement('div');
 	container.className = 'container d-flex align-items-center';
+	
 
-	// Create the burger button
-	const	burgerButton = document.createElement('button');
-	burgerButton.className = 'navbar-toggler collapsed';
-	burgerButton.type = 'button';
-	burgerButton.setAttribute('data-bs-toggle', 'collapse');
-	burgerButton.setAttribute('data-bs-target', '#navbarNav');
-	burgerButton.setAttribute('aria-controls', 'navbarNav');
-	burgerButton.setAttribute('aria-expanded', 'false');
-	burgerButton.setAttribute('aria-label', 'Toggle navigation');
-
-	const	burgerIcon = document.createElement('span');
-	burgerIcon.className = 'navbar-toggler-icon';
-	burgerButton.appendChild(burgerIcon);
+	// Custom message
+	const	customMessage = document.createElement('span');
+	customMessage.className = 'navbar-toggler-custom-message';
+	customMessage.textContent = 'EXPAND ME --->';
+	customMessage.setAttribute('aria-label', 'Toggle navigation');
 
 	// Create the collapse div
 	const	collapseDiv = document.createElement('div');
@@ -103,7 +93,7 @@ function createNavbar()
 
 	// Append the elements together
 	collapseDiv.appendChild(navList);
-	container.appendChild(burgerButton);
+	container.appendChild(customMessage);
 	container.appendChild(collapseDiv);
 	nav.appendChild(container);
 
@@ -122,5 +112,3 @@ export function renderNavbar()
 	const	navbar = createNavbar();
 	document.body.insertAdjacentElement('afterbegin', navbar);
 }
-
-document.addEventListener("DOMContentLoaded", renderNavbar);

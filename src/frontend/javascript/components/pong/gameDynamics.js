@@ -124,7 +124,7 @@ function resetBall(lastScorer)
 	BallConf.x = GraphConf.canvas.width / 2;
 	BallConf.y = GraphConf.canvas.height / 2;
 
-	BallConf.speed = 5;
+	BallConf.speed = 8;
 
 	// Randomize the initial launch angle between -45 to 45 degrees
 	let	randomAngle = (Math.random() * (5 * Math.PI / 6)) - (5 * Math.PI / 12);

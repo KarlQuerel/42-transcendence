@@ -1,20 +1,32 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = true;
+export	const	DEBUG = false;
 export	const	GITHUBACTIONS = false;
 
 /***********************************************\
 -				IMPORTING SCRIPTS				-
 \***********************************************/
 
-/***			  Page Not Found		 	 ***/
+/***			Page Not Found				***/
 import { renderPageNotFound }
 from "./views/error_404/error_404.js";
+
+/***				GDPR					***/
+import { initGDPRModal }
+from "./views/privacy_policy/GDPR.js";
+
+/***			Privacy Policy				***/
+import { renderPrivacyPolicy, cleanUpPrivacyPolicy }
+from "./views/privacy_policy/privacy_policy.js";
 
 /***			Nav Bar						***/
 import { renderNavbar }
 from "./views/navbar/navbar.js";
+
+/***			Footer						***/
+import { renderFooter }
+from "./views/footer/footer.js";
 
 /***			Home						***/
 import { renderHome }
@@ -54,6 +66,8 @@ from "./views/user/signup.js";
 import { renderChangePassword, initializeChangePassword }
 from "./views/user/change_password.js";
 
+import { manageInactiveUsers }
+from "./views/user/delete_inactive_users.js";
 
 /***			Footer						***/
 
@@ -71,6 +85,12 @@ const	routes =
 	{
 		title: "Home",
 		render: renderHome
+	},
+	'/privacy-policy':
+	{
+		title: "Privacy Policy",
+		render: renderPrivacyPolicy,
+		cleanup: cleanUpPrivacyPolicy
 	},
 	'/dashboard':
 	{
@@ -111,7 +131,7 @@ const	routes =
 		title: "Friends List",
 		render: renderFriendsList
 	},
-	'/2fa_verification':
+	'/2fa-verification':
 	{
 		title: "2FA Verification",
 		render: render2fa
@@ -130,14 +150,6 @@ const	routes =
 
 //	Initializing currentPath to an empty string
 let	currentPath = '';
-
-/***			Navbar						***/
-function render()
-{
-	const	navbar = renderNavbar();
-	document.body.insertAdjacentElement('afterbegin', navbar);
-}
-
 
 /***			Normalizing Paths			***/
 function normalizePath(path)
@@ -164,6 +176,10 @@ export function getSignedInState()
 /***			Router Function				***/
 function router()
 {
+	// FONCTION JESS
+	manageInactiveUsers();
+	// FIN FONCTION JESS
+	
 	let path = normalizePath(window.location.pathname) || '/home';
 
 	//	Assigning default path if none
@@ -243,6 +259,11 @@ function router()
 
 		// Scrolling to the top of the page
 		window.scroll(0, 0);
+
+		if (path !== '/privacy-policy')
+		{
+			initGDPRModal();
+		}
 	}
 	else
 	{
@@ -266,9 +287,14 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
+	// Rendering Navbar
+	renderNavbar();
+
+	// Rendering Footer
+	renderFooter();
+
 	document.body.addEventListener("click", (event) =>
 	{
-		// Find the nearest anchor tag if the clicked element is nested inside one
 		const	link = event.target.closest("a[data-link]");
 		
 		if (link)
