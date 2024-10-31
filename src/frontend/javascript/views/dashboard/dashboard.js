@@ -452,7 +452,7 @@ function setupEventListeners(gameHistory, allUsers)
 -					CHART ICON					-
 \***********************************************/
 
-// KARL HERE FINISH IT
+// KARL HERE BACKUP
 function chartPieData(gameHistory)
 {
 	// Count the number of victories and defeats
@@ -540,97 +540,6 @@ function chartPieData(gameHistory)
 	// Insert the legend after the chart
 	myStatsCanvas.parentNode.insertBefore(legendContainer, myStatsCanvas.nextSibling);
 }
-
-// KARL HERE TEST HOVER
-// function chartPieData(gameHistory) {
-// 	let nb_of_victories = gameHistory.filter(game => game.myScore > game.opponentScore).length;
-// 	let nb_of_defeats = gameHistory.filter(game => game.myScore < game.opponentScore).length;
-
-// 	const myStatsCanvas = document.getElementById('mystats-canvas');
-// 	if (!myStatsCanvas) {
-// 		console.error('Canvas element with id "mystats-canvas" not found.');
-// 		return;
-// 	}
-
-// 	const ctx = myStatsCanvas.getContext('2d');
-// 	if (!ctx) {
-// 		console.error('Unable to get context for "mystats-canvas".');
-// 		return;
-// 	}
-
-// 	const totalGames = nb_of_victories + nb_of_defeats;
-// 	const angles = [
-// 		(nb_of_victories / totalGames) * 2 * Math.PI,
-// 		(nb_of_defeats / totalGames) * 2 * Math.PI
-// 	];
-
-// 	const styles = getComputedStyle(document.documentElement);
-// 	const colors = [
-// 		styles.getPropertyValue('--base-light-green').trim(), // Wins
-// 		styles.getPropertyValue('--base-light-red').trim() // Losses
-// 	];
-
-// 	const centerX = myStatsCanvas.width / 2;
-// 	const centerY = myStatsCanvas.height / 2;
-// 	const radius = Math.min(myStatsCanvas.width, myStatsCanvas.height) / 2 - 10;
-
-// 	let segments = [];
-// 	let startAngle = Math.PI / 2;
-
-// 	// Function to draw the pie chart
-// 	function drawChart(highlightIndex = null) {
-// 		ctx.clearRect(0, 0, myStatsCanvas.width, myStatsCanvas.height);
-
-// 		angles.forEach((angle, index) => {
-// 			const isHighlighted = index === highlightIndex;
-// 			const segmentRadius = isHighlighted ? radius + 10 : radius; // Slightly increase radius on hover
-
-// 			ctx.fillStyle = colors[index];
-// 			ctx.beginPath();
-// 			ctx.moveTo(centerX, centerY);
-// 			ctx.arc(centerX, centerY, segmentRadius, startAngle, startAngle + angle);
-// 			ctx.closePath();
-// 			ctx.fill();
-
-// 			segments[index] = {
-// 				startAngle,
-// 				endAngle: startAngle + angle,
-// 				color: colors[index]
-// 			};
-
-// 			startAngle += angle;
-// 		});
-// 	}
-
-// 	// Event listener to handle hover
-// 	myStatsCanvas.addEventListener('mousemove', (event) => {
-// 		const mouseX = event.offsetX;
-// 		const mouseY = event.offsetY;
-// 		const dx = mouseX - centerX;
-// 		const dy = mouseY - centerY;
-// 		const distance = Math.sqrt(dx * dx + dy * dy);
-
-// 		if (distance <= radius + 10) {
-// 			const angle = Math.atan2(dy, dx);
-// 			const adjustedAngle = angle >= -Math.PI / 2 ? angle : angle + 2 * Math.PI;
-
-// 			let hoveredIndex = null;
-// 			segments.forEach((segment, index) => {
-// 				if (adjustedAngle >= segment.startAngle && adjustedAngle < segment.endAngle) {
-// 					hoveredIndex = index;
-// 				}
-// 			});
-
-// 			drawChart(hoveredIndex);
-// 		} else {
-// 			drawChart();
-// 		}
-// 	});
-
-// 	// Initial draw
-// 	drawChart();
-// }
-
 
 
 /***********************************************\

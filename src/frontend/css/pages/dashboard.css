@@ -204,7 +204,6 @@
 	}
 }
 
-
 /*		AVATAR		*/
 .avatar-container
 {
@@ -217,4 +216,10 @@
 	height: auto;
 	margin-bottom: 2vh;
 	border-radius: 1vh;
+}
+
+/*		BADGES		*/
+.badge-icon
+{
+	top: 50%;
 }
