@@ -8,6 +8,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
+from django.db.models import Q
+from django.views.decorators.csrf import csrf_protect
 
 @method_decorator(permission_classes([IsAuthenticated]), name='dispatch')
 @method_decorator(login_required, name='dispatch')
@@ -108,6 +110,49 @@ class FriendRequestID(APIView):
 			return Response({friend_request.id}, status=status.HTTP_200_OK)
 		except FriendRequest.DoesNotExist:
 				return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_200_OK)
+
+
+class DeleteInactiveUsersFriendRequests(APIView):
+	def delete(self, request):
+		try:
+			usersToDeleteID = request.data.get('inactiveUsersID', [])
+			if isinstance(usersToDeleteID, str):
+				try:
+					usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
+				except ValueError:
+					return Response({'error': 'Invalid user ID format'}, status=status.HTTP_405_BAD_REQUEST)
+
+			if not usersToDeleteID:
+				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
+			
+			friendRequests = FriendRequest.objects.filter(Q(sender_id__in=usersToDeleteID) | Q(receiver_id__in=usersToDeleteID))
+			friendRequests.delete()
+
+			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
+
+		except:
+			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DeleteUserFriendRequests(APIView):
+	def delete(self, request):
+		try:
+			user = request.user
+			if not user.is_authenticated:
+				return Response({'error': 'User not authenticated'}, status=status.HTTP_400_BAD_REQUEST)
+			
+			user_id = user.id
+
+			friendRequests = FriendRequest.objects.filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
+			print('friendRequests', friendRequests)
+			friendRequests.delete()
+
+			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
+
+		except Exception as e:
+			print('Error in DeleteUserFriendRequests', str(e))
+			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 # class SentFriendRequestView(APIView):
 # 	def get(self, request):

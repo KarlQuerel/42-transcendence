@@ -59,7 +59,7 @@ export async function sendResultsToBackend() {
 			throw new Error(`HTTP error! status: ${response.status}`);
 		}
 
-		const data = await response.json();
+		const data = await json();
 		if (DEBUG) {
 			console.log('Response from backend:', data);
 		}
