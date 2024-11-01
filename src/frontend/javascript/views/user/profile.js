@@ -223,7 +223,6 @@ export function renderProfile()
                 method: 'GET',
             })
             .then(games => {
-                console.log('games: ', games);
                 apiRequest('/api/users/send-infos-to-user/', {
                     method: 'POST',
                     body: JSON.stringify(games),

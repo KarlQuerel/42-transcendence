@@ -17,6 +17,7 @@ urlpatterns = [
 	path('verify-2fa-code/', views.verify_2fa_code, name='verifiy_2fa_code'),
 	path('resend-2fa-code/', views.resend_2fa_code, name='resend_2fa_code'),
 	path('loggout-user/', views.loggout_user, name='loggout_user'),
+	path('update-online-status/', views.updateOnlineStatus, name='update_online_status'),
 	path('changePassword/', views.changePassword, name='change-password'),
 	path('checkAuthentication/', views.checkAuthentication, name='check-authentication'),
 	path('verifyPassword/', views.verifyPassword, name='verify-password'),
