@@ -10,7 +10,7 @@ from '../navbar/navbar.js';
 import { apiRequest, getAuthHeaders, getCookie }
 from './signin.js';
 
-import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend }
+import { getIdentifier, checkIdentifierType, allValuesAreValid, sendErrorToFrontend_editMode }
 from './signup.js';
 
 import { loadUserGameHistory }
@@ -506,8 +506,6 @@ async function profileEditMode(userData_edit, personalInfoSection)
 		const	avatarFile = avatarInput.files[0];
 
 		const	isValidData = verifyProfileChanges();
-        // JESS HERE
-		// const	isValidData = Boolean(verifyProfileChanges());
 
         if (DEBUG)
             console.log('isValidData = ', isValidData);
@@ -568,7 +566,7 @@ function verifyProfileChanges()
 		if (DEBUG)
 			console.log('Profile changes are invalid.');
 
-		sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
+		sendErrorToFrontend_editMode(first_name_type, last_name_type, date_of_birth_type, email_type);
 		return false;
 	}
 	else

@@ -46,7 +46,8 @@ export async function deleteInactiveUsers(inactiveUsersID)
     {
         const response = await fetch('/api/dashboard/deleteGameHistoryInactiveUsers/', {
             method: 'DELETE',
-            headers: {
+            headers:
+            {
                 'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
@@ -67,7 +68,9 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
     {
         const response = await fetch('api/users/friends/DeleteInactiveUsersFriendRequests/', {
             method: 'DELETE',
-            headers: {
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
@@ -82,8 +85,10 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
     try
     {
         const response = await fetch('api/users/deleteInactiveUsersFriends/', {
-            method: 'POST',
-            headers: {
+            method: 'DELETE',
+            headers:
+            {
+                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })

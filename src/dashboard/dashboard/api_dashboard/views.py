@@ -23,7 +23,7 @@ def getGameHistory(request):
 
 # Get a user's game history
 @api_view(['GET'])
-# @csrf_protect
+@csrf_protect
 def getSpecificUserGameHistory(request):
 	try:
 		username = request.query_params.get('username')
@@ -144,7 +144,7 @@ def deleteGameHistory(request):
 
 	except Exception as e:
 		print("deleteGameHistory view error:", str(e))
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 

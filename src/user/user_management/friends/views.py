@@ -118,6 +118,7 @@ class FriendRequestID(APIView):
 				return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_200_OK)
 
 
+@method_decorator(csrf_protect, name='dispatch')
 class DeleteInactiveUsersFriendRequests(APIView):
 	def delete(self, request):
 		try:
@@ -140,6 +141,7 @@ class DeleteInactiveUsersFriendRequests(APIView):
 			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@method_decorator(csrf_protect, name='dispatch')
 class DeleteUserFriendRequests(APIView):
 	def delete(self, request):
 		try:
@@ -157,7 +159,7 @@ class DeleteUserFriendRequests(APIView):
 
 		except Exception as e:
 			print('Error in DeleteUserFriendRequests', str(e))
-			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 # class SentFriendRequestView(APIView):
