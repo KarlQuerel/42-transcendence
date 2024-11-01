@@ -138,13 +138,6 @@ async function loadAllUsers()
 			},
 		});
 
-		if (DEBUG) {
-			response.forEach(user => {
-				console.log("user id = ", user.id);
-				console.log("username = ", user.username);
-			});
-		}
-
 		if (GITHUBACTIONS)
 			console.log("Successfully fetched all users");
 
@@ -213,7 +206,7 @@ async function loadSpecificUserGameHistory(username)
 \***********************************************/
 
 function setupEventListeners(gameHistory, allUsers)
-{
+{	
 	const	chartButton = document.getElementById('statsButton');
 	const	gameHistoryButton = document.getElementById('myGameHistory');
 	const	trophyButton = document.getElementById('rankButton');
@@ -642,7 +635,7 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 -				TROPHY ICON					-
 \***********************************************/
 
-async function retrieveAllUserStats(allUsers, gameHistory)
+async function retrieveAllUserStats(allUsers)
 {
 	const	allStats = [];
 
@@ -680,39 +673,43 @@ async function retrieveAllUserStats(allUsers, gameHistory)
 				}
 			}
 		});
-
-		//HERE
-		// if (DEBUG)
-		console.log("allStats 1: ", allStats);
-
-
-		allStats.forEach(user =>
-		{
-			const totalGames = user.nb_of_victories + user.nb_of_defeats;
-			if (totalGames > 0)
-				user.success_percentage = (user.nb_of_victories / totalGames) * 100;
-		});
-
-		console.log("allStats 2: ", allStats);
-
-		// assign each user in allStats a ranking position
-		// based on their success_percentage
-		allStats.sort((a, b) => b.success_percentage - a.success_percentage);
-		allStats.forEach((user, index) => user.ranking_position = index + 1);
-
-		console.log("allStats 3: ", allStats);
-
 		allStats.push(stats);
 	};
 
+	allStats.forEach(user =>
+	{
+		const totalGames = user.nb_of_victories + user.nb_of_defeats;
+		if (totalGames > 0)
+			user.success_percentage = (user.nb_of_victories / totalGames) * 100;
+	});
+
 	return allStats;
+}
+
+function retrieveConnectedUserRanking(allStats, connectedUser)
+{
+	// Assign the ranking position to each user based on success_percentage
+	allStats.forEach(user => {
+		user.ranking_position = 1 + allStats.filter(otherUser => otherUser.success_percentage > user.success_percentage).length;
+	});
+
+	// Find the connected user's stats
+	const userStats = allStats.find(user => user.username === connectedUser);
+
+	if (DEBUG)
+	{
+		console.log("connected user : ", connectedUser);
+		console.log("success_percentage for ", userStats.username, " = ", userStats.success_percentage);
+		console.log("ranking position for ", userStats.username, " = ", userStats.ranking_position);
+	}
+
+	return userStats.ranking_position;
 }
 
 async function badge(gameHistory, allUsers)
 {
 	let badgeImgSrc = '';
 	let message = '';
-	let rankingPosition = 0;
 
 	if (allUsers.length === 1)
 	{
@@ -721,16 +718,13 @@ async function badge(gameHistory, allUsers)
 	}
 	else
 	{
-		const allStats = await retrieveAllUserStats(allUsers, gameHistory);
+		const allStats = await retrieveAllUserStats(allUsers);
 
-		// Find the ranking position of the connected user
-		allStats.forEach(user => {
-			if (user.username === gameHistory.username) {
-				rankingPosition = user.ranking_position;
-			}
-		});
+		if (DEBUG)
+			console.log("allStats: ", allStats);
+	
+		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
 
-		console.log("My ranking position : ", rankingPosition);
 		// Determine the badge image and message
 		if (rankingPosition > 3)
 		{
