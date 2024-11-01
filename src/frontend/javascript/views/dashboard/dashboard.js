@@ -738,79 +738,6 @@ function retrieveConnectedUserRanking(allStats, connectedUser)
 	return userStats.ranking_position;
 }
 
-// KARL HERE BACKUP
-// async function badge(gameHistory, allUsers)
-// {
-// 	let badgeImgSrc = '';
-// 	let message = '';
-
-// 	if (allUsers.length === 1)
-// 	{
-// 		message = " You're the best player ever!";
-// 		badgeImgSrc = '../../../assets/images/dashboard/alone.gif';
-// 	}
-// 	else
-// 	{
-// 		const allStats = await retrieveAllUserStats(allUsers);
-
-// 		if (DEBUG)
-// 			console.log("allStats: ", allStats);
-	
-// 		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
-
-// 		// Determine the badge image and message
-// 		if (rankingPosition > 3)
-// 		{
-// 			message = ' You need to improve!';
-// 			badgeImgSrc = '../../../assets/images/dashboard/unranked.gif';
-// 		}
-// 		else if (rankingPosition === 3)
-// 		{
-// 			message = ' You are the 3rd best player!';
-// 			badgeImgSrc = '../../../assets/images/dashboard/3rd.gif';
-// 		}
-// 		else if (rankingPosition === 2)
-// 		{
-// 			message = ` You are the 2nd best player!`;
-// 			badgeImgSrc = '../../../assets/images/dashboard/2nd.gif';
-// 		}
-// 		else if (rankingPosition === 1)
-// 		{
-// 			message = " You are the best player ever!";
-// 			badgeImgSrc = '../../../assets/images/dashboard/1st.gif';
-// 		}
-// 	}
-
-// 	// Create a container for the badge display
-// 	const badgeContainer = document.createElement('div');
-// 	badgeContainer.classList.add('badge-container');
-
-// 	// Create the badge image element
-// 	const badgeIcon = document.createElement('img');
-// 	badgeIcon.src = badgeImgSrc;
-// 	badgeIcon.alt = 'Badge Icon';
-// 	badgeIcon.classList.add('badge-icon');
-
-// 	// Create the message element
-// 	const badgeMessage = document.createElement('p');
-// 	badgeMessage.textContent = message;
-// 	badgeMessage.classList.add('badge-message');
-
-// 	// Append the badge icon and message to the container
-// 	badgeContainer.appendChild(badgeIcon);
-// 	badgeContainer.appendChild(badgeMessage);
-
-// 	// Append the badge container to the dashboard
-// 	const dashboard = document.getElementById('dashboard-container');
-// 	if (dashboard)
-// 	{
-// 		dashboard.appendChild(badgeContainer);
-// 	}
-// 	else
-// 	{
-// 		console.error('Dashboard container not found!');
-// 	}
-// }
 
 async function badge(gameHistory, allUsers)
 {
@@ -819,7 +746,7 @@ async function badge(gameHistory, allUsers)
 
 	if (allUsers.length === 1)
 	{
-		message = " You're the best player ever!";
+		message = " You are alone!";
 		badgeImgSrc = '../../../assets/images/dashboard/alone.gif';
 	}
 	else
@@ -984,29 +911,4 @@ function favouritePlayingBuddy(gameHistory, allUsers)
 
 	// Append the favorite buddy container below the chart
 	myStatsContainer.appendChild(favouriteBuddyContainer);
-}
-
-/************************************************
-- 			SHOW CONNECTED USER AVATAR			-
-**********************************************/
-
-// KARL HERE MAYBE TO FINISH
-function showConnectedUserAvatar(gameHistory, allUsers)
-{
-	const	connectedUser = gameHistory.username;
-
-	allUsers.forEach(user => {
-		if (user.username === connectedUser) {
-			const	avatarImg = document.createElement('img');
-			avatarImg.className = 'avatar-icon'
-			avatarImg.style.position = 'absolute';
-			avatarImg.style.top = '0';
-			avatarImg.style.right = '0';
-			avatarImg.style.width = '100px';
-			avatarImg.style.height = '100px';
-			avatarImg.src = getAvatar(user.id, avatarImg)
-			avatarImg.alt = `${user.username}`;
-			document.body.appendChild(avatarImg);
-		}
-	});
 }

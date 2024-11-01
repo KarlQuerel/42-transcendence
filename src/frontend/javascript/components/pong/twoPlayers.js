@@ -96,7 +96,12 @@ export function displayPlayer2Form()
 		if (isNameValid(player2Name) == false)
 			return;
 
+		console.log(player2Name);
+		console.log('entering does user exists');
 		const	userEXists = await doesUserExist(player2Name);
+		console.log(userEXists);
+
+
 
 		if (userEXists === true)
 		{

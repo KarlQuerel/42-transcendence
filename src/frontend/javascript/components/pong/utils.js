@@ -121,11 +121,10 @@ export async function doesUserExist(playerName)
 {
 	try
 	{
-		const	data = await fetch(`/api/users/does-user-exist/${playerName}/`,
+		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
 		{
 			method: 'GET',
 		});
-
 		return data.user_exists;
 	}
 	catch (error)
@@ -140,7 +139,7 @@ export async function doesEmailExist(email)
 {
 	try
 	{
-		const	data = await fetch(`/api/users/does-email-exist/${email}/`,
+		const	data = await apiRequest(`/api/users/does-email-exist/${email}/`,
 		{
 			method: 'GET',
 		});

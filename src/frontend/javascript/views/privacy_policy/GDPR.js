@@ -7,14 +7,7 @@ from '../../main.js';
 export function initGDPRModal()
 {
 	// Check if the GDPR consent has already been accepted
-	const	GDPRAccepted = localStorage.getItem("GDPRAccepted");
-
-	// KARL HERE TO REMOVE LATER - DEBUG
-	// if (DEBUG)
-	// {
-	// 	localStorage.setItem("GDPRAccepted", "false");
-	// 	console.log(GDPRAccepted);
-	// }
+	const	GDPRAccepted = localStorage.getItem("GDPRAccepted"); }
 
 	if (GDPRAccepted === "false" || GDPRAccepted === null)
 	{
