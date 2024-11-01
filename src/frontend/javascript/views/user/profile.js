@@ -283,49 +283,55 @@ export function renderProfile()
 		twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
 		twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
 
-		document.addEventListener('DOMContentLoaded', async () => {
-			const	is2fa = await getUser2FAStatus();
-			if (is2fa !== null) {
-				twoFactorAuthCheckbox.checked = is2fa;
-			}
-		});
+		// KARL HERE BACKUP
+		// document.addEventListener('DOMContentLoaded', async () => {
+		// 	const	is2fa = await getUser2FAStatus();
+		// 	if (is2fa !== null) {
+		// 		twoFactorAuthCheckbox.checked = is2fa;
+		// 	}
+		// });
 
-		twoFactorAuthCheckbox.addEventListener('change', () => {
-			const	is2fa = twoFactorAuthCheckbox.checked;
-			updateUser2FAStatus(is2fa);
-		});
+		// twoFactorAuthCheckbox.addEventListener('change', () => {
+		// 	const	is2fa = twoFactorAuthCheckbox.checked;
+		// 	updateUser2FAStatus(is2fa);
+		// });
+		// FIN BACKUP
 
 		// KARL HERE FIX ME DOESNT WORK
 		// Retrieve the 2FA status from localStorage on page load
-		// document.addEventListener('DOMContentLoaded', async () => {
-		// 	try {
-		// 		// Try to get the saved state from localStorage
-		// 		const saved2FAState = localStorage.getItem('twoFactorAuthChecked');
+		document.addEventListener('DOMContentLoaded', async () => {
+			try {
+				// Try to get the saved state from localStorage
+				const saved2FAState = localStorage.getItem('twoFactorAuthChecked');
+				console.log('LALA',saved2FAState);
 
-		// 		if (saved2FAState !== null) {
-		// 			// Use the saved state from localStorage
-		// 			twoFactorAuthCheckbox.checked = JSON.parse(saved2FAState);
-		// 		} else {
-		// 			// If no saved state, fetch from the server
-		// 			const is2fa = await getUser2FAStatus();
-		// 			if (is2fa !== null) {
-		// 				twoFactorAuthCheckbox.checked = is2fa;
-		// 				// Save the fetched state in localStorage
-		// 				localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa));
-		// 			}
-		// 		}
-		// 	} catch (error) {
-		// 		console.error('Error retrieving 2FA status:', error);
-		// 	}
-		// });
+				if (saved2FAState !== null) {
+					// Use the saved state from localStorage
+					twoFactorAuthCheckbox.checked = JSON.parse(saved2FAState);
+				} else {
+					// If no saved state, fetch from the server
+					const is2fa = await getUser2FAStatus();
+					console.log('BITE', is2fa);
+					if (is2fa !== null) {
+						twoFactorAuthCheckbox.checked = is2fa;
+						// Save the fetched state in localStorage
+						localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa));
+					}
+				}
+			} catch (error) {
+				console.error('Error retrieving 2FA status:', error);
+			}
+		});
 		// FIN KARL FIX
 
-// Save the checkbox state in localStorage when it's toggled
-twoFactorAuthCheckbox.addEventListener('change', () => {
-	const is2fa = twoFactorAuthCheckbox.checked;
-	localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa)); // Save the state
-	updateUser2FAStatus(is2fa);
-});
+		// Save the checkbox state in localStorage when it's toggled
+		twoFactorAuthCheckbox.addEventListener('change', () => {
+			const is2fa = twoFactorAuthCheckbox.checked;
+			localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa)); // Save the state
+			console.log('BITE HERE', is2fa);
+
+			updateUser2FAStatus(is2fa);
+		});
 
 		/************** ANONYMIZE DATA **************/
 		
@@ -820,7 +826,7 @@ async function getUser2FAStatus()
 	try
 	{
 		const	response = await apiRequest('api/users/get2FAStatus/', {
-			method: 'GET'   
+			method: 'GET'
 		});
 		return response.is2fa;
 	}

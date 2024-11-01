@@ -290,6 +290,9 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
+	// KARL HERE
+	alert(window.location.pathname);
+	
 	// Rendering Navbar
 	renderNavbar();
 

@@ -20,3 +20,41 @@
 	height: auto;
 	display: block;
 }
+
+#gif-not-found-1
+{
+	position: absolute;
+	z-index: 10;
+	top : 27%;
+}
+
+#gif-not-found-2
+{
+	position: absolute;
+	z-index: 10;
+	left: 50%;
+	width: 50%;
+	top : 12%;
+}
+
+#gif-not-found-3
+{
+	position: absolute;
+	z-index: 10;
+	right: 50%;
+	width: 2vh;
+	top: 80%;
+}
+
+#gif-not-found-4
+{
+	position: absolute;
+	z-index: 10;
+	left: 1%;
+}
+
+#gif-not-found-5
+{
+	position: absolute;
+	z-index: 10;
+}
