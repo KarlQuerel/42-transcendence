@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from api_dashboard.models import GameHistory
 from api_user.models import CustomUser
 from datetime import datetime
+from django.utils import timezone
 
 class Command(BaseCommand):
 	help = 'Populates the database with random game history data'
@@ -19,7 +20,8 @@ class Command(BaseCommand):
 					num_games = games_per_pair()
 					for _ in range(num_games):
 						myScore, opponentScore = (10, random.randint(0, 9)) if random.random() > 0.5 else (random.randint(0, 9), 10)
-						game_date = datetime.strptime(f'2024-09-{random.randint(1, 30)}', '%Y-%m-%d')
+						game_date = datetime.strptime(f'2024-{random.randint(1, 12)}-{random.randint(1, 28)}', '%Y-%m-%d')
+						game_date = timezone.make_aware(game_date)
 
 						# Add game to the user
 						predefined_games.append({

@@ -138,13 +138,6 @@ async function loadAllUsers()
 			},
 		});
 
-		if (DEBUG) {
-			response.forEach(user => {
-				console.log("user id = ", user.id);
-				console.log("username = ", user.username);
-			});
-		}
-
 		if (GITHUBACTIONS)
 			console.log("Successfully fetched all users");
 
@@ -181,12 +174,39 @@ function getAvatar(userID, avatar)
 	})
 }
 
+async function loadSpecificUserGameHistory(username)
+{
+	try
+	{
+		const	gameHistory = await apiRequest(`/api/dashboard/getSpecificUserGameHistory/?username=${username}`,
+		{
+			method: 'GET',
+			headers: {
+
+				// 'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		});
+
+		if (DEBUG)
+			console.log("gameHistory= ", gameHistory);
+		if (GITHUBACTIONS)
+			console.log("Successfully fetched the user's game history");
+		return gameHistory;
+	}
+	catch (error)
+	{
+		console.error("Error fetching connected user's game history");
+		throw error;
+	}
+}
+
 /***********************************************\
 -				EVENT LISTENERS					-
 \***********************************************/
 
 function setupEventListeners(gameHistory, allUsers)
-{
+{	
 	const	chartButton = document.getElementById('statsButton');
 	const	gameHistoryButton = document.getElementById('myGameHistory');
 	const	trophyButton = document.getElementById('rankButton');
@@ -296,13 +316,21 @@ function chartPieData(gameHistory)
 		ctx.textAlign = 'center';
 		ctx.textBaseline = 'middle';
 		let	labelText;
-		if (index === 0)
+		if (totalGames === 1)
 		{
-			labelText = nb_of_victories;
+			labelText = '100%';
+
+			if (index === 0)
+				labelText = '100%';
+			else
+				labelText = '';
 		}
 		else
 		{
-			labelText = nb_of_defeats;
+			if (index === 0)
+				labelText = Math.round(nb_of_victories / totalGames * 100) + '%';
+			else
+				labelText = Math.round(nb_of_defeats / totalGames * 100) + '%';
 		}
 		ctx.fillText(labelText, labelX, labelY);
 
@@ -460,12 +488,14 @@ function avatars(gameHistory, allUsers)
 		avatarBox.className = 'avatar-box';
 		avatarBox.dataset.username = opponent;
 
-		const	avatarImg = document.createElement('img');
-		avatarImg.src = opponent === 'deleted_user'
-			? '/assets/images/dashboard/deleted_user.png'
-			: opponent === '🤖 Ponginator3000 🤖'
-			? '/assets/images/dashboard/robot.png'
-			: '/assets/images/dashboard/default.png';
+		const avatarImg = document.createElement('img');
+		if (opponent === 'deleted_user') {
+			avatarImg.src = '/assets/images/dashboard/deleted_user.png';
+		} else if (opponent === '🤖 Ponginator3000 🤖') {
+			avatarImg.src = '/assets/images/dashboard/robot.png';
+		} else {
+			avatarImg.src = '/assets/images/dashboard/default.png';
+		}
 		avatarImg.alt = `${opponent}`;
 		avatarImg.className = 'avatar-icon';
 
@@ -638,101 +668,34 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 -				TROPHY ICON					-
 \***********************************************/
 
-
-// KARL HERE BACKUP
-// function badge(gameHistory, allUsers)
-// {
-// 	const	allStats = retrieveAllUserStats(allUsers, gameHistory);
-
-// 	let badgeImgSrc = '';
-// 	let message = '';
-// 	let rankingPosition = 0;
-
-// 	// Determine ranking position
-// 	allStats.sort((a, b) =>
-// 	{
-// 		if (b.nb_of_victories !== a.nb_of_victories)
-// 		{
-// 			return b.nb_of_victories - a.nb_of_victories;
-// 		}
-// 		return a.nb_of_defeats - b.nb_of_defeats;
-// 	});
-
-// 	// Assign ranking to each user
-// 	allStats.forEach((user, index) => {
-// 		user.ranking_position = index + 1;
-// 	});
-
-// 	// Find the ranking position of the connected user
-// 	allStats.forEach(user => {
-// 		if (user.username === gameHistory.username) {
-// 			rankingPosition = user.ranking_position;
-// 		}
-// 	});
-
-// 	// Determine the badge image and message
-// 	if (rankingPosition < 3) {
-// 		message = ' You need to improve!';
-// 		badgeImgSrc = '../../../assets/images/dashboard/chart.gif';
-// 	} else if (rankingPosition === 3) {
-// 		message = ' You are the 3rd best player!';
-// 		badgeImgSrc = '../../../assets/images/dashboard/top3.gif';
-// 	} else if (rankingPosition === 2) {
-// 		message = ` You are the 2nd best player!`;
-// 		badgeImgSrc = '../../../assets/images/dashboard/top3_badge.png';
-// 	} else if (rankingPosition === 1) {
-// 		message = " You're the best player ever!";
-// 		badgeImgSrc = '../../../assets/images/dashboard/top1_badge.png';
-// 	}
-
-// 	// Create a container for the badge display
-// 	const	badgeContainer = document.createElement('div');
-// 	badgeContainer.classList.add('badge-container');
-
-// 	// Create the badge image element
-// 	const	badgeIcon = document.createElement('img');
-// 	badgeIcon.src = badgeImgSrc;
-// 	badgeIcon.alt = 'Badge Icon';
-// 	badgeIcon.classList.add('badge-icon');
-
-// 	// Create the message element
-// 	const	badgeMessage = document.createElement('p');
-// 	badgeMessage.textContent = message;
-// 	badgeMessage.classList.add('badge-message');
-
-// 	// Append the badge icon and message to the container
-// 	badgeContainer.appendChild(badgeIcon);
-// 	badgeContainer.appendChild(badgeMessage);
-
-// 	// Append the badge container to the dashboard
-// 	const	dashboard = document.getElementById('dashboard-container');
-// 	if (dashboard) {
-// 		dashboard.appendChild(badgeContainer);
-// 	} else {
-// 		console.error('Dashboard container not found!');
-// 	}
-// }
-
-function retrieveAllUserStats(allUsers, gameHistory)
+async function retrieveAllUserStats(allUsers)
 {
 	const	allStats = [];
 
-	allUsers.forEach(user =>
+	// allUsers.forEach(user =>
+	for (const user of allUsers) ///instead of forEch because await underneeth does not work otherwise
 	{
 		const	stats =
 		{
 			username: user.username,
 			nb_of_victories: 0,
 			nb_of_defeats: 0,
+			success_percentage: 0,
 			ranking_position: 0
 		};
 
-		gameHistory.forEach(game =>
+		const games = await loadSpecificUserGameHistory(stats.username);
+
+		if (DEBUG)
 		{
-			// Check if the game belongs to the current user
-			// if (game.myUsername === stats.username)
+			console.log("user: ", stats.username);
+			console.log("games: ", games);
+		}
+
+		games.forEach(game =>
+		{
+			if (game.myUsername == user.username)
 			{
-				// Update victories or defeats based on game score
 				if (game.myScore > game.opponentScore)
 				{
 					stats.nb_of_victories++;
@@ -743,19 +706,43 @@ function retrieveAllUserStats(allUsers, gameHistory)
 				}
 			}
 		});
-
 		allStats.push(stats);
+	};
+
+	allStats.forEach(user =>
+	{
+		const totalGames = user.nb_of_victories + user.nb_of_defeats;
+		if (totalGames > 0)
+			user.success_percentage = (user.nb_of_victories / totalGames) * 100;
 	});
 
 	return allStats;
 }
 
-function badge(gameHistory, allUsers)
+function retrieveConnectedUserRanking(allStats, connectedUser)
 {
+	// Assign the ranking position to each user based on success_percentage
+	allStats.forEach(user => {
+		user.ranking_position = 1 + allStats.filter(otherUser => otherUser.success_percentage > user.success_percentage).length;
+	});
 
+	// Find the connected user's stats
+	const userStats = allStats.find(user => user.username === connectedUser);
+
+	if (DEBUG)
+	{
+		console.log("connected user : ", connectedUser);
+		console.log("success_percentage for ", userStats.username, " = ", userStats.success_percentage);
+		console.log("ranking position for ", userStats.username, " = ", userStats.ranking_position);
+	}
+
+	return userStats.ranking_position;
+}
+
+async function badge(gameHistory, allUsers)
+{
 	let badgeImgSrc = '';
 	let message = '';
-	let rankingPosition = 0;
 
 	if (allUsers.length === 1)
 	{
@@ -764,40 +751,13 @@ function badge(gameHistory, allUsers)
 	}
 	else
 	{
-		const allStats = retrieveAllUserStats(allUsers, gameHistory);
-		console.log(allStats);
-		console.log(gameHistory);
+		const allStats = await retrieveAllUserStats(allUsers);
 
+		if (DEBUG)
+			console.log("allStats: ", allStats);
+	
+		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
 
-		// Determine ranking position
-		allStats.sort((a, b) =>
-		{
-			const aRatio = a.nb_of_victories / (a.nb_of_defeats + a.nb_of_victories);
-			const bRatio = b.nb_of_victories / (b.nb_of_defeats + b.nb_of_victories);
-
-			if (bRatio > aRatio)
-			{
-				return 1; // sort it putting b first
-			}
-			else
-			{
-				return -1; // sort it putting a first
-			}
-		});
-
-		// Assign ranking to each user
-		allStats.forEach((user, index) => {
-			user.ranking_position = index + 1;
-		});
-
-		// Find the ranking position of the connected user
-		allStats.forEach(user => {
-			if (user.username === gameHistory.username) {
-				rankingPosition = user.ranking_position;
-			}
-		});
-
-		console.log(rankingPosition);
 		// Determine the badge image and message
 		if (rankingPosition > 3)
 		{

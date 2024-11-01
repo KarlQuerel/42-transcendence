@@ -144,8 +144,6 @@ export async function initializeChangePassword()
 				return;
 			}
 
-			console.log('Current Password:', currentPassword);
-
 			try
 			{
 				// Verify current password at the start

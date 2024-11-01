@@ -43,7 +43,6 @@ export function createButtonWithListener(text, targetId, expanded)
 
 	button.addEventListener('click', () =>
 	{
-		// moveButtonToCenter(button); // KARL TODO FIX IT
 		toggleButtons(text);
 	});
 

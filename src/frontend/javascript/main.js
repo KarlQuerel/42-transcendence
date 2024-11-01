@@ -51,7 +51,7 @@ from "./components/particles/particles.js"
 import { render2fa }
 from "./views/user/2fa.js";
 
-import { renderSignIn }
+import { renderSignIn, userPingBackend }
 from "./views/user/signin.js";
 
 import { renderProfile }
@@ -308,6 +308,13 @@ document.addEventListener("DOMContentLoaded", () =>
 			navigateTo(href);
 		}
 	});
+
+	if (localStorage.getItem('access_token'))
+	{
+		if (DEBUG)
+			console.log('je suis dans le main et je ping le back');
+		userPingBackend();
+	}
 
 	window.addEventListener("popstate", router);
 

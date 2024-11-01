@@ -23,6 +23,7 @@
 @import url('pages/friends.css');
 @import url('pages/privacy-policy.css');
 @import url('pages/profile.css');
+@import url('pages/2fa.css');
 
 /*				Pong				*/
 @import url('pages/pong/general.css');

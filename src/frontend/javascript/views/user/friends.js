@@ -122,6 +122,7 @@ async function sendFriendRequest(other_user_id)
 			},
 			body: JSON.stringify({receiver: other_user_id}),
 		})
+		navigateTo('/friends');
 	}
 	catch (error)
 	{
@@ -171,6 +172,7 @@ async function acceptFriendRequest(request_id)
 				'Content-Type': 'application/json',
 			},
 		})
+		navigateTo('/friends');
 	}
 	catch (error)
 	{
@@ -190,6 +192,7 @@ async function rejectFriendRequest(request_id)
 				'Content-Type': 'application/json',
 			},
 		})
+		navigateTo('/friends');
 	}
 	catch (error)
 	{
@@ -209,6 +212,7 @@ async function removeFriend(other_user_id)
 				'Content-Type': 'application/json',
 			},
 		})
+		navigateTo('/friends');
 	}
 	catch (error)
 	{
@@ -292,7 +296,7 @@ function getAvatar(other_user, avatar)
 	})
 	.then(userData =>
 	{
-		if (userData || DEBUG)
+		if (userData && DEBUG)
 			console.log(userData);
 		else
 			console.log('No user data found');

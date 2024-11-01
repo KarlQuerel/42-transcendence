@@ -121,7 +121,7 @@ export async function doesUserExist(playerName)
 {
 	try
 	{
-		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		const	data = await fetch(`/api/users/does-user-exist/${playerName}/`,
 		{
 			method: 'GET',
 		});
@@ -134,6 +134,26 @@ export async function doesUserExist(playerName)
 		return false;
 	}
 }
+
+
+export async function doesEmailExist(email)
+{
+	try
+	{
+		const	data = await fetch(`/api/users/does-email-exist/${email}/`,
+		{
+			method: 'GET',
+		});
+
+		return data.email_exists;
+	}
+	catch (error)
+	{
+		console.error('API request error:', error);
+		return false;
+	}
+}
+
 
 export async function checkPassword(username, password)
 {
