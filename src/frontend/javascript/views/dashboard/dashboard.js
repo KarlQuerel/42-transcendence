@@ -11,7 +11,7 @@ import { getAuthHeaders }
 from '../user/signin.js';
 
 /***********************************************\
-*				   RENDERING				   *
+*				 RENDERING				 *
 \***********************************************/
 
 export function renderDashboard()
@@ -252,7 +252,6 @@ function setupEventListeners(gameHistory, allUsers)
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
-// KARL HERE PERCENTAGE
 function chartPieData(gameHistory)
 {
 	// Count the number of victories and defeats
@@ -526,83 +525,83 @@ function avatars(gameHistory, allUsers)
 }
 
 function displayGameHistory(connectedUser, chosenOpponent, gameHistory) {
-    // Create an overlay
-    const overlay = document.createElement('div');
-    overlay.classList.add('overlay');
+// Create an overlay
+const overlay = document.createElement('div');
+overlay.classList.add('overlay');
 
-    // Add event listener to prevent clicks on the overlay
-    overlay.addEventListener('click', (e) => e.stopPropagation());
+// Add event listener to prevent clicks on the overlay
+overlay.addEventListener('click', (e) => e.stopPropagation());
 
-    // Create a container for the game history
-    const gameHistoryContainer = document.createElement('div');
-    gameHistoryContainer.classList.add('container', 'game-history-container');
+// Create a container for the game history
+const gameHistoryContainer = document.createElement('div');
+gameHistoryContainer.classList.add('container', 'game-history-container');
 
-    // Create a header for the game history
-    const header = document.createElement('div');
-    header.classList.add('game-history-header');
-    header.textContent = `Game History with ${chosenOpponent}`;
-    gameHistoryContainer.appendChild(header);
+// Create a header for the game history
+const header = document.createElement('div');
+header.classList.add('game-history-header');
+header.textContent = `Game History with ${chosenOpponent}`;
+gameHistoryContainer.appendChild(header);
 
-    // Create a close button
-    const closeButton = document.createElement('div');
-    closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close');
-    closeButton.textContent = 'X';
+// Create a close button
+const closeButton = document.createElement('div');
+closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close');
+closeButton.textContent = 'X';
 
-    // Close button functionality to remove the game history container and overlay
-    closeButton.addEventListener('click', () => {
-        gameHistoryContainer.remove();
-        overlay.remove();
-    });
+// Close button functionality to remove the game history container and overlay
+closeButton.addEventListener('click', () => {
+gameHistoryContainer.remove();
+overlay.remove();
+});
 
-    // Append the close button to the game history container
-    gameHistoryContainer.appendChild(closeButton);
+// Append the close button to the game history container
+gameHistoryContainer.appendChild(closeButton);
 
-    // Create a table element to display game history
-    const table = document.createElement('table');
-    table.classList.add('game-history-table');
+// Create a table element to display game history
+const table = document.createElement('table');
+table.classList.add('game-history-table');
 
-    // Create the table header
-    const tableHeaderRow = document.createElement('tr');
-    tableHeaderRow.classList.add('game-history-header-row');
+// Create the table header
+const tableHeaderRow = document.createElement('tr');
+tableHeaderRow.classList.add('game-history-header-row');
 
-    const dateHeader = document.createElement('th');
-    dateHeader.textContent = 'Date';
-    dateHeader.classList.add('game-history-header-cell');
-    tableHeaderRow.appendChild(dateHeader);
+const dateHeader = document.createElement('th');
+dateHeader.textContent = 'Date';
+dateHeader.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(dateHeader);
 
-    const username1Header = document.createElement('th');
-    username1Header.textContent = connectedUser;
-    username1Header.classList.add('game-history-header-cell');
-    tableHeaderRow.appendChild(username1Header);
+const username1Header = document.createElement('th');
+username1Header.textContent = connectedUser;
+username1Header.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(username1Header);
 
-    const username2Header = document.createElement('th');
-    username2Header.textContent = chosenOpponent;
-    username2Header.classList.add('game-history-header-cell');
-    tableHeaderRow.appendChild(username2Header);
+const username2Header = document.createElement('th');
+username2Header.textContent = chosenOpponent;
+username2Header.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(username2Header);
 
-    // Append the header row to the table
-    table.appendChild(tableHeaderRow);
+// Append the header row to the table
+table.appendChild(tableHeaderRow);
 
-    // Call function to add game history to the table
-    addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
+// Call function to add game history to the table
+addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
 
-    // Append the table to the game history container
-    gameHistoryContainer.appendChild(table);
+// Append the table to the game history container
+gameHistoryContainer.appendChild(table);
 
-    // Append the overlay and game history container to the dashboard or another element
-    const dashboard = document.getElementById('dashboard-container');
-    if (dashboard) {
-        // Remove any existing game history containers and overlays before appending new ones
-        const existingOverlay = document.querySelector('.overlay');
-        const existingGameHistory = document.querySelector('.game-history-container');
-        if (existingOverlay) existingOverlay.remove();
-        if (existingGameHistory) existingGameHistory.remove();
+// Append the overlay and game history container to the dashboard or another element
+const dashboard = document.getElementById('dashboard-container');
+if (dashboard) {
+// Remove any existing game history containers and overlays before appending new ones
+const existingOverlay = document.querySelector('.overlay');
+const existingGameHistory = document.querySelector('.game-history-container');
+if (existingOverlay) existingOverlay.remove();
+if (existingGameHistory) existingGameHistory.remove();
 
-        dashboard.appendChild(overlay);
-        dashboard.appendChild(gameHistoryContainer);
-    } else {
-        console.error("Dashboard container not found.");
-    }
+dashboard.appendChild(overlay);
+dashboard.appendChild(gameHistoryContainer);
+} else {
+console.error("Dashboard container not found.");
+}
 }
 
 
@@ -739,6 +738,80 @@ function retrieveConnectedUserRanking(allStats, connectedUser)
 	return userStats.ranking_position;
 }
 
+// KARL HERE BACKUP
+// async function badge(gameHistory, allUsers)
+// {
+// 	let badgeImgSrc = '';
+// 	let message = '';
+
+// 	if (allUsers.length === 1)
+// 	{
+// 		message = " You're the best player ever!";
+// 		badgeImgSrc = '../../../assets/images/dashboard/alone.gif';
+// 	}
+// 	else
+// 	{
+// 		const allStats = await retrieveAllUserStats(allUsers);
+
+// 		if (DEBUG)
+// 			console.log("allStats: ", allStats);
+	
+// 		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
+
+// 		// Determine the badge image and message
+// 		if (rankingPosition > 3)
+// 		{
+// 			message = ' You need to improve!';
+// 			badgeImgSrc = '../../../assets/images/dashboard/unranked.gif';
+// 		}
+// 		else if (rankingPosition === 3)
+// 		{
+// 			message = ' You are the 3rd best player!';
+// 			badgeImgSrc = '../../../assets/images/dashboard/3rd.gif';
+// 		}
+// 		else if (rankingPosition === 2)
+// 		{
+// 			message = ` You are the 2nd best player!`;
+// 			badgeImgSrc = '../../../assets/images/dashboard/2nd.gif';
+// 		}
+// 		else if (rankingPosition === 1)
+// 		{
+// 			message = " You are the best player ever!";
+// 			badgeImgSrc = '../../../assets/images/dashboard/1st.gif';
+// 		}
+// 	}
+
+// 	// Create a container for the badge display
+// 	const badgeContainer = document.createElement('div');
+// 	badgeContainer.classList.add('badge-container');
+
+// 	// Create the badge image element
+// 	const badgeIcon = document.createElement('img');
+// 	badgeIcon.src = badgeImgSrc;
+// 	badgeIcon.alt = 'Badge Icon';
+// 	badgeIcon.classList.add('badge-icon');
+
+// 	// Create the message element
+// 	const badgeMessage = document.createElement('p');
+// 	badgeMessage.textContent = message;
+// 	badgeMessage.classList.add('badge-message');
+
+// 	// Append the badge icon and message to the container
+// 	badgeContainer.appendChild(badgeIcon);
+// 	badgeContainer.appendChild(badgeMessage);
+
+// 	// Append the badge container to the dashboard
+// 	const dashboard = document.getElementById('dashboard-container');
+// 	if (dashboard)
+// 	{
+// 		dashboard.appendChild(badgeContainer);
+// 	}
+// 	else
+// 	{
+// 		console.error('Dashboard container not found!');
+// 	}
+// }
+
 async function badge(gameHistory, allUsers)
 {
 	let badgeImgSrc = '';
@@ -753,9 +826,8 @@ async function badge(gameHistory, allUsers)
 	{
 		const allStats = await retrieveAllUserStats(allUsers);
 
-		if (DEBUG)
-			console.log("allStats: ", allStats);
-	
+		if (DEBUG) console.log("allStats: ", allStats);
+
 		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
 
 		// Determine the badge image and message
@@ -781,6 +853,13 @@ async function badge(gameHistory, allUsers)
 		}
 	}
 
+	// Create the overlay element
+	const overlay = document.createElement('div');
+	overlay.classList.add('overlay');
+
+	// Prevent clicking on the overlay
+	overlay.addEventListener('click', (e) => e.stopPropagation());
+
 	// Create a container for the badge display
 	const badgeContainer = document.createElement('div');
 	badgeContainer.classList.add('badge-container');
@@ -796,15 +875,33 @@ async function badge(gameHistory, allUsers)
 	badgeMessage.textContent = message;
 	badgeMessage.classList.add('badge-message');
 
-	// Append the badge icon and message to the container
+	// Append the badge icon and message to the badge container
 	badgeContainer.appendChild(badgeIcon);
 	badgeContainer.appendChild(badgeMessage);
 
-	// Append the badge container to the dashboard
+	// Create the close button
+	const closeButton = document.createElement('div');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close', 'badge-btn-close');
+	closeButton.textContent = 'X';
+
+	// Close button functionality to remove both the badge container and overlay
+	closeButton.addEventListener('click', () =>
+	{
+		badgeContainer.remove();
+		overlay.remove();
+	});
+
+	// Append the close button to the badge container
+	badgeContainer.appendChild(closeButton);
+
+	// Append the badge container to the overlay
+	overlay.appendChild(badgeContainer);
+
+	// Append the overlay to the dashboard
 	const dashboard = document.getElementById('dashboard-container');
 	if (dashboard)
 	{
-		dashboard.appendChild(badgeContainer);
+		dashboard.appendChild(overlay);
 	}
 	else
 	{

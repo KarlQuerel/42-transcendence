@@ -360,14 +360,20 @@
 	background-color: var(--base-light-green);
 }
 
+
+/*	BADGE	*/
 .badge-container
 {
-	position: fixed;
-	z-index: 50;
+	position: relative;
+	z-index: 1500;
 	display: flex;
 	align-items: center;
 	background-color: var(--base-light-green);
 	border-radius: 30px;
+	top: 40%;
+	left: 35%;
+	width: 65vh;
+	padding: 2vh;
 }
 
 .badge-icon
@@ -381,6 +387,14 @@
 	font-size: 4vh;
 	color: var(--base-light-yellow);
 	animation: favBuddy 2s infinite alternate;
+}
+
+.badge-btn-close
+{
+	position: relative;
+	width: 15vh;
+	z-index: inherit;
+	top: -8vh;
 }
 
 .username-text
