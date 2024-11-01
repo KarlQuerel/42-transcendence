@@ -11,7 +11,7 @@ import { getAuthHeaders, getCookie }
 from '../user/signin.js';
 
 /***********************************************\
-*				   RENDERING				   *
+*				 RENDERING				 *
 \***********************************************/
 
 export function renderDashboard()
@@ -102,7 +102,7 @@ export async function initializeDashboard()
 -					FETCHING DATA				-
 \***********************************************/
 
-async function loadUserGameHistory()
+export async function loadUserGameHistory()
 {
 	try
 	{
@@ -252,7 +252,6 @@ function setupEventListeners(gameHistory, allUsers)
 /***********************************************\
 -					CHART ICON					-
 \***********************************************/
-// KARL HERE PERCENTAGE
 function chartPieData(gameHistory)
 {
 	// Count the number of victories and defeats
@@ -401,13 +400,32 @@ function chartPieData(gameHistory)
 -				FRIENDS ICON					-
 \***********************************************/
 
-// KARL HERE AJOUTER SCROLLING
 function avatars(gameHistory, allUsers)
 {
 	// Create the main container for game info
 	const	mygameinfocontainer = document.createElement('div');
 	mygameinfocontainer.id = 'mygameinfocontainer';
-	mygameinfocontainer.classList.add('mygameinfocontainer');
+	mygameinfocontainer.classList.add('container', 'mygameinfocontainer');
+
+
+	// Create a close button
+	const closeButton = document.createElement('button');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn', 'btn-avatar-close');
+	closeButton.textContent = 'Close';
+
+	// Add event listener to close the mygameinfocontainer
+	closeButton.addEventListener('click', () =>
+	{
+		mygameinfocontainer.remove();
+	});
+
+	// Append the close button to the mygameinfocontainer
+	mygameinfocontainer.appendChild(closeButton);
+
+
+	// Create a row to hold the avatar boxes
+	const	row = document.createElement('div');
+	row.classList.add('row');
 
 	// Collect unique opponent usernames from game history
 	const	opponentsList = [];
@@ -421,9 +439,13 @@ function avatars(gameHistory, allUsers)
 
 	// Loop through all users and create avatar boxes for opponents
 	allUsers.forEach(user =>
-	{
-		if (opponentsList.includes(user.username))
 		{
+		if (opponentsList.includes(user.username))
+			{
+			// Create a column for each avatar
+			const	col = document.createElement('div');
+			col.classList.add('col-md-4', 'mb-3');
+
 			const	avatarBox = document.createElement('div');
 			avatarBox.className = 'avatar-box';
 			avatarBox.dataset.username = user.username;
@@ -436,14 +458,13 @@ function avatars(gameHistory, allUsers)
 			avatarBox.appendChild(avatarImg);
 
 			// Create and append the username under the avatar image
-			const usernameText = document.createElement('p');
+			const	usernameText = document.createElement('p');
 			usernameText.textContent = user.username;
 			usernameText.className = 'username-text';
 
-
 			avatarBox.appendChild(usernameText);
-			mygameinfocontainer.appendChild(avatarBox);
-
+			col.appendChild(avatarBox);
+			row.appendChild(col);
 
 			// Add click event to display game history
 			avatarBox.addEventListener('click', () =>
@@ -458,7 +479,10 @@ function avatars(gameHistory, allUsers)
 
 	// Handle remaining opponents without user data
 	opponentsList.forEach(opponent =>
-	{
+		{
+		const	col = document.createElement('div');
+		col.classList.add('col-md-4', 'mb-3');
+
 		const	avatarBox = document.createElement('div');
 		avatarBox.className = 'avatar-box';
 		avatarBox.dataset.username = opponent;
@@ -475,13 +499,14 @@ function avatars(gameHistory, allUsers)
 		avatarImg.className = 'avatar-icon';
 
 		// Create and append the username under the avatar image
-		const noaccountusernametext = document.createElement('p');
-		noaccountusernametext.textContent = opponent;
-		noaccountusernametext.className = 'username-text';
+		const	noAccountUsernameText = document.createElement('p');
+		noAccountUsernameText.textContent = opponent;
+		noAccountUsernameText.className = 'username-text';
 
 		avatarBox.appendChild(avatarImg);
-		avatarBox.appendChild(noaccountusernametext);
-		mygameinfocontainer.appendChild(avatarBox);
+		avatarBox.appendChild(noAccountUsernameText);
+		col.appendChild(avatarBox);
+		row.appendChild(col);
 
 		// Add click event to display game history
 		avatarBox.addEventListener('click', () =>
@@ -490,88 +515,95 @@ function avatars(gameHistory, allUsers)
 		});
 	});
 
+	// Append the row to the container
+	mygameinfocontainer.appendChild(row);
+
 	// Append the container to the dashboard
 	document.getElementById('dashboard-container').appendChild(mygameinfocontainer);
 
 	return mygameinfocontainer;
 }
 
-function displayGameHistory(connectedUser, chosenOpponent, gameHistory)
-{
-	// Create a container for the game history
-	const gameHistoryContainer = document.createElement('div');
-	gameHistoryContainer.classList.add('container', 'game-history-container');
+function displayGameHistory(connectedUser, chosenOpponent, gameHistory) {
+// Create an overlay
+const overlay = document.createElement('div');
+overlay.classList.add('overlay');
 
-	// Create a header for the game history
-	const header = document.createElement('div');
-	header.classList.add('game-history-header');
-	header.textContent = `Game History with ${chosenOpponent}`;
-	gameHistoryContainer.appendChild(header);
+// Add event listener to prevent clicks on the overlay
+overlay.addEventListener('click', (e) => e.stopPropagation());
 
-	// Create a close button
-	const	closeButton = document.createElement('button');
-	closeButton.classList.add('btn', 'close-btn', 'game-history-close');
-	closeButton.text = 'close';
+// Create a container for the game history
+const gameHistoryContainer = document.createElement('div');
+gameHistoryContainer.classList.add('container', 'game-history-container');
 
-	// Close button functionality to remove the game history container
-	closeButton.addEventListener('click', () =>
-	{
-		gameHistoryContainer.remove();
-	});
+// Create a header for the game history
+const header = document.createElement('div');
+header.classList.add('game-history-header');
+header.textContent = `Game History with ${chosenOpponent}`;
+gameHistoryContainer.appendChild(header);
 
-	// Append the close button to the game history container
-	gameHistoryContainer.appendChild(closeButton);
+// Create a close button
+const closeButton = document.createElement('div');
+closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close');
+closeButton.textContent = 'X';
 
-	// Create a table element to display game history
-	const table = document.createElement('table');
-	table.classList.add('game-history-table');
+// Close button functionality to remove the game history container and overlay
+closeButton.addEventListener('click', () => {
+gameHistoryContainer.remove();
+overlay.remove();
+});
 
-	// Create the table header
-	const tableHeaderRow = document.createElement('tr');
-	tableHeaderRow.classList.add('game-history-header-row');
+// Append the close button to the game history container
+gameHistoryContainer.appendChild(closeButton);
 
-	const dateHeader = document.createElement('th');
-	dateHeader.textContent = 'Date';
-	dateHeader.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(dateHeader);
+// Create a table element to display game history
+const table = document.createElement('table');
+table.classList.add('game-history-table');
 
-	const username1Header = document.createElement('th');
-	username1Header.textContent = connectedUser; // Current user's username
-	username1Header.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(username1Header);
+// Create the table header
+const tableHeaderRow = document.createElement('tr');
+tableHeaderRow.classList.add('game-history-header-row');
 
-	const username2Header = document.createElement('th');
-	username2Header.textContent = chosenOpponent; // Opponent user's username
-	username2Header.classList.add('game-history-header-cell');
-	tableHeaderRow.appendChild(username2Header);
+const dateHeader = document.createElement('th');
+dateHeader.textContent = 'Date';
+dateHeader.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(dateHeader);
 
-	// Append the header row to the table
-	table.appendChild(tableHeaderRow);
+const username1Header = document.createElement('th');
+username1Header.textContent = connectedUser;
+username1Header.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(username1Header);
 
-	// Call function to add game history to the table
-	addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
+const username2Header = document.createElement('th');
+username2Header.textContent = chosenOpponent;
+username2Header.classList.add('game-history-header-cell');
+tableHeaderRow.appendChild(username2Header);
 
-	// Append the table to the game history container
-	gameHistoryContainer.appendChild(table);
+// Append the header row to the table
+table.appendChild(tableHeaderRow);
 
-	// Append the game history container to the dashboard or another element
-	const dashboard = document.getElementById('dashboard-container');
-	if (dashboard)
-	{
-		// Remove any existing game history containers before appending a new one
-		const existingGameHistory = document.querySelector('.game-history-container');
-		if (existingGameHistory)
-		{
-			existingGameHistory.remove();
-		}
+// Call function to add game history to the table
+addGameHistory(connectedUser, chosenOpponent, gameHistory, table);
 
-		dashboard.appendChild(gameHistoryContainer);
-	}
-	else
-	{
-		console.error("Dashboard container not found.");
-	}
+// Append the table to the game history container
+gameHistoryContainer.appendChild(table);
+
+// Append the overlay and game history container to the dashboard or another element
+const dashboard = document.getElementById('dashboard-container');
+if (dashboard) {
+// Remove any existing game history containers and overlays before appending new ones
+const existingOverlay = document.querySelector('.overlay');
+const existingGameHistory = document.querySelector('.game-history-container');
+if (existingOverlay) existingOverlay.remove();
+if (existingGameHistory) existingGameHistory.remove();
+
+dashboard.appendChild(overlay);
+dashboard.appendChild(gameHistoryContainer);
+} else {
+console.error("Dashboard container not found.");
 }
+}
+
 
 function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 {
@@ -579,20 +611,20 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 	table.innerHTML = '';
 
 	// Create the header row
-	const headerRow = document.createElement('tr');
+	const	headerRow = document.createElement('tr');
 	headerRow.classList.add('game-history-header-row'); // Add your custom class
 
-	const dateHeader = document.createElement('th');
+	const	dateHeader = document.createElement('th');
 	dateHeader.textContent = 'Date';
 	dateHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(dateHeader);
 
-	const myUsernameHeader = document.createElement('th');
+	const	myUsernameHeader = document.createElement('th');
 	myUsernameHeader.textContent = 'Me';
 	myUsernameHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(myUsernameHeader);
 
-	const opponentUsernameHeader = document.createElement('th');
+	const	opponentUsernameHeader = document.createElement('th');
 	opponentUsernameHeader.textContent = chosenOpponent;
 	opponentUsernameHeader.classList.add('game-history-header-cell'); // Add your custom class
 	headerRow.appendChild(opponentUsernameHeader);
@@ -604,23 +636,23 @@ function addGameHistory(connectedUser, chosenOpponent, gameHistory, table)
 	gameHistory.forEach(game => {
 		if (game.opponentUsername === chosenOpponent) {
 			// Create a row for the match details
-			const matchRow = document.createElement('tr');
+			const	matchRow = document.createElement('tr');
 			matchRow.classList.add('game-history-row'); // Add your custom class
 
 			// Date cell
-			const dateCell = document.createElement('td');
+			const	dateCell = document.createElement('td');
 			dateCell.textContent = new Date(game.date).toLocaleDateString();
 			dateCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(dateCell);
 
 			// My score cell
-			const myScoreCell = document.createElement('td');
+			const	myScoreCell = document.createElement('td');
 			myScoreCell.textContent = game.myScore;
 			myScoreCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(myScoreCell);
 
 			// Opponent's score cell
-			const opponentScoreCell = document.createElement('td');
+			const	opponentScoreCell = document.createElement('td');
 			opponentScoreCell.textContent = game.opponentScore;
 			opponentScoreCell.classList.add('game-history-cell'); // Add your custom class
 			matchRow.appendChild(opponentScoreCell);
@@ -706,6 +738,7 @@ function retrieveConnectedUserRanking(allStats, connectedUser)
 	return userStats.ranking_position;
 }
 
+
 async function badge(gameHistory, allUsers)
 {
 	let badgeImgSrc = '';
@@ -713,16 +746,15 @@ async function badge(gameHistory, allUsers)
 
 	if (allUsers.length === 1)
 	{
-		message = " You're the best player ever!";
+		message = " You are alone!";
 		badgeImgSrc = '../../../assets/images/dashboard/alone.gif';
 	}
 	else
 	{
 		const allStats = await retrieveAllUserStats(allUsers);
 
-		if (DEBUG)
-			console.log("allStats: ", allStats);
-	
+		if (DEBUG) console.log("allStats: ", allStats);
+
 		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
 
 		// Determine the badge image and message
@@ -748,6 +780,13 @@ async function badge(gameHistory, allUsers)
 		}
 	}
 
+	// Create the overlay element
+	const overlay = document.createElement('div');
+	overlay.classList.add('overlay');
+
+	// Prevent clicking on the overlay
+	overlay.addEventListener('click', (e) => e.stopPropagation());
+
 	// Create a container for the badge display
 	const badgeContainer = document.createElement('div');
 	badgeContainer.classList.add('badge-container');
@@ -763,15 +802,33 @@ async function badge(gameHistory, allUsers)
 	badgeMessage.textContent = message;
 	badgeMessage.classList.add('badge-message');
 
-	// Append the badge icon and message to the container
+	// Append the badge icon and message to the badge container
 	badgeContainer.appendChild(badgeIcon);
 	badgeContainer.appendChild(badgeMessage);
 
-	// Append the badge container to the dashboard
+	// Create the close button
+	const closeButton = document.createElement('div');
+	closeButton.classList.add('btn', 'btn-home', 'close-btn', 'game-history-close', 'badge-btn-close');
+	closeButton.textContent = 'X';
+
+	// Close button functionality to remove both the badge container and overlay
+	closeButton.addEventListener('click', () =>
+	{
+		badgeContainer.remove();
+		overlay.remove();
+	});
+
+	// Append the close button to the badge container
+	badgeContainer.appendChild(closeButton);
+
+	// Append the badge container to the overlay
+	overlay.appendChild(badgeContainer);
+
+	// Append the overlay to the dashboard
 	const dashboard = document.getElementById('dashboard-container');
 	if (dashboard)
 	{
-		dashboard.appendChild(badgeContainer);
+		dashboard.appendChild(overlay);
 	}
 	else
 	{
@@ -854,29 +911,4 @@ function favouritePlayingBuddy(gameHistory, allUsers)
 
 	// Append the favorite buddy container below the chart
 	myStatsContainer.appendChild(favouriteBuddyContainer);
-}
-
-/************************************************
-- 			SHOW CONNECTED USER AVATAR			-
-**********************************************/
-
-// KARL HERE MAYBE TO FINISH
-function showConnectedUserAvatar(gameHistory, allUsers)
-{
-	const	connectedUser = gameHistory.username;
-
-	allUsers.forEach(user => {
-		if (user.username === connectedUser) {
-			const	avatarImg = document.createElement('img');
-			avatarImg.className = 'avatar-icon'
-			avatarImg.style.position = 'absolute';
-			avatarImg.style.top = '0';
-			avatarImg.style.right = '0';
-			avatarImg.style.width = '100px';
-			avatarImg.style.height = '100px';
-			avatarImg.src = getAvatar(user.id, avatarImg)
-			avatarImg.alt = `${user.username}`;
-			document.body.appendChild(avatarImg);
-		}
-	});
 }

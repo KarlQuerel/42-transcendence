@@ -13,9 +13,6 @@ import { createElementWithClass, createImage, createTextElement,
 createCardHeader, createButton }
 from './utils.js'
 
-import { createCarousel }
-from './carousel.js'
-
 /***********************************************\
 -					CARDS						-
 \***********************************************/

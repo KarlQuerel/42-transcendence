@@ -20,3 +20,39 @@
 	height: auto;
 	display: block;
 }
+
+#gif-not-found-1
+{
+	position: fixed;
+	z-index: 10;
+	top : 27%;
+}
+
+#gif-not-found-2
+{
+	position: fixed;
+	z-index: 10;
+	left: 50%;
+	width: 50%;
+	top : 12%;
+	transform: scaleX(-1);
+}
+
+#gif-not-found-3
+{
+	position: fixed;
+	z-index: 10;
+	right: 89%;
+	width: 23vh;
+	top: 72%;
+}
+
+#gif-not-found-4
+{
+	position: fixed;
+	z-index: 10;
+	left: 15%;
+	top: 26%;
+	width: 28vh;
+	transform: scaleX(-1);
+}

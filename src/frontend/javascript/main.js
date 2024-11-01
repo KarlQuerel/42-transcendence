@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = false;
+export	const	DEBUG = true;
 export	const	GITHUBACTIONS = false;
 
 /***********************************************\
@@ -155,9 +155,8 @@ let	currentPath = '';
 /***			Normalizing Paths			***/
 function normalizePath(path)
 {
-	if (path.endsWith('/'))
-		return path.slice(0, -1);
-	return path;
+	path = path.startsWith('/') ? path : '/' + path;
+	return path.replace(/\/+$/, '') || '/';
 }
 
 /***			Authentication				***/
@@ -179,6 +178,7 @@ function router()
 {
 	manageInactiveUsers();
 	
+	// KARL HERE FIX ME
 	let path = normalizePath(window.location.pathname) || '/home';
 
 	//	Assigning default path if none
@@ -286,6 +286,9 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
+	// KARL HERE
+	// alert(window.location.pathname);
+	
 	// Rendering Navbar
 	renderNavbar();
 

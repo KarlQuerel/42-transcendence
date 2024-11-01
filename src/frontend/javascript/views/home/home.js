@@ -37,7 +37,7 @@ function createHomeContainer()
 {
 	const	container = document.createElement('div');
 	container.id = 'home-content';
-	container.className = 'd-flex justify-content-center align-items-center position-relative';
+	container.className = 'container d-flex justify-content-center align-items-center position-relative';
 	container.appendChild(createContentRow());
 	return container;
 }

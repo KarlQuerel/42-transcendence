@@ -148,17 +148,17 @@
 
 #statsButton
 {
-	width: 25vh;
+	width: 40vh;
 }
 
 #myGameHistory
 {
-	width: 25vh;
+	width: 40vh;
 }
 
 #rankButton
 {
-	width: 25vh;
+	width: 40vh;
 }
 
 .close-btn
@@ -172,6 +172,7 @@
 	font-size: 1rem;
 	padding: 5px 10px;
 	z-index: 20;
+	pointer-events: auto;
 }
 
 /*		FAVOURITE BUDDY		*/
@@ -230,10 +231,9 @@
 /*		AVATAR		*/
 .avatar-icon
 {
-	width: 13%;
+	width: 10vh;
 	height: auto;
-	margin-bottom: 2vh;
-	border-radius: 1vh;
+	border-radius: 30px;
 }
 
 /*		BADGES		*/
@@ -249,16 +249,18 @@
 	flex-direction: column;
 	position: fixed;
 	justify-content: center;
-	align-items: center;
-	width: 75vh;
+	align-items: stretch;
+	width: 100%;
+	height: 80%;
 	background-color: var(--base-dark);
 	border: 1vh solid var(--base-green);
 	border-radius: 30px;
 	z-index: 10;
-	transform: translateY(20px);
+	transform: translate(-50%, -50%);
 	transition: opacity 0.3s ease, transform 0.3s ease;
 	pointer-events: none;
-	bottom: 15vh;
+	top: 50%;
+	left: 50%;
 }
 
 .mygameinfocontainer.active
@@ -273,37 +275,71 @@
 	display: flex;
 	z-index: 10;
 	pointer-events: auto;
-	width: 90%;
+	width: 100%;
+	height: 100%;
 	flex-direction: row;
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	align-items: center;
+	border-radius: 30px;
+}
+
+.avatar-box:hover
+{
+	animation: backgroundColorAvatarBox 2s infinite alternate, textColorAvatarBox 2s infinite alternate;
+}
+
+/* Keyframes for background color animation */
+@keyframes backgroundColorAvatarBox
+{
+	0%
+	{
+		background-color: var(--base-light-yellow);
+	}
+	100%
+	{
+		background-color: var(--base-light-green);
+	}
+}
+
+/* Keyframes for text color animation */
+@keyframes textColorAvatarBox
+{
+	0%
+	{
+		color: var(--base-light-yellow);
+	}
+	100%
+	{
+		color: var(--base-light-green);
+	}
 }
 
 /* GAME HISTORY */
 .game-history-container
 {
 	color: var(--base-green);
-	padding: 20px;
+	padding: 1vh;
 	background-color: var(--base-dark);
-	border: 1px solid #ddd;
-	border-radius: 20px;
-	/* margin-top: 20px; */
+	border-radius: 30px;
 	position: relative;
 	bottom: 50vh;
-	z-index: 20;
+	z-index: 1000;
 }
 
 .game-history-header
 {
-	font-size: 18px;
+	font-size: 2vh;
 	font-weight: bold;
-	margin-bottom: 10px;
+	margin-bottom: 3vh;
+	margin-left: 35%;
 }
 
-.game-history-table {
+.game-history-table
+{
 	width: 100%;
-	border-collapse: collapse;
+	height: 100%;
+	border-collapse: separate;
 }
 
 .game-history-header-row
@@ -314,9 +350,9 @@
 .game-history-header-cell,
 .game-history-cell
 {
-	padding: 1px;
+	padding: 1vh;
 	border: 1px solid var(--base-light-yellow);
-	text-align: left;
+	text-align: center;
 }
 
 .game-history-row:hover 
@@ -324,32 +360,77 @@
 	background-color: var(--base-light-green);
 }
 
+
+/*	BADGE	*/
 .badge-container
 {
+	position: relative;
+	z-index: 1500;
 	display: flex;
 	align-items: center;
-	margin-top: 20px;
+	background-color: var(--base-light-green);
+	border-radius: 30px;
+	top: 40%;
+	left: 35%;
+	width: 65vh;
+	padding: 2vh;
 }
 
-.badge-icon {
-	width: 50px;
-	height: 50px;
-	margin-right: 10px;
+.badge-icon
+{
+	width: 15vh;
+	height: 15vh;
+	border-radius: 30px;
 }
 
-.badge-message {
-	font-size: 16px;
-	color: #333;
+.badge-message
+{
+	font-size: 4vh;
+	color: var(--base-light-yellow);
+	animation: favBuddy 2s infinite alternate;
+	padding-left: 6vh;
+}
+
+.badge-btn-close
+{
+	position: relative;
+	width: 15vh;
+	z-index: inherit;
+	top: -8vh;
 }
 
 .username-text
 {
 	color: var(--base-white);
 	font-size: 2.5vh;
+	margin-top: 1.5vh;
 }
 
 .game-history-close
 {
-	color: var(--base-white);
-	z-index: 150;
+	border-radius: 30px;
+	width: 5vh;
+	height: 5vh;
+	display: flex;
+	flex-wrap: nowrap;
+	align-content: center;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+}
+
+.table
+{
+	border-collapse: separate;
+}
+
+.overlay
+{
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.9);
+	z-index: 999;
 }
