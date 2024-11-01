@@ -197,8 +197,8 @@ export function userPingBackend()
 export function getAuthHeaders()
 {
 	const	token = localStorage.getItem('access_token');
-	if (!token)
-		throw new Error('No access token found');
+	// if (!token)
+	// 	throw new Error('No access token found');
 
 	return {
 		'Authorization': 'Bearer ' + token,
