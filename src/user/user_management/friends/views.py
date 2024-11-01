@@ -157,7 +157,7 @@ class DeleteUserFriendRequests(APIView):
 
 		except Exception as e:
 			print('Error in DeleteUserFriendRequests', str(e))
-			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 # class SentFriendRequestView(APIView):

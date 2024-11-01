@@ -126,12 +126,12 @@ def deleteGameHistory(request):
 
 	except Exception as e:
 		print("deleteGameHistory view error:", str(e))
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 
 @api_view(['DELETE'])
-@csrf_protect
+# @csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])

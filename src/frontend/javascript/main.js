@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = false;
+export	const	DEBUG = true;
 export	const	GITHUBACTIONS = false;
 
 /***********************************************\

@@ -91,7 +91,7 @@ def signInUser(request):
 		return JsonResponse({'error': 'Invalid JSON'}, status=status.HTTP_401_UNAUTHORIZED)
 	except Exception as e:
 		print(f'signInUser error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -109,7 +109,7 @@ def updateOnlineStatus(request):
 		user.save()
 		return JsonResponse({'status': 'user is online'}, status=status.HTTP_200_OK)
 	except Exception as e:
-		return JsonResponse({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)	
 
 
 #########################################
@@ -145,7 +145,7 @@ def currentlyLoggedInUser(request):
 
 	except Exception as e:
 		print(f'currentlyLoggedInUser error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -154,11 +154,16 @@ def currentlyLoggedInUser(request):
 @api_view(['GET'])
 def doesUserExist(request, username):
 	try:
-		user = CustomUser.objects.get(username=username)
+		users = CustomUser.objects.all()
 
-		return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
-	except Exception as e:
+		for user in users:
+			if user.username == username:
+				return JsonResponse({'user_exists': True}, status=status.HTTP_200_OK)
+
 		return JsonResponse({'user_exists': False}, status=status.HTTP_200_OK)
+
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -167,11 +172,16 @@ def doesUserExist(request, username):
 @api_view(['GET'])
 def doesEmailExist(request, email):
 	try:
-		user = CustomUser.objects.get(email=email)
+		users = CustomUser.objects.all()
 
-		return JsonResponse({'email_exists': True}, status=status.HTTP_200_OK)
-	except Exception as e:
+		for user in users:
+			if user.email == email:
+				return JsonResponse({'email_exists': True}, status=status.HTTP_200_OK)
+
 		return JsonResponse({'email_exists': False}, status=status.HTTP_200_OK)
+
+	except Exception as e:
+		return JsonResponse({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -214,11 +224,11 @@ def getAllUsers(request):
 
 		except Exception as e:
 			print(f'getAllUsers error: {str(e)}')
-			return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 	except Exception as e:
 		print(f'getAllUsers error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
  
 
 
@@ -263,7 +273,7 @@ def changePassword(request):
 			return Response(form.errors, status=status.HTTP_400_BAD_REQUEST)
 	
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -323,7 +333,7 @@ def hashAndChangePassword(request):
 		user.save()
 		return Response({'success': 'Password changed successfully'}, status=status.HTTP_200_OK)
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 	
 
 
@@ -352,7 +362,7 @@ def updateProfile(request):
 		return Response({'success': 'Profile updated successfully'}, status=status.HTTP_200_OK)	
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -386,7 +396,7 @@ def updateAvatar(request):
 				f.write(avatar_data)
 		except Exception as e:
 			print(f'Error de open: {str(e)}')
-			return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 		user.avatar = avatar_path
 		user.save()
@@ -395,7 +405,7 @@ def updateAvatar(request):
 
 	except Exception as e:
 		print(f'updateAvatar Error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 ##################################################
@@ -452,7 +462,7 @@ we are providing you with an export of your personal data.
 		return JsonResponse({'success': 'user informations send to user email'}, status=status.HTTP_200_OK)
 	except Exception as e:
 		print(f"Error: {e}")
-		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_404_NOT_FOUND)
 
 
 ##################################################
@@ -535,7 +545,7 @@ def get2FAStatus(request):
 		return JsonResponse({user.is2fa}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -560,7 +570,7 @@ def update2FAStatus(request):
 		return Response({'message': '2FA status updated successfully', 'is2fa': user.is2fa}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -644,7 +654,7 @@ def anonymizeUserData(request):
 		return JsonResponse({'old_username': userOldUsername, 'new_username': user.username}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -665,7 +675,7 @@ def updateAnonymousStatus(request):
 		return JsonResponse({'isAnonymous': user.isAnonymous}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -683,7 +693,7 @@ def getAnonymousStatus(request):
 		return JsonResponse({'isAnonymous': user.isAnonymous}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -712,13 +722,13 @@ def deleteUserFriendships(request):
 
 		except Exception as e:
 			print(f'Error: {str(e)}')
-			return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 	except CustomUser.DoesNotExist:
 		return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
 	except Exception as e:
 		print(f'Error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -737,7 +747,7 @@ def deleteUser(request):
 
 	except Exception as e:
 		print(f'Error: {str(e)}')
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 ##################################################
@@ -764,7 +774,7 @@ def getInactiveUsersID(request):
 		return JsonResponse(inactive_users_id, safe=False, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 #########################################
@@ -789,7 +799,7 @@ def deleteInactiveUsersFriends(request):
 		return JsonResponse({'success': 'Inactive users\' friendships deleted successfully'}, status=status.HTTP_200_OK)
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -820,4 +830,4 @@ def checkUserPassword(request):
 		except json.JSONDecodeError:
 			return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 	
-	return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+	return JsonResponse({'error': 'Invalid request method'}, status=status.HTTP_404_NOT_FOUND)
