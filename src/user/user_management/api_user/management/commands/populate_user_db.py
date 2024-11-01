@@ -97,14 +97,8 @@ class Command(BaseCommand):
 					date_of_birth=user_data['date_of_birth'],
 					first_name=user_data['first_name'],
 					last_name=user_data['last_name'],
-					# avatar = '../../friends/' + user_data['username'] + '.png'
+					avatar = user_data['avatar_path']
 				)
-				avatar_path = user_data['avatar_path']
-				if os.path.exists(avatar_path):
-					with open(avatar_path, 'rb') as avatar_file:
-						user.avatar.save(os.path.basename(avatar_path), File(avatar_file), save=True)
-				else:
-					self.stdout.write(self.style.WARNING(f"Avatar file {avatar_path} does not exist"))
 
 		self.stdout.write(self.style.SUCCESS('Successfully populated the user database'))
 

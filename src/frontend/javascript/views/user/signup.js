@@ -249,7 +249,7 @@ function isValidUsername(username)
 		return false;
 	else if (acceptedCharacters.test(username) == false)
 		return false;
-	if (doesUserExist(username))
+	if (!doesUserExist(username))
 		return false;
 	return true;
 }
@@ -274,7 +274,7 @@ function isValidEmail(email)
 		return false;
 	if (domainPart.length > 255)
 		return false;
-	if (doesEmailExist(email))
+	if (!doesEmailExist(email))
 		return false;
 	return true;
 }
@@ -285,6 +285,56 @@ export function allValuesAreValid(first_name_type, last_name_type, username_type
 		return false;
 	return true;
 }
+
+
+export function sendErrorToFrontend_editMode(first_name_type, last_name_type, date_of_birth_type, email_type)
+{
+	if (DEBUG)
+	{
+		console.log('Enter sendErrorToFrontend_editMode');
+		console.log('first_name_type:', first_name_type);
+		console.log('last_name_type:', last_name_type);
+		console.log('date_of_birth_type:', date_of_birth_type);
+		console.log('email_type:', email_type);
+	}
+
+	const	errorMessages =
+	{
+		first_name: 'First name must have less than 30 characters, using only letters.',
+		last_name: 'Please enter a last name with fewer than 30 characters, using letters, spaces, and hyphens only.',
+		date_of_birth: 'Please enter a valid date of birth.',
+		email: 'Email must be unique and in valid format [xxx@xxx.xxx].',
+	};
+
+	const	fields =
+	[
+		{ type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
+		{ type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
+		{ type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
+		{ type: email_type, id: 'email_input', message: errorMessages.email }
+	];
+
+	fields.forEach(field =>
+	{
+		const	formGroup = document.getElementById(field.id).parentElement;
+		const	existingError = formGroup.querySelector('.error-message');
+		if (existingError)
+			existingError.remove();
+
+		if (field.type === 'error')
+		{
+			const	error = document.createElement('p');
+			error.textContent = field.message;
+			error.classList.add('error-message');
+
+			if (field.id === 'email_input')
+				error.classList.add('email-input-error-message');
+
+			formGroup.appendChild(error);
+		}
+	});
+}
+
 
 export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type)
 {
@@ -310,10 +360,10 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		{ type: username_type, id: 'username', message: errorMessages.username },
 		{ type: password_type, id: 'password', message: errorMessages.password },
 		{ type: email_type, id: 'email', message: errorMessages.email },
-		{ type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
-		{ type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
-		{ type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
-		{ type: email_type, id: 'email_input', message: errorMessages.email }
+		// { type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
+		// { type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
+		// { type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
+		// { type: email_type, id: 'email_input', message: errorMessages.email }
 	];
 
 	if (typeof password_confirmation_type !== 'undefined')
@@ -322,6 +372,14 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 	fields.forEach(field =>
 	{
 		const	formGroup = document.getElementById(field.id).parentElement;
+
+		// const	formGroup = document.getElementById(field.id)
+		// if (!formGroup)
+		// {
+		// 	console.error(`Element with id ${field.id} not found.`);
+		// 	return;
+		// }
+
 		const	existingError = formGroup.querySelector('.error-message');
 		if (existingError)
 			existingError.remove();
@@ -332,8 +390,8 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 			error.textContent = field.message;
 			error.classList.add('error-message');
 			
-			if (field.id === 'email_input')
-				error.classList.add('email-input-error-message');
+			// if (field.id === 'email_input')
+			// 	error.classList.add('email-input-error-message');
 
 			formGroup.appendChild(error);
 		}

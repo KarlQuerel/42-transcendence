@@ -7,7 +7,7 @@ from '../../main.js';
 import { apiRequest }
 from '../user/signin.js';
 
-import { getAuthHeaders }
+import { getAuthHeaders, getCookie }
 from '../user/signin.js';
 
 /***********************************************\
@@ -148,7 +148,7 @@ async function loadAllUsers()
 	{
 		console.error("Error fetching users' avatars:", error);
 
-		if (error.response) //DEBUG
+		if (error.response)
 		{
 			const	errorText = await error.response.text();
 			console.error("Response text:", errorText);
@@ -183,7 +183,7 @@ async function loadSpecificUserGameHistory(username)
 			method: 'GET',
 			headers: {
 
-				// 'X-CSRFToken': getCookie('csrftoken'),
+				'X-CSRFToken': getCookie('csrftoken'),
 				'Content-Type': 'application/json',
 			},
 		});
