@@ -766,7 +766,7 @@ def getInactiveUsersID(request):
 
 		for user in users:
 			if user.last_login is not None:
-				# cutoffTime = user.last_login + timezone.timedelta(minutes=2)
+				# cutoffTime = user.last_login + timezone.timedelta(minutes=1)
 				cutoffTime = user.last_login + timezone.timedelta(days=3*365)
 				if time > cutoffTime and user.is_online == False:
 					inactive_users_id.append(user.id)
@@ -780,7 +780,8 @@ def getInactiveUsersID(request):
 #########################################
 
 
-@api_view(['POST'])
+@api_view(['DELETE'])
+@csrf_protect
 def deleteInactiveUsersFriends(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])

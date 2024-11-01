@@ -23,7 +23,7 @@ def getGameHistory(request):
 
 # Get a user's game history
 @api_view(['GET'])
-# @csrf_protect
+@csrf_protect
 def getSpecificUserGameHistory(request):
 	try:
 		username = request.query_params.get('username')
@@ -149,7 +149,7 @@ def deleteGameHistory(request):
 
 
 @api_view(['DELETE'])
-# @csrf_protect
+@csrf_protect
 def deleteGameHistoryInactiveUsers(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])
