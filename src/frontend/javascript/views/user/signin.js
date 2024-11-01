@@ -143,8 +143,8 @@ function login(username, password)
 		}
 		else
 		throw new Error('Username or password incorrect');
-})
-.then(newAccessToken =>
+	})
+	.then(newAccessToken =>
 	{
 		if (DEBUG)
 			console.log('Token refreshed:', newAccessToken);
@@ -152,6 +152,7 @@ function login(username, password)
 			console.log('Login successful');
 		setSignedInState(true);
 		renderNavbar();
+		userPingBackend();
 		navigateTo('/profile');
 	})
 	.catch(error =>
@@ -162,6 +163,29 @@ function login(username, password)
 			alert('❌ Login failed: ' + error.message);
 		}
 	});
+}
+
+export function userPingBackend()
+{
+	const pingInterval = 30000;
+	if (DEBUG)
+		console.log('je passe dans le ping');
+	apiRequest('api/users/update-online-status/', {
+		method: 'POST',
+	})
+	.catch(error =>
+	{
+		console.error('Error: ', error);
+	});
+	setInterval(() => {
+		apiRequest('api/users/update-online-status/', {
+			method: 'POST',
+		})
+		.catch(error =>
+		{
+			console.error('Error: ', error);
+		});
+	}, pingInterval);
 }
 
 /***********************************************\

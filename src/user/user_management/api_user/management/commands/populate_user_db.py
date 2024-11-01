@@ -16,7 +16,7 @@ class Command(BaseCommand):
 		{
 			'username': 'karl',
 			'password': 'pass123',
-			'email': 'karl@email.com',
+			'email': 'kquerel@student.42.fr',
 			'date_of_birth': '1992-09-29',
 			'first_name': 'Karl',
 			'last_name': 'Querel',
@@ -25,7 +25,7 @@ class Command(BaseCommand):
 		{
 			'username': 'clement',
 			'password': 'pass123',
-			'email': 'clément@email.com',
+			'email': 'cbernaze@student.42.fr',
 			'date_of_birth': '1997-01-28',
 			'first_name': 'Clément',
 			'last_name': 'Bernazeau',
@@ -34,7 +34,7 @@ class Command(BaseCommand):
 		{
 			'username': 'carolina',
 			'password': 'pass123',
-			'email': 'carolina@email.com',
+			'email': ' casomarr@student.42.fr',
 			'date_of_birth': '1997-07-04',
 			'first_name': 'Carolina',
 			'last_name': 'Somarriba',
@@ -43,7 +43,7 @@ class Command(BaseCommand):
 		{
 			'username': 'jess',
 			'password': 'pass123',
-			'email': 'jess@email.com',
+			'email': 'jrouillo@student.42.fr',
 			'date_of_birth': '1994-05-13',
 			'first_name': 'Jessica',
 			'last_name': 'Rouillon',
@@ -70,7 +70,7 @@ class Command(BaseCommand):
 		{
 			'username': 'lebidou',
 			'password': 'pass123',
-			'email': 'lebidou@email.com',
+			'email': 'traans.een.daance@gmail.com',
 			'date_of_birth': '2010-01-01',
 			'first_name': 'Lebidou',
 			'last_name': 'Onvoitplus',

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     username = models.CharField(blank=False, null=False, max_length=12, unique=True)
@@ -9,6 +10,7 @@ class CustomUser(AbstractUser):
     is2fa = models.BooleanField(default=False)
     totp_secret = models.CharField(blank=True, null=True)
     is_online = models.BooleanField(default=False)
+    last_ping = models.DateTimeField(default=timezone.now)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, default='avatars/default.png')
     isAnonymous = models.BooleanField(default=False)
     # pour lier avec dashboard

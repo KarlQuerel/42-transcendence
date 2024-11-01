@@ -7,6 +7,9 @@ from '../../main.js';
 import { getCookie }
 from './signin.js';
 
+import { doesUserExist, doesEmailExist }
+from '../../../javascript/components/pong/utils.js';
+
 /***********************************************\
 *					RENDERING					*
 \***********************************************/
@@ -82,7 +85,8 @@ export function renderSignUp()
 	const	gdprLabel = document.createElement('label');
 	gdprLabel.classList.add('form-input', 'sign-up-label', 'form-label');
 	gdprLabel.setAttribute('for', 'gdpr-acceptance');
-	gdprLabel.textContent = 'I accept the Privacy Policy Terms';
+	gdprLabel.style.textAlign = 'center';
+	gdprLabel.innerHTML = 'I accept the<br>Privacy Policy Terms';
 	gdprLabel.classList.add('form-check-label');
 
 	gdprFormGroup.appendChild(gdprCheckbox);
@@ -154,18 +158,21 @@ export function initializeSignUp()
 
 			// Password confirmation
 			let	password_confirmation = getIdentifier('password_confirmation');
+			let password_confirmation_type = 'password_confirmation';
 
 			// Email
 			let	email = getIdentifier('email');
 			let	email_type = checkIdentifierType(email, 'email');
+
 
 			if (!allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type) || password !== password_confirmation)
 			{
 				if (password !== password_confirmation)
 				{
 					console.log('Error: Password and password confirmation do not match.');
+					password_confirmation_type = 'error';
 				}
-				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
+				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type);
 				return ;
 			}
 			else
@@ -236,11 +243,13 @@ function isValidDateOfBirth(date_of_birth)
 
 function isValidUsername(username)
 {
-	const	acceptedCharacters = /^[a-zA-Z0-9_-]+$/;
+	const acceptedCharacters = /^[a-z0-9_-]+$/;
 
 	if (username.length >= 12)
 		return false;
 	else if (acceptedCharacters.test(username) == false)
+		return false;
+	if (doesUserExist(username))
 		return false;
 	return true;
 }
@@ -265,6 +274,8 @@ function isValidEmail(email)
 		return false;
 	if (domainPart.length > 255)
 		return false;
+	if (doesEmailExist(email))
+		return false;
 	return true;
 }
 
@@ -275,16 +286,20 @@ export function allValuesAreValid(first_name_type, last_name_type, username_type
 	return true;
 }
 
-export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type)
+export function sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type)
 {
+	if (DEBUG)
+		console.log('Enter sendErrorToFrontend');
+
 	const	errorMessages =
 	{
-		first_name: 'Please enter a first name with fewer than 30 characters, using only letters.',
+		first_name: 'First name must have less than 30 characters, using only letters.',
 		last_name: 'Please enter a last name with fewer than 30 characters, using letters, spaces, and hyphens only.',
 		date_of_birth: 'Please enter a valid date of birth.',
-		username: 'Username must be fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
+		username: 'Username must be unique, fewer than 13 characters and can include letters, numbers, underscores, and hyphens.',
 		password: 'Password must be at least 6 characters long.',
-		email: 'Please enter a valid email address.'
+		email: 'Email must be unique and in valid format [xxx@xxx.xxx].',
+		password_confirmation: 'Password and password confirmation do not match.'
 	};
 
 	const	fields =
@@ -294,8 +309,15 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		{ type: date_of_birth_type, id: 'date_of_birth', message: errorMessages.date_of_birth },
 		{ type: username_type, id: 'username', message: errorMessages.username },
 		{ type: password_type, id: 'password', message: errorMessages.password },
-		{ type: email_type, id: 'email', message: errorMessages.email }
+		{ type: email_type, id: 'email', message: errorMessages.email },
+		{ type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
+		{ type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
+		{ type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
+		{ type: email_type, id: 'email_input', message: errorMessages.email }
 	];
+
+	if (typeof password_confirmation_type !== 'undefined')
+		fields.push({ type: password_confirmation_type, id: 'password_confirmation', message: errorMessages.password_confirmation });
 
 	fields.forEach(field =>
 	{
@@ -309,6 +331,10 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 			const	error = document.createElement('p');
 			error.textContent = field.message;
 			error.classList.add('error-message');
+			
+			if (field.id === 'email_input')
+				error.classList.add('email-input-error-message');
+
 			formGroup.appendChild(error);
 		}
 	});
@@ -317,6 +343,7 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 /***********************************************\
 *				 MAIN FUNCTION				 *
 \***********************************************/
+
 function addNewUser(username, password, email, date_of_birth, first_name, last_name)
 {
 	fetch('/api/users/addUser/',

@@ -1,9 +1,9 @@
 /************************************************
-					SIGN-UP
+					2FA
 ***********************************************/
 
 /*		CONTAINER		*/
-.sign-up-container
+.two-fa-container
 {
 	display: flex;
 	flex-direction: column;
@@ -13,7 +13,7 @@
 }
 
 /*		TITLE		*/
-.sign-up-title
+.two-fa-title
 {
 	font-size: 5vh;
 	color: var(--base-white);
@@ -21,17 +21,19 @@
 	margin-bottom: 2vh;
 	z-index: 1000;
 	background-color: var(--base-dark);
+	bottom: 20vh;
+    position: relative;
 }
 
-/*		FORM		*/
-#sign-up-form
+/*			FORM			*/
+#two-fa-form
 {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	width: 100%;
-	height: -webkit-fill-available;
+	height: 75vh;
+	margin-left: 15%;
 }
 
 .form-group
@@ -42,17 +44,8 @@
 	width: 30%;
 }
 
-/*		INPUT		*/
-.sign-up-label
-{
-	font-size: 1.75vh;
-	background-color: var(--base-dark);
-	margin-bottom: 1vh;
-	width: max-content;
-	padding: 1vh;
-}
-
-.sign-up-input
+/*			INPUT			*/
+.two-fa-input
 {
 	display: block;
 	width: 100%;
@@ -66,80 +59,40 @@
 	text-align: center;
 }
 
-.sign-up-input::placeholder
+.two-fa-input::placeholder
 {
 	color: var(--base-white);
 	opacity: 0.7;
 }
 
-/*		BUTTONS			*/
-.sign-up-button
+.two-fa-label
+{
+	font-size: 1.75vh;
+	background-color: var(--base-dark);
+	margin-bottom: 1vh;
+	width: max-content;
+	padding: 1vh;
+}
+
+/*			BUTTONS			*/
+.two-fa-button
 {
 	width: 15vh !important;
 	height: 5vh !important;
 	margin-top: 3vh;
 	margin-right: 8vh;
 	transform: translate(-50%, -50%);
-	left: 8%;
+	left: 23%;
 	font-size: 1em;
 }
 
-.sign-up-wrapper
+.two-fa-wrapper
 {
 	display: flex;
 	justify-content: flex-start;
 	width: 100%;
 	max-width: 60vh;
 }
-
-/*		CHECKBOX		*/
-.GDPR-checkbox
-{
-	width: 17vh;
-	font-size: 1vh;
-	padding: 2vh;
-}
-
-#gdpr-acceptance
-{
-	width: 3vh;
-	height: 3vh;
-	z-index: 1;
-}
-
-.form-check-input[type=checkbox]
-{
-	border-radius: 60em;
-	border: solid 0.3vh var(--base-green);
-	background-color: var(--base-light-green);
-	appearance: none;
-	margin-top: .25em;
-	position: relative;
-}
-
-.form-check-input:checked[type=checkbox]
-{
-	background-image: url('../../assets/images/sign-up/checked.gif');
-	background-size: 5vh 5vh;
-}
-
-/*		ERRORS			*/
-.error-message
-{
-	font-size: 1em;
-	color: var(--base-red);
-	z-index: 1000;
-	background: var(--base-dark);
-	text-align: center;
-	font-weight: 900;
-}
-
-.email-input-error-message
-{
-    bottom: 2vh;
-    position: relative;
-}
-
 
 /*		MEDIA QUERIES		*/
 @media (max-width: 768px)
@@ -149,12 +102,12 @@
 		width: 80%;
 	}
 
-	.sign-up-title
+	.two-fa-title
 	{
 		font-size: 4vh;
 	}
 
-	.sign-up-input
+	.two-fa-input
 	{
 		font-size: 1.1vh;
 	}
@@ -167,12 +120,12 @@
 		width: 90%;
 	}
 
-	.sign-up-title
+	.two-fa-title
 	{
 		font-size: 3.5vh;
 	}
 
-	.sign-up-button
+	.two-fa-button
 	{
 		width: 40vh;
 	}
