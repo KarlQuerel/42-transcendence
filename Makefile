@@ -14,7 +14,6 @@ clean :
 	@if (docker ps --filter "name=Dashboard" --filter "status=running" | grep -q Dashboard) && (docker ps --filter "name=User" --filter "status=running" | grep -q User); then \
 		make clear_db; \
 	fi
-	@make clean_images
 	@find . -name "*.pyc" -delete
 	@cd src && docker-compose down --remove-orphans
 
@@ -85,7 +84,5 @@ clear_db:
 	docker exec -it Dashboard bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_dashboard_db"
 	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_user_db"
 
-clean_images:
-	find ./src/user/user_management/media/avatars/ -type f -name '*_*' -exec rm {} \;
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends clean_images
+.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends
