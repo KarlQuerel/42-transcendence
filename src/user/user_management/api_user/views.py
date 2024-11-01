@@ -781,7 +781,6 @@ def getInactiveUsersID(request):
 
 
 @api_view(['DELETE'])
-@csrf_protect
 def deleteInactiveUsersFriends(request):
 	try:
 		usersToDeleteID = request.data.get('inactiveUsersID', [])

@@ -879,7 +879,6 @@ async function deleteUserAccount()
 			method: 'DELETE',
 			headers:
 			{
-				'X-CSRFToken': getCookie('csrftoken'),
 				'Content-Type': 'application/json',
 			},
 		});

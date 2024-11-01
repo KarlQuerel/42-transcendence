@@ -48,7 +48,6 @@ export async function deleteInactiveUsers(inactiveUsersID)
             method: 'DELETE',
             headers:
             {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
@@ -70,7 +69,6 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
             method: 'DELETE',
             headers:
             {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
@@ -88,7 +86,6 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
             method: 'DELETE',
             headers:
             {
-                'X-CSRFToken': getCookie('csrftoken'),
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ inactiveUsersID })
