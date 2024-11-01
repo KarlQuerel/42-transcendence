@@ -1,7 +1,7 @@
 /***********************************************\
 -				GLOBAL VARIABLES				-
 \***********************************************/
-export	const	DEBUG = true;
+export	const	DEBUG = false;
 export	const	GITHUBACTIONS = false;
 
 /***********************************************\
@@ -177,8 +177,7 @@ export function getSignedInState()
 function router()
 {
 	manageInactiveUsers();
-	
-	// KARL HERE FIX ME
+
 	let path = normalizePath(window.location.pathname) || '/home';
 
 	//	Assigning default path if none
@@ -286,9 +285,7 @@ window.navigateTo = navigateTo;
 /***		Enabling Client-side Routing	***/
 document.addEventListener("DOMContentLoaded", () =>
 {
-	// KARL HERE
-	// alert(window.location.pathname);
-	
+
 	// Rendering Navbar
 	renderNavbar();
 
