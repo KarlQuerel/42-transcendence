@@ -155,10 +155,6 @@ let	currentPath = '';
 /***			Normalizing Paths			***/
 function normalizePath(path)
 {
-	// KARL HERE DEBUG
-	// console.log('first test', '/dashboard/'.replace(/\/+$/, ''));	// --> Should output: "/dashboard"
-	// console.log('second test', '/'.replace(/\/+$/, ''));			// --> Should output:
-
 	path = path.startsWith('/') ? path : '/' + path;
 	return path.replace(/\/+$/, '') || '/';
 }
@@ -291,7 +287,7 @@ window.navigateTo = navigateTo;
 document.addEventListener("DOMContentLoaded", () =>
 {
 	// KARL HERE
-	alert(window.location.pathname);
+	// alert(window.location.pathname);
 	
 	// Rendering Navbar
 	renderNavbar();

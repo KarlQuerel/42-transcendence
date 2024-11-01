@@ -4,8 +4,6 @@
 import { DEBUG }
 from '../../main.js';
 
-
-// KARL HERE
 export function renderPageNotFound()
 {
 	// Create container for the Not Found page
@@ -41,7 +39,6 @@ export function renderPageNotFound()
 	notFoundContainer.appendChild(gif2);
 	notFoundContainer.appendChild(gif3);
 	notFoundContainer.appendChild(gif4);
-	notFoundContainer.appendChild(gif5);
 
 	// Return the complete not found container
 	return notFoundContainer;

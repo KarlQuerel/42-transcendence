@@ -23,38 +23,36 @@
 
 #gif-not-found-1
 {
-	position: absolute;
+	position: fixed;
 	z-index: 10;
 	top : 27%;
 }
 
 #gif-not-found-2
 {
-	position: absolute;
+	position: fixed;
 	z-index: 10;
 	left: 50%;
 	width: 50%;
 	top : 12%;
+	transform: scaleX(-1);
 }
 
 #gif-not-found-3
 {
-	position: absolute;
+	position: fixed;
 	z-index: 10;
-	right: 50%;
-	width: 2vh;
-	top: 80%;
+	right: 89%;
+	width: 23vh;
+	top: 72%;
 }
 
 #gif-not-found-4
 {
-	position: absolute;
+	position: fixed;
 	z-index: 10;
-	left: 1%;
-}
-
-#gif-not-found-5
-{
-	position: absolute;
-	z-index: 10;
+	left: 15%;
+	top: 26%;
+	width: 28vh;
+	transform: scaleX(-1);
 }

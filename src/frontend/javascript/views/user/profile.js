@@ -283,46 +283,17 @@ export function renderProfile()
 		twoFactorAuthContainer.appendChild(twoFactorAuthLabel);
 		twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
 
-		// KARL HERE BACKUP
-		// document.addEventListener('DOMContentLoaded', async () => {
-		// 	const	is2fa = await getUser2FAStatus();
-		// 	if (is2fa !== null) {
-		// 		twoFactorAuthCheckbox.checked = is2fa;
-		// 	}
-		// });
-
-		// twoFactorAuthCheckbox.addEventListener('change', () => {
-		// 	const	is2fa = twoFactorAuthCheckbox.checked;
-		// 	updateUser2FAStatus(is2fa);
-		// });
-		// FIN BACKUP
-
-		// KARL HERE FIX ME DOESNT WORK
-		// Retrieve the 2FA status from localStorage on page load
 		document.addEventListener('DOMContentLoaded', async () => {
-			try {
-				// Try to get the saved state from localStorage
-				const saved2FAState = localStorage.getItem('twoFactorAuthChecked');
-				console.log('LALA',saved2FAState);
-
-				if (saved2FAState !== null) {
-					// Use the saved state from localStorage
-					twoFactorAuthCheckbox.checked = JSON.parse(saved2FAState);
-				} else {
-					// If no saved state, fetch from the server
-					const is2fa = await getUser2FAStatus();
-					console.log('BITE', is2fa);
-					if (is2fa !== null) {
-						twoFactorAuthCheckbox.checked = is2fa;
-						// Save the fetched state in localStorage
-						localStorage.setItem('twoFactorAuthChecked', JSON.stringify(is2fa));
-					}
-				}
-			} catch (error) {
-				console.error('Error retrieving 2FA status:', error);
+			const	is2fa = await getUser2FAStatus();
+			if (is2fa !== null) {
+				twoFactorAuthCheckbox.checked = is2fa;
 			}
 		});
-		// FIN KARL FIX
+
+		twoFactorAuthCheckbox.addEventListener('change', () => {
+			const	is2fa = twoFactorAuthCheckbox.checked;
+			updateUser2FAStatus(is2fa);
+		});
 
 		// Save the checkbox state in localStorage when it's toggled
 		twoFactorAuthCheckbox.addEventListener('change', () => {
