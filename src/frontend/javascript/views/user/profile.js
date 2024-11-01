@@ -514,8 +514,17 @@ async function profileEditMode(userData_edit, personalInfoSection)
 			if (DEBUG)
 				console.log('Profile changes are valid.');
 
-			if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
-				await saveNewAvatar(avatarFile);
+            if (avatarFile)
+			{
+				if (await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
+				{
+					await saveNewAvatar(avatarFile);
+				}
+				else
+				{
+					alert('❌ File type not supported (only jpeg, jpg, png) ❌');
+				}
+			}
 			await saveProfileChanges(userData_edit);
 			navigateTo('/profile');
 		}

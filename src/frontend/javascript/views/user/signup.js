@@ -242,16 +242,20 @@ function isValidDateOfBirth(date_of_birth)
 	return true;
 }
 
-function isValidUsername(username)
+async function isValidUsername(username)
 {
 	const acceptedCharacters = /^[a-z0-9_-]+$/;
 
 	if (username.length >= 12)
 		return false;
-	else if (acceptedCharacters.test(username) == false)
+	else if (acceptedCharacters.test(username) === false)
 		return false;
-	if (!doesUserExist(username))
+	if (await doesUserExist(username) === true)
+	{
+		if (DEBUG)
+			console.log('Error: Username already exists.');
 		return false;
+	}
 	return true;
 }
 
@@ -264,7 +268,7 @@ function isValidPassword(password)
 	return true;
 }
 
-function isValidEmail(email)
+async function isValidEmail(email)
 {
 	const	acceptedCharacters = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	const	[localPart, domainPart] = email.split('@');
@@ -275,8 +279,12 @@ function isValidEmail(email)
 		return false;
 	if (domainPart.length > 255)
 		return false;
-	if (!doesEmailExist(email))
+	if (await doesEmailExist(email) === true)
+	{
+		if (DEBUG)
+			console.log('Error: Email already exists.');
 		return false;
+	}
 	return true;
 }
 

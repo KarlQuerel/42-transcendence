@@ -37,7 +37,7 @@ def getSpecificUserGameHistory(request):
 
 		return Response(serializer.data)
 	except Exception as e:
-		return Response({'getSpecificUserGameHistory error': str(e)}, status=500)
+		return Response({'getSpecificUserGameHistory error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 # Adds a new game history instance
@@ -82,7 +82,7 @@ def addStats(request):
 
 		return Response({"message": "Game history instance added successfully"})
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['PUT'])
@@ -109,7 +109,7 @@ def anonymiseGameHistory(request):
 		return Response({"anonymiseGameHistory view message": "Game history instance anonymised successfully"})
 
 	except Exception as e:
-		return Response({'error': str(e)}, status=500)
+		return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['DELETE'])
@@ -201,4 +201,4 @@ def deleteGameHistoryInactiveUsers(request):
 		return Response({"deleteGameHistory view message": "Account deleted successfully"})
 
 	except Exception as e:
-		return Response({'Delete inactive users view error': str(e)}, status=500)
+		return Response({'Delete inactive users view error': str(e)}, status=status.HTTP_404_NOT_FOUND)

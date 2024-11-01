@@ -121,11 +121,14 @@ export async function doesUserExist(playerName)
 {
 	try
 	{
-		const	data = await apiRequest(`/api/users/does-user-exist/${playerName}/`,
+		const	data = await fetch(`/api/users/does-user-exist/${playerName}/`,
 		{
 			method: 'GET',
 		});
-		return data.user_exists;
+		let result = await data.json();
+		if (DEBUG)
+			console.log('doesUserExist result = ', result.user_exists);
+		return result.user_exists;
 	}
 	catch (error)
 	{
@@ -139,12 +142,16 @@ export async function doesEmailExist(email)
 {
 	try
 	{
-		const	data = await apiRequest(`/api/users/does-email-exist/${email}/`,
+		const	data = await fetch(`/api/users/does-email-exist/${email}/`,
 		{
 			method: 'GET',
 		});
 
-		return data.email_exists;
+		let result = await data.json();
+
+		if (DEBUG)
+			console.log('doesEmailExist result = ', result.email_exists);
+		return result.email_exists;
 	}
 	catch (error)
 	{
