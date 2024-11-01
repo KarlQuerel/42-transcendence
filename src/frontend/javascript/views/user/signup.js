@@ -132,7 +132,7 @@ export function initializeSignUp()
 			const gdprCheckbox = document.getElementById('gdpr-acceptance');
 			if (!gdprCheckbox.checked)
 			{
-				alert('Please accept the Privacy Policy Terms before proceeding.');
+				alert('❌ Please accept the Privacy Policy Terms before proceeding. ❌');
 				return;
 			}
 
@@ -169,7 +169,8 @@ export function initializeSignUp()
 			{
 				if (password !== password_confirmation)
 				{
-					console.log('Error: Password and password confirmation do not match.');
+					if (DEBUG)
+						console.log('Error: Password and password confirmation do not match.');
 					password_confirmation_type = 'error';
 				}
 				sendErrorToFrontend(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type, password_confirmation_type);
@@ -360,10 +361,6 @@ export function sendErrorToFrontend(first_name_type, last_name_type, username_ty
 		{ type: username_type, id: 'username', message: errorMessages.username },
 		{ type: password_type, id: 'password', message: errorMessages.password },
 		{ type: email_type, id: 'email', message: errorMessages.email },
-		// { type: first_name_type, id: 'first_name_input', message: errorMessages.first_name },
-		// { type: last_name_type, id: 'last_name_input', message: errorMessages.last_name },
-		// { type: date_of_birth_type, id: 'dob_input', message: errorMessages.date_of_birth },
-		// { type: email_type, id: 'email_input', message: errorMessages.email }
 	];
 
 	if (typeof password_confirmation_type !== 'undefined')
@@ -432,7 +429,8 @@ function addNewUser(username, password, email, date_of_birth, first_name, last_n
 	{
 		const	maskedPassword = '*'.repeat(password.length);
 		const	safeData = { ...data, password: maskedPassword };
-		console.log('Success:', safeData);
+		if (DEBUG)
+			console.log('Success:', safeData);
 		navigateTo('/sign-in');
 	})
 	.catch((error) =>

@@ -19,7 +19,7 @@ addStats view, informing Django of the game’s result so it can update the data
 export async function sendResultsToBackend() {
 	try {
 		if (DEBUG)
-		console.log("Results object:", Results);
+			console.log("Results object:", Results);
 
 		if (!Results.opponent_username) {
 			throw new Error("Missing opponent_username");

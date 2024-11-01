@@ -753,7 +753,8 @@ async function badge(gameHistory, allUsers)
 	{
 		const allStats = await retrieveAllUserStats(allUsers);
 
-		if (DEBUG) console.log("allStats: ", allStats);
+		if (DEBUG)
+			console.log("allStats: ", allStats);
 
 		const rankingPosition = retrieveConnectedUserRanking(allStats, gameHistory[0].myUsername);
 

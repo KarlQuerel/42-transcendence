@@ -83,7 +83,8 @@ function checkGameData(data)
 	{
 		if (value == undefined)
 		{
-			console.log(`ERROR: ${key} is undefined`);
+			if (DEBUG)
+				console.log(`ERROR: ${key} is undefined`);
 			return false;
 		}
 	}
@@ -101,7 +102,8 @@ export function getPaddleAction()
 
 	if (!checkGameData(data))
 	{
-		console.log("Error updating data : data variables are undefined");
+		if (DEBUG)
+			console.log("Error updating data : data variables are undefined");
 		return ERROR;
 	}
 

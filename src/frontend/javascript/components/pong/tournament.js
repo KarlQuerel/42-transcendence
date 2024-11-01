@@ -193,7 +193,8 @@ export async function displayTournamentForm()
 			try
 			{
 				const	username = await loadUserManagementData();
-				if (DEBUG) console.log("Username:", username);
+				if (DEBUG)
+					console.log("Username:", username);
 				playerInput.value = username.username.toLowerCase();
 				playerInput.disabled = true;
 				playerNames[currentPlayerIndex] = playerInput.value;
@@ -282,7 +283,8 @@ async function validatePasswordTournament(username, password)
 	const	isValid = await checkPassword(username, password);
 	if (isValid === true)
 	{
-		console.log('Password is valid. Proceed to game.');
+		if (DEBUG)
+			console.log('Password is valid. Proceed to game.');
 		return true;
 	}
 	else
@@ -308,8 +310,8 @@ export function startTournamentGame(playerNames)
 	{
 		if (nameSet.has(playerName))
 		{
-			const	TEST = "- ❌ Player names must be unique ❌\n- Press OK to be redirected to the menu";
-			alert(TEST);
+			const	nameCheck = "- ❌ Player names must be unique ❌\n- Press OK to be redirected to the menu";
+			alert(nameCheck);
 			{
 				navigateTo('/pong');
 			}
@@ -427,17 +429,14 @@ export function setupFinalMatch()
 	GameConf.isFinalMatch = true;
 	
 	const	finalMatchup = GameConf.winners;
-	console.log("Setting up final match between:", finalMatchup);
+	if (DEBUG)
+		console.log("Setting up final match between:", finalMatchup);
 	
 	player1.name = finalMatchup[0];
 	player2.name = finalMatchup[1];
 
-	console.log("Starting final match between:", player1.name, "and", player2.name);
-	console.log("Ball speed =", BallConf.speed);
 	resetGame();
 	drawUsernames(player1.name, player2.name);
-
-	console.log("GameState after setting final match:", GameState)
 
 	updateRematchButtonText();
 }

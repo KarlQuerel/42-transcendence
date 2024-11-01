@@ -72,7 +72,8 @@ export function renderSignIn()
 		const	username = emailInput.value;
 		const	password = passwordInput.value;
 
-		if (DEBUG) console.log('About to sign in with:', username, password);
+		if (DEBUG)
+			console.log('About to sign in with:', username, password);
 
 		login(username, password);
 	});

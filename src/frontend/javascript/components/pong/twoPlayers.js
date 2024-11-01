@@ -96,12 +96,7 @@ export function displayPlayer2Form()
 		if (isNameValid(player2Name) == false)
 			return;
 
-		console.log(player2Name);
-		console.log('entering does user exists');
 		const	userEXists = await doesUserExist(player2Name);
-		console.log(userEXists);
-
-
 
 		if (userEXists === true)
 		{
@@ -196,7 +191,8 @@ async function validatePasswordTwoPlayers(username, password, modal, player2Form
 	const	isValid = await checkPassword(username, password);
 	if (isValid === true)
 	{
-		console.log('Password is valid. Proceed to game.');
+		if (DEBUG)
+			console.log('Password is valid. Proceed to game.');
 		modal.remove();
 		player2Form.remove();
 		player2.name = username;

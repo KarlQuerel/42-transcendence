@@ -137,7 +137,7 @@ export function renderProfile()
 	fetchUserData()
 		.then(userData =>
 		{
-			if (!userData)
+			if (!userData && DEBUG)
 				console.log('No user data found');
 
 			userData_edit = userData;
@@ -243,23 +243,23 @@ export function renderProfile()
 		requestInfosButton.textContent = 'Request My Infos';
 		container.appendChild(requestInfosButton);
 
-        requestInfosButton.addEventListener('click', () => {
-            apiRequest('/api/dashboard/getGameHistory/', {
-                method: 'GET',
-            })
-            .then(games => {
-                apiRequest('/api/users/send-infos-to-user/', {
-                    method: 'POST',
-                    body: JSON.stringify(games),
-                })
-                .catch(error => {
-                    console.error('Error sending their personnal informations to the user:', error);
-                });
-            })
-            .catch(error => {
-                console.error('Error user game history:', error);
-            })
-        });
+		requestInfosButton.addEventListener('click', () => {
+			apiRequest('/api/dashboard/getGameHistory/', {
+				method: 'GET',
+			})
+			.then(games => {
+				apiRequest('/api/users/send-infos-to-user/', {
+					method: 'POST',
+					body: JSON.stringify(games),
+				})
+				.catch(error => {
+					console.error('Error sending their personnal informations to the user:', error);
+				});
+			})
+			.catch(error => {
+				console.error('Error user game history:', error);
+			})
+		});
 
 
 		/***************** 2FA *****************/
@@ -291,13 +291,13 @@ export function renderProfile()
 		twoFactorAuthContainer.appendChild(twoFactorAuthCheckbox);
 
 		twoFactorAuthCheckbox.addEventListener('change', async() => {
-            const    is2fa = await getUser2FAStatus();
-            
-            if (is2fa == true)
-                await updateUser2FAStatus(false);
-            else
-                await updateUser2FAStatus(true);
-        });
+			const    is2fa = await getUser2FAStatus();
+			
+			if (is2fa == true)
+				await updateUser2FAStatus(false);
+			else
+				await updateUser2FAStatus(true);
+		});
 
 		/************** ANONYMIZE DATA **************/
 		
@@ -340,7 +340,10 @@ export function renderProfile()
 				anonymizeUserData();
 			}
 			else
-				console.log('Anonymization cancelled.');
+			{
+				if (DEBUG)
+					console.log('Anonymization cancelled.');
+			}
 		});
 
 		/***************** LOG OUT *****************/
@@ -503,13 +506,13 @@ async function profileEditMode(userData_edit, personalInfoSection)
 
 		const	isValidData = verifyProfileChanges();
 
-        if (DEBUG)
-            console.log('isValidData = ', isValidData);
+		if (DEBUG)
+			console.log('isValidData = ', isValidData);
 
 		if (isValidData)
 		{
-            if (DEBUG)
-                console.log('Profile changes are valid.');
+			if (DEBUG)
+				console.log('Profile changes are valid.');
 
 			if (avatarFile && await verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput))
 				await saveNewAvatar(avatarFile);
@@ -535,8 +538,8 @@ function hideAllButtonsExcept(allowedButtonIds)
 
 function verifyProfileChanges()
 {
-    if (DEBUG)
-        console.log('Verifying profile changes...');
+	if (DEBUG)
+		console.log('Verifying profile changes...');
 
 	// Fetch the values from the input fields
 	const	firstName = getIdentifier('first_name_input');
@@ -554,8 +557,8 @@ function verifyProfileChanges()
 
 	const	allValid = allValuesAreValid(first_name_type, last_name_type, username_type, date_of_birth_type, password_type, email_type);
 
-    if (DEBUG)
-        console.log('allValuesAreValid = ', allValid);
+	if (DEBUG)
+		console.log('allValuesAreValid = ', allValid);
 
 	if (allValid == false)
 	{
@@ -574,18 +577,19 @@ function verifyProfileChanges()
 }
 
 async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput) {
-	if (DEBUG) console.log('Verifying avatar file...');
+	if (DEBUG)
+		console.log('Verifying avatar file...');
 
 	let result = true;
 
 	if (!saveButton)
-    {
+	{
 		console.error('Save button not found.');
 		return false;
 	}
 
 	if (!avatarInput)
-    {
+	{
 		console.error('Avatar input not found.');
 		return false;
 	}
@@ -598,7 +602,7 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 
 	// Check if the file is not empty
 	if (!avatarFile || !avatarFile.size || avatarFile.name === '')
-    {
+	{
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'Select a file';
@@ -609,7 +613,7 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 	// Check if the file type is jpeg, jpg, or png
 	const	validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
 	if (!validTypes.includes(avatarFile.type))
-    {
+	{
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'File type not supported (only jpeg, jpg, png)';
@@ -619,7 +623,7 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 
 	// Check if the file size is no more than 1 MB
 	if (avatarFile.size > 1000000)
-    {
+	{
 		const	errorMessage = document.createElement('p');
 		errorMessage.className = 'error-messages-avatar';
 		errorMessage.textContent = 'File too large (max 1 MB)';
@@ -627,7 +631,8 @@ async function verifyAvatarFile(avatarFile, saveButton, avatarLabel, avatarInput
 		result = false;
 	}
 
-	if (DEBUG) console.log('Avatar file verification result:', result);
+	if (DEBUG)
+		console.log('Avatar file verification result:', result);
 
 	return result;
 }
@@ -659,13 +664,14 @@ async function saveProfileChanges(userData_edit)
 			}),
 		});
 
-		console.log('Profile updated successfully.');
+		if (DEBUG)
+			console.log('Profile updated successfully.');
 
 	}
 	catch (error)
 	{
 		console.error('Error updating profile:', error.message);
-		alert('An error occurred while updating the profile. Please check your new information and try again.');
+		alert('❌ An error occurred while updating the profile. Please check your new information and try again. ❌');
 	}
 }
 
@@ -699,14 +705,15 @@ async function saveNewAvatar(avatarFile)
 				console.log('Response status text:', response.statusText);
 			}
 		
-			console.log('Avatar updated successfully.');
+			if (DEBUG)
+				console.log('Avatar updated successfully.');
 			};
 			reader.readAsDataURL(avatarFile); // Read the file as a data URL
 		}
 		catch (error)
 		{
 			console.error('Error updating avatar:', error);
-			alert('An error occurred while updating the avatar.');
+			alert('❌ An error occurred while updating the avatar. ❌');
 		}
 	}
 }
@@ -730,13 +737,14 @@ async function updateUserAnonymousStatus()
 			},
 		});
 
-		console.log('Anonymous status updated successfully.');
+		if (DEBUG)
+			console.log('Anonymous status updated successfully.');
 
 	}
 	catch (error)
 	{
 		console.error('Error updating anonymous status:', error);
-		alert('Failed to update anonymous status: ' + error.message);
+		alert('❌ Failed to update anonymous status: ' + error.message);
 	}
 }
 
@@ -755,7 +763,6 @@ async function anonymizeUserData()
 			},
 		})
 		.then(user=>{
-			console.log('old_username = ', user.old_username, 'new_username = ', user.new_username);
 			apiRequest('/api/dashboard/anonymiseGameHistory/', {
 				method: 'PUT',
 				headers:
@@ -766,17 +773,18 @@ async function anonymizeUserData()
 				},
 				body: JSON.stringify(user),
 			})
-			console.log("Finished anonymising GameHistory")
+			if (DEBUG)
+				console.log("Finished anonymising GameHistory")
 		});
 
-		alert('Your data has been anonymized successfully.\nPlease use your new username for future logins.');
+		alert('❌ Your data has been anonymized successfully.\nPlease use your new username for future logins. ❌');
 		navigateTo('/profile');
 
 	}
 	catch (error)
 	{
 		console.error('Anonymization error:', error);
-		alert('Failed to anonymize data: ' + error.message);
+		alert('❌ Failed to anonymize data: ' + error.message);
 	}
 }
 
@@ -834,13 +842,14 @@ async function updateUser2FAStatus(is2fa)
 			body: JSON.stringify({ is2fa }),
 		});
 
-		console.log('2FA status updated successfully.');
+		if (DEBUG)
+			console.log('2FA status updated successfully.');
 
 	}
 	catch (error)
 	{
 		console.error('Error updating 2FA status:', error);
-		alert('Failed to update 2FA status: ' + error.message);
+		alert('❌ Failed to update 2FA status: ' + error.message);
 	}
 }
 
@@ -850,59 +859,63 @@ async function updateUser2FAStatus(is2fa)
 
 async function deleteUserAccount()
 {
-    console.log('Deleting account...');
-    try
-    {
-        // delete user's game history and account
-        await apiRequest('/api/dashboard/deleteGameHistory/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        })
-        console.log("Finished deleting user's GameHistory");
+	try
+	{
+		// delete user's game history and account
+		await apiRequest('/api/dashboard/deleteGameHistory/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		});
+		if (DEBUG)
+			console.log("Finished deleting user's GameHistory");
 
 
-        // delete friend requests
-        await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log("Finished deleting user's Friend Requests");
+		// delete friend requests
+		await apiRequest('api/users/friends/DeleteUserFriendRequests/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		});
+		if (DEBUG)
+			console.log("Finished deleting user's Friend Requests");
 
 
-        // delete friendships
-        await apiRequest('/api/users/deleteUserFriendships/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log("Finished deleting user's Friendships");
+		// delete friendships
+		await apiRequest('/api/users/deleteUserFriendships/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		});
+		if (DEBUG)
+			console.log("Finished deleting user's Friendships");
 
 
-        // delete account
-        await apiRequest('/api/users/deleteUser/', {
-            method: 'DELETE',
-            headers:
-            {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log("Finished deleting user's Account");
+		// delete account
+		await apiRequest('/api/users/deleteUser/', {
+			method: 'DELETE',
+			headers:
+			{
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Content-Type': 'application/json',
+			},
+		});
+		if (DEBUG)
+			console.log("Finished deleting user's Account");
 
 
-		console.log('Account deleted successfully.');
-		alert('Your account has been deleted successfully.');
+		if (DEBUG)
+			console.log('Account deleted successfully.');
+		alert('❌ Your account has been deleted successfully. ❌');
 
 		navigateTo('/sign-in');
 
@@ -910,6 +923,6 @@ async function deleteUserAccount()
 	catch (error)
 	{
 		console.error('Error during account deletion:', error);
-		alert('An error occurred while trying to delete your account.');
+		alert('❌ An error occurred while trying to delete your account. ❌');
 	}
 }

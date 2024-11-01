@@ -406,7 +406,6 @@ function checkTournamentWinner(winnerName)
 			GameState.isTournamentDone = true;
 			GameConf.winners.push(winnerName);
 			GameConf.tournamentWinner = winnerName;
-			console.log(' tournament winner', GameConf.tournamentWinner);
 			
 			hideWinningMessage();
 			showTournamentResults();

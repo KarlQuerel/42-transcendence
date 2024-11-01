@@ -59,8 +59,6 @@ INSTALLED_APPS = [
 	'friends',
 	'pytest',
     'api_user.apps.ApiConfig',
-    # 'api_dashboard.apps.ApiDashboardConfig', #C'EST TECHNIQUEMENT NÉCESSAIRE!!!
-    # 'api_dashboard', #TEST CARO //HERE --> ÇA PÈTE TOUT!! NE PAS LE REMETTRE!!!
 ]
 
 ################# Pour les JWTokens #################

@@ -9,7 +9,6 @@ from django.core.files.base import ContentFile
 #			ADD MANUALLY ENTERED USERS		#
 #********************************************
 
-# TODO - change password before push
 class Command(BaseCommand):
 	def handle(self, *args, **kwargs):
 		predefined_data = [
