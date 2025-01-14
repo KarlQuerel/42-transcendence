@@ -1,5 +1,7 @@
 <a id="top"></a>
 
+![Demo](./src/demo/demo.gif)
+
 # ft_transcendence
 `ft_transcendence` is a full-stack web application developed as part of the curriculum at 42. It showcases advanced web development skills by combining a wide range of technologies to deliver a polished and feature-rich application.
 
@@ -9,7 +11,6 @@
 - [Techonologies Used](#techonologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Controls](#controls)
 
 ## Introduction
 This project involves creating a web-based application that adheres to modern development practices. It integrates a back-end API with a front-end interface and includes features such as real-time communication, authentication, and responsive design. The goal of the project is to provide a robust user experience while demonstrating proficiency in both server-side and client-side programming.
