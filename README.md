@@ -65,6 +65,6 @@ To access and use the web application, open your web browser and navigate to:
 https://localhost:4430
 ```
 
-For more information, refer to the [subject PDF](https://github.com/KarlQuerel/42-so_long/blob/master/docs/en.subject.pdf).
+For more information, refer to the [subject PDF](https://github.com/KarlQuerel/42-transcendence/blob/main/docs/en.subject.pdf).
 
 [Back to Top](#top)
