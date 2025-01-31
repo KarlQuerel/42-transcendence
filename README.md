@@ -8,7 +8,7 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
-- [Techonologies Used](#techonologies-used)
+- [Techonlogies Used](#technologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
 
@@ -28,7 +28,6 @@ This project involves creating a web-based application that adheres to modern de
 - **Microservices and Multi-Container Architecture:** Modular and scalable application design.
 
 ## Technologies Used
-
 ### Front-End
 - **Bootstrap**: For responsive and modern UI design.
 
