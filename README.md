@@ -8,7 +8,7 @@
 ## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
-- [Techonlogies Used](#technologies-used)
+- [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Usage](#usage)
 
