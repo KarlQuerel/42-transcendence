@@ -4,16 +4,16 @@ RED = \033[0;31m
 NC = \033[0m
 
 #######		GENERAL RULES		#######
+all : env
+	@cd src && docker compose up -d --build
+	@make fill_db
+	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
+
 env :
 	@if [ ! -f src/.env ]; then \
 		cp src/.env.example src/.env; \
 		echo "$(GREEN)Created src/.env from src/.env.example$(NC)"; \
 	fi
-
-all : env
-	@cd src && docker compose up -d --build
-	@make fill_db
-	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
 clean :
 #if Dashboard and User databases are up, clear it
