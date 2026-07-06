@@ -651,8 +651,6 @@ async function saveProfileChanges(userData_edit)
 {
 	if (DEBUG)
 	{
-		console.log('Saving profile changes...');
-		console.log('Userdata =', userData_edit);
 	}
 
 	try
@@ -710,8 +708,6 @@ async function saveNewAvatar(avatarFile)
 			if (DEBUG)
 			{
 				console.log('Response:', response); // Log the entire response object
-				console.log('Response status:', response.status);
-				console.log('Response status text:', response.statusText);
 			}
 		
 			if (DEBUG)

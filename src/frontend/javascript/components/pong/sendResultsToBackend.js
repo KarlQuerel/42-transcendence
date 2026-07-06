@@ -55,7 +55,6 @@ export async function sendResultsToBackend() {
 
 		const data = await response.json();
 		if (DEBUG) {
-			console.log('Response from backend:', data);
 		}
 	} catch (error) {
 		console.error('Error sending results to backend:', error.message);
