@@ -4,7 +4,13 @@ RED = \033[0;31m
 NC = \033[0m
 
 #######		GENERAL RULES		#######
-all :
+env :
+	@if [ ! -f src/.env ]; then \
+		cp src/.env.example src/.env; \
+		echo "$(GREEN)Created src/.env from src/.env.example$(NC)"; \
+	fi
+
+all : env
 	@cd src && docker compose up -d --build
 	@make fill_db
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
@@ -85,4 +91,4 @@ clear_db:
 	docker exec -it User bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py clear_user_db"
 
 
-.PHONY: all clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends
+.PHONY: all env clean fclean re logs logs-nginx logs-profile logs-userViews logs-dashboardViews logs-database logs-dashboard-container check_allGameHistory check_currentGameHistory check_allUsers fill_db clear_db makemigrations_dashboard check_allFriendRequests check_allFriends
