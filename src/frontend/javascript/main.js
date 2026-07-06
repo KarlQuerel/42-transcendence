@@ -69,15 +69,12 @@ from "./views/user/change_password.js";
 import { manageInactiveUsers }
 from "./views/user/delete_inactive_users.js";
 
-
-/***			Footer						***/
-
 /***********************************************\
 -				DEFINING ROUTES					-
 \***********************************************/
 const	routes =
 {
-	'':
+	'/':
 	{
 		title: "Home",
 		render: renderHome
