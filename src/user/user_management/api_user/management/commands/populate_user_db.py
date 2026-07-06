@@ -1,9 +1,6 @@
 from django.core.management.base import BaseCommand
 from api_user.models import CustomUser
 
-import os
-from django.core.files import File
-from django.core.files.base import ContentFile
 
 #********************************************
 #			ADD MANUALLY ENTERED USERS		#

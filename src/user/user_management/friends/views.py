@@ -3,13 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from api_user.models import CustomUser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import permission_classes
-from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import login_required
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 from django.db.models import Q
-from django.views.decorators.csrf import csrf_protect
 
 
 class SendFriendRequestView(APIView):

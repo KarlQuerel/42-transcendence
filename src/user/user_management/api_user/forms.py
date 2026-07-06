@@ -1,6 +1,5 @@
 from django import forms
 from .models import CustomUser
-from django.contrib.auth.forms import UserCreationForm, SetPasswordForm
 
 
 class CustomUserRegistrationForm(forms.ModelForm):
