@@ -5,7 +5,7 @@ NC = \033[0m
 
 #######		GENERAL RULES		#######
 all :
-	@cd src && docker-compose up -d --build
+	@cd src && docker compose up -d --build
 	@make fill_db
 	@echo "$(GREEN)\n✨ Ft_Transcendence is ready and running on https://localhost:4430 ✨\n$(NC)"
 
@@ -15,7 +15,7 @@ clean :
 		make clear_db; \
 	fi
 	@find . -name "*.pyc" -delete
-	@cd src && docker-compose down --remove-orphans
+	@cd src && docker compose down --remove-orphans
 
 fclean : clean
 	cd src && docker system prune -af
@@ -27,19 +27,19 @@ re : fclean all
 #######		DOCKER CONTAINERS		#######
 
 logs:
-	cd src && docker-compose logs -f
+	cd src && docker compose logs -f
 
 logs-nginx:
-	cd src && docker-compose logs -f nginx
+	cd src && docker compose logs -f nginx
 
 logs-profile:
-	cd src && docker-compose logs -f profile
+	cd src && docker compose logs -f profile
 
 logs-dashboard:
-	cd src && docker-compose logs -f dashboard
+	cd src && docker compose logs -f dashboard
 
 logs-database:
-	cd src && docker-compose logs -f database
+	cd src && docker compose logs -f database
 
 logs-userViews:
 	docker logs User
