@@ -687,8 +687,6 @@ async function retrieveAllUserStats(allUsers)
 
 		if (DEBUG)
 		{
-			console.log("user: ", stats.username);
-			console.log("games: ", games);
 		}
 
 		games.forEach(game =>
@@ -730,9 +728,6 @@ function retrieveConnectedUserRanking(allStats, connectedUser)
 
 	if (DEBUG)
 	{
-		console.log("connected user : ", connectedUser);
-		console.log("success_percentage for ", userStats.username, " = ", userStats.success_percentage);
-		console.log("ranking position for ", userStats.username, " = ", userStats.ranking_position);
 	}
 
 	return userStats.ranking_position;

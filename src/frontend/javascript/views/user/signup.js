@@ -300,11 +300,6 @@ export function sendErrorToFrontend_editMode(first_name_type, last_name_type, da
 {
 	if (DEBUG)
 	{
-		console.log('Enter sendErrorToFrontend_editMode');
-		console.log('first_name_type:', first_name_type);
-		console.log('last_name_type:', last_name_type);
-		console.log('date_of_birth_type:', date_of_birth_type);
-		console.log('email_type:', email_type);
 	}
 
 	const	errorMessages =

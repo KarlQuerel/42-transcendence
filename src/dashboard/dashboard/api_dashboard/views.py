@@ -56,8 +56,7 @@ def addStats(request):
 		
 
 		user = CustomUser.objects.filter(username=myUsername).first()
-		if user and user.is_authenticated:
-			print("User is authenticated : ", myUsername)
+		if user:
 			GameHistory.objects.create(
 				myUsername=myUsername,
 				opponentUsername=opponentUsername,
@@ -65,12 +64,10 @@ def addStats(request):
 				myScore=myScore,
 				date=date
 			)
-			print("gamehistory instance created for user: ", myUsername)
 
 		# Check if the opponent is authenticated and add their game history if they have an account
 		opponent = CustomUser.objects.filter(username=opponentUsername).first()
-		if opponent and opponent.is_authenticated:
-			print("Opponent is authenticated : ", opponentUsername)
+		if opponent:
 			GameHistory.objects.create(
 				myUsername=opponentUsername,
 				opponentUsername=myUsername,
@@ -78,7 +75,6 @@ def addStats(request):
 				myScore=opponentScore,
 				date=date
 			)
-			print("gamehistory instance created for user: ", myUsername)
 
 		return Response({"message": "Game history instance added successfully"})
 	except Exception as e:
@@ -104,7 +100,6 @@ def anonymiseGameHistory(request):
 				game.opponentUsername = newUsername
 			game.save()
 
-		print("Game history instances anonymised successfully")
 
 		return Response({"anonymiseGameHistory view message": "Game history instance anonymised successfully"})
 
@@ -130,7 +125,6 @@ def deleteGameHistory(request):
 				return Response({"error": "No matching games found"}, status=status.HTTP_200_OK)
 
 			games.delete()
-			print(f"Deleted games where user is {username}")
 
 			opponent_games = GameHistory.objects.filter(Q(opponentUsername=username))
 			for game in opponent_games:
@@ -138,7 +132,6 @@ def deleteGameHistory(request):
 					game.opponentUsername = "deleted_user"
 				game.save()
 
-			print(f"Deleted games where opponent is {username}")
 
 		return Response({"deleteGameHistory view message": "Game history instances deleted successfully"}, status=status.HTTP_200_OK)
 
@@ -159,7 +152,6 @@ def deleteGameHistoryInactiveUsers(request):
 				return Response({"error": "Invalid user ID format"}, status=400)
 
 		if not usersToDeleteID:
-			print("No matching users found")
 			return Response({"error": "No matching users found"})
 		
 		usersToDelete = CustomUser.objects.filter(id__in=usersToDeleteID)
@@ -168,35 +160,28 @@ def deleteGameHistoryInactiveUsers(request):
 
 		usersToDeleteUsername = []
 		allUsers = CustomUser.objects.all()
-		print('allUsers', allUsers)
 
 		for user in allUsers:
 			for userID in usersToDeleteID:
 				if (userID == user.id):
 					usersToDeleteUsername.append(user.username)
-		print('usersToDeleteUsername', usersToDeleteUsername)
 
 		for username in usersToDeleteUsername:
 			games = GameHistory.objects.all()
 			for game in games:
 				if game.myUsername == username:
-					print("deleted game for", username)
 					game.delete()
 
 			games = GameHistory.objects.filter(Q(opponentUsername=username))
 			for game in games:
 				if game.opponentUsername == username:
-					print("deleted opponent username for", username)
 					game.opponentUsername = "deleted_user"
 					game.save()
 		
-		print("Game history instances deleted successfully")
 
 		user = CustomUser.objects.get(username=username)
-		print("deleted account for", username)
 		user.delete()
 
-		print("User account deleted successfully")
 
 		return Response({"deleteGameHistory view message": "Account deleted successfully"})
 

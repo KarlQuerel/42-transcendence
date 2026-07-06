@@ -205,16 +205,6 @@ export function hideCanvas()
 }
 
 /***			Keys Handling					***/
-export function blockKeys(event)
-{
-	const blockedKeys = ['p', 'Escape', 'ArrowUp', 'ArrowDown', 'w', 's'];
-
-	if (GameConf.keysBlocked === true && blockedKeys.includes(event.key))
-	{
-		event.preventDefault();
-	}
-}
-
 export function enableKeyBlocking()
 {
 	GameConf.keysBlocked = true;

@@ -31,17 +31,12 @@ export function renderFriendsList()
 		{
 			if (DEBUG)
 			{
-				console.log('other_users: ', other_users);
-				console.log('users length: ', other_users.length);
 			}
 
 			for (const	other_user of other_users)
 			{
 				if (DEBUG)
 				{
-					console.log('other_user: ', other_user.username);
-					console.log('friendship: ', other_user.friendship_status);
-					console.log('users length: ', other_users.length);
 				}
 				const	userCard = await createUserCard(other_user);
 				

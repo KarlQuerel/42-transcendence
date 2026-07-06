@@ -14,7 +14,6 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.http import JsonResponse
-from django.utils import timezone
 from django.conf import settings
 from .serializers import UsernameSerializer
 from django.db.models import Q
@@ -34,7 +33,6 @@ logger = logging.getLogger(__name__)
 def addUser(request):
 	try:
 		data = json.loads(request.body)
-		print(f"Received data: {data}")
 	except json.JSONDecodeError:
 		return JsonResponse({'error': 'Invalid JSON'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -47,7 +45,6 @@ def addUser(request):
 		return JsonResponse(form.cleaned_data, status=status.HTTP_201_CREATED)
 
 	else:
-		print(f"addUser errors: {form.errors}")
 		return JsonResponse(form.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -460,8 +457,7 @@ we are providing you with an export of your personal data.
 		)
 
 		return JsonResponse({'success': 'user informations send to user email'}, status=status.HTTP_200_OK)
-	except Exception as e:
-		print(f"Error: {e}")
+	except Exception:
 		return JsonResponse({'error': 'An error occurred while sending user information'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -713,7 +709,6 @@ def deleteUserFriendships(request):
 
 		try:
 			friendships = CustomUser.objects.filter(friends=user)
-			print('friendships to delete:', friendships)
 
 			for friendship in friendships:
 				friendship.friends.remove(user)

@@ -186,8 +186,6 @@ function router()
 
 	if (DEBUG)
 	{
-		console.log('Current path:', path);
-		console.log('Route:', route);	
 	}
 
 	//	Clear previous route if necessary

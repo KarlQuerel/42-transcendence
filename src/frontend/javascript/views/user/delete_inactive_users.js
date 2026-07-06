@@ -65,7 +65,7 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
     // delete inactive users' friend requests
     try
     {
-        const response = await fetch('api/users/friends/DeleteInactiveUsersFriendRequests/', {
+        const response = await fetch('/api/users/friends/DeleteInactiveUsersFriendRequests/', {
             method: 'DELETE',
             headers:
             {
@@ -82,7 +82,7 @@ export async function deleteInactiveUsersFriendsAndRequests(inactiveUsersID)
     // delete inactive users' friends 
     try
     {
-        const response = await fetch('api/users/deleteInactiveUsersFriends/', {
+        const response = await fetch('/api/users/deleteInactiveUsersFriends/', {
             method: 'DELETE',
             headers:
             {

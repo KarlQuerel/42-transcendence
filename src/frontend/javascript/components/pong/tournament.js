@@ -418,8 +418,6 @@ export function fillMatchPlayers(matchupIndex)
 		console.error('Invalid matchup index or match data missing');
 		if (DEBUG)
 		{
-			console.log('GameConf.allMatchups:', GameConf.allMatchups);
-			console.log('GameConf.matchupIndex:', matchupIndex);
 		}
 	}
 }
