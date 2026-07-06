@@ -137,8 +137,11 @@ export function renderProfile()
 	fetchUserData()
 		.then(userData =>
 		{
-			if (!userData && DEBUG)
-				console.log('No user data found');
+			if (!userData)
+			{
+				container.innerHTML = '<p>Failed to load profile data.</p>';
+				return;
+			}
 
 			userData_edit = userData;
 
@@ -317,6 +320,9 @@ export function renderProfile()
 			
 			if (DEBUG)
 				console.log(status);
+
+			if (!status)
+				return;
 
 			if (status.isAnonymous === false)
 			{
