@@ -1,7 +1,7 @@
 /***********************************************\
 -					IMPORTS						-
 \***********************************************/
-import { DEBUG, GITHUBACTIONS, setSignedInState }
+import { DEBUG, GITHUBACTIONS, setSignedInState, navigateTo }
 from '../../main.js';
 
 import { renderNavbar }
@@ -240,6 +240,14 @@ export async function refreshToken()
 }
 
 
+function handleSessionExpired()
+{
+	localStorage.removeItem('access_token');
+	localStorage.removeItem('refresh_token');
+	setSignedInState(false);
+	navigateTo('/sign-in');
+}
+
 // Send a request to the server to refresh the access token
 // Function to be called at every request
 
@@ -261,7 +269,16 @@ export async function apiRequest(url, options = {})
 		{
 			if (DEBUG)
 				console.log('Token expired, refreshing...');
-			const	newAccessToken = await refreshToken();
+			let	newAccessToken;
+			try
+			{
+				newAccessToken = await refreshToken();
+			}
+			catch (refreshError)
+			{
+				handleSessionExpired();
+				throw refreshError;
+			}
 			options.headers['Authorization'] = 'Bearer ' + newAccessToken;
 			response = await fetch(url, options);
 		}
