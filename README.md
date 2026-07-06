@@ -45,15 +45,20 @@ This project involves creating a web-based application that adheres to modern de
 ## Installation
 1. Clone this repository to your local machine:
 	```sh
-	git clone https://github.com/KarlQuerel/42-transcendence.git
+	git clone https://github.com/KarlQuerel/ft_transcendence.git
 	```
 
 2. Navigate to the project directory:
 	```sh
-	cd 42-transcendence
+	cd ft_transcendence
 	```
 
-3. Compile the project using `make`:
+3. Create the environment file (default values run locally as-is):
+	```sh
+	cp src/.env.example src/.env
+	```
+
+4. Compile the project using `make`:
 	```sh
 	make
 	```
@@ -64,6 +69,6 @@ To access and use the web application, open your web browser and navigate to:
 https://localhost:4430
 ```
 
-For more information, refer to the [subject PDF](https://github.com/KarlQuerel/42-transcendence/blob/main/docs/en.subject.pdf).
+For more information, refer to the [subject PDF](https://github.com/KarlQuerel/ft_transcendence/blob/main/docs/en.subject.pdf).
 
 [Back to Top](#top)
