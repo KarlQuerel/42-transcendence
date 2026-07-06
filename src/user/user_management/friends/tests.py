@@ -18,8 +18,6 @@ class FriendRequestTestCase(TestCase):
 		self.client.force_authenticate(user=self.user1)
 		url = reverse('send_friend_request')
 		response = self.client.post(url, {'receiver': self.user2.id})
-		print("Status code for send request:", response.status_code)
-		print("Response data for send request:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 	def test_accept_friend_request(self):
@@ -27,8 +25,6 @@ class FriendRequestTestCase(TestCase):
 		self.friend_request = FriendRequest.objects.create(sender=self.user1, receiver=self.user3, request_status='pending')
 		url = reverse('accept_friend_request', kwargs={'request_id': self.friend_request.id})
 		response = self.client.post(url)
-		print("Status code for accept request:", response.status_code)
-		print("Response data for accept request:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_reject_friend_request(self):
@@ -36,8 +32,6 @@ class FriendRequestTestCase(TestCase):
 		self.friend_request = FriendRequest.objects.create(sender=self.user1, receiver=self.user3, request_status='pending')
 		url = reverse('reject_friend_request', kwargs={'request_id': self.friend_request.id})
 		response = self.client.post(url)
-		print("Status code for reject request:", response.status_code)
-		print("Response data for reject request:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_remove_friend(self):
@@ -45,8 +39,6 @@ class FriendRequestTestCase(TestCase):
 		self.user1.friends.add(self.user3)
 		url = reverse('remove_friend', kwargs={'user_id': self.user3.id})
 		response = self.client.post(url)
-		print("Status code for remove friend:", response.status_code)
-		print("Response data for remove friend:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertNotIn(self.user3, self.user1.friends.all())
 
@@ -56,8 +48,6 @@ class FriendRequestTestCase(TestCase):
 		self.friend_request = FriendRequest.objects.create(sender=self.user1, receiver=self.user2, request_status='pending')
 		url = reverse('sent_requests')
 		response = self.client.get(url)
-		print("Status code for sent requests:", response.status_code)
-		print("Response data for sent requests:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 	def test_received_requests(self):
@@ -66,10 +56,6 @@ class FriendRequestTestCase(TestCase):
 		self.friend_request = FriendRequest.objects.create(sender=self.user2, receiver=self.user3, request_status='pending')
 		url = reverse('received_requests')
 		response = self.client.get(url)
-		print("Status code for received requests:", response.status_code)
-		print("Response data for received requests:", response.data)
 		url = reverse('accept_friend_request', kwargs={'request_id': self.friend_request.id})
 		response = self.client.post(url)
-		print("Status code for received2 requests:", response.status_code)
-		print("Response data for received2 requests:", response.data)
 		self.assertEqual(response.status_code, status.HTTP_200_OK)

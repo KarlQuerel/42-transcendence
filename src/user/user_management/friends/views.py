@@ -12,8 +12,8 @@ class SendFriendRequestView(APIView):
 	permission_classes = [IsAuthenticated]
 	
 	def post(self, request):
-		if requestAlreadySent(request) == True:
-			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)	
+		if requestAlreadySent(request):
+			return Response({'error': 'friend request already exists'}, status=status.HTTP_400_BAD_REQUEST)
 		serializer = FriendRequestSerializer(data=request.data)
 		if serializer.is_valid():
 			serializer.save(sender=request.user)
@@ -21,24 +21,11 @@ class SendFriendRequestView(APIView):
 		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def requestAlreadySent(request):
-	try:
-		other_user = CustomUser.objects.get(id=request.data.get('receiver'))
-		friend_request = FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='pending')
-		return True
-	except FriendRequest.DoesNotExist:
-		try:
-			friend_request = FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='accepted')
-			return True
-		except FriendRequest.DoesNotExist:
-			try:
-				friend_request = FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='pending')
-				return True
-			except FriendRequest.DoesNotExist:
-				try:
-					friend_request = FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='accepted')
-					return True
-				except FriendRequest.DoesNotExist:
-					return False
+	other_user = CustomUser.objects.get(id=request.data.get('receiver'))
+	return FriendRequest.objects.filter(
+		Q(sender=other_user, receiver=request.user) | Q(sender=request.user, receiver=other_user),
+		request_status__in=['pending', 'accepted']
+	).exists()
 
 
 class AcceptFriendRequestView(APIView):
@@ -75,7 +62,7 @@ class RemoveFriendView(APIView):
 			try:
 				friend_request = FriendRequest.objects.get(sender=request.user, request_status='accepted')
 				friend_request.remove_friend()
-			except:
+			except FriendRequest.DoesNotExist:
 				friend_request = FriendRequest.objects.get(receiver=request.user, request_status='accepted')
 				friend_request.remove_friend()
 			friend_to_remove = CustomUser.objects.get(id=user_id)
@@ -92,11 +79,11 @@ class FriendRequestStatus(APIView):
 	def get(self, request, user_id):
 		try:
 			other_user = CustomUser.objects.get(id=user_id)
-			friend_request = FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='pending')
+			FriendRequest.objects.get(sender=other_user, receiver=request.user, request_status='pending')
 			return Response({'respond_to_request'}, status=status.HTTP_200_OK)
 		except FriendRequest.DoesNotExist:
 			try:
-				friend_request = FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='pending')
+				FriendRequest.objects.get(sender=request.user, receiver=other_user, request_status='pending')
 				return Response({'waiting_for_response'}, status=status.HTTP_200_OK)
 			except FriendRequest.DoesNotExist:
 				return Response({'error': 'friend request not found or already rejected'}, status=status.HTTP_200_OK)
@@ -122,7 +109,7 @@ class DeleteInactiveUsersFriendRequests(APIView):
 				try:
 					usersToDeleteID = [int(id) for id in usersToDeleteID.split(",")]
 				except ValueError:
-					return Response({'error': 'Invalid user ID format'}, status=status.HTTP_405_BAD_REQUEST)
+					return Response({'error': 'Invalid user ID format'}, status=status.HTTP_400_BAD_REQUEST)
 
 			if not usersToDeleteID:
 				return Response({'error': 'No matching users found'}, status=status.HTTP_200_OK)
@@ -132,7 +119,7 @@ class DeleteInactiveUsersFriendRequests(APIView):
 
 			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
 
-		except:
+		except Exception:
 			return Response({'error': 'no user id provided'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -148,24 +135,9 @@ class DeleteUserFriendRequests(APIView):
 			user_id = user.id
 
 			friendRequests = FriendRequest.objects.filter(Q(sender_id=user_id) | Q(receiver_id=user_id))
-			print('friendRequests', friendRequests)
 			friendRequests.delete()
 
 			return Response({'success': 'friend requests deleted successfully'}, status=status.HTTP_200_OK)
 
 		except Exception as e:
-			print('Error in DeleteUserFriendRequests', str(e))
 			return Response({'DeleteUserFriendRequests error': str(e)}, status=status.HTTP_404_NOT_FOUND)
-
-
-# class SentFriendRequestView(APIView):
-# 	def get(self, request):
-# 		queryset = FriendRequest.objects.filter(sender=request.user, request_status='pending')
-# 		serializer = FriendRequestSerializer(queryset, many=True)
-# 		return Response(serializer.data, status=status.HTTP_200_OK)
-
-# class ReceivedFriendRequestView(APIView):
-# 	def get(self, request):
-# 		queryset = FriendRequest.objects.filter(receiver=request.user, request_status='pending')
-# 		serializer = FriendRequestSerializer(queryset, many=True)
-# 		return Response(serializer.data, status=status.HTTP_200_OK)
